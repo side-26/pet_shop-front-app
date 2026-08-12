@@ -1,0 +1,6 @@
+pnpm run format || exit 1
+
+# Include any formatting and ESLint fixes in the pending commit.
+git add -A
+
+pnpm run test
