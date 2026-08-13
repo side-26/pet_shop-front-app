@@ -8,9 +8,10 @@
     "start": "next start",
     "lint": "eslint .",
     "format": "prettier --write . --ignore-unknown && eslint . --fix",
-    "test": "pnpm run test:unit && pnpm run test:integration && pnpm run test:e2e",
+    "test": "pnpm run test:unit && pnpm run test:integration && pnpm run test:component && pnpm run test:e2e",
     "test:unit": "vitest run --project unit --passWithNoTests",
     "test:integration": "vitest run --project integration --passWithNoTests",
+    "test:component": "cypress run --component --browser electron",
     "test:e2e": "node scripts/run-cypress.mjs",
     "prepare": "husky",
     "cypress:open": "cypress open --e2e"

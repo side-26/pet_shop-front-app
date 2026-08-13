@@ -16,7 +16,8 @@ Build Pet Shop UI components on the existing shadcn/Base UI foundation. Preserve
 5. If the component exists in shadcn but is missing locally, inspect its current docs and add it through the established shadcn workflow.
 6. Never overwrite unrelated local customization or blindly regenerate customized components.
 7. Implement the requested contract, migrate call sites when necessary, and update meaningful tests and applicable `AGENTS.md` documentation.
-8. Run focused tests and the repository's actual validation commands.
+8. Create or update the `/ui-components` living gallery for every added or changed UI component.
+9. Run focused tests and the repository's actual validation commands.
 
 ## Architecture and boundaries
 
@@ -89,6 +90,16 @@ Prefer native, ARIA, or `data-*` selectors over duplicate React state. Loading c
 
 Aim for friendly, calm, trustworthy, clean, warm, modern, and premium UI. Use rounded geometry, restrained elevation, and clear hierarchy. Reserve glass treatment for navigation, floating controls, overlays, dialogs, drawers, and contextual elevated surfaces. Prefer opaque or semi-opaque surfaces for forms, grids, tables, dense cards, admin UI, and content-heavy areas.
 
+## Living component gallery
+
+- Treat `src/app/ui-components/page.tsx` (`/ui-components`) as the canonical visual inventory for `src/components/ui`.
+- Create the route when it does not exist. Whenever a UI component is added or its public API, styling, states, or behavior changes, update the route in the same change.
+- Inventory every public component family under `src/components/ui`; exclude tests, helpers, and documentation files.
+- Render meaningful examples of every supported visual axis, including colors, variants, sizes, and relevant states such as disabled, loading, invalid, selected, empty, open, and RTL/mixed-direction content. Do not manufacture states or axes the component does not support.
+- Exercise full shadcn composition for compound components. Keep labels realistic, Persian-first, and accessible; isolate LTR identifiers with `<bdi>` or `dir="ltr"`.
+- Keep the page a Server Component and static by default. Move only genuinely interactive showcase logic into the smallest route-local Client Component. Apply the mandatory Promise/Suspense workflow only when a gallery region is Promise-backed.
+- Use responsive, semantic-token-based gallery layout without redefining component styling at the call site. Add or update focused route tests so missing component sections or broken public composition are detected.
+
 ## Testing
 
 - Use the repository's existing testing stack; never introduce a duplicate framework.
@@ -106,3 +117,4 @@ Update the applicable `AGENTS.md` when a component change alters public API, var
 Report the component and primitive used, sizes/variants/colors, relevant states, RTL and accessibility decisions, motion/reduced-motion behavior, tests and documentation changed, validation run, and intentional breaking changes or limitations.
 
 Do not declare completion until relevant architecture, behavior, accessibility, RTL, light/dark, responsive-content, documentation, tests, lint, TypeScript, and build checks have been addressed.
+Do not declare a UI component change complete until `/ui-components` represents the current component inventory and supported conditions.

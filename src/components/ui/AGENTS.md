@@ -128,8 +128,8 @@ state
 Example conceptual API:
 
 ```tsx
-<Button variant="primary" size="md" />
-<Button variant="destructive" size="sm" />
+<Button variant="fill" color="primary" size="md" />
+<Button variant="tonal" color="error" size="sm" />
 ```
 
 Avoid creating separate components such as:
@@ -141,6 +141,40 @@ danger-button.tsx
 ```
 
 when one variant-based component is sufficient.
+
+---
+
+# Current Foundation Components
+
+`Button` and `Badge` share the following visual axes:
+
+```text
+size: xs | sm | md | lg | xl
+variant: fill | outlined | tonal | flat | text | transparent
+color: primary | secondary | info | success | warning | error
+```
+
+Both default to `md`, `fill`, and `primary`. Button icons use logical
+`data-icon="inline-start|inline-end"` placement; icon-only buttons use
+`iconOnly` plus an accessible name.
+
+Resolve foreground color from `color` and `variant` together. Filled surfaces
+use `<color>-foreground`; tonal surfaces use `<color>-muted-foreground`;
+outlined, flat, text, and transparent surfaces use a readable semantic color
+with the matching border/background treatment. Do not let these variants
+inherit the surrounding foreground or use an unrelated neutral text color.
+
+`Card` uses `size="xs|sm|md|lg|xl"` and
+`variant="elevated|filled|outlined|glass"`. Compose it with `CardHeader`,
+`CardTitle`, `CardDescription`, `CardAction`, `CardContent`, and `CardFooter`.
+
+`AlertDialogContent` uses `size="sm|md|lg"`. Every alert dialog must include
+an `AlertDialogTitle` and should include an `AlertDialogDescription`. Use
+`AlertDialogCancel` for the focus-restoring close action; choose the semantic
+`color` on `AlertDialogAction` for the confirmation intent.
+
+The transparent and glass variants are reserved for elevated or contextual
+macOS-style surfaces. Default cards remain opaque for content readability.
 
 ---
 
