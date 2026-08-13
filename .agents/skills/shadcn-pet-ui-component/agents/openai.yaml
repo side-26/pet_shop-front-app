@@ -1,0 +1,6 @@
+interface:
+  display_name: "Pet Shop UI Components"
+  short_description: "Build accessible RTL Pet Shop UI components"
+  default_prompt: "Use $shadcn-pet-ui-component to create or update a Pet Shop UI component."
+policy:
+  allow_implicit_invocation: true

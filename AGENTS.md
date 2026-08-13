@@ -24,3 +24,7 @@ Do not create separate skeleton cards, lists, grids, tables, or duplicated loadi
 Keep `customFetcher`, endpoint data functions, cache policy, Suspense orchestration, result handling, and presentation separate. Prefer renderer-specific view models over fake or weakened backend DTOs for placeholder data. Preserve the established `.skeleton` selector and spelling.
 
 Before considering the work complete, add or update relevant tests and run typecheck, lint, applicable Vitest/Cypress tests, and the production build. Verify loading, loaded, empty, and error states; layout stability; disabled skeleton interactions; Server Component defaults; and the absence of duplicate skeleton markup.
+
+## Pet Shop UI component skill
+
+For every prompt involving UI components, primitives, component variants or states, forms, overlays, navigation controls, cards, RTL component behavior, component accessibility, motion, or UI component tests, use the project skill at `.agents/skills/shadcn-pet-ui-component/SKILL.md` in addition to any other applicable skills.
