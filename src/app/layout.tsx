@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 
+import { RtlLayout } from '@/components/layouts/rtl-layout';
 import { cn } from '@/lib/utils';
 
 import './styles/tailwind.config.css';
@@ -45,8 +46,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="en" className={cn('h-full antialiased font-sans', iranYekan.variable)}>
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="fa" dir="rtl" className={cn('tw:h-full tw:antialiased', iranYekan.variable)}>
+      <body className="min-h-full flex flex-col">
+        <RtlLayout>{children}</RtlLayout>
+      </body>
     </html>
   );
 }
