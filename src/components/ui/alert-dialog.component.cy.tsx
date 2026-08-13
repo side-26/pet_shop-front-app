@@ -22,7 +22,7 @@ function AlertDialogFixture() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>لغو</AlertDialogCancel>
-          <AlertDialogAction color="error">حذف</AlertDialogAction>
+          <AlertDialogAction>حذف</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

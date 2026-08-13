@@ -173,6 +173,45 @@ an `AlertDialogTitle` and should include an `AlertDialogDescription`. Use
 `AlertDialogCancel` for the focus-restoring close action; choose the semantic
 `color` on `AlertDialogAction` for the confirmation intent.
 
+Dialog footer semantics are standardized: `DialogCancel` and
+`AlertDialogCancel` use `outlined + error`; `DialogAction` and
+`AlertDialogAction` use `fill + primary`. Use structural `DialogClose` only
+for non-action close affordances such as a title-bar close icon.
+
+`PopoverContent` and `TooltipContent` use `color="primary|secondary|info|success|warning|error"`.
+Their `fill`, `outlined`, and `tonal` variants resolve foreground, background,
+border, and (for Tooltip) arrow color as one compound visual decision.
+`Spinner` uses the same semantic colors with `size="xs|sm|md|lg|xl"`.
+
+`DialogContent` uses `size="sm|md|lg|xl"` and always requires `DialogTitle`;
+include `DialogDescription` for explanatory content. Toast uses the Base UI toast
+manager and resolves `fill|outlined|tonal` foregrounds from semantic color.
+Its viewport is top-centered, and its close control inherits the resolved toast
+foreground so error, success, info, and warning notifications remain visually aligned.
+`CollapsibleContent` preserves Base UI state/ARIA behavior while Framer Motion
+animates height and opacity, with reduced-motion producing an immediate transition.
+
+`DropdownMenu` is non-modal by default and closes on any captured scroll event,
+including window and nested scrolling containers. Preserve its complete group,
+checkbox, radio, separator, shortcut, and submenu composition. `Pagination` uses
+semantic navigation markup, Persian labels, `xs|sm|md|lg|xl` sizing, and RTL-aware
+previous/next arrows. Links accept the shared `variant` and `color` axes; when
+`variant` is omitted, active links are outlined and inactive links are flat.
+`DropdownMenuLabel` and checkbox items must be placed inside `DropdownMenuGroup`;
+radio items must be placed inside `DropdownMenuRadioGroup`, as required by Base UI.
+
+`DataTable` composes TanStack Table v8 with the shared `Table` renderer and owns
+sorting, pagination, empty state, and stable row IDs. `Carousel` uses Embla with
+`direction="rtl"` by default; in RTL, previous uses a right chevron, next uses a
+left chevron, ArrowRight moves previous, and ArrowLeft moves next. `ButtonGroup`
+supports horizontal and vertical orientations and joins child borders using
+logical start/end properties.
+
+`Menubar` composes Base UI Menubar with the shared Dropdown Menu parts and is
+non-modal by default. Labels and checkbox items belong inside `MenubarGroup`;
+radio items belong inside `MenubarRadioGroup`. Preserve RTL arrow-key movement,
+submenus, disabled items, shortcuts, and destructive semantic styling.
+
 The transparent and glass variants are reserved for elevated or contextual
 macOS-style surfaces. Default cards remain opaque for content readability.
 

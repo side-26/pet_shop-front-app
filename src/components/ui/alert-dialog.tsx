@@ -142,10 +142,16 @@ function AlertDialogDescription({ className, ...props }: AlertDialogPrimitive.De
   );
 }
 
-function AlertDialogAction({ className, color = 'primary', ...props }: ButtonProps) {
+function AlertDialogAction({
+  className,
+  variant = 'fill',
+  color = 'primary',
+  ...props
+}: ButtonProps) {
   return (
     <Button
       data-slot="alert-dialog-action"
+      variant={variant}
       color={color}
       className={cn('tw:max-sm:w-full', className)}
       {...props}
@@ -156,7 +162,7 @@ function AlertDialogAction({ className, color = 'primary', ...props }: ButtonPro
 function AlertDialogCancel({
   className,
   variant = 'outlined',
-  color = 'primary',
+  color = 'error',
   size = 'md',
   ...props
 }: AlertDialogPrimitive.Close.Props & Pick<ButtonProps, 'variant' | 'color' | 'size'>) {

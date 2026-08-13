@@ -79,7 +79,7 @@ export function AlertDialogShowcase() {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>انصراف</AlertDialogCancel>
-                <AlertDialogAction color={color}>{action}</AlertDialogAction>
+                <AlertDialogAction>{action}</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
