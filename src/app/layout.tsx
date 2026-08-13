@@ -1,15 +1,41 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
-import './styles/globals.css';
+import localFont from 'next/font/local';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
+import { cn } from '@/lib/utils';
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+import './styles/tailwind.config.css';
+
+const iranYekan = localFont({
+  src: [
+    {
+      path: '../../public/fonts/iran-yekan/light.ttf',
+      weight: '300',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/iran-yekan/regular.ttf',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/iran-yekan/medium.ttf',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/iran-yekan/bold.ttf',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/iran-yekan/extra-bold.ttf',
+      weight: '800',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-iran-yekan',
+  display: 'swap',
+  fallback: ['Tahoma', 'Arial', 'sans-serif'],
 });
 
 export const metadata: Metadata = {
@@ -19,7 +45,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html lang="en" className={cn('h-full antialiased font-sans', iranYekan.variable)}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
