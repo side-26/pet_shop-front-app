@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 
 import './styles/tailwind.config.css';
 
-const iranYekan = localFont({
+const defaultFont = localFont({
   src: [
     {
       path: '../../public/fonts/iran-yekan/light.ttf',
@@ -34,7 +34,7 @@ const iranYekan = localFont({
       style: 'normal',
     },
   ],
-  variable: '--font-iran-yekan',
+  variable: '--font-default',
   display: 'swap',
   fallback: ['Tahoma', 'Arial', 'sans-serif'],
 });
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="fa" dir="rtl" className={cn('tw:h-full tw:antialiased', iranYekan.variable)}>
+    <html lang="fa" dir="rtl" className={cn('tw:h-full tw:antialiased', defaultFont.variable)}>
       <body className="min-h-full flex flex-col">
         <RtlLayout>{children}</RtlLayout>
       </body>
