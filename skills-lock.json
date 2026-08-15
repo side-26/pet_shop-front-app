@@ -13,6 +13,12 @@
       "skillPath": "skills/cypress-docs/SKILL.md",
       "computedHash": "ee00ca8822995b19be602f36abc90623dc557529f3804508defdaf0f6e6aa538"
     },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "computedHash": "93f53fd1c0352d3d7ec17b8f73d7351bf76f4821e55d123c9d2abc2c53ba48e4"
+    },
     "frontend-testing": {
       "source": "aj-geddes/useful-ai-prompts",
       "sourceType": "github",
@@ -48,6 +54,12 @@
       "sourceType": "github",
       "skillPath": "plugins/core/skills/solid-principles/SKILL.md",
       "computedHash": "3188df08407dd45dddbed592cb27e8c156f802999f88c9ad08b0fbf090f220bb"
+    },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "computedHash": "d1de8ff8d228cd4204bf06eb959ef4317d5b927908d9f42765971e33e80c8a7e"
     },
     "vercel-react-best-practices": {
       "source": "vercel-labs/agent-skills",
