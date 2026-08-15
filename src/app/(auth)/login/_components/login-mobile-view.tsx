@@ -1,43 +1,36 @@
 import Link from 'next/link';
 
-import { cn } from '@/lib/utils';
-
 import { LoginForm } from '@/app/(auth)/login/_components/login-form';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/components/ui/card';
 
 export function LoginMobileView() {
   return (
-    <main
-      className={cn(
-        'tw:flex tw:min-h-svh tw:flex-col tw:min-w-0 tw:items-center tw:justify-end tw:bg-top tw:bg-clip-border tw:bg-origin-content tw:bg-no-repeat tw:bg-contain tw:overflow-hidden tw:text-foreground',
-        `tw:bg-[image:url(/images/auth/login-bg-mobile.png)]`,
-      )}
-    >
+    <div className="tw:flex tw:min-w-0 tw:items-center tw:justify-center tw:text-foreground">
       <section
         aria-labelledby="login-title"
-        className="tw:relative tw:flex tw:h-fit tw:w-full tw:max-w-md tw:flex-none tw:items-end tw:overflow-hidden tw:sm:rounded-4xl tw:sm:border"
+        className="tw:relative tw:flex tw:h-fit tw:w-full tw:max-w-md tw:flex-none tw:items-end tw:overflow-hidden tw:sm:max-lg:max-w-none tw:sm:max-lg:rounded-t-4xl tw:sm:max-lg:rounded-b-none tw:sm:max-lg:border"
       >
         <div aria-hidden="true" className="tw:absolute tw:inset-0 tw:bg-background/15" />
 
         <Card
           variant="glass"
           size="xs"
-          className="tw:relative tw:gap-3 tw:rounded-t-4xl tw:rounded-b-none tw:border-border-strong tw:bg-card/85 tw:py-3 tw:[@media(max-height:430px)]:gap-1.5 tw:[@media(max-height:430px)]:rounded-3xl tw:size-full tw:[@media(max-height:430px)]:py-2"
+          className="tw:relative tw:size-full tw:gap-3 tw:rounded-t-4xl tw:rounded-b-none tw:border-border-strong tw:bg-card/85 tw:py-3 tw:sm:max-lg:rounded-t-4xl tw:sm:max-lg:rounded-b-none tw:[@media(max-height:430px)]:gap-1.5 tw:[@media(max-height:430px)]:rounded-t-3xl tw:[@media(max-height:430px)]:rounded-b-none tw:[@media(max-height:430px)]:py-2"
         >
-          <CardHeader className="tw:gap-1 tw:text-center">
+          <CardHeader className="tw:gap-1 tw:text-center tw:sm:max-lg:mx-auto tw:sm:max-lg:w-full tw:sm:max-lg:max-w-[430px]">
             <h1 id="login-title" className="tw:text-heading-3 tw:text-card-foreground">
               ورود به پت‌شاپ
             </h1>
             <CardDescription className="tw:[@media(max-height:430px)]:hidden">
-              همراه مطمئن برای مراقبت از دوست کوچولوی شما
+              برای بهره مندی از امکانات بیشتر اپلیکیشن شماره تلفن و کلمه عبور خود را وارد کنید
             </CardDescription>
           </CardHeader>
 
-          <CardContent>
+          <CardContent className="tw:sm:max-lg:mx-auto tw:sm:max-lg:w-full tw:sm:max-lg:max-w-[430px]">
             <LoginForm />
           </CardContent>
 
-          <CardFooter className="tw:justify-center tw:border-t tw:border-border/70 tw:text-center tw:[@media(max-height:430px)]:pt-1.5">
+          <CardFooter className="tw:justify-center tw:border-t tw:border-border/70 tw:text-center tw:sm:max-lg:mx-auto tw:sm:max-lg:w-full tw:sm:max-lg:max-w-[430px] tw:[@media(max-height:430px)]:pt-1.5">
             <p className="tw:text-body-s tw:text-muted-foreground">
               حساب کاربری ندارید؟{' '}
               <Link
@@ -50,6 +43,6 @@ export function LoginMobileView() {
           </CardFooter>
         </Card>
       </section>
-    </main>
+    </div>
   );
 }

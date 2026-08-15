@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 
+import { AuthLayoutShell } from '@/components/layouts/auth/auth-layout-shell';
+
 export const metadata: Metadata = {
   title: {
     default: 'ورود به پت‌شاپ',
@@ -9,5 +11,5 @@ export const metadata: Metadata = {
 };
 
 export default function AuthLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <main>{children}</main>;
+  return <AuthLayoutShell>{children}</AuthLayoutShell>;
 }

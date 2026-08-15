@@ -15,6 +15,11 @@ describe('/login', () => {
     );
 
     expect(screen.getByRole('heading', { level: 1, name: 'ورود به پت‌شاپ' })).toBeTruthy();
+    expect(
+      screen.getByText(
+        'برای بهره مندی از امکانات بیشتر اپلیکیشن شماره تلفن و کلمه عبور خود را وارد کنید',
+      ),
+    ).toBeTruthy();
     expect(screen.getByRole('form', { name: 'فرم ورود' })).toBeTruthy();
     expect(screen.getByRole('checkbox', { name: 'مرا به خاطر بسپار' })).toBeTruthy();
     expect(screen.getByRole('link', { name: 'فراموشی رمز عبور؟' })).toBeTruthy();
