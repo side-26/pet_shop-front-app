@@ -30,6 +30,14 @@ import { spinnerVariants } from '@/components/ui/spinner';
 import { tooltipVariants } from '@/components/ui/tooltip';
 import { dialogContentVariants } from '@/components/ui/dialog';
 import { toastVariants } from '@/components/ui/toast';
+import { Field } from '@/components/ui/field/default';
+import { FieldLabel } from '@/components/ui/field/label';
+import { Checkbox } from '@/components/ui/fields/checkbox';
+import { Input, inputVariants } from '@/components/ui/fields/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/fields/radio-group';
+import { Switch } from '@/components/ui/fields/switch';
+import { selectionStateClasses } from '@/components/ui/fields/selection-control.styles';
+import { Textarea, textareaVariants } from '@/components/ui/fields/textarea';
 import {
   Pagination,
   PaginationContent,
@@ -42,6 +50,135 @@ import {
 afterEach(cleanup);
 
 describe('Pet Shop UI primitives', () => {
+  it('scales selection controls and their associated label typography together', () => {
+    render(
+      <div>
+        <Field>
+          <Checkbox id="small-check" size="xs" />
+          <FieldLabel htmlFor="small-check">Small checkbox</FieldLabel>
+        </Field>
+        <Field>
+          <Switch id="large-switch" size="xl" />
+          <FieldLabel htmlFor="large-switch">Large switch</FieldLabel>
+        </Field>
+        <RadioGroup defaultValue="large">
+          <Field>
+            <RadioGroupItem id="large-radio" value="large" size="lg" />
+            <FieldLabel htmlFor="large-radio">Large radio</FieldLabel>
+          </Field>
+        </RadioGroup>
+      </div>,
+    );
+
+    expect(screen.getByRole('checkbox', { name: 'Small checkbox' }).getAttribute('data-size')).toBe(
+      'xs',
+    );
+    expect(screen.getByRole('switch', { name: 'Large switch' }).className).toContain('tw:h-8');
+    expect(screen.getByRole('radio', { name: 'Large radio' }).className).toContain('tw:size-6');
+    expect(screen.getByText('Large switch').className).toContain('data-size=xl');
+  });
+  it('resolves independent checked and unchecked colors for selection controls', () => {
+    const classes = selectionStateClasses('tonal', 'success', 'warning');
+    expect(classes).toContain('tw:data-checked:bg-success-muted');
+    expect(classes).toContain('tw:not-data-checked:bg-warning-muted');
+
+    render(
+      <div>
+        <Checkbox
+          aria-label="Dual checkbox"
+          variant="outlined"
+          checkedColor="error"
+          uncheckedColor="info"
+        />
+        <Switch
+          aria-label="Dual switch"
+          variant="tonal"
+          checkedColor="success"
+          uncheckedColor="warning"
+          readOnly
+        />
+        <RadioGroup defaultValue="one">
+          <RadioGroupItem
+            value="one"
+            aria-label="Dual radio"
+            variant="fill"
+            checkedColor="primary"
+            uncheckedColor="secondary"
+            disabled
+          />
+        </RadioGroup>
+      </div>,
+    );
+
+    expect(
+      screen.getByRole('checkbox', { name: 'Dual checkbox' }).getAttribute('data-variant'),
+    ).toBe('outlined');
+    expect(
+      screen.getByRole('switch', { name: 'Dual switch' }).getAttribute('data-unchecked-color'),
+    ).toBe('warning');
+    expect(screen.getByRole('radio', { name: 'Dual radio' }).className).toContain(
+      'tw:disabled:bg-disabled',
+    );
+  });
+  it('resolves Textarea color, size, and accessible invalid state', () => {
+    expect(textareaVariants({ color: 'info', size: 'xl' })).toContain('tw:border-info/55');
+    expect(textareaVariants({ color: 'info', size: 'xl' })).toContain('tw:min-h-32');
+
+    render(<Textarea aria-label="Pet notes" color="success" size="lg" aria-invalid />);
+    const textarea = screen.getByRole('textbox', { name: 'Pet notes' });
+    expect(textarea.getAttribute('data-color')).toBe('success');
+    expect(textarea.getAttribute('data-size')).toBe('lg');
+    expect(textarea.getAttribute('aria-invalid')).toBe('true');
+  });
+  it('resolves Text Field color and size as independent visual axes', () => {
+    expect(inputVariants({ color: 'error', size: 'xl' })).toContain('tw:border-error/55');
+    expect(inputVariants({ color: 'success', size: 'xs' })).toContain(
+      'tw:focus-visible:ring-success/20',
+    );
+
+    render(<Input aria-label="Colored input" color="warning" size="lg" />);
+    const input = screen.getByRole('textbox', { name: 'Colored input' });
+    expect(input.getAttribute('data-color')).toBe('warning');
+    expect(input.getAttribute('data-size')).toBe('lg');
+  });
+  it('exposes accessible input, checkbox, switch, and radio contracts', () => {
+    render(
+      <div>
+        <Field>
+          <FieldLabel htmlFor="owner">نام سرپرست</FieldLabel>
+          <Input id="owner" size="lg" />
+        </Field>
+        <Checkbox id="terms" defaultChecked aria-label="پذیرش قوانین" />
+        <Switch id="alerts" defaultChecked aria-label="فعال‌سازی اعلان‌ها" />
+        <RadioGroup defaultValue="phone" aria-label="روش تماس">
+          <RadioGroupItem value="phone" aria-label="تلفن" />
+          <RadioGroupItem value="email" aria-label="ایمیل" />
+        </RadioGroup>
+      </div>,
+    );
+
+    expect(screen.getByLabelText('نام سرپرست').getAttribute('data-size')).toBe('lg');
+    expect(
+      screen.getByRole('checkbox', { name: 'پذیرش قوانین' }).getAttribute('aria-checked'),
+    ).toBe('true');
+    expect(
+      screen.getByRole('switch', { name: 'فعال‌سازی اعلان‌ها' }).getAttribute('aria-checked'),
+    ).toBe('true');
+    expect(screen.getByRole('radio', { name: 'تلفن' }).getAttribute('aria-checked')).toBe('true');
+  });
+  it('associates FieldLabel with its control and exposes field states', () => {
+    render(
+      <Field data-invalid>
+        <FieldLabel htmlFor="pet-name">نام حیوان</FieldLabel>
+        <input id="pet-name" aria-invalid="true" />
+      </Field>,
+    );
+
+    expect(screen.getByLabelText('نام حیوان').getAttribute('aria-invalid')).toBe('true');
+    expect(
+      screen.getByText('نام حیوان').closest('[data-slot="field"]')?.hasAttribute('data-invalid'),
+    ).toBe(true);
+  });
   it('renders Data Table rows, empty state, and pagination controls', () => {
     const columns: ColumnDef<{ name: string }>[] = [{ accessorKey: 'name', header: 'نام' }];
     const { rerender } = render(<DataTable columns={columns} data={[{ name: 'میشا' }]} />);

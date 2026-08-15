@@ -59,6 +59,19 @@ profile-shell.tsx
 mobile-navigation.tsx
 ```
 
+Reusable authentication structure lives under `components/layouts/auth` and is
+composed by `app/(auth)/layout.tsx`. `AuthLayoutShell` owns the responsive,
+RTL-first brand and content regions while nested routes own headings, forms,
+validation, actions, and auth business logic. Keep the shell server-rendered;
+use the existing CSS/Tailwind motion utilities for entry sequencing unless a
+future interaction genuinely requires a focused Client Component. The auth
+card uses the shared `Card` glass variant and semantic theme tokens only.
+
+Auth layout behavior is stacked and content-first on mobile, an asymmetric
+split on tablet, and a wider branded split on desktop. Never use fixed content
+heights, create fake auth methods/OTP UI, or let decorative visuals reduce form
+readability. Preserve short-height scrolling and reduced-motion behavior.
+
 ---
 
 # Next.js Layout Rule

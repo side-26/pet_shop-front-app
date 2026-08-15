@@ -1,3 +1,5 @@
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+
 import { BadgeShowcase } from './badge-showcase';
 import { ButtonShowcase } from './button-showcase';
 import { CardShowcase } from './card-showcase';
@@ -14,6 +16,7 @@ import { ButtonGroupShowcase } from './button-group-showcase';
 import { CarouselShowcase } from './carousel-showcase';
 import { DataTableShowcase } from './data-table-showcase';
 import { MenubarShowcase } from './menubar-showcase';
+import { FormShowcase } from './form-showcase';
 
 const navigation = [
   ['#buttons', 'Button'],
@@ -32,6 +35,7 @@ const navigation = [
   ['#carousels', 'Carousel'],
   ['#button-groups', 'Button Group'],
   ['#menubars', 'Menubar'],
+  ['#forms', 'Form'],
 ] as const;
 
 export function UiComponentsGallery() {
@@ -39,13 +43,16 @@ export function UiComponentsGallery() {
     <main className="tw:min-h-full tw:bg-background tw:text-foreground">
       <div className="tw:mx-auto tw:flex tw:w-full tw:max-w-7xl tw:flex-col tw:gap-8 tw:px-4 tw:py-10 tw:sm:px-6 tw:lg:px-8 tw:lg:py-16">
         <header className="tw:flex tw:flex-col tw:gap-5">
-          <div className="tw:flex tw:max-w-3xl tw:flex-col tw:gap-3">
-            <p className="tw:text-label-m tw:text-primary">Pet Shop UI · macOS 27</p>
-            <h1 className="tw:text-heading-1">کتابخانه اجزای رابط کاربری</h1>
-            <p className="tw:text-body-l tw:text-muted-foreground">
-              مرجع زنده اجزای عمومی پت‌شاپ، شامل اندازه‌ها، ظاهرها، رنگ‌های معنایی و حالت‌های تعاملی
-              پشتیبانی‌شده.
-            </p>
+          <div className="tw:flex tw:flex-col tw:items-start tw:justify-between tw:gap-5 tw:sm:flex-row">
+            <div className="tw:flex tw:max-w-3xl tw:flex-col tw:gap-3">
+              <p className="tw:text-label-m tw:text-primary">Pet Shop UI · macOS 27</p>
+              <h1 className="tw:text-heading-1">کتابخانه اجزای رابط کاربری</h1>
+              <p className="tw:text-body-l tw:text-muted-foreground">
+                مرجع زنده اجزای عمومی پت‌شاپ، شامل اندازه‌ها، ظاهرها، رنگ‌های معنایی و حالت‌های
+                تعاملی پشتیبانی‌شده.
+              </p>
+            </div>
+            <ThemeToggle />
           </div>
 
           <nav aria-label="فهرست اجزای رابط کاربری">
@@ -80,6 +87,7 @@ export function UiComponentsGallery() {
         <CarouselShowcase />
         <ButtonGroupShowcase />
         <MenubarShowcase />
+        <FormShowcase />
       </div>
     </main>
   );

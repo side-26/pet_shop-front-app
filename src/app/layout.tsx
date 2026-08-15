@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import Script from 'next/script';
 
 import { RtlLayout } from '@/components/layouts/rtl-layout';
+import { themeInitScript } from '@/components/ui/theme.helpers';
 import { cn } from '@/lib/utils';
 
 import './styles/tailwind.config.css';
@@ -46,8 +48,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="fa" dir="rtl" className={cn('tw:h-full tw:antialiased', defaultFont.variable)}>
-      <body className="min-h-full flex flex-col">
+    <html
+      lang="fa"
+      dir="rtl"
+      suppressHydrationWarning
+      className={cn('tw:h-full tw:antialiased', defaultFont.variable)}
+    >
+      <body className="tw:flex tw:min-h-full tw:flex-col tw:bg-background tw:text-foreground">
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeInitScript}
+        </Script>
         <RtlLayout>{children}</RtlLayout>
       </body>
     </html>

@@ -212,6 +212,60 @@ non-modal by default. Labels and checkbox items belong inside `MenubarGroup`;
 radio items belong inside `MenubarRadioGroup`. Preserve RTL arrow-key movement,
 submenus, disabled items, shortcuts, and destructive semantic styling.
 
+`Field` and `FieldLabel` live in `ui/field/default.tsx` and `ui/field/label.tsx`.
+Set `data-invalid` or `data-disabled` on `Field`, associate `FieldLabel` with its
+control through `htmlFor`, and mirror invalid or disabled state on the control.
+
+Form controls live under `ui/fields`: `Input`, `InputGroup`, `Select`, `Switch`,
+`Checkbox`, and `RadioGroup`. Compose `InputGroup` only with `InputGroupInput`
+and `InputGroupAddon`; place every `SelectItem` in `SelectGroup`. Base UI Select
+roots require the complete `items` collection. Controls use native/ARIA invalid
+and disabled state and are designed RTL-first.
+`Input` supports `color="primary|secondary|info|success|warning|error"` and
+`size="xs|sm|md|lg|xl"`, defaulting to primary/md. Color controls border, caret,
+and focus ring; `aria-invalid` always resolves to the error treatment.
+`Textarea` uses the same color and size axes, with size controlling its minimum
+height and typography. It remains vertically resizable unless disabled.
+`TextField` is the React Hook Form-aware composition for textual form controls.
+It consumes the nearest `FormProvider`, accepts a typed field `name`, and owns
+`Field`, `FieldLabel`, `Input`, and an always-mounted description region. Its
+color and size propagate to the input, label, icons, spacing, and description.
+Use `prefixIcon` and `postfixIcon` for inline decorative icons. Password fields
+automatically provide an accessible visibility toggle and preserve form state.
+The password toggle keeps a size-aware hit target, uses a smaller icon than the
+target, and is inset from the logical end edge; reserve matching input end
+padding so text never collides with it in RTL or LTR.
+`TextareaField` mirrors `TextField` composition and React Hook Form integration
+without password behavior. When `counter` is true, render a live character
+count at the physical bottom-left of the textarea, include `maxLength` when
+provided, and reserve bottom padding so user text cannot overlap the counter.
+`Checkbox`, `Switch`, and `RadioGroupItem` support `fill|outlined|tonal` through
+`variant`, plus independent `checkedColor` and `uncheckedColor` semantic colors.
+Checked/on/ticked and unchecked/off/unticked states must resolve their own
+surface and foreground. Disabled and read-only states always override both
+colors with readable neutral border, surface, foreground, and cursor treatment.
+All three controls also support `size="xs|sm|md|lg|xl"`. Size scales Checkbox
+and Radio indicators or the Switch track/thumb, writes `data-size` on the
+control, and causes the associated `FieldLabel` typography to scale with it.
+`CheckboxField`, `SwitchField`, and `RadioGroupField` are the React Hook Form
+compositions for selection controls. They consume the nearest `FormProvider`,
+bind through typed `name`, and render a persistent hint/error description.
+They expose the underlying variant, checked/unchecked colors, size, disabled,
+and read-only APIs. `RadioGroupField` receives accessible `{ value, label }`
+options and associates the group label and error description with the group.
+
+`Form` lives under `ui/form`, wraps React Hook Form with `FormProvider`, accepts
+`handleSubmit`, optional `handleInvalid`, `validationSchema`, and `options`, and
+supports render-prop children. Its forwarded ref exposes the complete typed
+`UseFormReturn`; use it for imperative `reset`, `setValue`, `trigger`, focus, and
+other React Hook Form operations rather than creating a second form state.
+
+`ThemeToggle` provides `light|dark|system` appearance modes. It persists the
+preference under `petshop-theme`, applies `.dark` to the root element, and keeps
+the browser `color-scheme` synchronized. All primitives must use semantic color
+tokens so the existing light and dark token maps theme components and portalled
+surfaces consistently; do not add component-local hardcoded dark colors.
+
 The transparent and glass variants are reserved for elevated or contextual
 macOS-style surfaces. Default cards remain opaque for content readability.
 

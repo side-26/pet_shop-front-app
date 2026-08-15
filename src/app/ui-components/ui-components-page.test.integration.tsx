@@ -57,11 +57,16 @@ describe('/ui-components', () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Carousel' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Button Group' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Menubar' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 3, name: 'Form' })).toBeTruthy();
 
     expect(screen.getAllByText('خیلی کوچک').length).toBeGreaterThan(0);
     expect(screen.getByText('ناموجود · tonal')).toBeTruthy();
     expect(screen.getByText('کارت شیشه‌ای')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'نمایش گفت‌وگوی بزرگ' })).toBeTruthy();
+    expect(screen.getByRole('group', { name: 'حالت نمایش' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'روشن' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'تیره' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'سیستم' })).toBeTruthy();
   });
 
   it('defines route metadata without making the page a Client Component', () => {

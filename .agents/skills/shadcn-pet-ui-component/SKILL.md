@@ -1,6 +1,6 @@
 ---
 name: shadcn-pet-ui-component
-description: Create, add, redesign, review, fix, or update UI components for the Pet Shop design system. Always use this skill for prompts involving UI primitives, shadcn components, component APIs or variants, visual states, forms, overlays, navigation controls, cards, RTL UI behavior, component motion, accessibility, UI tests, or related component documentation.
+description: Create, add, redesign, review, fix, or update UI components and enforce Pet Shop design-system composition when creating or changing layouts, pages, templates, or content sections. Always use this skill for prompts involving UI primitives, shadcn components, component APIs or variants, visual states, forms, overlays, navigation controls, cards, RTL UI behavior, component motion, accessibility, UI tests, component documentation, or application UI composition.
 ---
 
 # Shadcn Pet UI Component
@@ -10,14 +10,28 @@ Build Pet Shop UI components on the existing shadcn/Base UI foundation. Preserve
 ## Required workflow
 
 1. Read applicable `AGENTS.md` files completely.
-2. Inspect `components.json`, the component, its usages, sibling UI components, tokens, helpers, and tests.
-3. Read the repository's `shadcn` skill and use the project's package runner for shadcn commands.
-4. Reuse an existing component before adding or creating one.
-5. If the component exists in shadcn but is missing locally, inspect its current docs and add it through the established shadcn workflow.
-6. Never overwrite unrelated local customization or blindly regenerate customized components.
-7. Implement the requested contract, migrate call sites when necessary, and update meaningful tests and applicable `AGENTS.md` documentation.
-8. Create or update the `/ui-components` living gallery for every added or changed UI component.
-9. Run focused tests and the repository's actual validation commands.
+2. For layout, page, template, or content work, run the UI composition gate below before implementation.
+3. Inspect `components.json`, the component, its usages, sibling UI components, tokens, helpers, and tests.
+4. Read the repository's `shadcn` skill and use the project's package runner for shadcn commands.
+5. Reuse an existing component before adding or creating one.
+6. If the component exists in shadcn but is missing locally, inspect its current docs and add it through the established shadcn workflow.
+7. Never overwrite unrelated local customization or blindly regenerate customized components.
+8. Implement the requested contract, migrate call sites when necessary, and update meaningful tests and applicable `AGENTS.md` documentation.
+9. Create or update the `/ui-components` living gallery for every added or changed UI component.
+10. Run focused tests and the repository's actual validation commands.
+
+## UI composition gate for application content
+
+Before creating or modifying a layout, page, template, or content section:
+
+1. Inventory the reusable UI primitives and compound component families required by the requested design.
+2. Map every required family to an existing implementation under `src/components/ui` and confirm it is represented in `/ui-components`.
+3. Compose application UI from those shared components. Do not recreate an available primitive with page-local markup or styling.
+4. If a required reusable component family is missing locally or absent from `/ui-components`, stop before implementing the affected layout, page, template, or content.
+5. Notify the user with the exact missing component family, why the requested content depends on it, and the progress completed before the gate was reached. Record this as the current task blocker so the work resumes from that point after the user provides direction.
+6. Do not silently add the missing component, substitute a one-off implementation, or continue the dependent page work unless the user explicitly authorizes adding that component.
+
+Treat the skill and the reported task blocker as the durable workflow memory for subsequent related prompts. Ordinary semantic HTML that is not a reusable UI primitive does not trigger this gate.
 
 ## Architecture and boundaries
 
