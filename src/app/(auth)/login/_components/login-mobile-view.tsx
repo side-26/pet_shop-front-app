@@ -15,7 +15,7 @@ export function LoginMobileView() {
         <Card
           variant="glass"
           size="xs"
-          className="tw:relative tw:size-full tw:gap-3 tw:rounded-t-4xl tw:rounded-b-none tw:border-border-strong tw:bg-card/85 tw:py-3 tw:sm:max-lg:rounded-t-4xl tw:sm:max-lg:rounded-b-none tw:[@media(max-height:430px)]:gap-1.5 tw:[@media(max-height:430px)]:rounded-t-3xl tw:[@media(max-height:430px)]:rounded-b-none tw:[@media(max-height:430px)]:py-2"
+          className="tw:relative tw:size-full tw:gap-3 tw:rounded-t-4xl tw:rounded-b-none tw:border-border-strong tw:bg-card/85 tw:py-3 tw:sm:max-lg:rounded-t-4xl tw:sm:max-lg:rounded-b-none tw:[@media(max-height:430px)]:gap-1.5 tw:[@media(max-height:430px)]:rounded-t-3xl tw:[@media(max-height:430px)]:rounded-b-none tw:[@media(max-height:430px)]:py-2 tw:[@media(min-width:1025px)]:rounded-b-4xl"
         >
           <CardHeader className="tw:gap-1 tw:text-center tw:sm:max-lg:mx-auto tw:sm:max-lg:w-full tw:sm:max-lg:max-w-[430px]">
             <h1 id="login-title" className="tw:text-heading-3 tw:text-card-foreground">

@@ -67,10 +67,14 @@ use the existing CSS/Tailwind motion utilities for entry sequencing unless a
 future interaction genuinely requires a focused Client Component. The auth
 card uses the shared `Card` glass variant and semantic theme tokens only.
 
-Auth layout behavior is stacked and content-first on mobile, an asymmetric
-split on tablet, and a wider branded split on desktop. Never use fixed content
-heights, create fake auth methods/OTP UI, or let decorative visuals reduce form
-readability. Preserve short-height scrolling and reduced-motion behavior.
+Auth layout behavior is stacked and content-first through tablet widths. Desktop
+starts at 1025px and uses a semantic-token scene composed in code, with the auth
+content aligned to the logical start (the physical right in RTL). Constrain the
+desktop shell to 1536px and center it on wider viewports. Reference artwork must
+not be shipped as the desktop background; use it only to guide the coded scene.
+Never use fixed content heights, create fake auth methods/OTP UI, or let
+decorative visuals reduce form readability. Preserve short-height scrolling and
+reduced-motion behavior.
 
 ---
 

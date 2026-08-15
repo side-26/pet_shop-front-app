@@ -35,30 +35,50 @@ describe('auth layout responsive composition', () => {
     });
   });
 
-  it('shows the dog from tablet widths', () => {
-    cy.viewport(768, 900);
+  it('keeps the tablet composition through 1024px', () => {
+    cy.viewport(1024, 900);
     mountLayout();
 
     cy.get('img[alt="توله‌سگ گلدن رتریور"]').should('be.visible');
-  });
-
-  it('uses a split composition on desktop', () => {
-    cy.viewport(1440, 900);
-    mountLayout();
-
     cy.get('section[aria-labelledby="auth-brand-title"]').then(($scene) => {
       cy.get('section[aria-label="محتوای احراز هویت"]').then(($panel) => {
-        const scene = $scene[0].getBoundingClientRect();
-        const panel = $panel[0].getBoundingClientRect();
+        expect($panel[0].getBoundingClientRect().top).to.be.at.least(
+          $scene[0].getBoundingClientRect().bottom,
+        );
+      });
+    });
+  });
 
-        expect(scene.top).to.equal(panel.top);
-        expect(scene.bottom).to.equal(panel.bottom);
-        expect(
-          Math.min(Math.abs(scene.right - panel.left), Math.abs(panel.right - scene.left)),
-        ).to.be.lessThan(1);
+  it('creates the desktop scene in code and aligns the form to the right from 1025px', () => {
+    cy.viewport(1025, 900);
+    mountLayout();
+
+    cy.get('main img').should('have.length', 1);
+    cy.get('section[aria-labelledby="auth-brand-title"]').then(($scene) => {
+      cy.get('[data-testid="auth-child"]').then(($child) => {
+        const scene = $scene[0].getBoundingClientRect();
+        const child = $child[0].getBoundingClientRect();
+
+        expect(scene.top).to.equal(0);
+        expect(scene.right).to.equal(1025);
+        expect(scene.bottom).to.equal(900);
+        expect(scene.right - child.right).to.equal(16);
       });
     });
     cy.get('img[alt="توله‌سگ گلدن رتریور"]').should('be.visible');
+  });
+
+  it('centers the desktop layout after its 1536px maximum width', () => {
+    cy.viewport(1800, 1000);
+    mountLayout();
+
+    cy.get('main').then(($layout) => {
+      const layout = $layout[0].getBoundingClientRect();
+
+      expect(layout.width).to.equal(1536);
+      expect(layout.left).to.equal(132);
+      expect(layout.right).to.equal(1668);
+    });
     cy.document().then((document) => {
       expect(document.documentElement.scrollWidth).to.equal(document.documentElement.clientWidth);
       expect(document.documentElement.scrollHeight).to.equal(document.documentElement.clientHeight);

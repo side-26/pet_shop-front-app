@@ -61,6 +61,13 @@ describe('/login inside the auth layout', () => {
     cy.get('form[aria-label="فرم ورود"]').should('be.visible');
     cy.get('button[type="submit"]').should('be.visible');
     cy.get('a[href="/register"]').should('be.visible');
+    cy.get('[data-slot="card"]').then(($card) => {
+      const style = getComputedStyle($card[0]);
+
+      expect(style.borderBottomLeftRadius).to.equal(style.borderTopLeftRadius);
+      expect(style.borderBottomRightRadius).to.equal(style.borderTopRightRadius);
+      expect(style.borderBottomLeftRadius).not.to.equal('0px');
+    });
     cy.document().then((document) => {
       expect(document.documentElement.scrollWidth).to.equal(document.documentElement.clientWidth);
       expect(document.documentElement.scrollHeight).to.equal(document.documentElement.clientHeight);
