@@ -1,0 +1,4 @@
+interface:
+  display_name: "Manage Route Paths"
+  short_description: "Centralize page routes and navigation references"
+  default_prompt: "Use $manage-route-paths to add or update a routed page with centralized route constants."

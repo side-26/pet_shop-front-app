@@ -4,39 +4,33 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
 
-import LoginPage, { metadata } from './page';
+import RegisterPage, { metadata } from './page';
 
 afterEach(cleanup);
 
-describe(routePaths.login, () => {
-  it('renders the complete Persian login form', () => {
+describe(routePaths.register, () => {
+  it('renders the Persian registration form without login-only actions', () => {
     render(
       <DirectionProvider direction="rtl">
-        <LoginPage />
+        <RegisterPage />
       </DirectionProvider>,
     );
 
-    expect(screen.getByRole('heading', { level: 1, name: 'ورود به پت‌شاپ' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 1, name: 'ثبت‌نام در پت‌شاپ' })).toBeTruthy();
     expect(
-      screen.getByText(
-        'برای بهره مندی از امکانات بیشتر اپلیکیشن شماره تلفن و کلمه عبور خود را وارد کنید',
-      ),
+      screen.getByText('برای ساخت حساب کاربری شماره تلفن و کلمه عبور خود را وارد کنید'),
     ).toBeTruthy();
-    expect(screen.getByRole('form', { name: 'فرم ورود' })).toBeTruthy();
-    expect(screen.getByRole('checkbox', { name: 'مرا به خاطر بسپار' })).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'فراموشی رمز عبور؟' }).getAttribute('href')).toBe(
-      routePaths.forgotPassword,
-    );
-    expect(screen.getByRole('link', { name: 'ثبت‌نام' }).getAttribute('href')).toBe(
-      routePaths.register,
-    );
-    expect(screen.getByRole('button', { name: 'ورود' })).toBeTruthy();
+    expect(screen.getByRole('form', { name: 'فرم ثبت‌نام' })).toBeTruthy();
+    expect(screen.queryByRole('checkbox', { name: 'مرا به خاطر بسپار' })).toBeNull();
+    expect(screen.queryByRole('link', { name: 'فراموشی رمز عبور؟' })).toBeNull();
+    expect(screen.getByRole('link', { name: 'ورود' }).getAttribute('href')).toBe(routePaths.login);
+    expect(screen.getByRole('button', { name: 'ثبت‌نام' })).toBeTruthy();
   });
 
-  it('uses medium-touch field sizing and mixed RTL/LTR input direction', () => {
+  it('uses the same field sizing and direction as the login form', () => {
     render(
       <DirectionProvider direction="rtl">
-        <LoginPage />
+        <RegisterPage />
       </DirectionProvider>,
     );
 
@@ -48,22 +42,23 @@ describe(routePaths.login, () => {
     expect(phone.className).toContain('[&::placeholder]:[direction:rtl]');
     expect(password.getAttribute('data-size')).toBe('lg');
     expect(password.getAttribute('dir')).toBe('ltr');
+    expect(password.getAttribute('autocomplete')).toBe('new-password');
   });
 
   it('shows associated validation messages', async () => {
     render(
       <DirectionProvider direction="rtl">
-        <LoginPage />
+        <RegisterPage />
       </DirectionProvider>,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'ورود' }));
+    fireEvent.click(screen.getByRole('button', { name: 'ثبت‌نام' }));
 
     expect(await screen.findByText('شماره موبایل الزامی است.')).toBeTruthy();
     expect(await screen.findByText('رمز عبور الزامی است.')).toBeTruthy();
   });
 
-  it('defines login metadata', () => {
-    expect(metadata.title).toBe('ورود');
+  it('defines registration metadata', () => {
+    expect(metadata.title).toBe('ثبت‌نام');
   });
 });

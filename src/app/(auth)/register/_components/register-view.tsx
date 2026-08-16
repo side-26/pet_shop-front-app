@@ -1,28 +1,28 @@
 import Link from 'next/link';
 
 import { AuthFormCard } from '@/app/(auth)/_components/auth-form-card';
-import { LoginForm } from '@/app/(auth)/login/_components/login-form';
+import { RegisterForm } from '@/app/(auth)/register/_components/register-form';
 import { routePaths } from '@/configs/route.path';
 
-export function LoginMobileView() {
+export function RegisterView() {
   return (
     <AuthFormCard
-      titleId="login-title"
-      title="ورود به پت‌شاپ"
-      description="برای بهره مندی از امکانات بیشتر اپلیکیشن شماره تلفن و کلمه عبور خود را وارد کنید"
+      titleId="register-title"
+      title="ثبت‌نام در پت‌شاپ"
+      description="برای ساخت حساب کاربری شماره تلفن و کلمه عبور خود را وارد کنید"
       footer={
         <p className="tw:text-body-s tw:text-muted-foreground">
-          حساب کاربری ندارید؟{' '}
+          حساب کاربری دارید؟{' '}
           <Link
-            href={routePaths.register}
+            href={routePaths.login}
             className="tw:inline-flex tw:min-h-11 tw:items-center tw:rounded-lg tw:px-1 tw:font-medium tw:text-primary tw:outline-none tw:transition-colors tw:hover:text-primary-hover tw:focus-visible:ring-3 tw:focus-visible:ring-primary/25 tw:motion-reduce:transition-none"
           >
-            ثبت‌نام
+            ورود
           </Link>
         </p>
       }
     >
-      <LoginForm />
+      <RegisterForm />
     </AuthFormCard>
   );
 }
