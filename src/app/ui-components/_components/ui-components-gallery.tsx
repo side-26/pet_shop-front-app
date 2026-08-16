@@ -18,6 +18,7 @@ import { DataTableShowcase } from './data-table-showcase';
 import { MenubarShowcase } from './menubar-showcase';
 import { FormShowcase } from './form-showcase';
 import { InputOtpShowcase } from './input-otp-showcase';
+import { CountdownShowcase } from './countdown-showcase';
 
 const navigation = [
   ['#buttons', 'Button'],
@@ -38,6 +39,7 @@ const navigation = [
   ['#menubars', 'Menubar'],
   ['#forms', 'Form'],
   ['#input-otp-fields', 'Input OTP Field'],
+  ['#countdowns', 'Countdown'],
 ] as const;
 
 export function UiComponentsGallery() {
@@ -91,6 +93,7 @@ export function UiComponentsGallery() {
         <MenubarShowcase />
         <FormShowcase />
         <InputOtpShowcase />
+        <CountdownShowcase />
       </div>
     </main>
   );

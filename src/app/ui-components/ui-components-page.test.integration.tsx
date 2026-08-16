@@ -2,6 +2,8 @@ import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { routePaths } from '@/configs/route.path';
+
 import UiComponentsPage, { metadata } from './page';
 
 vi.mock('@/components/ui/carousel', () => ({
@@ -38,7 +40,7 @@ beforeEach(() => {
   );
 });
 
-describe('/ui-components', () => {
+describe(routePaths.uiComponents, () => {
   it('lists every public UI component family and its supported conditions', () => {
     render(
       <DirectionProvider direction="rtl">
@@ -67,7 +69,9 @@ describe('/ui-components', () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Menubar' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Form' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Input OTP Field' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 3, name: 'Countdown' })).toBeTruthy();
     expect(screen.getByLabelText('کد تأیید')).toBeTruthy();
+    expect(screen.getAllByRole('timer').length).toBeGreaterThan(0);
 
     expect(screen.getAllByText('خیلی کوچک').length).toBeGreaterThan(0);
     expect(screen.getByText('ناموجود · tonal')).toBeTruthy();

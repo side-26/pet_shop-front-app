@@ -270,6 +270,15 @@ supports render-prop children. Its forwarded ref exposes the complete typed
 `UseFormReturn`; use it for imperative `reset`, `setValue`, `trigger`, focus, and
 other React Hook Form operations rather than creating a second form state.
 
+`Countdown` receives a non-negative duration through `seconds`, supports
+`color="primary|secondary|info|success|warning|error"` and
+`size="xs|sm|md|lg|xl"`, and accepts root `className` and native div props. It
+always renders two-digit minutes and seconds, adds an hours segment only when
+at least one hour remains, and exposes `reset()` through `CountdownRef` to
+restart from the latest `seconds` prop. Its split-flap digit transition uses
+Framer Motion, corrects interval drift against a deadline, stops at zero, keeps
+the numeric run LTR in RTL interfaces, and becomes immediate under reduced motion.
+
 `ThemeToggle` provides `light|dark|system` appearance modes. It persists the
 preference under `petshop-theme`, applies `.dark` to the root element, and keeps
 the browser `color-scheme` synchronized. All primitives must use semantic color
