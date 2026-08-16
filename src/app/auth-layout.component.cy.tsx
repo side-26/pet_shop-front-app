@@ -68,16 +68,21 @@ describe('auth layout responsive composition', () => {
     cy.get('img[alt="توله‌سگ گلدن رتریور"]').should('be.visible');
   });
 
-  it('centers the desktop layout after its 1536px maximum width', () => {
+  it('extends the desktop scene while pinning the form plane after 1536px', () => {
     cy.viewport(1800, 1000);
     mountLayout();
 
     cy.get('main').then(($layout) => {
       const layout = $layout[0].getBoundingClientRect();
 
-      expect(layout.width).to.equal(1536);
-      expect(layout.left).to.equal(132);
-      expect(layout.right).to.equal(1668);
+      expect(layout.width).to.equal(1800);
+      expect(layout.left).to.equal(0);
+      expect(layout.right).to.equal(1800);
+    });
+    cy.get('section[aria-label="محتوای احراز هویت"]').then(($panel) => {
+      const panel = $panel[0].getBoundingClientRect();
+
+      expect(panel.right).to.equal(1536);
     });
     cy.document().then((document) => {
       expect(document.documentElement.scrollWidth).to.equal(document.documentElement.clientWidth);

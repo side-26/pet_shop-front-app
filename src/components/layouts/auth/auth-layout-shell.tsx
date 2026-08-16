@@ -28,7 +28,7 @@ const benefits = [
 
 export function AuthLayoutShell({ children }: AuthLayoutShellProps) {
   return (
-    <main className="tw:relative tw:mx-auto tw:grid tw:min-h-svh tw:w-full tw:min-w-0 tw:overflow-x-hidden tw:bg-info-muted tw:text-foreground tw:[@media(min-width:1025px)]:h-svh tw:[@media(min-width:1025px)]:max-w-[1536px] tw:[@media(min-width:1025px)]:overflow-hidden">
+    <main className="tw:relative tw:grid tw:min-h-svh tw:w-full tw:min-w-0 tw:overflow-x-hidden tw:bg-info-muted tw:text-foreground tw:[@media(min-width:1025px)]:h-svh tw:[@media(min-width:1025px)]:overflow-hidden">
       <section
         aria-labelledby="auth-brand-title"
         className="tw:relative tw:isolate tw:min-h-72 tw:overflow-hidden tw:bg-info-muted tw:sm:min-h-[34rem] tw:[@media(min-width:1025px)]:absolute tw:[@media(min-width:1025px)]:inset-0 tw:[@media(min-width:1025px)]:min-h-svh"
@@ -133,7 +133,7 @@ export function AuthLayoutShell({ children }: AuthLayoutShellProps) {
 
       <section
         aria-label="محتوای احراز هویت"
-        className="tw:relative tw:z-20 tw:flex tw:min-w-0 tw:items-end tw:justify-center tw:bg-transparent tw:p-0 tw:[@media(min-width:1025px)]:absolute tw:[@media(min-width:1025px)]:inset-y-0 tw:[@media(min-width:1025px)]:start-0 tw:[@media(min-width:1025px)]:h-svh tw:[@media(min-width:1025px)]:w-[min(32rem,38vw)] tw:[@media(min-width:1025px)]:items-center tw:[@media(min-width:1025px)]:overflow-y-auto tw:[@media(min-width:1025px)]:px-4 tw:[@media(min-width:1025px)]:py-8"
+        className="tw:relative tw:z-20 tw:flex tw:min-w-0 tw:items-end tw:justify-center tw:bg-transparent tw:p-0 tw:[@media(min-width:1025px)]:absolute tw:[@media(min-width:1025px)]:inset-y-0 tw:[@media(min-width:1025px)]:start-0 tw:[@media(min-width:1025px)]:h-svh tw:[@media(min-width:1025px)]:w-[min(32rem,38vw)] tw:[@media(min-width:1025px)]:items-center tw:[@media(min-width:1025px)]:overflow-y-auto tw:[@media(min-width:1025px)]:px-4 tw:[@media(min-width:1025px)]:py-8 tw:[@media(min-width:1537px)]:start-[calc(100vw-1536px)]"
       >
         <div className="tw:w-full tw:max-w-none tw:[@media(min-width:1025px)]:max-w-md">
           {children}
