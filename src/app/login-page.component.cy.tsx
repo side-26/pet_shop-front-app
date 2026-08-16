@@ -1,6 +1,6 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 
-import { LoginMobileView } from './(auth)/login/_components/login-mobile-view';
+import { LoginMobileView } from './(auth)/login/_components/login-view';
 import { AuthLayoutShell } from '@/components/layouts/auth/auth-layout-shell';
 
 function mountLogin() {

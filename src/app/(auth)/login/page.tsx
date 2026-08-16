@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { LoginMobileView } from '@/app/(auth)/login/_components/login-mobile-view';
+import { LoginMobileView } from '@/app/(auth)/login/_components/login-view';
 
 export const metadata: Metadata = {
   title: 'ورود',

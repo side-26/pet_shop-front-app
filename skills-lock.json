@@ -25,6 +25,12 @@
       "skillPath": "skills/frontend-testing/SKILL.md",
       "computedHash": "196c17a328d5db6914f790c4939a02073eeab5e95c155f5fe5971ffe8fbd42a5"
     },
+    "glassmorphism": {
+      "source": "bergside/awesome-design-skills",
+      "sourceType": "github",
+      "skillPath": "skills/glassmorphism/SKILL.md",
+      "computedHash": "a7814af3878a34f67442cdadc09bd79eebf57835b8ebe409f8c2f6b74ab26dc5"
+    },
     "next-best-practices": {
       "source": "vercel-labs/openreview",
       "sourceType": "github",
@@ -54,6 +60,12 @@
       "sourceType": "github",
       "skillPath": "plugins/core/skills/solid-principles/SKILL.md",
       "computedHash": "3188df08407dd45dddbed592cb27e8c156f802999f88c9ad08b0fbf090f220bb"
+    },
+    "tailwind-4-docs": {
+      "source": "lombiq/tailwind-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/tailwind-4-docs/SKILL.md",
+      "computedHash": "4900f575f24641b1af459cda37cbb8438ecf3f8f1a63148384197cb730895093"
     },
     "ui-ux-pro-max": {
       "source": "nextlevelbuilder/ui-ux-pro-max-skill",
