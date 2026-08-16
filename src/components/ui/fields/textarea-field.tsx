@@ -40,7 +40,7 @@ const textareaFieldVariants = tv({
         label: 'tw:text-label-s',
         icon: 'tw:start-2 tw:size-3',
         counter: 'tw:text-label-s',
-        description: 'tw:text-body-s',
+        description: 'tw:-mt-0.5 tw:text-xs',
         textareaWrap: 'tw:[&_textarea]:ps-7',
       },
       sm: {
@@ -48,7 +48,7 @@ const textareaFieldVariants = tv({
         label: 'tw:text-label-s',
         icon: 'tw:start-2.5 tw:size-3.5',
         counter: 'tw:text-label-s',
-        description: 'tw:text-body-s',
+        description: 'tw:-mt-0.5 tw:text-xs',
         textareaWrap: 'tw:[&_textarea]:ps-8',
       },
       md: {
@@ -56,7 +56,7 @@ const textareaFieldVariants = tv({
         label: 'tw:text-label-m',
         icon: 'tw:start-3 tw:size-4',
         counter: 'tw:text-label-s',
-        description: 'tw:text-body-s',
+        description: 'tw:-mt-1 tw:text-xs',
         textareaWrap: 'tw:[&_textarea]:ps-9',
       },
       lg: {
@@ -64,7 +64,7 @@ const textareaFieldVariants = tv({
         label: 'tw:text-label-l',
         icon: 'tw:start-3.5 tw:size-4.5',
         counter: 'tw:text-body-s',
-        description: 'tw:text-body-m',
+        description: 'tw:-mt-1 tw:text-[13px]/[1.6]',
         textareaWrap: 'tw:[&_textarea]:ps-10',
       },
       xl: {
@@ -72,7 +72,7 @@ const textareaFieldVariants = tv({
         label: 'tw:text-label-l',
         icon: 'tw:start-4 tw:size-5',
         counter: 'tw:text-body-s',
-        description: 'tw:text-body-m',
+        description: 'tw:-mt-1.5 tw:text-[13px]/[1.6]',
         textareaWrap: 'tw:[&_textarea]:ps-11',
       },
     },

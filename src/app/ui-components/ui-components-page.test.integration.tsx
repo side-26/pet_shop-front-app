@@ -16,6 +16,14 @@ afterEach(cleanup);
 
 beforeEach(() => {
   vi.stubGlobal(
+    'ResizeObserver',
+    class ResizeObserver {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    },
+  );
+  vi.stubGlobal(
     'matchMedia',
     vi.fn().mockReturnValue({
       matches: false,
@@ -58,6 +66,8 @@ describe('/ui-components', () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Button Group' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Menubar' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Form' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 3, name: 'Input OTP Field' })).toBeTruthy();
+    expect(screen.getByLabelText('کد تأیید')).toBeTruthy();
 
     expect(screen.getAllByText('خیلی کوچک').length).toBeGreaterThan(0);
     expect(screen.getByText('ناموجود · tonal')).toBeTruthy();

@@ -11,6 +11,9 @@ import {
   SelectValue,
 } from '@/components/ui/fields/select';
 import { Switch } from '@/components/ui/fields/switch';
+import { TextareaField } from '@/components/ui/fields/textarea-field';
+import { TextField } from '@/components/ui/fields/text-field';
+import { Form } from '@/components/ui/form';
 
 const items = [
   { label: 'Choose', value: null },
@@ -19,6 +22,53 @@ const items = [
 ];
 
 describe('Form controls', () => {
+  it('uses the compact field typography scale and tighter message spacing', () => {
+    cy.mount(
+      <div dir="rtl" className="tw:w-xl">
+        <Form<Record<string, string>> handleSubmit={() => undefined}>
+          <TextField
+            id="compact-input"
+            name="compact-input"
+            label="ورودی کوچک"
+            hint="راهنمای کوچک"
+            size="xs"
+          />
+          <TextField
+            id="large-input"
+            name="large-input"
+            label="ورودی بزرگ"
+            hint="راهنمای بزرگ"
+            size="xl"
+          />
+          <TextareaField
+            id="large-textarea"
+            name="large-textarea"
+            label="توضیحات بزرگ"
+            hint="راهنمای توضیحات"
+            size="xl"
+          />
+        </Form>
+      </div>,
+    );
+
+    cy.get('input[data-size="xs"]').should('have.css', 'font-size', '12px');
+    cy.get('input[data-size="xl"]').should('have.css', 'font-size', '16px');
+    cy.get('textarea[data-size="xl"]').should('have.css', 'font-size', '16px');
+    cy.contains('راهنمای بزرگ').should('have.css', 'font-size', '13px');
+    cy.contains('راهنمای توضیحات').should('have.css', 'font-size', '13px');
+
+    cy.get('#large-input').then(($input) => {
+      const field = $input[0].closest('[data-slot="field"]');
+      const label = field?.querySelector('label')?.getBoundingClientRect();
+      const input = $input[0].getBoundingClientRect();
+      const message = field?.querySelector('#large-input-description')?.getBoundingClientRect();
+
+      expect(label).not.to.be.undefined;
+      expect(message).not.to.be.undefined;
+      expect(message!.top - input.bottom).to.be.lessThan(input.top - label!.bottom);
+    });
+  });
+
   it('operates selection controls with pointer input', () => {
     cy.mount(
       <div dir="rtl">

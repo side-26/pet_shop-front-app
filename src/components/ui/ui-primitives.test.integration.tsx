@@ -123,6 +123,9 @@ describe('Pet Shop UI primitives', () => {
   it('resolves Textarea color, size, and accessible invalid state', () => {
     expect(textareaVariants({ color: 'info', size: 'xl' })).toContain('tw:border-info/55');
     expect(textareaVariants({ color: 'info', size: 'xl' })).toContain('tw:min-h-32');
+    expect(textareaVariants({ size: 'xs' })).toContain('tw:text-xs');
+    expect(textareaVariants({ size: 'md' })).toContain('tw:text-sm');
+    expect(textareaVariants({ size: 'xl' })).toContain('tw:text-base');
 
     render(<Textarea aria-label="Pet notes" color="success" size="lg" aria-invalid />);
     const textarea = screen.getByRole('textbox', { name: 'Pet notes' });
@@ -135,6 +138,9 @@ describe('Pet Shop UI primitives', () => {
     expect(inputVariants({ color: 'success', size: 'xs' })).toContain(
       'tw:focus-visible:ring-success/20',
     );
+    expect(inputVariants({ size: 'xs' })).toContain('tw:text-xs');
+    expect(inputVariants({ size: 'md' })).toContain('tw:text-sm');
+    expect(inputVariants({ size: 'xl' })).toContain('tw:text-base');
 
     render(<Input aria-label="Colored input" color="warning" size="lg" />);
     const input = screen.getByRole('textbox', { name: 'Colored input' });

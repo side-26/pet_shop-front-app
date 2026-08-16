@@ -39,7 +39,12 @@ describe('TextareaField', () => {
   });
 
   it('keeps counter physically left and exposes form errors in the persistent description', async () => {
-    expect(textareaFieldVariants({ size: 'xl' }).counter()).toContain('tw:left-3');
+    const large = textareaFieldVariants({ size: 'xl' });
+
+    expect(large.counter()).toContain('tw:left-3');
+    expect(large.label()).toContain('tw:text-label-l');
+    expect(large.description()).toContain('tw:text-[13px]/[1.6]');
+    expect(large.description()).toContain('tw:-mt-1.5');
     render(
       <Form<Values> handleSubmit={() => undefined} options={{ defaultValues: { notes: '' } }}>
         <TextareaField<Values>

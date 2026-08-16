@@ -21,6 +21,19 @@ describe('TextField', () => {
     expect(large.toggle()).toContain('tw:[&_svg]:size-5');
     expect(large.inputWrap()).toContain('tw:[&_input]:pe-14');
   });
+
+  it('caps description typography and tightens only the control-to-message gap', () => {
+    const small = textFieldVariants({ size: 'xs' });
+    const large = textFieldVariants({ size: 'xl' });
+
+    expect(small.label()).toContain('tw:text-label-s');
+    expect(small.description()).toContain('tw:text-xs');
+    expect(small.description()).toContain('tw:-mt-0.5');
+    expect(large.label()).toContain('tw:text-label-l');
+    expect(large.description()).toContain('tw:text-[13px]/[1.6]');
+    expect(large.description()).toContain('tw:-mt-1.5');
+  });
+
   it('syncs with Form context, keeps description mounted, and propagates visual state', async () => {
     const onSubmit = vi.fn();
     render(

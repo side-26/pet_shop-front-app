@@ -17,6 +17,7 @@ import { CarouselShowcase } from './carousel-showcase';
 import { DataTableShowcase } from './data-table-showcase';
 import { MenubarShowcase } from './menubar-showcase';
 import { FormShowcase } from './form-showcase';
+import { InputOtpShowcase } from './input-otp-showcase';
 
 const navigation = [
   ['#buttons', 'Button'],
@@ -36,6 +37,7 @@ const navigation = [
   ['#button-groups', 'Button Group'],
   ['#menubars', 'Menubar'],
   ['#forms', 'Form'],
+  ['#input-otp-fields', 'Input OTP Field'],
 ] as const;
 
 export function UiComponentsGallery() {
@@ -88,6 +90,7 @@ export function UiComponentsGallery() {
         <ButtonGroupShowcase />
         <MenubarShowcase />
         <FormShowcase />
+        <InputOtpShowcase />
       </div>
     </main>
   );

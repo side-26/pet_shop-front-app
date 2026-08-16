@@ -223,13 +223,16 @@ roots require the complete `items` collection. Controls use native/ARIA invalid
 and disabled state and are designed RTL-first.
 `Input` supports `color="primary|secondary|info|success|warning|error"` and
 `size="xs|sm|md|lg|xl"`, defaulting to primary/md. Color controls border, caret,
-and focus ring; `aria-invalid` always resolves to the error treatment.
+and focus ring; `aria-invalid` always resolves to the error treatment. Input and
+Textarea control typography resolves to 12/12/14/14/16px across the size scale.
 `Textarea` uses the same color and size axes, with size controlling its minimum
 height and typography. It remains vertically resizable unless disabled.
 `TextField` is the React Hook Form-aware composition for textual form controls.
 It consumes the nearest `FormProvider`, accepts a typed field `name`, and owns
 `Field`, `FieldLabel`, `Input`, and an always-mounted description region. Its
 color and size propagate to the input, label, icons, spacing, and description.
+Labels remain size-aware and never exceed 16px; persistent hint/error descriptions
+never exceed 13px and sit closer to the control than the control sits to its label.
 Use `prefixIcon` and `postfixIcon` for inline decorative icons. Password fields
 automatically provide an accessible visibility toggle and preserve form state.
 The password toggle keeps a size-aware hit target, uses a smaller icon than the
@@ -239,6 +242,13 @@ padding so text never collides with it in RTL or LTR.
 without password behavior. When `counter` is true, render a live character
 count at the physical bottom-left of the textarea, include `maxLength` when
 provided, and reserve bottom padding so user text cannot overlap the counter.
+`InputOTP`, `InputOTPGroup`, `InputOTPSlot`, and `InputOTPSeparator` are the
+project-owned shadcn Input OTP primitives backed by `input-otp`. `InputOtpField`
+is their React Hook Form composition with `color="primary|secondary|info|success|warning|error"`
+and `size="xs|sm|md|lg|xl"`. It defaults to six numeric slots, keeps slots LTR
+inside RTL forms, exposes `focusOnMount`, persistent hint/error messaging,
+`onFinished(value)`, and optional `submitOnFinished` through the owning `Form`.
+Slot geometry and typography scale together from 28px/12px to 48px/16px.
 `Checkbox`, `Switch`, and `RadioGroupItem` support `fill|outlined|tonal` through
 `variant`, plus independent `checkedColor` and `uncheckedColor` semantic colors.
 Checked/on/ticked and unchecked/off/unticked states must resolve their own

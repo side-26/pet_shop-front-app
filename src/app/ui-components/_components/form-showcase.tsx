@@ -196,6 +196,24 @@ export function FormShowcase() {
         </Form>
       </div>
 
+      <div className="tw:flex tw:flex-col tw:gap-4">
+        <h4 className="tw:text-heading-4">اندازه‌های TextareaField</h4>
+        <Form<Record<string, string>> handleSubmit={() => undefined}>
+          <div className="tw:grid tw:items-start tw:gap-3 tw:sm:grid-cols-2 tw:lg:grid-cols-3">
+            {inputSizes.map((size) => (
+              <TextareaField<Record<string, string>>
+                key={size}
+                name={`textarea-size-${size}`}
+                label={`اندازه ${size}`}
+                hint="متن راهنما"
+                size={size}
+                placeholder={size}
+              />
+            ))}
+          </div>
+        </Form>
+      </div>
+
       <div className="tw:grid tw:gap-6 tw:md:grid-cols-2">
         <Field>
           <FieldLabel htmlFor="form-search">جست‌وجوی پرونده</FieldLabel>
