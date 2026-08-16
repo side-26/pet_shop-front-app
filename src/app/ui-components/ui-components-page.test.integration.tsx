@@ -72,6 +72,7 @@ describe(routePaths.uiComponents, () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Countdown' })).toBeTruthy();
     expect(screen.getByLabelText('کد تأیید')).toBeTruthy();
     expect(screen.getAllByRole('timer').length).toBeGreaterThan(0);
+    expect(screen.getByText('زمان به پایان رسید')).toBeTruthy();
 
     expect(screen.getAllByText('خیلی کوچک').length).toBeGreaterThan(0);
     expect(screen.getByText('ناموجود · tonal')).toBeTruthy();

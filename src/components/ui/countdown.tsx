@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
   type ComponentProps,
+  type ReactNode,
 } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { tv, type VariantProps } from 'tailwind-variants';
@@ -101,6 +102,7 @@ export type CountdownRef = {
 export type CountdownProps = Omit<ComponentProps<'div'>, 'children' | 'color'> &
   CountdownVariantProps & {
     seconds: number;
+    children?: ReactNode;
   };
 
 type CountdownDigitProps = {
@@ -169,7 +171,16 @@ function CountdownDigitGroup({
 }
 
 const Countdown = forwardRef<CountdownRef, CountdownProps>(function Countdown(
-  { seconds, size = 'md', color = 'primary', className, 'aria-label': ariaLabel, ...props },
+  {
+    seconds,
+    size = 'md',
+    color = 'primary',
+    className,
+    children,
+    dir,
+    'aria-label': ariaLabel,
+    ...props
+  },
   ref,
 ) {
   const duration = normalizeCountdownSeconds(seconds);
@@ -237,6 +248,7 @@ const Countdown = forwardRef<CountdownRef, CountdownProps>(function Countdown(
 
   const remainingSeconds =
     timerState.duration === duration ? timerState.remainingSeconds : duration;
+  const showExpiredContent = remainingSeconds === 0 && children != null;
   const parts = getCountdownParts(remainingSeconds);
   const formattedTime = formatCountdown(remainingSeconds);
   const styles = countdownVariants({ size, color });
@@ -252,26 +264,38 @@ const Countdown = forwardRef<CountdownRef, CountdownProps>(function Countdown(
       {...props}
       role="timer"
       aria-atomic="true"
-      aria-label={ariaLabel ?? `زمان باقی‌مانده: ${formattedTime}`}
-      dir="ltr"
+      aria-label={
+        ariaLabel ?? (showExpiredContent ? undefined : `زمان باقی‌مانده: ${formattedTime}`)
+      }
+      dir={showExpiredContent ? dir : 'ltr'}
       data-slot="countdown"
       data-size={size}
       data-color={color}
-      className={cn(styles.root(), className)}
+      data-state={showExpiredContent ? 'expired' : 'active'}
+      className={cn(
+        showExpiredContent ? 'tw:inline-flex tw:items-center' : styles.root(),
+        className,
+      )}
     >
-      {parts.hours !== null && (
+      {showExpiredContent ? (
+        children
+      ) : (
         <>
-          <CountdownDigitGroup value={parts.hours} {...digitGroupProps} />
+          {parts.hours !== null && (
+            <>
+              <CountdownDigitGroup value={parts.hours} {...digitGroupProps} />
+              <span aria-hidden="true" className={styles.separator()}>
+                :
+              </span>
+            </>
+          )}
+          <CountdownDigitGroup value={parts.minutes} {...digitGroupProps} />
           <span aria-hidden="true" className={styles.separator()}>
             :
           </span>
+          <CountdownDigitGroup value={parts.seconds} {...digitGroupProps} />
         </>
       )}
-      <CountdownDigitGroup value={parts.minutes} {...digitGroupProps} />
-      <span aria-hidden="true" className={styles.separator()}>
-        :
-      </span>
-      <CountdownDigitGroup value={parts.seconds} {...digitGroupProps} />
     </div>
   );
 });

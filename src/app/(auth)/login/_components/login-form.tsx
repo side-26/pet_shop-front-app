@@ -26,8 +26,8 @@ const loginSchema: yup.ObjectSchema<LoginValues> = yup.object({
     .required('شماره موبایل الزامی است.'),
   password: yup
     .string()
-    .required('رمز عبور الزامی است.')
-    .min(6, 'رمز عبور باید حداقل ۶ نویسه باشد.'),
+    .required('کلمه عبور الزامی است.')
+    .min(6, 'کلمه عبور باید حداقل ۶ نویسه باشد.'),
   rememberMe: yup.boolean().required(),
 });
 
@@ -62,13 +62,13 @@ export function LoginForm() {
 
       <TextField<LoginValues>
         name="password"
-        label="رمز عبور"
+        label="کلمه عبور"
         type="password"
         autoComplete="current-password"
         dir="ltr"
         size="lg"
         color="primary"
-        placeholder="رمز عبور"
+        placeholder="کلمه عبور"
         prefixIcon={<LockKeyholeIcon />}
         className={mixedDirectionInput}
       />
@@ -83,10 +83,10 @@ export function LoginForm() {
           uncheckedColor="primary"
         />
         <Link
-          href={routePaths.forgotPassword}
+          href={routePaths.forgetPassword}
           className="tw:inline-flex tw:min-h-11 tw:shrink-0 tw:items-center tw:rounded-lg tw:px-1 tw:text-label-s tw:text-primary tw:outline-none tw:transition-colors tw:hover:text-primary-hover tw:focus-visible:ring-3 tw:focus-visible:ring-primary/25 tw:motion-reduce:transition-none"
         >
-          فراموشی رمز عبور؟
+          فراموشی کلمه عبور؟
         </Link>
       </div>
 

@@ -40,8 +40,8 @@ const profileSchema: yup.ObjectSchema<ProfileFormValues> = yup.object({
   petName: yup.string().min(2, 'نام باید حداقل دو نویسه باشد.').required('نام حیوان الزامی است.'),
   password: yup
     .string()
-    .min(8, 'رمز عبور باید حداقل هشت نویسه باشد.')
-    .required('رمز عبور الزامی است.'),
+    .min(8, 'کلمه عبور باید حداقل هشت نویسه باشد.')
+    .required('کلمه عبور الزامی است.'),
 });
 
 const inputColors = ['primary', 'secondary', 'info', 'success', 'warning', 'error'] as const;
@@ -91,7 +91,7 @@ export function FormShowcase() {
             />
             <TextField<ProfileFormValues>
               name="password"
-              label="رمز عبور"
+              label="کلمه عبور"
               hint="حداقل هشت نویسه"
               prefixIcon={<LockKeyholeIcon />}
               type="password"

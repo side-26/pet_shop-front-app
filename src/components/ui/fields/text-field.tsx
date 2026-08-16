@@ -192,7 +192,7 @@ function TextField<
             type="button"
             className={styles.toggle()}
             disabled={disabled}
-            aria-label={passwordVisible ? 'پنهان‌کردن رمز عبور' : 'نمایش رمز عبور'}
+            aria-label={passwordVisible ? 'پنهان‌کردن کلمه عبور' : 'نمایش کلمه عبور'}
             aria-pressed={passwordVisible}
             onClick={() => setPasswordVisible((visible) => !visible)}
           >

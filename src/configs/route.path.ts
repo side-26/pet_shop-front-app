@@ -2,6 +2,6 @@ export const routePaths = {
   home: '/',
   login: '/login',
   register: '/register',
-  forgotPassword: '/forgot-password',
+  forgetPassword: '/forget-password',
   uiComponents: '/ui-components',
 } as const;

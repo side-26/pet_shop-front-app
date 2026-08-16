@@ -31,7 +31,7 @@ describe(`${routePaths.login} inside the auth layout`, () => {
         .scrollIntoView()
         .should('be.visible')
         .and('have.attr', 'dir', 'ltr');
-      cy.contains('a', 'فراموشی رمز عبور؟').scrollIntoView().should('be.visible');
+      cy.contains('a', 'فراموشی کلمه عبور؟').scrollIntoView().should('be.visible');
       cy.contains('button', 'ورود').scrollIntoView().should('be.visible');
       cy.contains('a', 'ثبت‌نام').scrollIntoView().should('be.visible');
 
@@ -46,7 +46,7 @@ describe(`${routePaths.login} inside the auth layout`, () => {
     mountLogin();
 
     cy.get('input[name="password"]').type('petshop-pass');
-    cy.get('button[aria-label="نمایش رمز عبور"]').click();
+    cy.get('button[aria-label="نمایش کلمه عبور"]').click();
     cy.get('input[name="password"]').should('have.attr', 'type', 'text');
     cy.contains('label', 'مرا به خاطر بسپار').click();
     cy.get('[role="checkbox"]').should('have.attr', 'aria-checked', 'true');

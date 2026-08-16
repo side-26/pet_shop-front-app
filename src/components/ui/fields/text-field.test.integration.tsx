@@ -40,18 +40,18 @@ describe('TextField', () => {
       <Form<Values> handleSubmit={onSubmit} options={{ defaultValues: { password: '' } }}>
         <TextField<Values>
           name="password"
-          label="رمز عبور"
+          label="کلمه عبور"
           hint="حداقل هشت نویسه"
           type="password"
           color="warning"
           size="xl"
-          rules={{ required: 'رمز عبور الزامی است.' }}
+          rules={{ required: 'کلمه عبور الزامی است.' }}
         />
         <button type="submit">ثبت</button>
       </Form>,
     );
 
-    const input = screen.getByLabelText('رمز عبور');
+    const input = screen.getByLabelText('کلمه عبور');
     expect(input.getAttribute('data-color')).toBe('warning');
     expect(input.getAttribute('data-size')).toBe('xl');
     expect(screen.getByText('حداقل هشت نویسه')).toBeTruthy();
@@ -79,7 +79,7 @@ describe('TextField', () => {
 
     const input = screen.getByLabelText('Password');
     expect(input.getAttribute('type')).toBe('password');
-    fireEvent.click(screen.getByRole('button', { name: 'نمایش رمز عبور' }));
+    fireEvent.click(screen.getByRole('button', { name: 'نمایش کلمه عبور' }));
     expect(input.getAttribute('type')).toBe('text');
     fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
     expect((await screen.findByRole('alert')).textContent).toBe('Required password');

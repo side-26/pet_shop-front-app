@@ -22,8 +22,8 @@ const registerSchema: yup.ObjectSchema<RegisterValues> = yup.object({
     .required('شماره موبایل الزامی است.'),
   password: yup
     .string()
-    .required('رمز عبور الزامی است.')
-    .min(6, 'رمز عبور باید حداقل ۶ نویسه باشد.'),
+    .required('کلمه عبور الزامی است.')
+    .min(6, 'کلمه عبور باید حداقل ۶ نویسه باشد.'),
 });
 
 const mixedDirectionInput =
@@ -57,13 +57,13 @@ export function RegisterForm() {
 
       <TextField<RegisterValues>
         name="password"
-        label="رمز عبور"
+        label="کلمه عبور"
         type="password"
         autoComplete="new-password"
         dir="ltr"
         size="lg"
         color="primary"
-        placeholder="رمز عبور"
+        placeholder="کلمه عبور"
         prefixIcon={<LockKeyholeIcon />}
         className={mixedDirectionInput}
       />

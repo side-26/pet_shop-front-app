@@ -66,6 +66,32 @@ describe('Countdown', () => {
     expect(screen.getByRole('timer').getAttribute('aria-label')).toBe('زمان باقی‌مانده: 00:08');
   });
 
+  it('shows optional children only at zero and hides them again after reset', () => {
+    const ref = createRef<CountdownRef>();
+
+    render(
+      <Countdown ref={ref} seconds={1}>
+        <span>زمان به پایان رسید</span>
+      </Countdown>,
+    );
+
+    expect(screen.queryByText('زمان به پایان رسید')).toBeNull();
+    expect(screen.getByRole('timer').getAttribute('data-state')).toBe('active');
+
+    act(() => vi.advanceTimersByTime(1000));
+
+    expect(screen.getByText('زمان به پایان رسید')).toBeTruthy();
+    expect(screen.getByRole('timer').getAttribute('data-state')).toBe('expired');
+    expect(screen.getByRole('timer').getAttribute('aria-label')).toBeNull();
+    expect(screen.getByRole('timer').getAttribute('dir')).toBeNull();
+
+    act(() => ref.current?.reset());
+
+    expect(screen.queryByText('زمان به پایان رسید')).toBeNull();
+    expect(screen.getByRole('timer').getAttribute('aria-label')).toBe('زمان باقی‌مانده: 00:01');
+    expect(screen.getByRole('timer').getAttribute('dir')).toBe('ltr');
+  });
+
   it('applies semantic color, size, custom classes, and a custom accessible label', () => {
     render(
       <Countdown

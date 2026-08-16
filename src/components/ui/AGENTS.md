@@ -275,7 +275,10 @@ other React Hook Form operations rather than creating a second form state.
 `size="xs|sm|md|lg|xl"`, and accepts root `className` and native div props. It
 always renders two-digit minutes and seconds, adds an hours segment only when
 at least one hour remains, and exposes `reset()` through `CountdownRef` to
-restart from the latest `seconds` prop. Its split-flap digit transition uses
+restart from the latest `seconds` prop. Optional `children` replace the digits
+only when the inner counter reaches zero; without children, zero remains
+`00:00`. Expired child content inherits the surrounding text direction instead
+of the active counter's forced LTR direction. Its split-flap digit transition uses
 Framer Motion, corrects interval drift against a deadline, stops at zero, keeps
 the numeric run LTR in RTL interfaces, and becomes immediate under reduced motion.
 

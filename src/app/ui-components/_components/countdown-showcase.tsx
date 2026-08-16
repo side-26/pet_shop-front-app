@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Countdown, type CountdownProps, type CountdownRef } from '@/components/ui/countdown';
 
 import { ShowcaseSection } from './showcase-section';
@@ -27,13 +28,22 @@ export function CountdownShowcase() {
     <ShowcaseSection
       id="countdowns"
       title="Countdown"
-      description="شمارش معکوس دیجیتال با نمایش شرطی ساعت، انیمیشن ورق‌خوردن ارقام، رنگ‌های معنایی و کنترل reset از طریق ref."
+      description="شمارش معکوس دیجیتال با نمایش شرطی ساعت، محتوای پایان اختیاری، انیمیشن ورق‌خوردن ارقام، رنگ‌های معنایی و کنترل reset از طریق ref."
     >
       <div className="tw:flex tw:flex-col tw:items-start tw:gap-4">
         <Countdown ref={countdownRef} seconds={3721} color="info" size="xl" />
         <Button variant="outlined" color="info" onClick={() => countdownRef.current?.reset()}>
           شروع دوباره شمارش
         </Button>
+      </div>
+
+      <div className="tw:flex tw:flex-col tw:items-start tw:gap-3">
+        <h3 className="tw:text-title-s">محتوای پایان شمارش</h3>
+        <Countdown seconds={0} color="error">
+          <Badge color="error" variant="tonal" size="lg">
+            زمان به پایان رسید
+          </Badge>
+        </Countdown>
       </div>
 
       <div className="tw:flex tw:flex-col tw:gap-4">

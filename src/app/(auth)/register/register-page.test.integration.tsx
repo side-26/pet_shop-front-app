@@ -22,7 +22,7 @@ describe(routePaths.register, () => {
     ).toBeTruthy();
     expect(screen.getByRole('form', { name: 'فرم ثبت‌نام' })).toBeTruthy();
     expect(screen.queryByRole('checkbox', { name: 'مرا به خاطر بسپار' })).toBeNull();
-    expect(screen.queryByRole('link', { name: 'فراموشی رمز عبور؟' })).toBeNull();
+    expect(screen.queryByRole('link', { name: 'فراموشی کلمه عبور؟' })).toBeNull();
     expect(screen.getByRole('link', { name: 'ورود' }).getAttribute('href')).toBe(routePaths.login);
     expect(screen.getByRole('button', { name: 'ثبت‌نام' })).toBeTruthy();
   });
@@ -35,7 +35,7 @@ describe(routePaths.register, () => {
     );
 
     const phone = screen.getByLabelText('شماره موبایل');
-    const password = screen.getByLabelText('رمز عبور');
+    const password = screen.getByLabelText('کلمه عبور');
 
     expect(phone.getAttribute('data-size')).toBe('lg');
     expect(phone.getAttribute('dir')).toBe('ltr');
@@ -55,7 +55,7 @@ describe(routePaths.register, () => {
     fireEvent.click(screen.getByRole('button', { name: 'ثبت‌نام' }));
 
     expect(await screen.findByText('شماره موبایل الزامی است.')).toBeTruthy();
-    expect(await screen.findByText('رمز عبور الزامی است.')).toBeTruthy();
+    expect(await screen.findByText('کلمه عبور الزامی است.')).toBeTruthy();
   });
 
   it('defines registration metadata', () => {

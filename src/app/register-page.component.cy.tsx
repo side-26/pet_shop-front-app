@@ -33,7 +33,7 @@ describe(`${routePaths.register} inside the auth layout`, () => {
         .and('have.attr', 'dir', 'ltr');
       cy.contains('button', 'ثبت‌نام').scrollIntoView().should('be.visible');
       cy.get(`a[href="${routePaths.login}"]`).scrollIntoView().should('be.visible');
-      cy.contains('فراموشی رمز عبور؟').should('not.exist');
+      cy.contains('فراموشی کلمه عبور؟').should('not.exist');
       cy.contains('مرا به خاطر بسپار').should('not.exist');
 
       cy.document().then((document) => {
@@ -50,7 +50,7 @@ describe(`${routePaths.register} inside the auth layout`, () => {
     mountRegister();
 
     cy.get('input[name="password"]').type('petshop-pass');
-    cy.get('button[aria-label="نمایش رمز عبور"]').click();
+    cy.get('button[aria-label="نمایش کلمه عبور"]').click();
     cy.get('input[name="password"]').should('have.attr', 'type', 'text');
     cy.get('form[aria-label="فرم ثبت‌نام"]').should('be.visible');
     cy.get('button[type="submit"]').should('be.visible');

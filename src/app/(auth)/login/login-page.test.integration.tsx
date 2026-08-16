@@ -24,8 +24,8 @@ describe(routePaths.login, () => {
     ).toBeTruthy();
     expect(screen.getByRole('form', { name: 'فرم ورود' })).toBeTruthy();
     expect(screen.getByRole('checkbox', { name: 'مرا به خاطر بسپار' })).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'فراموشی رمز عبور؟' }).getAttribute('href')).toBe(
-      routePaths.forgotPassword,
+    expect(screen.getByRole('link', { name: 'فراموشی کلمه عبور؟' }).getAttribute('href')).toBe(
+      routePaths.forgetPassword,
     );
     expect(screen.getByRole('link', { name: 'ثبت‌نام' }).getAttribute('href')).toBe(
       routePaths.register,
@@ -41,7 +41,7 @@ describe(routePaths.login, () => {
     );
 
     const phone = screen.getByLabelText('شماره موبایل');
-    const password = screen.getByLabelText('رمز عبور');
+    const password = screen.getByLabelText('کلمه عبور');
 
     expect(phone.getAttribute('data-size')).toBe('lg');
     expect(phone.getAttribute('dir')).toBe('ltr');
@@ -60,7 +60,7 @@ describe(routePaths.login, () => {
     fireEvent.click(screen.getByRole('button', { name: 'ورود' }));
 
     expect(await screen.findByText('شماره موبایل الزامی است.')).toBeTruthy();
-    expect(await screen.findByText('رمز عبور الزامی است.')).toBeTruthy();
+    expect(await screen.findByText('کلمه عبور الزامی است.')).toBeTruthy();
   });
 
   it('defines login metadata', () => {
