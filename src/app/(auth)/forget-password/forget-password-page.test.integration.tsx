@@ -4,10 +4,26 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { OtpStepForm } from '@/app/(auth)/forget-password/_components/otp-step-form';
 import { routePaths } from '@/configs/route.path';
+import { sendOtpAction } from '@/entities/auth/auth.actions';
 
 import ForgetPasswordPage, { metadata } from './page';
 
+vi.mock('@/entities/auth/auth.actions', () => ({
+  loginUserAction: vi.fn(),
+  redirectToLoginAction: vi.fn(),
+  registerUserAction: vi.fn(),
+  sendOtpAction: vi.fn(),
+}));
+
+const sendOtpActionMock = vi.mocked(sendOtpAction);
+
 beforeEach(() => {
+  vi.clearAllMocks();
+  sendOtpActionMock.mockResolvedValue({
+    isSuccess: true,
+    message: 'کد تأیید با موفقیت ارسال شد',
+    data: { remainingSeconds: 120 },
+  });
   Object.defineProperty(document, 'elementFromPoint', {
     configurable: true,
     value: vi.fn(() => null),
@@ -76,7 +92,7 @@ describe(routePaths.forgetPassword, () => {
     await goToOtpStep();
 
     expect(screen.getByRole('button', { name: 'تغییر شماره' })).toBeTruthy();
-    expect(screen.getByRole('timer').getAttribute('aria-label')).toBe('زمان باقی‌مانده: 01:00');
+    expect(screen.getByRole('timer').getAttribute('aria-label')).toBe('زمان باقی‌مانده: 02:00');
 
     const otpInput = screen.getByLabelText('کد تأیید');
     expect(
@@ -123,13 +139,18 @@ describe(routePaths.forgetPassword, () => {
     );
   });
 
-  it('replaces an expired countdown with resend and restarts it on click', () => {
+  it('replaces an expired countdown with resend and restarts it from the server duration', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-08-16T00:00:00Z'));
+    sendOtpActionMock.mockResolvedValue({
+      isSuccess: true,
+      message: 'کد تأیید با موفقیت ارسال شد',
+      data: { remainingSeconds: 73 },
+    });
 
     render(
       <DirectionProvider direction="rtl">
-        <OtpStepForm resendSeconds={1} onSubmit={vi.fn()} />
+        <OtpStepForm phoneNumber="09123456789" resendSeconds={1} onSubmit={vi.fn()} />
       </DirectionProvider>,
     );
 
@@ -138,9 +159,57 @@ describe(routePaths.forgetPassword, () => {
     const resendButton = screen.getByRole('button', { name: 'ارسال مجدد کد' });
     expect(screen.getByRole('timer').getAttribute('data-state')).toBe('expired');
 
-    fireEvent.click(resendButton);
+    await act(async () => fireEvent.click(resendButton));
 
     expect(screen.queryByRole('button', { name: 'ارسال مجدد کد' })).toBeNull();
-    expect(screen.getByRole('timer').getAttribute('aria-label')).toBe('زمان باقی‌مانده: 00:01');
+    expect(screen.getByRole('timer').getAttribute('aria-label')).toBe('زمان باقی‌مانده: 01:13');
+    expect(sendOtpActionMock).toHaveBeenCalledWith({ phoneNumber: '09123456789' });
+  });
+
+  it('keeps the phone step visible while the backend rejects the request', async () => {
+    sendOtpActionMock.mockResolvedValue({
+      isSuccess: false,
+      message: 'کاربری با این شماره تلفن یافت نشد',
+      data: { messages: {}, details: {} },
+    });
+
+    renderPage();
+    fireEvent.change(screen.getByLabelText('شماره موبایل'), {
+      target: { value: '09999999999' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'ارسال کد تأیید' }));
+
+    await waitFor(() => expect(sendOtpActionMock).toHaveBeenCalledOnce());
+    expect(screen.getByRole('form', { name: 'فرم شماره موبایل بازیابی کلمه عبور' })).toBeTruthy();
+    expect(screen.getByText('مرحله 1 از ۳')).toBeTruthy();
+  });
+
+  it('shows the shared button loading state until the OTP request resolves', async () => {
+    let resolveRequest!: (result: Awaited<ReturnType<typeof sendOtpAction>>) => void;
+    sendOtpActionMock.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveRequest = resolve;
+        }),
+    );
+
+    renderPage();
+    fireEvent.change(screen.getByLabelText('شماره موبایل'), {
+      target: { value: '09123456789' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'ارسال کد تأیید' }));
+
+    const loadingButton = await screen.findByRole('button', { name: 'در حال ارسال کد' });
+    expect(loadingButton.getAttribute('aria-busy')).toBe('true');
+
+    await act(async () => {
+      resolveRequest({
+        isSuccess: true,
+        message: 'کد تأیید با موفقیت ارسال شد',
+        data: { remainingSeconds: 120 },
+      });
+    });
+
+    expect(await screen.findByText('09123456789')).toBeTruthy();
   });
 });

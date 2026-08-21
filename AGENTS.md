@@ -30,3 +30,9 @@ Before considering the work complete, add or update relevant tests and run typec
 For every prompt involving UI components, primitives, component variants or states, forms, overlays, navigation controls, cards, RTL component behavior, component accessibility, motion, or UI component tests, use the project skill at `.agents/skills/shadcn-pet-ui-component/SKILL.md` in addition to any other applicable skills.
 
 For every layout, page, template, or content-section task, also run that skill's UI composition gate before implementation. Use existing `src/components/ui` components. If a required reusable component is missing locally or from `/ui-components`, stop the dependent work, report the missing component and saved progress, and wait for explicit authorization to add it.
+
+### Button loading and width API
+
+Use the shared `Button` loading contract instead of composing loading markup at call sites. Pass
+`isLoading` with the required `loadingText`; Button replaces its children and owns the busy state.
+Use `block` for full-width buttons instead of passing `tw:w-full` through `className`.

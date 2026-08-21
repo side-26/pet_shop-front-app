@@ -1,9 +1,5 @@
 import * as yup from 'yup';
 
-export type PhoneStepValues = {
-  phoneNumber: string;
-};
-
 export type OtpStepValues = {
   verificationCode: string;
 };
@@ -12,16 +8,6 @@ export type PasswordStepValues = {
   newPassword: string;
   confirmPassword: string;
 };
-
-export const phoneStepSchema: yup.ObjectSchema<PhoneStepValues> = yup.object({
-  phoneNumber: yup
-    .string()
-    .matches(/^09\d{9}$/, {
-      message: 'شماره موبایل باید با ۰۹ شروع شود و ۱۱ رقم باشد.',
-      excludeEmptyString: true,
-    })
-    .required('شماره موبایل الزامی است.'),
-});
 
 export const otpStepSchema: yup.ObjectSchema<OtpStepValues> = yup.object({
   verificationCode: yup

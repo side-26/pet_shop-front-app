@@ -340,6 +340,21 @@ describe('Pet Shop UI primitives', () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
+  it('owns loading text, busy behavior, and block width', () => {
+    render(
+      <Button isLoading loadingText="در حال ثبت" block>
+        ثبت سفارش
+      </Button>,
+    );
+
+    const button = screen.getByRole('button', { name: 'در حال ثبت' });
+    expect(button.getAttribute('aria-busy')).toBe('true');
+    expect(button.getAttribute('data-loading')).toBe('true');
+    expect(button.getAttribute('data-block')).toBe('true');
+    expect(button.className).toContain('tw:w-full');
+    expect(screen.queryByText('ثبت سفارش')).toBeNull();
+  });
+
   it('renders Badge as a link without losing its semantic style state', () => {
     render(
       <Badge render={<a href="/orders" />} color="info" variant="outlined" size="sm">

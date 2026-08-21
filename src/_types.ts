@@ -1,7 +1,8 @@
 export interface AuthSessionModel {
   refreshToken: string;
   sessionExp: number;
-  userId: number;
+  userId: string;
+  role: string;
   accessToken: string;
   accessExp: number;
 }

@@ -52,7 +52,7 @@ export function PasswordStepForm() {
         className={mixedDirectionInput}
       />
 
-      <Button type="submit" size="lg" color="primary" className="tw:w-full">
+      <Button type="submit" size="lg" color="primary" block>
         بازنشانی کلمه عبور
       </Button>
     </Form>

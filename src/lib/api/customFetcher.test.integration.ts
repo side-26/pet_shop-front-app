@@ -23,25 +23,68 @@ beforeEach(() => {
 });
 
 describe('customFetcher', () => {
-  it('normalizes a public successful response', async () => {
-    fetchMock.mockResolvedValueOnce(jsonResponse({ isSuccess: true, products: [1, 2] }));
+  it('returns the backend success envelope and defaults to no-store', async () => {
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse({ isSuccess: true, message: 'Products loaded.', data: [1, 2] }),
+    );
 
-    const result = await customFetcher<{ products: number[] }>({ url: '/products' });
+    const result = await customFetcher<number[]>({ url: '/products' });
 
-    expect(result).toEqual({ isSuccess: true, data: { products: [1, 2] }, status: 200 });
+    expect(result).toEqual({ isSuccess: true, message: 'Products loaded.', data: [1, 2] });
+    expect(fetchMock.mock.calls[0]?.[1]?.cache).toBe('no-store');
   });
 
-  it('attaches the session token and prevents an Authorization override', async () => {
+  it('treats a partial HTTP success envelope as a successful request', async () => {
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse({ isSuccess: true, message: 'Registration completed.' }, 201),
+    );
+
+    const result = await customFetcher<void>({ url: '/users/register' });
+
+    expect(result).toEqual({
+      isSuccess: true,
+      message: 'Registration completed.',
+      data: undefined,
+    });
+  });
+
+  it('treats a successful empty response as a successful request', async () => {
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 201 }));
+
+    const result = await customFetcher<void>({ url: '/users/register' });
+
+    expect(result).toEqual({ isSuccess: true, message: null, data: undefined });
+  });
+
+  it('supports explicit public caching with reusable tags', async () => {
+    fetchMock.mockResolvedValueOnce(jsonResponse({ isSuccess: true, message: null, data: [1, 2] }));
+
+    await customFetcher<number[]>({
+      url: '/products',
+      cache: 'force-cache',
+      next: { revalidate: 300, tags: ['products'] },
+    });
+
+    expect(fetchMock.mock.calls[0]?.[1]).toMatchObject({
+      cache: 'force-cache',
+      next: { revalidate: 300, tags: ['products'] },
+    });
+  });
+
+  it('attaches the session token and keeps authenticated requests uncached', async () => {
     mockedGetSession.mockResolvedValueOnce({
       accessToken: 'session-token',
       accessExp: 1,
       refreshToken: 'refresh-token',
       sessionExp: 1,
-      userId: 1,
+      userId: '1',
+      role: 'customer',
     });
-    fetchMock.mockResolvedValueOnce(jsonResponse({ isSuccess: true, user: { id: 1 } }));
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse({ isSuccess: true, message: null, data: { id: 1 } }),
+    );
 
-    await customFetcher<{ user: { id: number } }>({
+    await customFetcher<{ id: number }>({
       url: '/profile',
       auth: true,
       headers: { Authorization: 'Bearer caller-token' },
@@ -53,94 +96,113 @@ describe('customFetcher', () => {
     expect(request?.next).toBeUndefined();
   });
 
-  it('returns unauthorized without making a request when the session is missing', async () => {
+  it('returns an envelope error without requesting when authentication is missing', async () => {
     mockedGetSession.mockResolvedValueOnce(null);
 
     const result = await customFetcher({ url: '/profile', auth: true });
 
     expect(result).toEqual({
       isSuccess: false,
-      status: 401,
-      error: { kind: 'unauthorized', message: 'Authentication is required.' },
+      message: 'Authentication is required.',
+      data: { messages: {}, details: {} },
     });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it.each([200, 422])('normalizes isSuccess false with HTTP %s', async (status) => {
+  it.each([200, 422])('preserves the backend error envelope with HTTP %s', async (status) => {
+    const backendError = {
+      isSuccess: false,
+      message: 'Validation failed.',
+      data: {
+        messages: [{ value: 'title', label: 'Title is required.' }],
+        details: { code: 'VALIDATION_ERROR' },
+      },
+    } as const;
+    fetchMock.mockResolvedValueOnce(jsonResponse(backendError, status));
+
+    const result = await customFetcher<never, { code: string }>({ url: '/products' });
+
+    expect(result).toEqual(backendError);
+  });
+
+  it('uses a backend message from a partial error response', async () => {
     fetchMock.mockResolvedValueOnce(
-      jsonResponse(
-        {
-          isSuccess: false,
-          message: 'Validation failed.',
-          code: 'VALIDATION_ERROR',
-          errors: { title: ['Title is required.'] },
-        },
-        status,
-      ),
+      jsonResponse({ message: 'This phone number is already registered.' }, 409),
     );
 
-    const result = await customFetcher<never, { message: string }>({ url: '/products' });
+    const result = await customFetcher({ url: '/users/register' });
 
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       isSuccess: false,
-      status,
-      error: {
-        kind: 'backend',
-        message: 'Validation failed.',
-        code: 'VALIDATION_ERROR',
-        fieldErrors: { title: ['Title is required.'] },
-      },
+      message: 'This phone number is already registered.',
+      data: { messages: {}, details: {} },
     });
   });
 
-  it('returns invalid-response for malformed server responses', async () => {
-    fetchMock.mockResolvedValueOnce(new Response('<html>Error</html>', { status: 500 }));
+  it('uses the default message when a backend error has no non-empty message', async () => {
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse({ isSuccess: false, message: null, data: { messages: {}, details: {} } }, 500),
+    );
 
     const result = await customFetcher({ url: '/products' });
 
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       isSuccess: false,
-      status: 500,
-      error: { kind: 'invalid-response' },
+      message: 'The server returned an invalid response.',
+      data: { messages: {}, details: {} },
     });
   });
 
-  it('uses success and error parsers', async () => {
+  it('applies parsers to success data and error details', async () => {
     fetchMock
-      .mockResolvedValueOnce(jsonResponse({ isSuccess: true, value: '4' }))
-      .mockResolvedValueOnce(jsonResponse({ isSuccess: false, reason: 'invalid' }, 400));
+      .mockResolvedValueOnce(jsonResponse({ isSuccess: true, message: null, data: '4' }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          isSuccess: false,
+          message: 'Invalid value.',
+          data: { messages: {}, details: { reason: 'invalid' } },
+        }),
+      );
 
     const success = await customFetcher<number>({
       url: '/value',
-      parseSuccess: (value) => Number((value as { value: string }).value),
+      parseSuccess: (value) => Number(value),
     });
     const error = await customFetcher<never, string>({
       url: '/value',
-      parseError: (value) => (value as { reason: string }).reason,
-      normalizeError: (reason) => ({ message: reason }),
+      parseErrorDetails: (value) => (value as { reason: string }).reason,
     });
 
-    expect(success).toEqual({ isSuccess: true, data: 4, status: 200 });
-    expect(error).toMatchObject({
+    expect(success).toEqual({ isSuccess: true, message: null, data: 4 });
+    expect(error).toEqual({
       isSuccess: false,
-      error: { kind: 'backend', message: 'invalid', details: 'invalid' },
+      message: 'Invalid value.',
+      data: { messages: {}, details: 'invalid' },
     });
   });
 
-  it('returns invalid-response when a response parser rejects the payload', async () => {
-    fetchMock.mockResolvedValueOnce(jsonResponse({ isSuccess: true, value: 'invalid' }));
+  it('returns an envelope error for malformed responses and parser failures', async () => {
+    fetchMock
+      .mockResolvedValueOnce(new Response('<html>Error</html>', { status: 500 }))
+      .mockResolvedValueOnce(jsonResponse({ isSuccess: true, message: null, data: 'invalid' }));
 
-    const result = await customFetcher<number>({
+    const malformed = await customFetcher({ url: '/malformed' });
+    const parserFailure = await customFetcher<number>({
       url: '/value',
       parseSuccess: () => {
         throw new Error('Invalid payload');
       },
     });
 
-    expect(result).toMatchObject({ isSuccess: false, error: { kind: 'invalid-response' } });
+    expect(malformed).toEqual({
+      isSuccess: false,
+      message: 'The server returned an invalid response.',
+      data: { messages: {}, details: {} },
+    });
+    expect(parserFailure).toEqual(malformed);
   });
 
-  it('normalizes network and timeout failures', async () => {
+  it('normalizes network and timeout failures into the error envelope', async () => {
     fetchMock
       .mockRejectedValueOnce(new TypeError('Connection refused'))
       .mockImplementationOnce((_url, init) => {
@@ -154,8 +216,8 @@ describe('customFetcher', () => {
     const network = await customFetcher({ url: '/network' });
     const timeout = await customFetcher({ url: '/timeout', timeoutMs: 1 });
 
-    expect(network).toMatchObject({ isSuccess: false, error: { kind: 'network' } });
-    expect(timeout).toMatchObject({ isSuccess: false, error: { kind: 'timeout' } });
+    expect(network).toMatchObject({ isSuccess: false, message: 'Unable to reach the server.' });
+    expect(timeout).toMatchObject({ isSuccess: false, message: 'The request timed out.' });
   });
 
   it('supports successful empty 204 responses', async () => {
@@ -163,13 +225,13 @@ describe('customFetcher', () => {
 
     const result = await customFetcher<void>({ url: '/products/1', method: 'DELETE' });
 
-    expect(result).toEqual({ isSuccess: true, data: undefined, status: 204 });
+    expect(result).toEqual({ isSuccess: true, message: null, data: undefined });
   });
 
   it('serializes JSON and FormData with the correct content type', async () => {
     fetchMock
-      .mockResolvedValueOnce(jsonResponse({ isSuccess: true }))
-      .mockResolvedValueOnce(jsonResponse({ isSuccess: true }));
+      .mockResolvedValueOnce(jsonResponse({ isSuccess: true, message: null, data: {} }))
+      .mockResolvedValueOnce(jsonResponse({ isSuccess: true, message: null, data: {} }));
 
     await customFetcher<object, unknown, { title: string }>({
       url: '/products',
@@ -194,7 +256,7 @@ describe('customFetcher', () => {
   });
 
   it('encodes primitive and repeated query parameters', async () => {
-    fetchMock.mockResolvedValueOnce(jsonResponse({ isSuccess: true }));
+    fetchMock.mockResolvedValueOnce(jsonResponse({ isSuccess: true, message: null, data: {} }));
 
     await customFetcher<object>({
       url: '/products',

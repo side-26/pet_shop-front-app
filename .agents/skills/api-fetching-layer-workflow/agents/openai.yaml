@@ -1,0 +1,4 @@
+interface:
+  display_name: "API Fetching Layers"
+  short_description: "Enforce layered API forms and fetching flows"
+  default_prompt: "Use $api-fetching-layer-workflow to implement this API-backed form using the project layer boundaries."

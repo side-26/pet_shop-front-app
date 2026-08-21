@@ -4,46 +4,30 @@ import { getSession } from '@/utils/session';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
-export type FieldErrors = Record<string, string[]>;
-
-export type FetcherErrorKind =
-  'unauthorized' | 'backend' | 'network' | 'timeout' | 'invalid-response' | 'unknown';
+export interface FetchErrorMessageDTO {
+  value: string;
+  label: string;
+}
 
 export type FetcherError<TBackendError = unknown> = {
-  kind: FetcherErrorKind;
-  message: string;
-  code?: string;
-  details?: TBackendError;
-  fieldErrors?: FieldErrors;
+  isSuccess: false;
+  message: string | null;
+  data: {
+    messages: FetchErrorMessageDTO[] | Record<string, never>;
+    details: TBackendError | Record<string, never>;
+  };
 };
 
 export type FetcherSuccess<TData> = {
   isSuccess: true;
+  message: string | null;
   data: TData;
-  status: number;
-};
-
-export type FetcherFailure<TBackendError> = {
-  isSuccess: false;
-  error: FetcherError<TBackendError>;
-  status: number | null;
 };
 
 export type FetcherResult<TData, TBackendError = unknown> =
-  FetcherSuccess<TData> | FetcherFailure<TBackendError>;
-
-export type BackendSuccess<TPayload extends object> = { isSuccess: true } & TPayload;
-export type BackendFailure<TPayload extends object> = { isSuccess: false } & TPayload;
-export type BackendResponse<TSuccessPayload extends object, TErrorPayload extends object> =
-  BackendSuccess<TSuccessPayload> | BackendFailure<TErrorPayload>;
+  FetcherSuccess<TData> | FetcherError<TBackendError>;
 
 export type ResponseParser<T> = (value: unknown) => T;
-
-export type ErrorNormalizer<TBackendError> = (payload: TBackendError) => {
-  message: string;
-  code?: string;
-  fieldErrors?: FieldErrors;
-};
 
 export type QueryPrimitive = string | number | boolean;
 export type QueryValue = QueryPrimitive | readonly QueryPrimitive[] | null | undefined;
@@ -51,7 +35,7 @@ export type QueryParams = Record<string, QueryValue>;
 
 type NextFetchOptions = {
   revalidate?: number | false;
-  tags?: string[];
+  tags: [string, ...string[]];
 };
 
 type CommonOptions<TSuccess, TBackendError> = {
@@ -60,14 +44,19 @@ type CommonOptions<TSuccess, TBackendError> = {
   headers?: HeadersInit;
   timeoutMs?: number;
   parseSuccess?: ResponseParser<TSuccess>;
-  parseError?: ResponseParser<TBackendError>;
-  normalizeError?: ErrorNormalizer<TBackendError>;
+  parseErrorDetails?: ResponseParser<TBackendError>;
 };
 
-type PublicOptions = {
+type PublicUncachedOptions = {
   auth?: false;
-  cache?: RequestCache;
-  next?: NextFetchOptions;
+  cache?: 'no-store';
+  next?: never;
+};
+
+type PublicCachedOptions = {
+  auth?: false;
+  cache: 'force-cache';
+  next: NextFetchOptions;
 };
 
 type PrivateOptions = {
@@ -90,10 +79,11 @@ export type CustomFetcherOptions<TSuccess, TBackendError, TBody = never> = Commo
   TSuccess,
   TBackendError
 > &
-  (PublicOptions | PrivateOptions) &
+  (PublicUncachedOptions | PublicCachedOptions | PrivateOptions) &
   (BodylessOptions | BodyOptions<TBody>);
 
 const DEFAULT_TIMEOUT_MS = 15_000;
+const DEFAULT_ERROR_MESSAGE = 'The server returned an invalid response.';
 
 function buildUrl(path: string, query?: QueryParams): string {
   const configuredBaseUrl = process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
@@ -121,7 +111,6 @@ function serializeBody<TBody>(body: TBody | undefined): BodyInit | undefined {
 
 async function safeReadJson(response: Response): Promise<unknown | undefined> {
   if (response.status === 204) return undefined;
-
   const text = await response.text();
   if (!text) return undefined;
 
@@ -132,49 +121,131 @@ async function safeReadJson(response: Response): Promise<unknown | undefined> {
   }
 }
 
-function isBackendResponse(value: unknown): value is { isSuccess: boolean } & object {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    'isSuccess' in value &&
-    typeof value.isSuccess === 'boolean'
-  );
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function omitIsSuccess<T extends { isSuccess: boolean }>(response: T): Omit<T, 'isSuccess'> {
-  const { isSuccess: _, ...payload } = response;
-  return payload;
+function getNonEmptyMessage(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim().length > 0 ? value : undefined;
 }
 
-function isFieldErrors(value: unknown): value is FieldErrors {
+function getResponseMessage(value: unknown): string | undefined {
+  if (isRecord(value)) return getNonEmptyMessage(value.message);
+  return getNonEmptyMessage(value);
+}
+
+function hasMessage(
+  value: Record<string, unknown>,
+): value is Record<string, unknown> & { message: string | null } {
+  return value.message === null || typeof value.message === 'string';
+}
+
+function isFetchErrorMessages(value: unknown): value is FetchErrorMessageDTO[] {
   return (
-    typeof value === 'object' &&
-    value !== null &&
-    Object.values(value).every(
-      (messages) =>
-        Array.isArray(messages) && messages.every((message) => typeof message === 'string'),
+    Array.isArray(value) &&
+    value.every(
+      (message) =>
+        isRecord(message) && typeof message.value === 'string' && typeof message.label === 'string',
     )
   );
 }
 
-function defaultNormalizeError(payload: unknown): ReturnType<ErrorNormalizer<unknown>> {
-  if (typeof payload !== 'object' || payload === null) return { message: 'Request failed.' };
+function isEmptyRecord(value: unknown): value is Record<string, never> {
+  return isRecord(value) && Object.keys(value).length === 0;
+}
 
-  const record = payload as Record<string, unknown>;
+function isSuccessEnvelope(value: unknown): value is FetcherSuccess<unknown> {
+  return (
+    isRecord(value) && value.isSuccess === true && hasMessage(value) && Object.hasOwn(value, 'data')
+  );
+}
+
+function isErrorEnvelope(value: unknown): value is FetcherError<unknown> {
+  if (
+    !isRecord(value) ||
+    value.isSuccess !== false ||
+    !hasMessage(value) ||
+    !isRecord(value.data)
+  ) {
+    return false;
+  }
+
+  return (
+    (isFetchErrorMessages(value.data.messages) || isEmptyRecord(value.data.messages)) &&
+    Object.hasOwn(value.data, 'details')
+  );
+}
+
+function isExplicitErrorResponse(value: unknown): boolean {
+  return isRecord(value) && value.isSuccess === false;
+}
+
+function transportError<TBackendError = never>(message: string): FetcherError<TBackendError> {
+  return { isSuccess: false, message, data: { messages: {}, details: {} } };
+}
+
+function parseSuccess<TSuccess, TBackendError>(
+  envelope: FetcherSuccess<unknown>,
+  parser?: ResponseParser<TSuccess>,
+): FetcherResult<TSuccess, TBackendError> {
+  try {
+    return {
+      isSuccess: true,
+      message: envelope.message,
+      data: parser ? parser(envelope.data) : (envelope.data as TSuccess),
+    };
+  } catch {
+    return transportError<TBackendError>(DEFAULT_ERROR_MESSAGE);
+  }
+}
+
+function normalizeSuccessResponse(value: unknown): FetcherSuccess<unknown> {
+  if (isSuccessEnvelope(value)) return value;
+
+  if (isRecord(value) && value.isSuccess === true) {
+    return {
+      isSuccess: true,
+      message: getResponseMessage(value) ?? null,
+      data: Object.hasOwn(value, 'data') ? value.data : undefined,
+    };
+  }
+
   return {
-    message: typeof record.message === 'string' ? record.message : 'Request failed.',
-    ...(typeof record.code === 'string' ? { code: record.code } : {}),
-    ...(isFieldErrors(record.errors) ? { fieldErrors: record.errors } : {}),
+    isSuccess: true,
+    message: getResponseMessage(value) ?? null,
+    data: value,
   };
 }
 
-function failure<TBackendError>(
-  kind: FetcherErrorKind,
-  message: string,
-  status: number | null,
-  extras?: Omit<FetcherError<TBackendError>, 'kind' | 'message'>,
-): FetcherFailure<TBackendError> {
-  return { isSuccess: false, status, error: { kind, message, ...extras } };
+function parseError<TBackendError>(
+  envelope: FetcherError<unknown>,
+  parser?: ResponseParser<TBackendError>,
+): FetcherError<TBackendError> {
+  const errorWithMessage = {
+    ...envelope,
+    message: getNonEmptyMessage(envelope.message) ?? DEFAULT_ERROR_MESSAGE,
+  };
+
+  if (!parser || isEmptyRecord(envelope.data.details)) {
+    return errorWithMessage as FetcherError<TBackendError>;
+  }
+
+  try {
+    return {
+      ...errorWithMessage,
+      data: { ...envelope.data, details: parser(envelope.data.details) },
+    };
+  } catch {
+    return transportError<TBackendError>(DEFAULT_ERROR_MESSAGE);
+  }
+}
+
+function parseResponseError<TBackendError>(
+  value: unknown,
+  parser?: ResponseParser<TBackendError>,
+): FetcherError<TBackendError> {
+  if (isErrorEnvelope(value)) return parseError(value, parser);
+  return transportError<TBackendError>(getResponseMessage(value) ?? DEFAULT_ERROR_MESSAGE);
 }
 
 export async function customFetcher<TSuccess, TBackendError = unknown, TBody = never>(
@@ -183,34 +254,31 @@ export async function customFetcher<TSuccess, TBackendError = unknown, TBody = n
   const {
     auth,
     body,
-    cache,
+    cache = 'no-store',
     headers: callerHeaders,
     method = 'GET',
     next,
-    normalizeError,
-    parseError,
-    parseSuccess,
+    parseErrorDetails,
+    parseSuccess: successParser,
     query,
     timeoutMs = DEFAULT_TIMEOUT_MS,
     url,
   } = options;
 
   const headers = new Headers(callerHeaders);
-
   if (auth) {
     const session = await getSession();
     if (!session?.accessToken) {
-      return failure('unauthorized', 'Authentication is required.', 401);
+      return transportError<TBackendError>('Authentication is required.');
     }
-
     headers.set('Authorization', `Bearer ${session.accessToken}`);
   }
 
   const serializedBody = serializeBody(body);
-  if (serializedBody && !(serializedBody instanceof FormData)) {
-    headers.set('Content-Type', 'application/json');
-  } else if (serializedBody instanceof FormData) {
+  if (serializedBody instanceof FormData) {
     headers.delete('Content-Type');
+  } else if (serializedBody) {
+    headers.set('Content-Type', 'application/json');
   }
 
   const controller = new AbortController();
@@ -221,74 +289,29 @@ export async function customFetcher<TSuccess, TBackendError = unknown, TBody = n
       method,
       headers,
       body: serializedBody,
-      cache: auth ? 'no-store' : cache,
-      next: auth ? undefined : next,
+      cache,
+      next,
       signal: controller.signal,
     });
+
     const responseBody = await safeReadJson(response);
 
-    if (response.status === 204 && response.ok) {
-      return { isSuccess: true, data: undefined as TSuccess, status: response.status };
+    if (!response.ok || isExplicitErrorResponse(responseBody)) {
+      return parseResponseError(responseBody, parseErrorDetails);
     }
 
-    if (!isBackendResponse(responseBody)) {
-      return failure(
-        'invalid-response',
-        'The server returned an invalid response.',
-        response.status,
-      );
-    }
-
-    const payload = omitIsSuccess(responseBody);
-
-    if (response.ok && responseBody.isSuccess) {
-      try {
-        return {
-          isSuccess: true,
-          data: parseSuccess ? parseSuccess(payload) : (payload as TSuccess),
-          status: response.status,
-        };
-      } catch {
-        return failure(
-          'invalid-response',
-          'The server returned an invalid response.',
-          response.status,
-        );
-      }
-    }
-
-    if (!responseBody.isSuccess) {
-      let details: TBackendError;
-      try {
-        details = parseError ? parseError(payload) : (payload as TBackendError);
-      } catch {
-        return failure(
-          'invalid-response',
-          'The server returned an invalid response.',
-          response.status,
-        );
-      }
-
-      const normalized = normalizeError ? normalizeError(details) : defaultNormalizeError(details);
-
-      return failure('backend', normalized.message, response.status, {
-        details,
-        ...(normalized.code ? { code: normalized.code } : {}),
-        ...(normalized.fieldErrors ? { fieldErrors: normalized.fieldErrors } : {}),
-      });
-    }
-
-    return failure('invalid-response', 'The server returned an invalid response.', response.status);
+    return parseSuccess<TSuccess, TBackendError>(
+      normalizeSuccessResponse(responseBody),
+      successParser,
+    );
   } catch (error: unknown) {
     if (controller.signal.aborted) {
-      return failure('timeout', 'The request timed out.', null);
+      return transportError<TBackendError>('The request timed out.');
     }
-
     if (error instanceof TypeError) {
-      return failure('network', 'Unable to reach the server.', null);
+      return transportError<TBackendError>('Unable to reach the server.');
     }
-
-    return failure('unknown', 'An unexpected error occurred.', null);
+    return transportError<TBackendError>('An unexpected error occurred.');
   } finally {
     clearTimeout(timeout);
   }

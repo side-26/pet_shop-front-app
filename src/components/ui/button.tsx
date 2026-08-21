@@ -1,4 +1,5 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
+import type { ReactNode } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';
@@ -41,6 +42,10 @@ const buttonVariants = tv({
       md: 'tw:h-10 tw:gap-2 tw:px-4 tw:text-label-m tw:[&_svg:not([class*=size-])]:size-4',
       lg: 'tw:h-11 tw:gap-2 tw:px-5 tw:text-label-l tw:[&_svg:not([class*=size-])]:size-4.5',
       xl: 'tw:h-12 tw:gap-2.5 tw:px-6 tw:text-label-l tw:[&_svg:not([class*=size-])]:size-5',
+    },
+    block: {
+      true: 'tw:w-full',
+      false: '',
     },
   },
   compoundVariants: [
@@ -202,13 +207,20 @@ const buttonVariants = tv({
     variant: 'fill',
     color: 'primary',
     size: 'md',
+    block: false,
   },
 });
 
-type ButtonProps = ButtonPrimitive.Props &
-  VariantProps<typeof buttonVariants> & {
+type ButtonLoadingProps =
+  { isLoading?: false; loadingText?: never } | { isLoading: boolean; loadingText: ReactNode };
+
+type ButtonProps = Omit<ButtonPrimitive.Props, 'children'> &
+  Omit<VariantProps<typeof buttonVariants>, 'block'> & {
+    block?: boolean;
+    children?: ReactNode;
+    'data-slot'?: string;
     iconOnly?: boolean;
-  };
+  } & ButtonLoadingProps;
 
 function Button({
   className,
@@ -216,18 +228,29 @@ function Button({
   color = 'primary',
   size = 'md',
   iconOnly = false,
+  block = false,
+  isLoading = false,
+  loadingText,
+  children,
+  'aria-busy': ariaBusy,
+  'data-slot': dataSlot = 'button',
   ...props
 }: ButtonProps) {
   return (
     <ButtonPrimitive
-      data-slot="button"
+      {...props}
+      data-slot={dataSlot}
       data-variant={variant}
       data-color={color}
       data-size={size}
       data-icon-only={iconOnly || undefined}
-      className={cn(buttonVariants({ variant, color, size }), className)}
-      {...props}
-    />
+      data-loading={isLoading || undefined}
+      data-block={block || undefined}
+      aria-busy={isLoading || ariaBusy}
+      className={cn(buttonVariants({ variant, color, size, block }), className)}
+    >
+      {isLoading ? loadingText : children}
+    </ButtonPrimitive>
   );
 }
 

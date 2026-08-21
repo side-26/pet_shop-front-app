@@ -7,12 +7,11 @@ import { AuthCardShell } from '@/app/(auth)/_components/auth-form-card';
 import { OtpStepForm } from '@/app/(auth)/forget-password/_components/otp-step-form';
 import { PasswordStepForm } from '@/app/(auth)/forget-password/_components/password-step-form';
 import { PhoneStepForm } from '@/app/(auth)/forget-password/_components/phone-step-form';
-import type {
-  OtpStepValues,
-  PhoneStepValues,
-} from '@/app/(auth)/forget-password/_components/forget-password.schemas';
+import type { OtpStepValues } from '@/app/(auth)/forget-password/_components/forget-password.schemas';
 import { Button } from '@/components/ui/button';
 import { CardContent, CardFooter } from '@/components/ui/card';
+import type { SendOtpResponseDTO } from '@/entities/auth/auth.dto';
+import type { SendOtpInput } from '@/entities/auth/auth.schema';
 import { cn } from '@/lib/utils';
 
 type RecoveryStep = 1 | 2 | 3;
@@ -43,11 +42,13 @@ function StepHeader({ title, children }: StepHeaderProps) {
 export function ForgetPasswordView({ resendSeconds = 60 }: ForgetPasswordViewProps) {
   const [step, setStep] = useState<RecoveryStep>(1);
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [otpCountdownSeconds, setOtpCountdownSeconds] = useState(resendSeconds);
   const [navigationDirection, setNavigationDirection] = useState<NavigationDirection>(1);
   const reduceMotion = Boolean(useReducedMotion());
 
-  const handlePhoneSubmit = useCallback((values: PhoneStepValues) => {
-    setPhoneNumber(values.phoneNumber);
+  const handlePhoneSuccess = useCallback((input: SendOtpInput, response: SendOtpResponseDTO) => {
+    setPhoneNumber(input.phoneNumber);
+    setOtpCountdownSeconds(response.remainingSeconds);
     setNavigationDirection(1);
     setStep(2);
   }, []);
@@ -85,7 +86,7 @@ export function ForgetPasswordView({ resendSeconds = 60 }: ForgetPasswordViewPro
                 <StepHeader title="فراموشی کلمه عبور">
                   شماره موبایل خود را وارد کنید تا کد تأیید برای شما ارسال شود.
                 </StepHeader>
-                <PhoneStepForm defaultPhoneNumber={phoneNumber} onSubmit={handlePhoneSubmit} />
+                <PhoneStepForm defaultPhoneNumber={phoneNumber} onSuccess={handlePhoneSuccess} />
               </>
             )}
 
@@ -107,7 +108,11 @@ export function ForgetPasswordView({ resendSeconds = 60 }: ForgetPasswordViewPro
                     تغییر شماره
                   </Button>
                 </StepHeader>
-                <OtpStepForm resendSeconds={resendSeconds} onSubmit={handleOtpSubmit} />
+                <OtpStepForm
+                  phoneNumber={phoneNumber}
+                  resendSeconds={otpCountdownSeconds}
+                  onSubmit={handleOtpSubmit}
+                />
               </>
             )}
 

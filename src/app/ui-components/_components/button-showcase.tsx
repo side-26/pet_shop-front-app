@@ -1,4 +1,4 @@
-import { LoaderCircle, PawPrint, Plus, Trash2 } from 'lucide-react';
+import { PawPrint, Plus, Trash2 } from 'lucide-react';
 
 import { Button, type ButtonProps } from '@/components/ui/button';
 
@@ -84,13 +84,8 @@ export function ButtonShowcase() {
           <Button type="button" disabled>
             غیرفعال
           </Button>
-          <Button type="button" disabled aria-busy="true">
-            <LoaderCircle
-              data-icon="inline-start"
-              aria-hidden="true"
-              className="tw:animate-spin tw:motion-reduce:animate-none"
-            />
-            در حال ثبت
+          <Button type="button" isLoading loadingText="در حال ثبت">
+            ثبت سفارش
           </Button>
           <Button type="button" aria-invalid="true" color="error" variant="outlined">
             ورودی نامعتبر
@@ -102,6 +97,12 @@ export function ButtonShowcase() {
             کالای <bdi>SKU PS-2048</bdi>
           </Button>
         </div>
+      </ShowcaseGroup>
+
+      <ShowcaseGroup title="عرض کامل">
+        <Button type="button" block>
+          ادامه فرایند خرید
+        </Button>
       </ShowcaseGroup>
     </ShowcaseSection>
   );

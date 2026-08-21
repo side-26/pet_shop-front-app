@@ -1,5 +1,7 @@
 import { defineConfig } from 'cypress';
 
+process.env.PETSHOP_CYPRESS_COMPONENT_TEST = 'true';
+
 export default defineConfig({
   allowCypressEnv: false,
   component: {

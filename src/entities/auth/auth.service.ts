@@ -1,0 +1,40 @@
+import 'server-only';
+
+import type {
+  LoginUserDTO,
+  LoginUserResponseDTO,
+  RegisterUserDTO,
+  SendOtpDTO,
+  SendOtpResponseDTO,
+} from '@/entities/auth/auth.dto';
+import { customFetcher } from '@/lib/api/customFetcher';
+
+export function registerUser(input: RegisterUserDTO) {
+  return customFetcher<null, unknown, RegisterUserDTO>({
+    url: '/users/register',
+    method: 'POST',
+    body: input,
+    auth: false,
+    cache: 'no-store',
+  });
+}
+
+export function loginUser(input: LoginUserDTO) {
+  return customFetcher<LoginUserResponseDTO, unknown, LoginUserDTO>({
+    url: '/users/login',
+    method: 'POST',
+    body: input,
+    auth: false,
+    cache: 'no-store',
+  });
+}
+
+export function sendOtp(input: SendOtpDTO) {
+  return customFetcher<SendOtpResponseDTO, unknown, SendOtpDTO>({
+    url: '/users/send-otp',
+    method: 'POST',
+    body: input,
+    auth: false,
+    cache: 'no-store',
+  });
+}

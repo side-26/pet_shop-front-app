@@ -1,78 +1,72 @@
 'use client';
 
 import { LockKeyholeIcon, PhoneIcon } from 'lucide-react';
-import * as yup from 'yup';
 
 import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/ui/fields/text-field';
 import { Form } from '@/components/ui/form';
-
-type RegisterValues = {
-  phoneNumber: string;
-  password: string;
-};
-
-const registerSchema: yup.ObjectSchema<RegisterValues> = yup.object({
-  phoneNumber: yup
-    .string()
-    .matches(/^09\d{9}$/, {
-      message: 'شماره موبایل باید با ۰۹ شروع شود و ۱۱ رقم باشد.',
-      excludeEmptyString: true,
-    })
-    .required('شماره موبایل الزامی است.'),
-  password: yup
-    .string()
-    .required('کلمه عبور الزامی است.')
-    .min(6, 'کلمه عبور باید حداقل ۶ نویسه باشد.'),
-});
+import { useRegisterUser } from '@/entities/auth/auth.client';
+import { registerUserSchema, type RegisterUserInput } from '@/entities/auth/auth.schema';
 
 const mixedDirectionInput =
   'tw:text-left tw:[&::placeholder]:text-right tw:[&::placeholder]:[direction:rtl]';
 
 export function RegisterForm() {
+  const { formRef, handleSubmit } = useRegisterUser();
+
   return (
-    <Form<RegisterValues>
-      validationSchema={registerSchema}
+    <Form<RegisterUserInput>
+      ref={formRef}
+      validationSchema={registerUserSchema}
       options={{
         defaultValues: { phoneNumber: '', password: '' },
         mode: 'onBlur',
       }}
-      handleSubmit={() => undefined}
+      handleSubmit={handleSubmit}
       aria-label="فرم ثبت‌نام"
       className="tw:gap-3 tw:[&_[data-slot=field]>span:last-child:has(>span:empty)]:hidden tw:[@media(max-height:430px)]:gap-1.5 tw:[@media(max-height:430px)]:[&_[data-slot=field-label]]:sr-only"
     >
-      <TextField<RegisterValues>
-        name="phoneNumber"
-        label="شماره موبایل"
-        type="tel"
-        inputMode="tel"
-        autoComplete="tel-national"
-        dir="ltr"
-        size="lg"
-        color="primary"
-        placeholder="شماره موبایل"
-        prefixIcon={<PhoneIcon />}
-        className={mixedDirectionInput}
-      />
+      {(formMethods) => (
+        <>
+          <TextField<RegisterUserInput>
+            name="phoneNumber"
+            label="شماره موبایل"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel-national"
+            dir="ltr"
+            size="lg"
+            color="primary"
+            placeholder="شماره موبایل"
+            prefixIcon={<PhoneIcon />}
+            className={mixedDirectionInput}
+          />
 
-      <TextField<RegisterValues>
-        name="password"
-        label="کلمه عبور"
-        type="password"
-        autoComplete="new-password"
-        dir="ltr"
-        size="lg"
-        color="primary"
-        placeholder="کلمه عبور"
-        prefixIcon={<LockKeyholeIcon />}
-        className={mixedDirectionInput}
-      />
+          <TextField<RegisterUserInput>
+            name="password"
+            label="کلمه عبور"
+            type="password"
+            autoComplete="new-password"
+            dir="ltr"
+            size="lg"
+            color="primary"
+            placeholder="کلمه عبور"
+            prefixIcon={<LockKeyholeIcon />}
+            className={mixedDirectionInput}
+          />
 
-      <Button type="submit" size="lg" color="primary" className="tw:w-full">
-        ثبت‌نام
-      </Button>
+          <Button
+            type="submit"
+            size="lg"
+            color="primary"
+            block
+            isLoading={formMethods.formState.isSubmitting}
+            loadingText="در حال ثبت‌نام"
+          >
+            ثبت‌نام
+          </Button>
+        </>
+      )}
     </Form>
   );
 }
-
-export { type RegisterValues };

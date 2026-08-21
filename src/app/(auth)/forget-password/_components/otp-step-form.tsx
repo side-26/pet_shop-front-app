@@ -1,23 +1,41 @@
 'use client';
 
-import { useRef } from 'react';
+import { useCallback, useState } from 'react';
 
 import {
   otpStepSchema,
   type OtpStepValues,
 } from '@/app/(auth)/forget-password/_components/forget-password.schemas';
 import { Button } from '@/components/ui/button';
-import { Countdown, type CountdownRef } from '@/components/ui/countdown';
+import { Countdown } from '@/components/ui/countdown';
 import { InputOtpField } from '@/components/ui/fields/input-otp-field';
 import { Form } from '@/components/ui/form';
+import type { SendOtpResponseDTO } from '@/entities/auth/auth.dto';
+import { useResendOtp } from '@/entities/auth/auth.client';
 
 type OtpStepFormProps = {
+  phoneNumber: string;
   resendSeconds: number;
   onSubmit: (values: OtpStepValues) => void;
 };
 
-export function OtpStepForm({ resendSeconds, onSubmit }: OtpStepFormProps) {
-  const countdownRef = useRef<CountdownRef>(null);
+type CountdownState = {
+  revision: number;
+  seconds: number;
+};
+
+export function OtpStepForm({ phoneNumber, resendSeconds, onSubmit }: OtpStepFormProps) {
+  const [countdown, setCountdown] = useState<CountdownState>({
+    revision: 0,
+    seconds: resendSeconds,
+  });
+  const handleResendSuccess = useCallback((response: SendOtpResponseDTO) => {
+    setCountdown((current) => ({
+      revision: current.revision + 1,
+      seconds: response.remainingSeconds,
+    }));
+  }, []);
+  const { handleResend, isLoading } = useResendOtp(phoneNumber, handleResendSuccess);
 
   return (
     <Form<OtpStepValues>
@@ -38,8 +56,8 @@ export function OtpStepForm({ resendSeconds, onSubmit }: OtpStepFormProps) {
       />
 
       <Countdown
-        ref={countdownRef}
-        seconds={resendSeconds}
+        key={countdown.revision}
+        seconds={countdown.seconds}
         size="sm"
         color="primary"
         className="tw:justify-center"
@@ -49,7 +67,9 @@ export function OtpStepForm({ resendSeconds, onSubmit }: OtpStepFormProps) {
           variant="text"
           color="primary"
           size="sm"
-          onClick={() => countdownRef.current?.reset()}
+          onClick={handleResend}
+          isLoading={isLoading}
+          loadingText="در حال ارسال مجدد"
         >
           ارسال مجدد کد
         </Button>

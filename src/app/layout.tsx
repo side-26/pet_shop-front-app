@@ -4,6 +4,7 @@ import Script from 'next/script';
 
 import { RtlLayout } from '@/components/layouts/rtl-layout';
 import { themeInitScript } from '@/components/ui/theme.helpers';
+import { Toaster } from '@/components/ui/toast';
 import { cn } from '@/lib/utils';
 
 import './styles/tailwind.config.css';
@@ -58,7 +59,9 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         <Script id="theme-init" strategy="beforeInteractive">
           {themeInitScript}
         </Script>
-        <RtlLayout>{children}</RtlLayout>
+        <RtlLayout>
+          <Toaster>{children}</Toaster>
+        </RtlLayout>
       </body>
     </html>
   );

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Entity Layer Architecture"
+  short_description: "Enforce typed entity boundaries and flow tests"
+  default_prompt: "Use $entity-layer-architecture to design or review this entity flow and its tests."
