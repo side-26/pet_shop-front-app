@@ -4,7 +4,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { AuthSessionModel } from '@/_types';
 
-const { cookieSetMock, cookiesMock } = vi.hoisted(() => ({
+const { cookieDeleteMock, cookieGetMock, cookieSetMock, cookiesMock } = vi.hoisted(() => ({
+  cookieDeleteMock: vi.fn(),
+  cookieGetMock: vi.fn(),
   cookieSetMock: vi.fn(),
   cookiesMock: vi.fn(),
 }));
@@ -16,6 +18,9 @@ vi.mock('next/headers', () => ({
 import {
   decryptSession,
   decryptTemporaryToken,
+  deleteTemporaryTokenCookie,
+  encryptTemporaryToken,
+  getTemporaryToken,
   saveSessionToCookie,
   saveTemporaryTokenToCookie,
 } from './session';
@@ -37,7 +42,11 @@ describe('session helpers', () => {
     vi.stubEnv('NEXT_PUBLIC_TEMPORARY_SESSION_SECRET_KEY', 'test-temporary-session-secret');
     vi.useFakeTimers();
     vi.setSystemTime(Date.UTC(2026, 7, 17, 12, 0, 0));
-    cookiesMock.mockResolvedValue({ set: cookieSetMock });
+    cookiesMock.mockResolvedValue({
+      delete: cookieDeleteMock,
+      get: cookieGetMock,
+      set: cookieSetMock,
+    });
   });
 
   it('encrypts the session and saves it until the access token expires', async () => {
@@ -84,5 +93,26 @@ describe('session helpers', () => {
       sameSite: 'strict',
       path: '/',
     });
+  });
+
+  it('reads and decrypts the temporary token without exposing its cookie value', async () => {
+    const encryptedToken = await encryptTemporaryToken('temporary-reset-token');
+    cookieGetMock.mockReturnValue({ value: encryptedToken });
+
+    await expect(getTemporaryToken()).resolves.toBe('temporary-reset-token');
+    expect(cookieGetMock).toHaveBeenCalledWith('temp_token');
+  });
+
+  it('returns null for missing or invalid temporary sessions', async () => {
+    cookieGetMock.mockReturnValueOnce(undefined).mockReturnValueOnce({ value: 'invalid-token' });
+
+    await expect(getTemporaryToken()).resolves.toBeNull();
+    await expect(getTemporaryToken()).resolves.toBeNull();
+  });
+
+  it('deletes the temporary-token cookie', async () => {
+    await deleteTemporaryTokenCookie();
+
+    expect(cookieDeleteMock).toHaveBeenCalledWith('temp_token');
   });
 });

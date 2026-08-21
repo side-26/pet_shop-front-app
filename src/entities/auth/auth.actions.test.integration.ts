@@ -1,36 +1,54 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PATHS } from '@/configs/route.path';
-import { saveSessionToCookie, saveTemporaryTokenToCookie } from '@/utils/session';
+import {
+  deleteTemporaryTokenCookie,
+  getTemporaryToken,
+  saveSessionToCookie,
+  saveTemporaryTokenToCookie,
+} from '@/utils/session';
 
 import {
   loginUserAction,
   redirectToLoginAction,
   registerUserAction,
+  resetPasswordAction,
   sendOtpAction,
   verifyResetPasswordOtpAction,
 } from './auth.actions';
-import { loginUser, registerUser, sendOtp, verifyResetPasswordOtp } from './auth.service';
+import {
+  loginUser,
+  registerUser,
+  resetPassword,
+  sendOtp,
+  verifyResetPasswordOtp,
+} from './auth.service';
 import { redirect } from 'next/navigation';
 
 vi.mock('./auth.service', () => ({
   loginUser: vi.fn(),
   registerUser: vi.fn(),
+  resetPassword: vi.fn(),
   sendOtp: vi.fn(),
   verifyResetPasswordOtp: vi.fn(),
 }));
 vi.mock('@/utils/session', () => ({
   saveSessionToCookie: vi.fn(),
   saveTemporaryTokenToCookie: vi.fn(),
+  getTemporaryToken: vi.fn(),
+  deleteTemporaryTokenCookie: vi.fn(),
 }));
 vi.mock('next/navigation', () => ({ redirect: vi.fn() }));
 
 const registerUserMock = vi.mocked(registerUser);
 const loginUserMock = vi.mocked(loginUser);
 const sendOtpMock = vi.mocked(sendOtp);
+const resetPasswordMock = vi.mocked(resetPassword);
 const verifyResetPasswordOtpMock = vi.mocked(verifyResetPasswordOtp);
 const saveSessionToCookieMock = vi.mocked(saveSessionToCookie);
 const saveTemporaryTokenToCookieMock = vi.mocked(saveTemporaryTokenToCookie);
+const getTemporaryTokenMock = vi.mocked(getTemporaryToken);
+const deleteTemporaryTokenCookieMock = vi.mocked(deleteTemporaryTokenCookie);
 const redirectMock = vi.mocked(redirect);
 
 const loginSession = {
@@ -184,6 +202,67 @@ describe('auth actions', () => {
     expect(result.isSuccess).toBe(false);
     expect(verifyResetPasswordOtpMock).not.toHaveBeenCalled();
     expect(saveTemporaryTokenToCookieMock).not.toHaveBeenCalled();
+  });
+
+  it('decrypts the temporary session, resets the password, and deletes the cookie', async () => {
+    getTemporaryTokenMock.mockResolvedValue('temporary-token');
+    resetPasswordMock.mockResolvedValue({
+      isSuccess: true,
+      message: 'کلمه عبور شما با موفقیت بازنشانی شد',
+      data: true,
+    });
+    const input = { newPassword: 'new-password', confirmPassword: 'new-password' };
+
+    await expect(resetPasswordAction(input)).resolves.toEqual({
+      isSuccess: true,
+      message: 'کلمه عبور شما با موفقیت بازنشانی شد',
+      data: true,
+    });
+    expect(resetPasswordMock).toHaveBeenCalledWith(input, 'temporary-token');
+    expect(deleteTemporaryTokenCookieMock).toHaveBeenCalledOnce();
+  });
+
+  it('returns a Persian session-expired result without calling the reset API', async () => {
+    getTemporaryTokenMock.mockResolvedValue(null);
+
+    await expect(
+      resetPasswordAction({ newPassword: 'new-password', confirmPassword: 'new-password' }),
+    ).resolves.toEqual({
+      isSuccess: false,
+      message: 'نشست موقت شما به پایان رسیده است. لطفاً دوباره تلاش کنید.',
+      data: { messages: {}, details: {} },
+      shouldRedirectToLogin: true,
+    });
+    expect(resetPasswordMock).not.toHaveBeenCalled();
+    expect(deleteTemporaryTokenCookieMock).not.toHaveBeenCalled();
+  });
+
+  it('validates reset-password input at the server boundary', async () => {
+    getTemporaryTokenMock.mockResolvedValue('temporary-token');
+
+    const result = await resetPasswordAction({
+      newPassword: 'short',
+      confirmPassword: 'different',
+    });
+
+    expect(result.isSuccess).toBe(false);
+    expect(resetPasswordMock).not.toHaveBeenCalled();
+    expect(deleteTemporaryTokenCookieMock).not.toHaveBeenCalled();
+  });
+
+  it('keeps the temporary cookie when the backend rejects the password reset', async () => {
+    const error = {
+      isSuccess: false as const,
+      message: 'کلمه عبور معتبر نیست',
+      data: { messages: {}, details: {} },
+    };
+    getTemporaryTokenMock.mockResolvedValue('temporary-token');
+    resetPasswordMock.mockResolvedValue(error);
+
+    await expect(
+      resetPasswordAction({ newPassword: 'new-password', confirmPassword: 'new-password' }),
+    ).resolves.toBe(error);
+    expect(deleteTemporaryTokenCookieMock).not.toHaveBeenCalled();
   });
 
   it('redirects to the canonical login path', async () => {

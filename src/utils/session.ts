@@ -117,3 +117,21 @@ export async function saveTemporaryTokenToCookie(temporaryToken: string): Promis
     path: '/',
   });
 }
+
+export async function getTemporaryToken(): Promise<string | null> {
+  try {
+    const cookieStore = await cookies();
+    const encryptedToken = cookieStore.get(TEMPORARY_TOKEN_COOKIE_NAME)?.value;
+
+    if (!encryptedToken) return null;
+
+    return await decryptTemporaryToken(encryptedToken);
+  } catch {
+    return null;
+  }
+}
+
+export async function deleteTemporaryTokenCookie(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete(TEMPORARY_TOKEN_COOKIE_NAME);
+}

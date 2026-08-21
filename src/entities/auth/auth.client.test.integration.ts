@@ -7,12 +7,14 @@ import {
   loginUserAction,
   redirectToLoginAction,
   registerUserAction,
+  resetPasswordAction,
   sendOtpAction,
   verifyResetPasswordOtpAction,
 } from './auth.actions';
 import {
   submitLoginUser,
   submitRegisterUser,
+  submitResetPassword,
   submitSendOtp,
   submitVerifyResetPasswordOtp,
 } from './auth.client';
@@ -20,6 +22,7 @@ import {
 vi.mock('./auth.actions', () => ({
   loginUserAction: vi.fn(),
   registerUserAction: vi.fn(),
+  resetPasswordAction: vi.fn(),
   redirectToLoginAction: vi.fn(),
   sendOtpAction: vi.fn(),
   verifyResetPasswordOtpAction: vi.fn(),
@@ -31,6 +34,7 @@ const registerUserActionMock = vi.mocked(registerUserAction);
 const loginUserActionMock = vi.mocked(loginUserAction);
 const redirectToLoginActionMock = vi.mocked(redirectToLoginAction);
 const sendOtpActionMock = vi.mocked(sendOtpAction);
+const resetPasswordActionMock = vi.mocked(resetPasswordAction);
 const verifyResetPasswordOtpActionMock = vi.mocked(verifyResetPasswordOtpAction);
 const globalErrorHandlerMock = vi.mocked(globalErrorHandler);
 const toastAddMock = vi.mocked(toast.add);
@@ -215,5 +219,68 @@ describe('verifyResetPasswordOtp client orchestration', () => {
     ).resolves.toBeNull();
     expect(globalErrorHandlerMock).toHaveBeenCalledWith(error, { showErrorFields: setError });
     expect(toastAddMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('resetPassword client orchestration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    redirectToLoginActionMock.mockResolvedValue(undefined as never);
+  });
+
+  it('shows the backend success message and redirects to login', async () => {
+    resetPasswordActionMock.mockResolvedValue({
+      isSuccess: true,
+      message: 'کلمه عبور شما با موفقیت بازنشانی شد',
+      data: true,
+    });
+    const input = { newPassword: 'new-password', confirmPassword: 'new-password' };
+    const setError = vi.fn();
+
+    await submitResetPassword(input, setError);
+
+    expect(toastAddMock).toHaveBeenCalledWith({
+      type: 'success',
+      title: 'کلمه عبور شما با موفقیت بازنشانی شد',
+    });
+    expect(redirectToLoginActionMock).toHaveBeenCalledOnce();
+  });
+
+  it('shows the Persian session-expired error and redirects to login', async () => {
+    const error = {
+      isSuccess: false as const,
+      message: 'نشست موقت شما به پایان رسیده است. لطفاً دوباره تلاش کنید.',
+      data: { messages: {}, details: {} },
+      shouldRedirectToLogin: true as const,
+    };
+    resetPasswordActionMock.mockResolvedValue(error);
+    const setError = vi.fn();
+
+    await submitResetPassword(
+      { newPassword: 'new-password', confirmPassword: 'new-password' },
+      setError,
+    );
+
+    expect(globalErrorHandlerMock).toHaveBeenCalledWith(error, { showErrorFields: setError });
+    expect(redirectToLoginActionMock).toHaveBeenCalledOnce();
+    expect(toastAddMock).not.toHaveBeenCalled();
+  });
+
+  it('keeps the form visible for ordinary backend errors', async () => {
+    const error = {
+      isSuccess: false as const,
+      message: 'کلمه عبور معتبر نیست',
+      data: { messages: {}, details: {} },
+    };
+    resetPasswordActionMock.mockResolvedValue(error);
+    const setError = vi.fn();
+
+    await submitResetPassword(
+      { newPassword: 'new-password', confirmPassword: 'new-password' },
+      setError,
+    );
+
+    expect(globalErrorHandlerMock).toHaveBeenCalledWith(error, { showErrorFields: setError });
+    expect(redirectToLoginActionMock).not.toHaveBeenCalled();
   });
 });

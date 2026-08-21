@@ -1,6 +1,7 @@
 import type {
   LoginUserInput,
   RegisterUserInput,
+  ResetPasswordInput,
   SendOtpInput,
   VerifyResetPasswordOtpInput,
 } from '@/entities/auth/auth.schema';
@@ -33,6 +34,14 @@ export async function verifyResetPasswordOtpAction(_input: VerifyResetPasswordOt
   return {
     isSuccess: true as const,
     message: 'کد تأیید شما معتبر است',
+    data: true as const,
+  };
+}
+
+export async function resetPasswordAction(_input: ResetPasswordInput) {
+  return {
+    isSuccess: true as const,
+    message: 'کلمه عبور شما با موفقیت بازنشانی شد',
     data: true as const,
   };
 }

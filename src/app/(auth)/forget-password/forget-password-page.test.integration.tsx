@@ -4,7 +4,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { OtpStepForm } from '@/app/(auth)/forget-password/_components/otp-step-form';
 import { routePaths } from '@/configs/route.path';
-import { sendOtpAction, verifyResetPasswordOtpAction } from '@/entities/auth/auth.actions';
+import {
+  redirectToLoginAction,
+  resetPasswordAction,
+  sendOtpAction,
+  verifyResetPasswordOtpAction,
+} from '@/entities/auth/auth.actions';
 
 import ForgetPasswordPage, { metadata } from './page';
 
@@ -12,12 +17,15 @@ vi.mock('@/entities/auth/auth.actions', () => ({
   loginUserAction: vi.fn(),
   redirectToLoginAction: vi.fn(),
   registerUserAction: vi.fn(),
+  resetPasswordAction: vi.fn(),
   sendOtpAction: vi.fn(),
   verifyResetPasswordOtpAction: vi.fn(),
 }));
 
 const sendOtpActionMock = vi.mocked(sendOtpAction);
 const verifyResetPasswordOtpActionMock = vi.mocked(verifyResetPasswordOtpAction);
+const resetPasswordActionMock = vi.mocked(resetPasswordAction);
+const redirectToLoginActionMock = vi.mocked(redirectToLoginAction);
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -31,6 +39,12 @@ beforeEach(() => {
     message: 'کد تأیید شما معتبر است',
     data: true,
   });
+  resetPasswordActionMock.mockResolvedValue({
+    isSuccess: true,
+    message: 'کلمه عبور شما با موفقیت بازنشانی شد',
+    data: true,
+  });
+  redirectToLoginActionMock.mockResolvedValue(undefined as never);
   Object.defineProperty(document, 'elementFromPoint', {
     configurable: true,
     value: vi.fn(() => null),
@@ -78,6 +92,12 @@ async function goToOtpStep(phoneNumber = '09123456789') {
   fireEvent.click(screen.getByRole('button', { name: 'ارسال کد تأیید' }));
 
   await screen.findByText(phoneNumber);
+}
+
+async function goToPasswordStep() {
+  await goToOtpStep();
+  fireEvent.change(screen.getByLabelText('کد تأیید'), { target: { value: '123456' } });
+  await screen.findByRole('heading', { level: 1, name: 'تنظیم کلمه عبور جدید' });
 }
 
 describe(routePaths.forgetPassword, () => {
@@ -149,6 +169,27 @@ describe(routePaths.forgetPassword, () => {
     await waitFor(() =>
       expect((screen.getByLabelText('شماره موبایل') as HTMLInputElement).value).toBe('09123456789'),
     );
+  });
+
+  it('submits matching passwords and redirects to login after success', async () => {
+    renderPage();
+    await goToPasswordStep();
+
+    fireEvent.change(screen.getByLabelText('کلمه عبور جدید'), {
+      target: { value: 'new-password' },
+    });
+    fireEvent.change(screen.getByLabelText('تکرار کلمه عبور جدید'), {
+      target: { value: 'new-password' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'بازنشانی کلمه عبور' }));
+
+    await waitFor(() =>
+      expect(resetPasswordActionMock).toHaveBeenCalledWith({
+        newPassword: 'new-password',
+        confirmPassword: 'new-password',
+      }),
+    );
+    expect(redirectToLoginActionMock).toHaveBeenCalledOnce();
   });
 
   it('replaces an expired countdown with resend and restarts it from the server duration', async () => {

@@ -4,6 +4,7 @@ import type {
   LoginUserDTO,
   LoginUserResponseDTO,
   RegisterUserDTO,
+  ResetPasswordDTO,
   SendOtpDTO,
   SendOtpResponseDTO,
   VerifyResetPasswordOtpDTO,
@@ -49,4 +50,17 @@ export function verifyResetPasswordOtp(input: VerifyResetPasswordOtpDTO) {
     auth: false,
     cache: 'no-store',
   });
+}
+
+export function resetPassword(input: ResetPasswordDTO, temporaryToken: string) {
+  return customFetcher<true, unknown, ResetPasswordDTO>(
+    {
+      url: '/users/reset-password',
+      method: 'POST',
+      body: input,
+      auth: false,
+      cache: 'no-store',
+    },
+    { customToken: temporaryToken },
+  );
 }

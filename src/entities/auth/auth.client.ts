@@ -9,6 +9,7 @@ import {
   loginUserAction,
   redirectToLoginAction,
   registerUserAction,
+  resetPasswordAction,
   sendOtpAction,
   verifyResetPasswordOtpAction,
 } from '@/entities/auth/auth.actions';
@@ -16,6 +17,7 @@ import type { SendOtpResponseDTO } from '@/entities/auth/auth.dto';
 import type {
   LoginUserInput,
   RegisterUserInput,
+  ResetPasswordInput,
   SendOtpInput,
   VerifyOtpCodeInput,
   VerifyResetPasswordOtpInput,
@@ -201,4 +203,34 @@ export function useVerifyResetPasswordOtp(
   }, []);
 
   return { formRef, handleFinished, handleSubmit, resetVerificationCode } as const;
+}
+
+export async function submitResetPassword(
+  input: ResetPasswordInput,
+  showErrorFields: UseFormSetError<ResetPasswordInput>,
+): Promise<void> {
+  const result = await resetPasswordAction(input);
+
+  if (!result.isSuccess) {
+    globalErrorHandler(result, { showErrorFields });
+    if ('shouldRedirectToLogin' in result && result.shouldRedirectToLogin) {
+      await redirectToLoginAction();
+    }
+    return;
+  }
+
+  toast.add({ type: 'success', title: result.message });
+  await redirectToLoginAction();
+}
+
+export function useResetPassword() {
+  const formRef = useRef<FormHandle<ResetPasswordInput>>(null);
+  const handleSubmit = useCallback(async (input: ResetPasswordInput) => {
+    const form = formRef.current;
+    if (!form) return;
+
+    await submitResetPassword(input, form.setError);
+  }, []);
+
+  return { formRef, handleSubmit } as const;
 }

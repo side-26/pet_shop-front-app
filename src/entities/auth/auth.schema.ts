@@ -59,3 +59,17 @@ export const verifyResetPasswordOtpSchema = yup.object({
 });
 
 export type VerifyResetPasswordOtpInput = yup.InferType<typeof verifyResetPasswordOtpSchema>;
+
+export const resetPasswordSchema = yup.object({
+  newPassword: yup
+    .string()
+    .required('کلمه عبور جدید الزامی است.')
+    .min(8, 'کلمه عبور باید حداقل ۸ نویسه باشد.'),
+  confirmPassword: yup
+    .string()
+    .required('تکرار کلمه عبور الزامی است.')
+    .min(8, 'تکرار کلمه عبور باید حداقل ۸ نویسه باشد.')
+    .oneOf([yup.ref('newPassword')], 'تکرار کلمه عبور با کلمه عبور جدید یکسان نیست.'),
+});
+
+export type ResetPasswordInput = yup.InferType<typeof resetPasswordSchema>;

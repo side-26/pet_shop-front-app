@@ -8,20 +8,31 @@ import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
 import {
   loginUserSchema,
   registerUserSchema,
+  resetPasswordSchema,
   sendOtpSchema,
   verifyResetPasswordOtpSchema,
   type LoginUserInput,
   type RegisterUserInput,
+  type ResetPasswordInput,
   type SendOtpInput,
   type VerifyResetPasswordOtpInput,
 } from '@/entities/auth/auth.schema';
 import {
   loginUser,
   registerUser,
+  resetPassword,
   sendOtp,
   verifyResetPasswordOtp,
 } from '@/entities/auth/auth.service';
-import { saveSessionToCookie, saveTemporaryTokenToCookie } from '@/utils/session';
+import {
+  deleteTemporaryTokenCookie,
+  getTemporaryToken,
+  saveSessionToCookie,
+  saveTemporaryTokenToCookie,
+} from '@/utils/session';
+
+const TEMPORARY_SESSION_EXPIRED_MESSAGE =
+  'نشست موقت شما به پایان رسیده است. لطفاً دوباره تلاش کنید.';
 
 export async function registerUserAction(input: RegisterUserInput) {
   try {
@@ -98,6 +109,44 @@ export async function verifyResetPasswordOtpAction(input: VerifyResetPasswordOtp
     if (!result.isSuccess) return result;
 
     await saveTemporaryTokenToCookie(result.data.temporaryToken);
+
+    return {
+      isSuccess: true as const,
+      message: result.message,
+      data: true as const,
+    };
+  } catch (error: unknown) {
+    if (error instanceof ValidationError) {
+      return validationErrorToFetcherError(error);
+    }
+
+    throw error;
+  }
+}
+
+export async function resetPasswordAction(input: ResetPasswordInput) {
+  try {
+    const temporaryToken = await getTemporaryToken();
+
+    if (!temporaryToken) {
+      return {
+        isSuccess: false as const,
+        message: TEMPORARY_SESSION_EXPIRED_MESSAGE,
+        data: { messages: {}, details: {} },
+        shouldRedirectToLogin: true as const,
+      };
+    }
+
+    const validatedInput = await resetPasswordSchema.validate(input, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+
+    const result = await resetPassword(validatedInput, temporaryToken);
+
+    if (!result.isSuccess) return result;
+
+    await deleteTemporaryTokenCookie();
 
     return {
       isSuccess: true as const,

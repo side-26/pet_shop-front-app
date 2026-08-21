@@ -2,7 +2,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { customFetcher } from '@/lib/api/customFetcher';
 
-import { loginUser, registerUser, sendOtp, verifyResetPasswordOtp } from './auth.service';
+import {
+  loginUser,
+  registerUser,
+  resetPassword,
+  sendOtp,
+  verifyResetPasswordOtp,
+} from './auth.service';
 
 vi.mock('@/lib/api/customFetcher', () => ({ customFetcher: vi.fn() }));
 
@@ -129,5 +135,36 @@ describe('verifyResetPasswordOtp service', () => {
       auth: false,
       cache: 'no-store',
     });
+  });
+});
+
+describe('resetPassword service', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('posts the validated passwords using only the supplied temporary token', async () => {
+    customFetcherMock.mockResolvedValue({
+      isSuccess: true,
+      message: 'کلمه عبور شما با موفقیت بازنشانی شد',
+      data: true,
+    });
+    const input = { newPassword: 'new-password', confirmPassword: 'new-password' };
+
+    await expect(resetPassword(input, 'temporary-token')).resolves.toEqual({
+      isSuccess: true,
+      message: 'کلمه عبور شما با موفقیت بازنشانی شد',
+      data: true,
+    });
+    expect(customFetcherMock).toHaveBeenCalledWith(
+      {
+        url: '/users/reset-password',
+        method: 'POST',
+        body: input,
+        auth: false,
+        cache: 'no-store',
+      },
+      { customToken: 'temporary-token' },
+    );
   });
 });

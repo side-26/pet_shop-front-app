@@ -5,6 +5,7 @@ import { validationErrorToFetcherError } from './auth.helpers';
 import {
   loginUserSchema,
   registerUserSchema,
+  resetPasswordSchema,
   sendOtpSchema,
   verifyResetPasswordOtpSchema,
 } from './auth.schema';
@@ -92,6 +93,37 @@ describe('verifyResetPasswordOtpSchema', () => {
       ),
     ).rejects.toMatchObject({
       errors: ['کد تأیید باید ۶ رقم باشد.', 'درخواست تأیید باید برای بازیابی کلمه عبور باشد.'],
+    });
+  });
+});
+
+describe('resetPasswordSchema', () => {
+  it('accepts matching passwords that satisfy the documented minimum length', async () => {
+    const input = { newPassword: '12345678', confirmPassword: '12345678' };
+
+    await expect(resetPasswordSchema.validate(input)).resolves.toEqual(input);
+  });
+
+  it('rejects short or mismatched password confirmation', async () => {
+    await expect(
+      resetPasswordSchema.validate(
+        { newPassword: '1234567', confirmPassword: '7654321' },
+        { abortEarly: false },
+      ),
+    ).rejects.toMatchObject({
+      errors: [
+        'کلمه عبور باید حداقل ۸ نویسه باشد.',
+        'تکرار کلمه عبور با کلمه عبور جدید یکسان نیست.',
+      ],
+    });
+
+    await expect(
+      resetPasswordSchema.validate(
+        { newPassword: '1234567', confirmPassword: '1234567' },
+        { abortEarly: false },
+      ),
+    ).rejects.toMatchObject({
+      errors: ['کلمه عبور باید حداقل ۸ نویسه باشد.', 'تکرار کلمه عبور باید حداقل ۸ نویسه باشد.'],
     });
   });
 });
