@@ -1,17 +1,5 @@
 import * as yup from 'yup';
 
-export const otpStepSchema = yup.object({
-  verificationCode: yup
-    .string()
-    .matches(/^\d{6}$/, {
-      message: 'کد تأیید باید ۶ رقم باشد.',
-      excludeEmptyString: true,
-    })
-    .required('کد تأیید الزامی است.'),
-});
-
-export type OtpStepValues = yup.InferType<typeof otpStepSchema>;
-
 export const passwordStepSchema = yup.object({
   newPassword: yup
     .string()

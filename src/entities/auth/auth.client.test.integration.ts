@@ -8,14 +8,21 @@ import {
   redirectToLoginAction,
   registerUserAction,
   sendOtpAction,
+  verifyResetPasswordOtpAction,
 } from './auth.actions';
-import { submitLoginUser, submitRegisterUser, submitSendOtp } from './auth.client';
+import {
+  submitLoginUser,
+  submitRegisterUser,
+  submitSendOtp,
+  submitVerifyResetPasswordOtp,
+} from './auth.client';
 
 vi.mock('./auth.actions', () => ({
   loginUserAction: vi.fn(),
   registerUserAction: vi.fn(),
   redirectToLoginAction: vi.fn(),
   sendOtpAction: vi.fn(),
+  verifyResetPasswordOtpAction: vi.fn(),
 }));
 vi.mock('@/utils/helpers', () => ({ globalErrorHandler: vi.fn() }));
 vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
@@ -24,6 +31,7 @@ const registerUserActionMock = vi.mocked(registerUserAction);
 const loginUserActionMock = vi.mocked(loginUserAction);
 const redirectToLoginActionMock = vi.mocked(redirectToLoginAction);
 const sendOtpActionMock = vi.mocked(sendOtpAction);
+const verifyResetPasswordOtpActionMock = vi.mocked(verifyResetPasswordOtpAction);
 const globalErrorHandlerMock = vi.mocked(globalErrorHandler);
 const toastAddMock = vi.mocked(toast.add);
 
@@ -155,6 +163,56 @@ describe('sendOtp client orchestration', () => {
     const setError = vi.fn();
 
     await expect(submitSendOtp({ phoneNumber: '09999999999' }, setError)).resolves.toBeNull();
+    expect(globalErrorHandlerMock).toHaveBeenCalledWith(error, { showErrorFields: setError });
+    expect(toastAddMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('verifyResetPasswordOtp client orchestration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('shows the backend message and returns only the verification flag', async () => {
+    verifyResetPasswordOtpActionMock.mockResolvedValue({
+      isSuccess: true,
+      message: 'کد تأیید شما معتبر است',
+      data: true,
+    });
+    const input = {
+      phoneNumber: '09123456789',
+      'otp-code': '123456',
+      'reset-password': true,
+    } as const;
+    const setError = vi.fn();
+
+    await expect(submitVerifyResetPasswordOtp(input, setError)).resolves.toBe(true);
+    expect(toastAddMock).toHaveBeenCalledWith({
+      type: 'success',
+      title: 'کد تأیید شما معتبر است',
+    });
+    expect(globalErrorHandlerMock).not.toHaveBeenCalled();
+  });
+
+  it('passes verification failures unchanged and returns no success flag', async () => {
+    const error = {
+      isSuccess: false as const,
+      message: 'کد تأیید وارد شده معتبر نیست',
+      data: { messages: {}, details: {} },
+    };
+    verifyResetPasswordOtpActionMock.mockResolvedValue(error);
+    const setError = vi.fn();
+
+    await expect(
+      submitVerifyResetPasswordOtp(
+        {
+          phoneNumber: '09123456789',
+          'otp-code': '123456',
+          'reset-password': true,
+        },
+        setError,
+      ),
+    ).resolves.toBeNull();
     expect(globalErrorHandlerMock).toHaveBeenCalledWith(error, { showErrorFields: setError });
     expect(toastAddMock).not.toHaveBeenCalled();
   });

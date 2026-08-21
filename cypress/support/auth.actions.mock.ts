@@ -1,4 +1,9 @@
-import type { LoginUserInput, RegisterUserInput, SendOtpInput } from '@/entities/auth/auth.schema';
+import type {
+  LoginUserInput,
+  RegisterUserInput,
+  SendOtpInput,
+  VerifyResetPasswordOtpInput,
+} from '@/entities/auth/auth.schema';
 
 export async function registerUserAction(_input: RegisterUserInput) {
   return {
@@ -21,6 +26,14 @@ export async function sendOtpAction(_input: SendOtpInput) {
     isSuccess: true as const,
     message: 'کد تأیید با موفقیت ارسال شد.',
     data: { remainingSeconds: 1 },
+  };
+}
+
+export async function verifyResetPasswordOtpAction(_input: VerifyResetPasswordOtpInput) {
+  return {
+    isSuccess: true as const,
+    message: 'کد تأیید شما معتبر است',
+    data: true as const,
   };
 }
 

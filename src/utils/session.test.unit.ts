@@ -13,7 +13,12 @@ vi.mock('next/headers', () => ({
   cookies: cookiesMock,
 }));
 
-import { decryptSession, saveSessionToCookie } from './session';
+import {
+  decryptSession,
+  decryptTemporaryToken,
+  saveSessionToCookie,
+  saveTemporaryTokenToCookie,
+} from './session';
 
 const session: AuthSessionModel = {
   accessToken: 'access-token',
@@ -29,6 +34,7 @@ describe('session helpers', () => {
     vi.clearAllMocks();
     vi.stubEnv('NEXT_PUBLIC_SESSION_COOKIE_NAME', 'petshop-session');
     vi.stubEnv('NEXT_PUBLIC_SESSION_SECRET_KEY', 'test-session-secret');
+    vi.stubEnv('NEXT_PUBLIC_TEMPORARY_SESSION_SECRET_KEY', 'test-temporary-session-secret');
     vi.useFakeTimers();
     vi.setSystemTime(Date.UTC(2026, 7, 17, 12, 0, 0));
     cookiesMock.mockResolvedValue({ set: cookieSetMock });
@@ -60,5 +66,23 @@ describe('session helpers', () => {
       expect.any(String),
       expect.objectContaining({ maxAge: 0 }),
     );
+  });
+
+  it('encrypts the temporary token in a secure five-minute cookie', async () => {
+    await saveTemporaryTokenToCookie('temporary-reset-token');
+
+    expect(cookieSetMock).toHaveBeenCalledOnce();
+    const [name, value, options] = cookieSetMock.mock.calls[0];
+
+    expect(name).toBe('temp_token');
+    expect(value).not.toContain('temporary-reset-token');
+    await expect(decryptTemporaryToken(value)).resolves.toBe('temporary-reset-token');
+    expect(options).toEqual({
+      httpOnly: true,
+      secure: true,
+      maxAge: 300,
+      sameSite: 'strict',
+      path: '/',
+    });
   });
 });

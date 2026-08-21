@@ -1,4 +1,9 @@
-import type { LoginUserInput, RegisterUserInput, SendOtpInput } from './auth.schema';
+import type {
+  LoginUserInput,
+  RegisterUserInput,
+  SendOtpInput,
+  VerifyResetPasswordOtpInput,
+} from './auth.schema';
 
 export type RegisterUserDTO = RegisterUserInput;
 
@@ -6,8 +11,15 @@ export type LoginUserDTO = Pick<LoginUserInput, 'phoneNumber' | 'password'>;
 
 export type SendOtpDTO = SendOtpInput;
 
+export type VerifyResetPasswordOtpDTO = VerifyResetPasswordOtpInput;
+
 export type SendOtpResponseDTO = {
   remainingSeconds: number;
+};
+
+export type VerifyResetPasswordOtpResponseDTO = {
+  temporaryToken: string;
+  expiry: number;
 };
 
 export type LoginUserResponseDTO = {

@@ -1,29 +1,36 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PATHS } from '@/configs/route.path';
-import { saveSessionToCookie } from '@/utils/session';
+import { saveSessionToCookie, saveTemporaryTokenToCookie } from '@/utils/session';
 
 import {
   loginUserAction,
   redirectToLoginAction,
   registerUserAction,
   sendOtpAction,
+  verifyResetPasswordOtpAction,
 } from './auth.actions';
-import { loginUser, registerUser, sendOtp } from './auth.service';
+import { loginUser, registerUser, sendOtp, verifyResetPasswordOtp } from './auth.service';
 import { redirect } from 'next/navigation';
 
 vi.mock('./auth.service', () => ({
   loginUser: vi.fn(),
   registerUser: vi.fn(),
   sendOtp: vi.fn(),
+  verifyResetPasswordOtp: vi.fn(),
 }));
-vi.mock('@/utils/session', () => ({ saveSessionToCookie: vi.fn() }));
+vi.mock('@/utils/session', () => ({
+  saveSessionToCookie: vi.fn(),
+  saveTemporaryTokenToCookie: vi.fn(),
+}));
 vi.mock('next/navigation', () => ({ redirect: vi.fn() }));
 
 const registerUserMock = vi.mocked(registerUser);
 const loginUserMock = vi.mocked(loginUser);
 const sendOtpMock = vi.mocked(sendOtp);
+const verifyResetPasswordOtpMock = vi.mocked(verifyResetPasswordOtp);
 const saveSessionToCookieMock = vi.mocked(saveSessionToCookie);
+const saveTemporaryTokenToCookieMock = vi.mocked(saveTemporaryTokenToCookie);
 const redirectMock = vi.mocked(redirect);
 
 const loginSession = {
@@ -144,6 +151,39 @@ describe('auth actions', () => {
 
     expect(result.isSuccess).toBe(false);
     expect(sendOtpMock).not.toHaveBeenCalled();
+  });
+
+  it('stores a verified reset token server-side and returns only a success flag', async () => {
+    verifyResetPasswordOtpMock.mockResolvedValue({
+      isSuccess: true,
+      message: 'کد تأیید شما معتبر است',
+      data: { temporaryToken: 'temporary-token', expiry: 300 },
+    });
+    const input = {
+      phoneNumber: '09123456789',
+      'otp-code': '123456',
+      'reset-password': true,
+    } as const;
+
+    await expect(verifyResetPasswordOtpAction(input)).resolves.toEqual({
+      isSuccess: true,
+      message: 'کد تأیید شما معتبر است',
+      data: true,
+    });
+    expect(verifyResetPasswordOtpMock).toHaveBeenCalledWith(input);
+    expect(saveTemporaryTokenToCookieMock).toHaveBeenCalledWith('temporary-token');
+  });
+
+  it('does not verify an invalid reset-password OTP request', async () => {
+    const result = await verifyResetPasswordOtpAction({
+      phoneNumber: '09123456789',
+      'otp-code': '12345',
+      'reset-password': true,
+    });
+
+    expect(result.isSuccess).toBe(false);
+    expect(verifyResetPasswordOtpMock).not.toHaveBeenCalled();
+    expect(saveTemporaryTokenToCookieMock).not.toHaveBeenCalled();
   });
 
   it('redirects to the canonical login path', async () => {

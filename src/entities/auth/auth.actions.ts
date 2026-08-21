@@ -9,12 +9,19 @@ import {
   loginUserSchema,
   registerUserSchema,
   sendOtpSchema,
+  verifyResetPasswordOtpSchema,
   type LoginUserInput,
   type RegisterUserInput,
   type SendOtpInput,
+  type VerifyResetPasswordOtpInput,
 } from '@/entities/auth/auth.schema';
-import { loginUser, registerUser, sendOtp } from '@/entities/auth/auth.service';
-import { saveSessionToCookie } from '@/utils/session';
+import {
+  loginUser,
+  registerUser,
+  sendOtp,
+  verifyResetPasswordOtp,
+} from '@/entities/auth/auth.service';
+import { saveSessionToCookie, saveTemporaryTokenToCookie } from '@/utils/session';
 
 export async function registerUserAction(input: RegisterUserInput) {
   try {
@@ -70,6 +77,33 @@ export async function sendOtpAction(input: SendOtpInput) {
     });
 
     return sendOtp(validatedInput);
+  } catch (error: unknown) {
+    if (error instanceof ValidationError) {
+      return validationErrorToFetcherError(error);
+    }
+
+    throw error;
+  }
+}
+
+export async function verifyResetPasswordOtpAction(input: VerifyResetPasswordOtpInput) {
+  try {
+    const validatedInput = await verifyResetPasswordOtpSchema.validate(input, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+
+    const result = await verifyResetPasswordOtp(validatedInput);
+
+    if (!result.isSuccess) return result;
+
+    await saveTemporaryTokenToCookie(result.data.temporaryToken);
+
+    return {
+      isSuccess: true as const,
+      message: result.message,
+      data: true as const,
+    };
   } catch (error: unknown) {
     if (error instanceof ValidationError) {
       return validationErrorToFetcherError(error);

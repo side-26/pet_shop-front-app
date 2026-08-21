@@ -15,8 +15,8 @@ function getRequiredEnvironmentVariable(name: string): string {
   return value;
 }
 
-async function getEncryptionKey(): Promise<Uint8Array> {
-  const sessionSecret = getRequiredEnvironmentVariable('NEXT_PUBLIC_SESSION_SECRET_KEY');
+async function getEncryptionKey(environmentVariableName: string): Promise<Uint8Array> {
+  const sessionSecret = getRequiredEnvironmentVariable(environmentVariableName);
   const encodedSecret = new TextEncoder().encode(sessionSecret);
   const keyDigest = await crypto.subtle.digest('SHA-256', encodedSecret);
 
@@ -29,14 +29,18 @@ export async function encryptSession(session: AuthSessionModel): Promise<string>
       alg: 'dir',
       enc: 'A256GCM',
     })
-    .encrypt(await getEncryptionKey());
+    .encrypt(await getEncryptionKey('NEXT_PUBLIC_SESSION_SECRET_KEY'));
 }
 
 export async function decryptSession<T>(encodedSession: string) {
-  const { payload } = await jwtDecrypt(encodedSession, await getEncryptionKey(), {
-    keyManagementAlgorithms: ['dir'],
-    contentEncryptionAlgorithms: ['A256GCM'],
-  });
+  const { payload } = await jwtDecrypt(
+    encodedSession,
+    await getEncryptionKey('NEXT_PUBLIC_SESSION_SECRET_KEY'),
+    {
+      keyManagementAlgorithms: ['dir'],
+      contentEncryptionAlgorithms: ['A256GCM'],
+    },
+  );
   return payload as T;
 }
 
@@ -65,6 +69,50 @@ export async function saveSessionToCookie(session: AuthSessionModel): Promise<vo
     httpOnly: true,
     secure: true,
     maxAge,
+    sameSite: 'strict',
+    path: '/',
+  });
+}
+
+const TEMPORARY_TOKEN_COOKIE_NAME = 'temp_token';
+const TEMPORARY_TOKEN_TTL_SECONDS = 5 * 60;
+
+type TemporaryTokenPayload = {
+  temporaryToken: string;
+};
+
+export async function encryptTemporaryToken(temporaryToken: string): Promise<string> {
+  return new EncryptJWT({ temporaryToken })
+    .setProtectedHeader({
+      alg: 'dir',
+      enc: 'A256GCM',
+    })
+    .setIssuedAt()
+    .setExpirationTime(`${TEMPORARY_TOKEN_TTL_SECONDS}s`)
+    .encrypt(await getEncryptionKey('NEXT_PUBLIC_TEMPORARY_SESSION_SECRET_KEY'));
+}
+
+export async function decryptTemporaryToken(encodedToken: string): Promise<string> {
+  const { payload } = await jwtDecrypt(
+    encodedToken,
+    await getEncryptionKey('NEXT_PUBLIC_TEMPORARY_SESSION_SECRET_KEY'),
+    {
+      keyManagementAlgorithms: ['dir'],
+      contentEncryptionAlgorithms: ['A256GCM'],
+    },
+  );
+
+  return (payload as TemporaryTokenPayload).temporaryToken;
+}
+
+export async function saveTemporaryTokenToCookie(temporaryToken: string): Promise<void> {
+  const encryptedToken = await encryptTemporaryToken(temporaryToken);
+  const cookieStore = await cookies();
+
+  cookieStore.set(TEMPORARY_TOKEN_COOKIE_NAME, encryptedToken, {
+    httpOnly: true,
+    secure: true,
+    maxAge: TEMPORARY_TOKEN_TTL_SECONDS,
     sameSite: 'strict',
     path: '/',
   });

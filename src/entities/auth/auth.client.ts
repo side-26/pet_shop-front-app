@@ -10,9 +10,16 @@ import {
   redirectToLoginAction,
   registerUserAction,
   sendOtpAction,
+  verifyResetPasswordOtpAction,
 } from '@/entities/auth/auth.actions';
 import type { SendOtpResponseDTO } from '@/entities/auth/auth.dto';
-import type { LoginUserInput, RegisterUserInput, SendOtpInput } from '@/entities/auth/auth.schema';
+import type {
+  LoginUserInput,
+  RegisterUserInput,
+  SendOtpInput,
+  VerifyOtpCodeInput,
+  VerifyResetPasswordOtpInput,
+} from '@/entities/auth/auth.schema';
 import { globalErrorHandler } from '@/utils/helpers';
 import { wait } from '@/utils/wait';
 
@@ -129,4 +136,69 @@ export function useResendOtp(
   }, [isLoading, onSuccess, phoneNumber]);
 
   return { handleResend, isLoading } as const;
+}
+
+export async function submitVerifyResetPasswordOtp(
+  input: VerifyResetPasswordOtpInput,
+  showErrorFields: UseFormSetError<VerifyOtpCodeInput>,
+): Promise<true | null> {
+  const result = await verifyResetPasswordOtpAction(input);
+
+  if (!result.isSuccess) {
+    globalErrorHandler(result, { showErrorFields });
+    return null;
+  }
+
+  toast.add({ type: 'success', title: result.message });
+
+  return result.data;
+}
+
+type VerifyResetPasswordOtpSuccessHandler = () => void;
+
+export function useVerifyResetPasswordOtp(
+  phoneNumber: string,
+  onSuccess: VerifyResetPasswordOtpSuccessHandler,
+) {
+  const formRef = useRef<FormHandle<VerifyOtpCodeInput>>(null);
+  const completedCodeRef = useRef('');
+  const handleSubmit = useCallback(
+    async (input: VerifyOtpCodeInput) => {
+      const form = formRef.current;
+      if (!form) return;
+      const verificationCode = input.verificationCode ?? completedCodeRef.current;
+      if (!verificationCode) return;
+
+      const isVerified = await submitVerifyResetPasswordOtp(
+        {
+          phoneNumber,
+          'otp-code': verificationCode,
+          'reset-password': true,
+        },
+        form.setError,
+      );
+      if (isVerified) onSuccess();
+    },
+    [onSuccess, phoneNumber],
+  );
+  const handleFinished = useCallback(
+    (verificationCode: string) => {
+      const form = formRef.current;
+      if (!form) return;
+
+      completedCodeRef.current = verificationCode;
+      form.setValue('verificationCode', verificationCode, {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+      void form.handleSubmit(handleSubmit)();
+    },
+    [handleSubmit],
+  );
+  const resetVerificationCode = useCallback(() => {
+    completedCodeRef.current = '';
+    formRef.current?.reset({ verificationCode: '' });
+  }, []);
+
+  return { formRef, handleFinished, handleSubmit, resetVerificationCode } as const;
 }

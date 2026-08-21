@@ -6,6 +6,8 @@ import type {
   RegisterUserDTO,
   SendOtpDTO,
   SendOtpResponseDTO,
+  VerifyResetPasswordOtpDTO,
+  VerifyResetPasswordOtpResponseDTO,
 } from '@/entities/auth/auth.dto';
 import { customFetcher } from '@/lib/api/customFetcher';
 
@@ -32,6 +34,16 @@ export function loginUser(input: LoginUserDTO) {
 export function sendOtp(input: SendOtpDTO) {
   return customFetcher<SendOtpResponseDTO, unknown, SendOtpDTO>({
     url: '/users/send-otp',
+    method: 'POST',
+    body: input,
+    auth: false,
+    cache: 'no-store',
+  });
+}
+
+export function verifyResetPasswordOtp(input: VerifyResetPasswordOtpDTO) {
+  return customFetcher<VerifyResetPasswordOtpResponseDTO, unknown, VerifyResetPasswordOtpDTO>({
+    url: '/users/verify',
     method: 'POST',
     body: input,
     auth: false,

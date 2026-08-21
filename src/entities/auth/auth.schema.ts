@@ -34,3 +34,28 @@ export const sendOtpSchema = yup.object({
 });
 
 export type SendOtpInput = yup.InferType<typeof sendOtpSchema>;
+
+export const otpCodeSchema = yup
+  .string()
+  .matches(/^\d{6}$/, {
+    message: 'کد تأیید باید ۶ رقم باشد.',
+    excludeEmptyString: true,
+  })
+  .required('کد تأیید الزامی است.');
+
+export const verifyOtpCodeSchema = yup.object({
+  verificationCode: otpCodeSchema,
+});
+
+export type VerifyOtpCodeInput = yup.InferType<typeof verifyOtpCodeSchema>;
+
+export const verifyResetPasswordOtpSchema = yup.object({
+  phoneNumber: iranianPhoneNumberSchema,
+  'otp-code': otpCodeSchema,
+  'reset-password': yup
+    .boolean()
+    .oneOf([true], 'درخواست تأیید باید برای بازیابی کلمه عبور باشد.')
+    .required(),
+});
+
+export type VerifyResetPasswordOtpInput = yup.InferType<typeof verifyResetPasswordOtpSchema>;

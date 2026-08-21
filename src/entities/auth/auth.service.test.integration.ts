@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { customFetcher } from '@/lib/api/customFetcher';
 
-import { loginUser, registerUser, sendOtp } from './auth.service';
+import { loginUser, registerUser, sendOtp, verifyResetPasswordOtp } from './auth.service';
 
 vi.mock('@/lib/api/customFetcher', () => ({ customFetcher: vi.fn() }));
 
@@ -92,6 +92,38 @@ describe('sendOtp service', () => {
     });
     expect(customFetcherMock).toHaveBeenCalledWith({
       url: '/users/send-otp',
+      method: 'POST',
+      body: input,
+      auth: false,
+      cache: 'no-store',
+    });
+  });
+});
+
+describe('verifyResetPasswordOtp service', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('posts the documented reset-password verification payload without authentication or caching', async () => {
+    customFetcherMock.mockResolvedValue({
+      isSuccess: true,
+      message: 'کد تأیید شما معتبر است',
+      data: { temporaryToken: 'temporary-token', expiry: 300 },
+    });
+    const input = {
+      phoneNumber: '09123456789',
+      'otp-code': '123456',
+      'reset-password': true,
+    } as const;
+
+    await expect(verifyResetPasswordOtp(input)).resolves.toEqual({
+      isSuccess: true,
+      message: 'کد تأیید شما معتبر است',
+      data: { temporaryToken: 'temporary-token', expiry: 300 },
+    });
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/users/verify',
       method: 'POST',
       body: input,
       auth: false,

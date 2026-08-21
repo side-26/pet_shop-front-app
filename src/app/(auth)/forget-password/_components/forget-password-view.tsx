@@ -7,7 +7,6 @@ import { AuthCardShell } from '@/app/(auth)/_components/auth-form-card';
 import { OtpStepForm } from '@/app/(auth)/forget-password/_components/otp-step-form';
 import { PasswordStepForm } from '@/app/(auth)/forget-password/_components/password-step-form';
 import { PhoneStepForm } from '@/app/(auth)/forget-password/_components/phone-step-form';
-import type { OtpStepValues } from '@/app/(auth)/forget-password/_components/forget-password.schemas';
 import { Button } from '@/components/ui/button';
 import { CardContent, CardFooter } from '@/components/ui/card';
 import type { SendOtpResponseDTO } from '@/entities/auth/auth.dto';
@@ -43,6 +42,7 @@ export function ForgetPasswordView({ resendSeconds = 60 }: ForgetPasswordViewPro
   const [step, setStep] = useState<RecoveryStep>(1);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [otpCountdownSeconds, setOtpCountdownSeconds] = useState(resendSeconds);
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [navigationDirection, setNavigationDirection] = useState<NavigationDirection>(1);
   const reduceMotion = Boolean(useReducedMotion());
 
@@ -54,11 +54,13 @@ export function ForgetPasswordView({ resendSeconds = 60 }: ForgetPasswordViewPro
   }, []);
 
   const handlePhoneChange = useCallback(() => {
+    setIsOtpVerified(false);
     setNavigationDirection(-1);
     setStep(1);
   }, []);
 
-  const handleOtpSubmit = useCallback((_values: OtpStepValues) => {
+  const handleOtpSuccess = useCallback(() => {
+    setIsOtpVerified(true);
     setNavigationDirection(1);
     setStep(3);
   }, []);
@@ -111,12 +113,12 @@ export function ForgetPasswordView({ resendSeconds = 60 }: ForgetPasswordViewPro
                 <OtpStepForm
                   phoneNumber={phoneNumber}
                   resendSeconds={otpCountdownSeconds}
-                  onSubmit={handleOtpSubmit}
+                  onSuccess={handleOtpSuccess}
                 />
               </>
             )}
 
-            {step === 3 && (
+            {step === 3 && isOtpVerified && (
               <>
                 <StepHeader title="تنظیم کلمه عبور جدید">
                   کلمه عبور جدید را وارد و دوباره تأیید کنید.

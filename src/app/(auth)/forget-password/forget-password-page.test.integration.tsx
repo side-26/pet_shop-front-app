@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { OtpStepForm } from '@/app/(auth)/forget-password/_components/otp-step-form';
 import { routePaths } from '@/configs/route.path';
-import { sendOtpAction } from '@/entities/auth/auth.actions';
+import { sendOtpAction, verifyResetPasswordOtpAction } from '@/entities/auth/auth.actions';
 
 import ForgetPasswordPage, { metadata } from './page';
 
@@ -13,9 +13,11 @@ vi.mock('@/entities/auth/auth.actions', () => ({
   redirectToLoginAction: vi.fn(),
   registerUserAction: vi.fn(),
   sendOtpAction: vi.fn(),
+  verifyResetPasswordOtpAction: vi.fn(),
 }));
 
 const sendOtpActionMock = vi.mocked(sendOtpAction);
+const verifyResetPasswordOtpActionMock = vi.mocked(verifyResetPasswordOtpAction);
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -23,6 +25,11 @@ beforeEach(() => {
     isSuccess: true,
     message: 'کد تأیید با موفقیت ارسال شد',
     data: { remainingSeconds: 120 },
+  });
+  verifyResetPasswordOtpActionMock.mockResolvedValue({
+    isSuccess: true,
+    message: 'کد تأیید شما معتبر است',
+    data: true,
   });
   Object.defineProperty(document, 'elementFromPoint', {
     configurable: true,
@@ -111,6 +118,11 @@ describe(routePaths.forgetPassword, () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'تنظیم کلمه عبور جدید' }),
     ).toBeTruthy();
+    expect(verifyResetPasswordOtpActionMock).toHaveBeenCalledWith({
+      phoneNumber: '09123456789',
+      'otp-code': '123456',
+      'reset-password': true,
+    });
     expect(screen.getByLabelText('کلمه عبور جدید').getAttribute('autocomplete')).toBe(
       'new-password',
     );
@@ -150,7 +162,7 @@ describe(routePaths.forgetPassword, () => {
 
     render(
       <DirectionProvider direction="rtl">
-        <OtpStepForm phoneNumber="09123456789" resendSeconds={1} onSubmit={vi.fn()} />
+        <OtpStepForm phoneNumber="09123456789" resendSeconds={1} onSuccess={vi.fn()} />
       </DirectionProvider>,
     );
 
@@ -158,9 +170,13 @@ describe(routePaths.forgetPassword, () => {
 
     const resendButton = screen.getByRole('button', { name: 'ارسال مجدد کد' });
     expect(screen.getByRole('timer').getAttribute('data-state')).toBe('expired');
+    const otpInput = screen.getByLabelText('کد تأیید') as HTMLInputElement;
+    fireEvent.change(otpInput, { target: { value: '123' } });
+    expect(otpInput.value).toBe('123');
 
     await act(async () => fireEvent.click(resendButton));
 
+    expect(otpInput.value).toBe('');
     expect(screen.queryByRole('button', { name: 'ارسال مجدد کد' })).toBeNull();
     expect(screen.getByRole('timer').getAttribute('aria-label')).toBe('زمان باقی‌مانده: 01:13');
     expect(sendOtpActionMock).toHaveBeenCalledWith({ phoneNumber: '09123456789' });
@@ -211,5 +227,37 @@ describe(routePaths.forgetPassword, () => {
     });
 
     expect(await screen.findByText('09123456789')).toBeTruthy();
+  });
+
+  it('keeps the OTP step visible while verification is pending or rejected', async () => {
+    let resolveVerification!: (
+      result: Awaited<ReturnType<typeof verifyResetPasswordOtpAction>>,
+    ) => void;
+    verifyResetPasswordOtpActionMock.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveVerification = resolve;
+        }),
+    );
+
+    renderPage();
+    await goToOtpStep();
+    const otpInput = screen.getByLabelText('کد تأیید');
+    fireEvent.change(otpInput, { target: { value: '123456' } });
+
+    await waitFor(() => expect((otpInput as HTMLInputElement).disabled).toBe(true));
+    expect(screen.getByText('در حال بررسی کد تأیید…')).toBeTruthy();
+    expect(screen.getByText('مرحله 2 از ۳')).toBeTruthy();
+
+    await act(async () => {
+      resolveVerification({
+        isSuccess: false,
+        message: 'کد تأیید وارد شده معتبر نیست',
+        data: { messages: {}, details: {} },
+      });
+    });
+
+    expect(screen.getByText('مرحله 2 از ۳')).toBeTruthy();
+    expect(screen.queryByRole('heading', { name: 'تنظیم کلمه عبور جدید' })).toBeNull();
   });
 });
