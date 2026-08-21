@@ -96,6 +96,26 @@ describe('customFetcher', () => {
     expect(request?.next).toBeUndefined();
   });
 
+  it('uses an optional custom token without reading the main session', async () => {
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse({ isSuccess: true, message: null, data: { updated: true } }),
+    );
+
+    await customFetcher(
+      {
+        url: '/users/reset-password',
+        method: 'POST',
+        body: { password: 'new-password' },
+      },
+      { customToken: 'temporary-token' },
+    );
+
+    const request = fetchMock.mock.calls[0]?.[1];
+    expect(new Headers(request?.headers).get('Authorization')).toBe('Bearer temporary-token');
+    expect(mockedGetSession).not.toHaveBeenCalled();
+    expect(request?.cache).toBe('no-store');
+  });
+
   it('returns an envelope error without requesting when authentication is missing', async () => {
     mockedGetSession.mockResolvedValueOnce(null);
 

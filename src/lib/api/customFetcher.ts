@@ -82,6 +82,10 @@ export type CustomFetcherOptions<TSuccess, TBackendError, TBody = never> = Commo
   (PublicUncachedOptions | PublicCachedOptions | PrivateOptions) &
   (BodylessOptions | BodyOptions<TBody>);
 
+export type CustomFetcherConfig = {
+  customToken?: string;
+};
+
 const DEFAULT_TIMEOUT_MS = 15_000;
 const DEFAULT_ERROR_MESSAGE = 'The server returned an invalid response.';
 
@@ -250,6 +254,7 @@ function parseResponseError<TBackendError>(
 
 export async function customFetcher<TSuccess, TBackendError = unknown, TBody = never>(
   options: CustomFetcherOptions<TSuccess, TBackendError, TBody>,
+  customConfig?: CustomFetcherConfig,
 ): Promise<FetcherResult<TSuccess, TBackendError>> {
   const {
     auth,
@@ -266,7 +271,9 @@ export async function customFetcher<TSuccess, TBackendError = unknown, TBody = n
   } = options;
 
   const headers = new Headers(callerHeaders);
-  if (auth) {
+  if (customConfig?.customToken) {
+    headers.set('Authorization', `Bearer ${customConfig.customToken}`);
+  } else if (auth) {
     const session = await getSession();
     if (!session?.accessToken) {
       return transportError<TBackendError>('Authentication is required.');
