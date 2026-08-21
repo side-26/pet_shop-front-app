@@ -1,4 +1,4 @@
-import { ForgetPasswordView } from './(auth)/forget-password/_components/forget-password-view';
+import { ForgetPasswordView } from './_components/forget-password-view';
 import { AuthLayoutShell } from '@/components/layouts/auth/auth-layout-shell';
 import { routePaths } from '@/configs/route.path';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { AtSignIcon, LockKeyholeIcon, PawPrintIcon, SearchIcon } from 'lucide-react';
+import { AtSignIcon, LockKeyholeIcon, PawPrintIcon, PhoneIcon, SearchIcon } from 'lucide-react';
 import * as yup from 'yup';
 
 import { Button } from '@/components/ui/button';
@@ -29,20 +29,17 @@ import { Form, type FormHandle } from '@/components/ui/form';
 
 import { ShowcaseSection } from './showcase-section';
 
-type ProfileFormValues = {
-  email: string;
-  petName: string;
-  password: string;
-};
-
-const profileSchema: yup.ObjectSchema<ProfileFormValues> = yup.object({
+const profileSchema = yup.object({
   email: yup.string().email('نشانی ایمیل معتبر نیست.').required('ایمیل الزامی است.'),
   petName: yup.string().min(2, 'نام باید حداقل دو نویسه باشد.').required('نام حیوان الزامی است.'),
   password: yup
     .string()
     .min(8, 'کلمه عبور باید حداقل هشت نویسه باشد.')
     .required('کلمه عبور الزامی است.'),
+  phoneNumber: yup.string().required('شماره موبایل الزامی است.'),
 });
+
+type ProfileFormValues = yup.InferType<typeof profileSchema>;
 
 const inputColors = ['primary', 'secondary', 'info', 'success', 'warning', 'error'] as const;
 const inputSizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const;
@@ -66,7 +63,10 @@ export function FormShowcase() {
       <Form<ProfileFormValues>
         ref={formRef}
         validationSchema={profileSchema}
-        options={{ defaultValues: { email: '', petName: '', password: '' }, mode: 'onBlur' }}
+        options={{
+          defaultValues: { email: '', petName: '', password: '', phoneNumber: '' },
+          mode: 'onBlur',
+        }}
         handleSubmit={(values) => setSubmittedName(values.petName)}
         className="tw:max-w-xl"
       >
@@ -97,8 +97,18 @@ export function FormShowcase() {
               type="password"
               color="warning"
             />
+            <TextField<ProfileFormValues>
+              name="phoneNumber"
+              label="شماره موبایل"
+              hint="مقدار چپ‌به‌راست و جای‌نگهدار راست‌به‌چپ است."
+              prefixIcon={<PhoneIcon />}
+              type="tel"
+              inputMode="tel"
+              placeholder="شماره موبایل"
+              color="primary"
+            />
             <div className="tw:flex tw:flex-wrap tw:gap-2">
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" isLoading={isSubmitting} loadingText="در حال ثبت">
                 ثبت
               </Button>
               <Button

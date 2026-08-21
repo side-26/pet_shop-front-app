@@ -174,6 +174,7 @@ function TextField<
           {...field}
           id={id}
           type={isPassword ? (passwordVisible ? 'text' : 'password') : type}
+          mixedDirectionInput={type === 'tel' || isPassword}
           color={color}
           size={size}
           disabled={disabled}

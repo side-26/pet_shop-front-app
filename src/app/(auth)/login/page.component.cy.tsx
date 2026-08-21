@@ -1,6 +1,6 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 
-import { LoginMobileView } from './(auth)/login/_components/login-view';
+import { LoginMobileView } from './_components/login-view';
 import { AuthLayoutShell } from '@/components/layouts/auth/auth-layout-shell';
 import { routePaths } from '@/configs/route.path';
 
@@ -47,7 +47,10 @@ describe(`${routePaths.login} inside the auth layout`, () => {
 
     cy.get('input[name="password"]').type('petshop-pass');
     cy.get('button[aria-label="نمایش کلمه عبور"]').click();
-    cy.get('input[name="password"]').should('have.attr', 'type', 'text');
+    cy.get('input[name="password"]')
+      .should('have.attr', 'type', 'text')
+      .and('have.attr', 'dir', 'ltr')
+      .and('have.css', 'text-align', 'left');
     cy.contains('label', 'مرا به خاطر بسپار').click();
     cy.get('[role="checkbox"]').should('have.attr', 'aria-checked', 'true');
   });

@@ -11,9 +11,6 @@ import { routePaths } from '@/configs/route.path';
 import { useLoginUser } from '@/entities/auth/auth.client';
 import { loginUserSchema, type LoginUserInput } from '@/entities/auth/auth.schema';
 
-const mixedDirectionInput =
-  'tw:text-left tw:[&::placeholder]:text-right tw:[&::placeholder]:[direction:rtl]';
-
 export function LoginForm() {
   const { formRef, handleSubmit } = useLoginUser();
 
@@ -37,12 +34,10 @@ export function LoginForm() {
             type="tel"
             inputMode="tel"
             autoComplete="tel-national"
-            dir="ltr"
             size="lg"
             color="primary"
             placeholder="شماره موبایل"
             prefixIcon={<PhoneIcon />}
-            className={mixedDirectionInput}
           />
 
           <TextField<LoginUserInput>
@@ -50,12 +45,10 @@ export function LoginForm() {
             label="کلمه عبور"
             type="password"
             autoComplete="current-password"
-            dir="ltr"
             size="lg"
             color="primary"
             placeholder="کلمه عبور"
             prefixIcon={<LockKeyholeIcon />}
-            className={mixedDirectionInput}
           />
 
           <div className="tw:flex tw:min-h-11 tw:items-center tw:justify-between tw:gap-2">

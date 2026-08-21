@@ -1,16 +1,10 @@
-export type RegisterUserDTO = {
-  phoneNumber: string;
-  password: string;
-};
+import type { LoginUserInput, RegisterUserInput, SendOtpInput } from './auth.schema';
 
-export type LoginUserDTO = {
-  phoneNumber: string;
-  password: string;
-};
+export type RegisterUserDTO = RegisterUserInput;
 
-export type SendOtpDTO = {
-  phoneNumber: string;
-};
+export type LoginUserDTO = Pick<LoginUserInput, 'phoneNumber' | 'password'>;
+
+export type SendOtpDTO = SendOtpInput;
 
 export type SendOtpResponseDTO = {
   remainingSeconds: number;

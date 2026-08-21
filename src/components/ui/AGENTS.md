@@ -225,6 +225,9 @@ and disabled state and are designed RTL-first.
 `size="xs|sm|md|lg|xl"`, defaulting to primary/md. Color controls border, caret,
 and focus ring; `aria-invalid` always resolves to the error treatment. Input and
 Textarea control typography resolves to 12/12/14/14/16px across the size scale.
+Telephone and password inputs automatically use the shared `mixedDirectionInput`
+behavior: entered values remain LTR while Persian placeholders remain RTL. A
+password field keeps this behavior while its visibility toggle renders it as text.
 `Textarea` uses the same color and size axes, with size controlling its minimum
 height and typography. It remains vertically resizable unless disabled.
 `TextField` is the React Hook Form-aware composition for textual form controls.

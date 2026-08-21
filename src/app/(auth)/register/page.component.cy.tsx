@@ -1,6 +1,6 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 
-import { RegisterView } from './(auth)/register/_components/register-view';
+import { RegisterView } from './_components/register-view';
 import { AuthLayoutShell } from '@/components/layouts/auth/auth-layout-shell';
 import { routePaths } from '@/configs/route.path';
 

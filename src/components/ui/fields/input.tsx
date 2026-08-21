@@ -30,18 +30,40 @@ const inputVariants = tv({
   defaultVariants: { color: 'primary', size: 'md' },
 });
 
-type InputProps = Omit<ComponentProps<'input'>, 'size'> & VariantProps<typeof inputVariants>;
+type InputProps = Omit<ComponentProps<'input'>, 'size'> &
+  VariantProps<typeof inputVariants> & {
+    mixedDirectionInput?: boolean;
+  };
 
-function Input({ className, color = 'primary', size = 'md', ...props }: InputProps) {
+const mixedDirectionInputClassName =
+  'tw:text-left tw:[&::placeholder]:text-right tw:[&::placeholder]:[direction:rtl]';
+
+function Input({
+  className,
+  color = 'primary',
+  dir,
+  mixedDirectionInput,
+  size = 'md',
+  type = 'text',
+  ...props
+}: InputProps) {
+  const usesMixedDirection = Boolean(mixedDirectionInput) || type === 'tel' || type === 'password';
+
   return (
     <input
       data-slot="field-control"
       data-size={size}
       data-color={color}
-      className={cn(inputVariants({ color, size }), className)}
+      type={type}
+      dir={usesMixedDirection ? 'ltr' : dir}
+      className={cn(
+        inputVariants({ color, size }),
+        usesMixedDirection && mixedDirectionInputClassName,
+        className,
+      )}
       {...props}
     />
   );
 }
 
-export { Input, inputVariants, type InputProps };
+export { Input, inputVariants, mixedDirectionInputClassName, type InputProps };

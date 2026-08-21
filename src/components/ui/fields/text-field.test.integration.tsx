@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Form } from '@/components/ui/form';
 import { TextField, textFieldVariants } from '@/components/ui/fields/text-field';
 
-type Values = { password: string };
+type Values = { password: string; phoneNumber: string };
 
 afterEach(cleanup);
 
@@ -37,7 +37,10 @@ describe('TextField', () => {
   it('syncs with Form context, keeps description mounted, and propagates visual state', async () => {
     const onSubmit = vi.fn();
     render(
-      <Form<Values> handleSubmit={onSubmit} options={{ defaultValues: { password: '' } }}>
+      <Form<Values>
+        handleSubmit={onSubmit}
+        options={{ defaultValues: { password: '', phoneNumber: '' } }}
+      >
         <TextField<Values>
           name="password"
           label="کلمه عبور"
@@ -59,13 +62,19 @@ describe('TextField', () => {
     fireEvent.change(input, { target: { value: 'secret-value' } });
     fireEvent.click(screen.getByRole('button', { name: 'ثبت' }));
     await waitFor(() =>
-      expect(onSubmit).toHaveBeenCalledWith({ password: 'secret-value' }, expect.anything()),
+      expect(onSubmit).toHaveBeenCalledWith(
+        { password: 'secret-value', phoneNumber: '' },
+        expect.anything(),
+      ),
     );
   });
 
   it('shows schema/rule errors in the persistent description and toggles password visibility', async () => {
     render(
-      <Form<Values> handleSubmit={() => undefined} options={{ defaultValues: { password: '' } }}>
+      <Form<Values>
+        handleSubmit={() => undefined}
+        options={{ defaultValues: { password: '', phoneNumber: '' } }}
+      >
         <TextField<Values>
           name="password"
           label="Password"
@@ -79,9 +88,34 @@ describe('TextField', () => {
 
     const input = screen.getByLabelText('Password');
     expect(input.getAttribute('type')).toBe('password');
+    expect(input.getAttribute('dir')).toBe('ltr');
+    expect(input.className).toContain('[&::placeholder]:[direction:rtl]');
     fireEvent.click(screen.getByRole('button', { name: 'نمایش کلمه عبور' }));
     expect(input.getAttribute('type')).toBe('text');
+    expect(input.getAttribute('dir')).toBe('ltr');
+    expect(input.className).toContain('[&::placeholder]:[direction:rtl]');
     fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
     expect((await screen.findByRole('alert')).textContent).toBe('Required password');
+  });
+
+  it('automatically applies mixed-direction behavior to telephone fields', () => {
+    render(
+      <Form<Values>
+        handleSubmit={() => undefined}
+        options={{ defaultValues: { password: '', phoneNumber: '' } }}
+      >
+        <TextField<Values>
+          name="phoneNumber"
+          label="Phone number"
+          type="tel"
+          placeholder="شماره موبایل"
+        />
+      </Form>,
+    );
+
+    const input = screen.getByLabelText('Phone number');
+    expect(input.getAttribute('dir')).toBe('ltr');
+    expect(input.className).toContain('tw:text-left');
+    expect(input.className).toContain('[&::placeholder]:[direction:rtl]');
   });
 });

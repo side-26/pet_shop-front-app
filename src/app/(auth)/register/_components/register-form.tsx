@@ -8,9 +8,6 @@ import { Form } from '@/components/ui/form';
 import { useRegisterUser } from '@/entities/auth/auth.client';
 import { registerUserSchema, type RegisterUserInput } from '@/entities/auth/auth.schema';
 
-const mixedDirectionInput =
-  'tw:text-left tw:[&::placeholder]:text-right tw:[&::placeholder]:[direction:rtl]';
-
 export function RegisterForm() {
   const { formRef, handleSubmit } = useRegisterUser();
 
@@ -34,12 +31,10 @@ export function RegisterForm() {
             type="tel"
             inputMode="tel"
             autoComplete="tel-national"
-            dir="ltr"
             size="lg"
             color="primary"
             placeholder="شماره موبایل"
             prefixIcon={<PhoneIcon />}
-            className={mixedDirectionInput}
           />
 
           <TextField<RegisterUserInput>
@@ -47,12 +42,10 @@ export function RegisterForm() {
             label="کلمه عبور"
             type="password"
             autoComplete="new-password"
-            dir="ltr"
             size="lg"
             color="primary"
             placeholder="کلمه عبور"
             prefixIcon={<LockKeyholeIcon />}
-            className={mixedDirectionInput}
           />
 
           <Button

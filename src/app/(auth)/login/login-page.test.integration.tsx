@@ -45,7 +45,6 @@ describe(routePaths.login, () => {
 
     expect(phone.getAttribute('data-size')).toBe('lg');
     expect(phone.getAttribute('dir')).toBe('ltr');
-    expect(phone.className).toContain('[&::placeholder]:[direction:rtl]');
     expect(password.getAttribute('data-size')).toBe('lg');
     expect(password.getAttribute('dir')).toBe('ltr');
   });

@@ -14,9 +14,6 @@ type PhoneStepFormProps = {
   onSuccess: (input: SendOtpInput, response: SendOtpResponseDTO) => void;
 };
 
-const mixedDirectionInput =
-  'tw:text-left tw:[&::placeholder]:text-right tw:[&::placeholder]:[direction:rtl]';
-
 export function PhoneStepForm({ defaultPhoneNumber, onSuccess }: PhoneStepFormProps) {
   const { formRef, handleSubmit } = useSendOtp(onSuccess);
 
@@ -38,12 +35,10 @@ export function PhoneStepForm({ defaultPhoneNumber, onSuccess }: PhoneStepFormPr
             inputMode="tel"
             autoComplete="tel-national"
             autoFocus
-            dir="ltr"
             size="lg"
             color="primary"
             placeholder="شماره موبایل"
             prefixIcon={<PhoneIcon />}
-            className={mixedDirectionInput}
           />
 
           <Button

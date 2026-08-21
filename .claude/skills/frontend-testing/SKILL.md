@@ -76,6 +76,13 @@ Detailed implementations in the `references/` directory:
 
 ## Best Practices
 
+### App Router colocation
+
+- Place a Cypress spec for an App Router `page.tsx`, `layout.tsx`, or other route file in the same route segment as that file.
+- Place a Cypress spec for a route-private component beside its source inside the matching `_components` directory.
+- Name the spec after the source it exercises, such as `page.component.cy.tsx`, `layout.component.cy.tsx`, or `login-form.component.cy.tsx`.
+- Do not collect route or route-private component specs at the `src/app` root.
+
 ### ✅ DO
 
 - Follow established patterns and conventions

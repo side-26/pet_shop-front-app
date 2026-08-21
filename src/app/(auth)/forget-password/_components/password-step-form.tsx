@@ -10,9 +10,6 @@ import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/ui/fields/text-field';
 import { Form } from '@/components/ui/form';
 
-const mixedDirectionInput =
-  'tw:text-left tw:[&::placeholder]:text-right tw:[&::placeholder]:[direction:rtl]';
-
 export function PasswordStepForm() {
   return (
     <Form<PasswordStepValues>
@@ -31,12 +28,10 @@ export function PasswordStepForm() {
         type="password"
         autoComplete="new-password"
         autoFocus
-        dir="ltr"
         size="lg"
         color="primary"
         placeholder="کلمه عبور جدید"
         prefixIcon={<LockKeyholeIcon />}
-        className={mixedDirectionInput}
       />
 
       <TextField<PasswordStepValues>
@@ -44,12 +39,10 @@ export function PasswordStepForm() {
         label="تکرار کلمه عبور جدید"
         type="password"
         autoComplete="new-password"
-        dir="ltr"
         size="lg"
         color="primary"
         placeholder="تکرار کلمه عبور جدید"
         prefixIcon={<LockKeyholeIcon />}
-        className={mixedDirectionInput}
       />
 
       <Button type="submit" size="lg" color="primary" block>
