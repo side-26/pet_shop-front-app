@@ -5,8 +5,9 @@ import type { NextConfig } from 'next';
 
 const projectDirectory = path.dirname(fileURLToPath(import.meta.url));
 
-const nextConfig: NextConfig =
-  process.env.PETSHOP_CYPRESS_COMPONENT_TEST === 'true'
+const nextConfig: NextConfig = {
+  cacheComponents: true,
+  ...(process.env.PETSHOP_CYPRESS_COMPONENT_TEST === 'true'
     ? {
         webpack(config, { webpack }) {
           config.plugins.push(
@@ -19,6 +20,7 @@ const nextConfig: NextConfig =
           return config;
         },
       }
-    : {};
+    : {}),
+};
 
 export default nextConfig;
