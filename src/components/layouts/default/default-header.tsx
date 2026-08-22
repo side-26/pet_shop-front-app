@@ -1,52 +1,50 @@
-import { Menu, Search, ShoppingCart } from 'lucide-react';
+import { ShoppingCart, UserRound } from 'lucide-react';
 import Link from 'next/link';
 
-import { Button, buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
 
 import { Brand } from './brand';
 import { DesktopNavigation } from './desktop-navigation';
+import { HeaderProductSearch } from './header-product-search';
 
 export function DefaultHeader() {
   return (
     <header className="tw:fixed tw:inset-x-0 tw:top-0 tw:z-50 tw:border-b tw:border-border/60 tw:bg-background/82 tw:shadow-sm tw:supports-backdrop-filter:backdrop-blur-2xl">
-      <div className="tw:mx-auto tw:flex tw:h-[76px] tw:w-full tw:max-w-7xl tw:items-center tw:justify-between tw:px-4 tw:md:px-8 tw:lg:h-[88px]">
-        <div className="tw:flex tw:items-center tw:gap-1 tw:lg:gap-0">
-          <Button
-            type="button"
-            variant="flat"
-            size="lg"
-            iconOnly
-            aria-label="باز کردن منوی اصلی"
-            className="tw:lg:hidden"
-          >
-            <Menu aria-hidden="true" />
-          </Button>
-          <Brand size="compact" />
+      <div className="tw:mx-auto tw:flex tw:h-[76px] tw:w-full tw:max-w-7xl tw:items-center tw:justify-between tw:gap-3 tw:px-4 tw:md:px-8 tw:lg:h-[88px]">
+        <div className="tw:flex tw:shrink-0 tw:items-center">
+          <Brand size="compact" showName={false} className="tw:lg:hidden" />
+          <Brand size="compact" className="tw:hidden tw:lg:inline-flex" />
         </div>
 
         <DesktopNavigation />
 
-        <div className="tw:flex tw:items-center tw:gap-0.5 tw:sm:gap-1.5">
-          <Button type="button" variant="flat" size="lg" iconOnly aria-label="جستجو">
-            <Search aria-hidden="true" />
-          </Button>
+        <div className="tw:flex tw:min-w-0 tw:items-center tw:gap-1 tw:sm:gap-1.5">
+          <HeaderProductSearch />
+          <ThemeToggle variant="icon" />
           <Link
             href={routePaths.cart}
             aria-label="سبد خرید"
             data-icon-only="true"
-            className={buttonVariants({ variant: 'flat', color: 'primary', size: 'lg' })}
+            className={cn(
+              buttonVariants({ variant: 'tonal', color: 'primary', size: 'lg' }),
+              'tw:hidden tw:lg:inline-flex',
+            )}
           >
             <ShoppingCart aria-hidden="true" />
           </Link>
-          <ThemeToggle variant="icon" />
           <Link
             href={routePaths.login}
-            className={cn(buttonVariants({ size: 'lg' }), 'tw:hidden tw:px-5 tw:lg:inline-flex')}
+            aria-label="حساب کاربری"
+            data-icon-only="true"
+            className={cn(
+              buttonVariants({ variant: 'fill', color: 'primary', size: 'lg' }),
+              'tw:hidden tw:lg:inline-flex',
+            )}
           >
-            ورود | ثبت‌نام
+            <UserRound aria-hidden="true" />
           </Link>
         </div>
       </div>

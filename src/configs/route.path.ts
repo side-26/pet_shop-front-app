@@ -2,6 +2,8 @@ export const PATHS = {
   HOME: '/',
   PETS: '/pets',
   PRODUCTS: '/products',
+  SERVICES: '/services',
+  ABOUT: '/about',
   CART: '/cart',
   PROFILE: '/profile',
   AUTH: {
@@ -16,6 +18,8 @@ export const routePaths = {
   home: PATHS.HOME,
   pets: PATHS.PETS,
   products: PATHS.PRODUCTS,
+  services: PATHS.SERVICES,
+  about: PATHS.ABOUT,
   cart: PATHS.CART,
   profile: PATHS.PROFILE,
   login: PATHS.AUTH.LOGIN,

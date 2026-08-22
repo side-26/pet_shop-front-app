@@ -38,13 +38,19 @@ describe('DefaultLayoutShell', () => {
     expect(screen.getAllByRole('link', { name: /صفحه اصلی/ })[0].getAttribute('href')).toBe(
       routePaths.home,
     );
-    expect(screen.getByRole('link', { name: 'نژاد حیوانات' }).getAttribute('href')).toBe(
+    expect(screen.getAllByRole('link', { name: 'حیوانات' })[0].getAttribute('href')).toBe(
       routePaths.pets,
     );
-    expect(screen.getByRole('link', { name: 'محصولات' }).getAttribute('href')).toBe(
+    expect(screen.getAllByRole('link', { name: 'محصولات' })[0].getAttribute('href')).toBe(
       routePaths.products,
     );
-    expect(screen.getByRole('link', { name: 'ورود | ثبت‌نام' }).getAttribute('href')).toBe(
+    expect(screen.getAllByRole('link', { name: 'خدمات ما' })[0].getAttribute('href')).toBe(
+      routePaths.services,
+    );
+    expect(screen.getAllByRole('link', { name: 'درباره ما' })[0].getAttribute('href')).toBe(
+      routePaths.about,
+    );
+    expect(screen.getByRole('link', { name: 'حساب کاربری' }).getAttribute('href')).toBe(
       routePaths.login,
     );
     expect(
@@ -58,12 +64,30 @@ describe('DefaultLayoutShell', () => {
   it('keeps compact header actions accessible', () => {
     render(<DefaultLayoutShell>صفحه</DefaultLayoutShell>);
 
-    expect(screen.getByRole('button', { name: 'باز کردن منوی اصلی' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'جستجو' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'باز کردن منوی اصلی' })).toBeNull();
+    expect(screen.getByRole('searchbox', { name: 'جستجو در محصولات' })).toBeTruthy();
+    expect(screen.getByRole('search').getAttribute('action')).toBe(routePaths.products);
     expect(screen.getAllByRole('link', { name: 'سبد خرید' })[0].getAttribute('href')).toBe(
       routePaths.cart,
     );
     expect(screen.getByRole('button', { name: 'فعال‌سازی حالت تیره' })).toBeTruthy();
+  });
+
+  it('keeps the six requested mobile and tablet destinations as real links', () => {
+    render(<DefaultLayoutShell>صفحه</DefaultLayoutShell>);
+
+    const mobileNavigation = screen.getByRole('navigation', { name: 'ناوبری موبایل' });
+    const links = Array.from(mobileNavigation.querySelectorAll('a'));
+
+    expect(links).toHaveLength(6);
+    expect(links.map((link) => link.getAttribute('href'))).toEqual([
+      routePaths.home,
+      routePaths.pets,
+      routePaths.products,
+      routePaths.services,
+      routePaths.about,
+      routePaths.cart,
+    ]);
   });
 
   it('marks the current mobile destination and clears the home active state', () => {

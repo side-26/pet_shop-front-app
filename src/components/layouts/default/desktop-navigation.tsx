@@ -11,7 +11,10 @@ export function DesktopNavigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="tw:hidden tw:items-center tw:gap-7 tw:lg:flex" aria-label="ناوبری اصلی">
+    <nav
+      className="tw:hidden tw:items-center tw:gap-5 tw:lg:flex tw:xl:gap-7"
+      aria-label="ناوبری اصلی"
+    >
       {desktopNavigationItems.map(({ href, label }) => {
         const isActive = isNavigationItemActive(pathname, href);
 
