@@ -55,7 +55,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       suppressHydrationWarning
       className={cn('tw:h-full tw:antialiased', defaultFont.variable)}
     >
-      <body className="tw:flex tw:min-h-full tw:flex-col tw:bg-background tw:text-foreground">
+      <body
+        suppressHydrationWarning
+        className="tw:flex tw:min-h-full tw:flex-col tw:bg-background tw:text-foreground"
+      >
         <Script id="theme-init" strategy="beforeInteractive">
           {themeInitScript}
         </Script>
