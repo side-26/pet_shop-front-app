@@ -1,7 +1,7 @@
 'use client';
 
 import { Monitor, Moon, Sun } from 'lucide-react';
-import { useEffect, useSyncExternalStore } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
@@ -47,22 +47,51 @@ function setThemePreference(theme: ThemePreference) {
   window.dispatchEvent(new Event(themeChangeEvent));
 }
 
-function ThemeToggle() {
+type ThemeToggleProps = Readonly<{
+  variant?: 'segmented' | 'icon';
+}>;
+
+function ThemeToggle({ variant = 'segmented' }: ThemeToggleProps) {
   const theme = useSyncExternalStore<ThemePreference>(
     subscribeToTheme,
     getThemeSnapshot,
     () => 'system',
   );
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
     const colorScheme = window.matchMedia('(prefers-color-scheme: dark)');
-    const syncTheme = () => applyTheme(theme, colorScheme.matches);
+    const syncTheme = () => {
+      const nextIsDark = theme === 'dark' || (theme === 'system' && colorScheme.matches);
+      applyTheme(theme, colorScheme.matches);
+      setIsDark(nextIsDark);
+    };
 
     syncTheme();
 
     if (theme === 'system') colorScheme.addEventListener('change', syncTheme);
     return () => colorScheme.removeEventListener('change', syncTheme);
   }, [theme]);
+
+  if (variant === 'icon') {
+    const Icon = isDark ? Sun : Moon;
+    const label = isDark ? 'فعال‌سازی حالت روشن' : 'فعال‌سازی حالت تیره';
+
+    return (
+      <Button
+        type="button"
+        size="lg"
+        variant="flat"
+        color="primary"
+        iconOnly
+        aria-label={label}
+        title={label}
+        onClick={() => setThemePreference(isDark ? 'light' : 'dark')}
+      >
+        <Icon aria-hidden="true" />
+      </Button>
+    );
+  }
 
   return (
     <div className="tw:flex tw:flex-col tw:gap-2" aria-label="انتخاب حالت نمایش">
@@ -91,4 +120,4 @@ function ThemeToggle() {
   );
 }
 
-export { ThemeToggle };
+export { ThemeToggle, type ThemeToggleProps };

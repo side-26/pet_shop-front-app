@@ -59,6 +59,18 @@ profile-shell.tsx
 mobile-navigation.tsx
 ```
 
+The default storefront shell lives under `components/layouts/default` and is
+composed by `app/(default)/layout.tsx`. Keep `DefaultLayoutShell`, its header,
+footer, brand, and mobile bottom navigation server-rendered; isolate theme
+interaction in the shared `ThemeToggle` and route-aware active navigation in
+focused client components. The header is 76px through tablet and 88px from
+`lg`; desktop header navigation starts at `lg`. The bottom navigation is
+edge-to-edge on phones, becomes a centered content-width floating dock on
+tablets, and is hidden from `lg` upward. The footer stays single-column through
+tablet before splitting at `lg`. Reuse the transparent
+`public/images/brand/pet-haven-mark.png` asset and canonical `routePaths`
+entries rather than duplicating brand art or route literals.
+
 Reusable authentication structure lives under `components/layouts/auth` and is
 composed by `app/(auth)/layout.tsx`. `AuthLayoutShell` owns the responsive,
 RTL-first brand and content regions while nested routes own headings, forms,

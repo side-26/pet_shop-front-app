@@ -21,4 +21,14 @@ describe('ThemeToggle', () => {
     cy.document().its('documentElement').should('not.have.class', 'dark');
     cy.document().its('documentElement.dataset.theme').should('equal', 'light');
   });
+
+  it('offers a compact accessible control for navigation surfaces', () => {
+    cy.window().then((window) => window.localStorage.setItem(THEME_STORAGE_KEY, 'light'));
+    cy.mount(<ThemeToggle variant="icon" />);
+
+    cy.get('button[aria-label="فعال‌سازی حالت تیره"]').click();
+    cy.document().its('documentElement').should('have.class', 'dark');
+    cy.get('button[aria-label="فعال‌سازی حالت روشن"]').click();
+    cy.document().its('documentElement').should('not.have.class', 'dark');
+  });
 });

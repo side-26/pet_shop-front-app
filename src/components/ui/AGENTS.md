@@ -287,7 +287,10 @@ the numeric run LTR in RTL interfaces, and becomes immediate under reduced motio
 
 `ThemeToggle` provides `light|dark|system` appearance modes. It persists the
 preference under `petshop-theme`, applies `.dark` to the root element, and keeps
-the browser `color-scheme` synchronized. All primitives must use semantic color
+the browser `color-scheme` synchronized. Use the default `segmented` variant
+when all three preferences must remain visible and `variant="icon"` on compact
+navigation surfaces; the icon variant toggles the resolved light/dark mode with
+an accessible action label. All primitives must use semantic color
 tokens so the existing light and dark token maps theme components and portalled
 surfaces consistently; do not add component-local hardcoded dark colors.
 

@@ -56,7 +56,10 @@ export function UiComponentsGallery() {
                 تعاملی پشتیبانی‌شده.
               </p>
             </div>
-            <ThemeToggle />
+            <div className="tw:flex tw:items-end tw:gap-3">
+              <ThemeToggle variant="icon" />
+              <ThemeToggle />
+            </div>
           </div>
 
           <nav aria-label="فهرست اجزای رابط کاربری">
