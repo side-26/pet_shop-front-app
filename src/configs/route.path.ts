@@ -1,6 +1,8 @@
 export const PATHS = {
   HOME: '/',
   PETS: '/pets',
+  PETS_LANDING: '/pets/landing',
+  PETS_LIST: '/pets/list',
   PRODUCTS: '/products',
   SERVICES: '/services',
   ABOUT: '/about',
@@ -17,6 +19,8 @@ export const PATHS = {
 export const routePaths = {
   home: PATHS.HOME,
   pets: PATHS.PETS,
+  petsLanding: PATHS.PETS_LANDING,
+  petsList: PATHS.PETS_LIST,
   products: PATHS.PRODUCTS,
   services: PATHS.SERVICES,
   about: PATHS.ABOUT,
