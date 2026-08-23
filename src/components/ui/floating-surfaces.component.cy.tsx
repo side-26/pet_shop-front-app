@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import {
   Popover,
   PopoverContent,
@@ -39,6 +40,27 @@ function SolidTooltipFixture({ variant }: { variant: 'fill' | 'tonal' }) {
 }
 
 describe('floating surfaces', () => {
+  it('opens HoverCard from its trigger and renders the preview in a portal', () => {
+    cy.mount(
+      <HoverCard>
+        <HoverCardTrigger delay={0} closeDelay={0} render={<Button />}>
+          Preview pet
+        </HoverCardTrigger>
+        <HoverCardContent side="inline-end" align="start">
+          Golden retriever details
+        </HoverCardContent>
+      </HoverCard>,
+    );
+
+    cy.contains('button', 'Preview pet').trigger('mouseenter');
+    cy.get('[data-slot="hover-card-content"]')
+      .should('be.visible')
+      .and('contain.text', 'Golden retriever details');
+    cy.get('[data-slot="hover-card-content"]')
+      .should('have.attr', 'data-side')
+      .and('match', /^(left|right|inline-start|inline-end)$/);
+  });
+
   it('opens Popover in a portal and closes it with Escape', () => {
     cy.mount(
       <Popover>

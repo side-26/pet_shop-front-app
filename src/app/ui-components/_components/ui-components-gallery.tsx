@@ -19,6 +19,7 @@ import { MenubarShowcase } from './menubar-showcase';
 import { FormShowcase } from './form-showcase';
 import { InputOtpShowcase } from './input-otp-showcase';
 import { CountdownShowcase } from './countdown-showcase';
+import { HoverCardShowcase } from './hover-card-showcase';
 
 const navigation = [
   ['#buttons', 'Button'],
@@ -26,6 +27,7 @@ const navigation = [
   ['#cards', 'Card'],
   ['#alert-dialogs', 'Alert Dialog'],
   ['#popovers', 'Popover'],
+  ['#hover-cards', 'Hover Card'],
   ['#tooltips', 'Tooltip'],
   ['#spinners', 'Spinner'],
   ['#dialogs', 'Dialog'],
@@ -83,6 +85,7 @@ export function UiComponentsGallery() {
         <CardShowcase />
         <AlertDialogShowcase />
         <PopoverShowcase />
+        <HoverCardShowcase />
         <TooltipShowcase />
         <SpinnerShowcase />
         <DialogShowcase />

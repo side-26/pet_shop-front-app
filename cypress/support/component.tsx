@@ -19,3 +19,11 @@ Cypress.Commands.add('mount', (component, options = {}) => {
     options,
   );
 });
+
+Cypress.on('uncaught:exception', (error) => {
+  if (error.message.includes('ResizeObserver loop completed with undelivered notifications')) {
+    return false;
+  }
+
+  return true;
+});

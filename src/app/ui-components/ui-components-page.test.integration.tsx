@@ -56,6 +56,7 @@ describe(routePaths.uiComponents, () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Card' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Alert Dialog' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Popover' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 3, name: 'Hover Card' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Tooltip' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Spinner' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Dialog' })).toBeTruthy();

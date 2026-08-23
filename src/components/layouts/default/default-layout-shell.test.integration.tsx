@@ -66,6 +66,7 @@ describe('DefaultLayoutShell', () => {
 
     expect(screen.queryByRole('button', { name: 'باز کردن منوی اصلی' })).toBeNull();
     expect(screen.getByRole('searchbox', { name: 'جستجو در محصولات' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'باز کردن جستجوی محصولات' })).toBeTruthy();
     expect(screen.getByRole('search').getAttribute('action')).toBe(routePaths.products);
     expect(screen.getAllByRole('link', { name: 'سبد خرید' })[0].getAttribute('href')).toBe(
       routePaths.cart,

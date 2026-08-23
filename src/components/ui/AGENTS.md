@@ -181,6 +181,9 @@ for non-action close affordances such as a title-bar close icon.
 `PopoverContent` and `TooltipContent` use `color="primary|secondary|info|success|warning|error"`.
 Their `fill`, `outlined`, and `tonal` variants resolve foreground, background,
 border, and (for Tooltip) arrow color as one compound visual decision.
+`HoverCard` composes Base UI Preview Card with `HoverCardTrigger` and
+`HoverCardContent`. Its portalled content uses semantic popover tokens, logical
+RTL positioning, configurable trigger delays, and reduced-motion-safe transitions.
 `Spinner` uses the same semantic colors with `size="xs|sm|md|lg|xl"`.
 
 `DialogContent` uses `size="sm|md|lg|xl"` and always requires `DialogTitle`;

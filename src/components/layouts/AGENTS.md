@@ -71,6 +71,12 @@ tablet before splitting at `lg`. Reuse the transparent
 `public/images/brand/pet-haven-mark.png` asset and canonical `routePaths`
 entries rather than duplicating brand art or route literals.
 
+The header product search uses a controlled shadcn Hover Card from `lg` upward
+and an accessible Dialog overlay below `lg`. Both surfaces reuse the same
+popular-search and debounced-suggestion renderer. Keep product search links on
+the canonical `routePaths.productsSearch()` builder and debounce input through
+the focused `useSetDefaultValue` hook.
+
 Reusable authentication structure lives under `components/layouts/auth` and is
 composed by `app/(auth)/layout.tsx`. `AuthLayoutShell` owns the responsive,
 RTL-first brand and content regions while nested routes own headings, forms,
