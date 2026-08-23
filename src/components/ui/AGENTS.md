@@ -168,6 +168,10 @@ inherit the surrounding foreground or use an unrelated neutral text color.
 `variant="elevated|filled|outlined|glass"`. Compose it with `CardHeader`,
 `CardTitle`, `CardDescription`, `CardAction`, `CardContent`, and `CardFooter`.
 
+`Price` accepts a numeric `number`, `prefix="$|ریال|تومان"`, and root
+`className`. It formats values with Persian thousands separators, isolates the
+numeric run as LTR, places `$` before the number, and places rial/toman after it.
+
 `AlertDialogContent` uses `size="sm|md|lg"`. Every alert dialog must include
 an `AlertDialogTitle` and should include an `AlertDialogDescription`. Use
 `AlertDialogCancel` for the focus-restoring close action; choose the semantic

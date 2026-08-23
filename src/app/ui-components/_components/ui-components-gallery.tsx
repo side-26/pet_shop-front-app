@@ -20,11 +20,13 @@ import { FormShowcase } from './form-showcase';
 import { InputOtpShowcase } from './input-otp-showcase';
 import { CountdownShowcase } from './countdown-showcase';
 import { HoverCardShowcase } from './hover-card-showcase';
+import { PriceShowcase } from './price-showcase';
 
 const navigation = [
   ['#buttons', 'Button'],
   ['#badges', 'Badge'],
   ['#cards', 'Card'],
+  ['#prices', 'Price'],
   ['#alert-dialogs', 'Alert Dialog'],
   ['#popovers', 'Popover'],
   ['#hover-cards', 'Hover Card'],
@@ -83,6 +85,7 @@ export function UiComponentsGallery() {
         <ButtonShowcase />
         <BadgeShowcase />
         <CardShowcase />
+        <PriceShowcase />
         <AlertDialogShowcase />
         <PopoverShowcase />
         <HoverCardShowcase />
