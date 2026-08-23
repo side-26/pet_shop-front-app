@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test Failure Triage"
+  short_description: "Diagnose implementation and test contracts first"
+  default_prompt: "Investigate this failed test by comparing the related implementation and test contract, then fix the correct layer."
