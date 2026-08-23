@@ -1,0 +1,4 @@
+interface:
+  display_name: "Component Composition Architecture"
+  short_description: "Next.js composition and cache boundaries"
+  default_prompt: "Use $composition-component-architecture to design or review this Next.js UI architecture."

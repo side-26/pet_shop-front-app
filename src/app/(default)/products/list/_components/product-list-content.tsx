@@ -1,6 +1,14 @@
 import { ArrowDownUp, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { routePaths } from '@/configs/route.path';
 
@@ -14,29 +22,25 @@ const sortOptions = ['محبوب‌ترین', 'جدیدترین', 'ارزان‌
 export function ProductListContent() {
   return (
     <main className="tw:mx-auto tw:flex tw:w-full tw:max-w-7xl tw:flex-col tw:gap-5 tw:px-3 tw:py-5 tw:sm:px-5 tw:md:gap-6 tw:md:px-6 tw:md:py-8 tw:lg:px-8 tw:lg:py-10">
-      <nav aria-label="مسیر صفحه">
-        <ol className="tw:flex tw:flex-wrap tw:items-center tw:gap-1 tw:text-label-s tw:text-muted-foreground">
-          <li>
-            <Link href={routePaths.home} className="tw:hover:text-primary">
-              خانه
-            </Link>
-          </li>
-          <li>
-            <ChevronLeft aria-hidden="true" className="tw:size-4" />
-          </li>
-          <li>
-            <Link href={routePaths.products} className="tw:hover:text-primary">
-              فروشگاه
-            </Link>
-          </li>
-          <li>
-            <ChevronLeft aria-hidden="true" className="tw:size-4" />
-          </li>
-          <li aria-current="page" className="tw:text-foreground">
-            محصولات
-          </li>
-        </ol>
-      </nav>
+      <Breadcrumb aria-label="مسیر صفحه">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink render={<Link href={routePaths.home} />}>خانه</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator>
+            <ChevronLeft />
+          </BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbLink render={<Link href={routePaths.products} />}>فروشگاه</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator>
+            <ChevronLeft />
+          </BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbPage>محصولات</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
 
       <header>
         <h1 className="tw:text-heading-2 tw:lg:text-heading-1">محصولات حیوانات خانگی</h1>

@@ -12,6 +12,8 @@ describe(routePaths.productsList, () => {
     render(await ProductListPage());
 
     expect(screen.getByRole('heading', { level: 1, name: 'محصولات حیوانات خانگی' })).toBeTruthy();
+    expect(screen.getByRole('navigation', { name: 'مسیر صفحه' })).toBeTruthy();
+    expect(screen.getByText('محصولات').getAttribute('aria-current')).toBe('page');
     expect(screen.getByRole('complementary', { name: 'فیلتر محصولات' })).toBeTruthy();
     expect(screen.queryByText('برای دوست کوچکت، بهترین را انتخاب کن')).toBeNull();
     expect(screen.queryByText(/محصول منتخب برای تغذیه، بازی و مراقبت/)).toBeNull();
