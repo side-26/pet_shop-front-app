@@ -38,16 +38,8 @@ export function ProductListContent() {
         </ol>
       </nav>
 
-      <header className="tw:flex tw:flex-col tw:gap-2">
-        <p className="tw:text-label-m tw:text-secondary-active">
-          برای دوست کوچکت، بهترین را انتخاب کن
-        </p>
-        <div>
-          <h1 className="tw:text-heading-2 tw:lg:text-heading-1">محصولات حیوانات خانگی</h1>
-          <p className="tw:mt-1 tw:max-w-xl tw:text-body-s tw:text-muted-foreground tw:md:text-body-m">
-            {productListItems.length.toLocaleString('fa-IR')} محصول منتخب برای تغذیه، بازی و مراقبت
-          </p>
-        </div>
+      <header>
+        <h1 className="tw:text-heading-2 tw:lg:text-heading-1">محصولات حیوانات خانگی</h1>
       </header>
 
       <MobileProductTools />

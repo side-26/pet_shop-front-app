@@ -1,7 +1,8 @@
-import { PawPrint } from 'lucide-react';
+import { ChevronDown, PawPrint } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Field } from '@/components/ui/field/default';
 import { FieldLabel } from '@/components/ui/field/label';
 import { Checkbox } from '@/components/ui/fields/checkbox';
@@ -22,27 +23,36 @@ export function ProductFilters({ compact = false }: ProductFiltersProps) {
           <PawPrint aria-hidden="true" className="tw:text-primary" />
           فیلتر محصولات
         </CardTitle>
-        <CardDescription>
-          انتخاب‌ها را برای رسیدن سریع‌تر به محصول مناسب محدود کنید.
-        </CardDescription>
       </CardHeader>
       <CardContent className="tw:flex tw:flex-col tw:gap-5">
         {filterGroups.map((group, groupIndex) => (
-          <div key={group.title} className="tw:flex tw:flex-col tw:gap-3">
+          <Collapsible key={group.title} defaultOpen className="tw:flex tw:flex-col tw:gap-3">
             {groupIndex > 0 ? <Separator /> : null}
-            <h3 className="tw:text-title-s">{group.title}</h3>
-            <div className="tw:flex tw:flex-col tw:gap-3">
-              {group.options.map((option, optionIndex) => {
-                const id = `${compact ? 'mobile' : 'desktop'}-${groupIndex}-${optionIndex}`;
-                return (
-                  <Field key={option} className="tw:flex-row tw:items-center">
-                    <Checkbox id={id} defaultChecked={optionIndex === 0} size="sm" />
-                    <FieldLabel htmlFor={id}>{option}</FieldLabel>
-                  </Field>
-                );
-              })}
-            </div>
-          </div>
+            <CollapsibleTrigger
+              render={
+                <Button block color="secondary" variant="flat" className="tw:justify-between" />
+              }
+            >
+              <span>{group.title}</span>
+              <ChevronDown
+                aria-hidden="true"
+                className="tw:transition-transform tw:group-aria-expanded/button:rotate-180 tw:motion-reduce:transition-none"
+              />
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="tw:flex tw:flex-col tw:gap-3 tw:px-3">
+                {group.options.map((option, optionIndex) => {
+                  const id = `${compact ? 'mobile' : 'desktop'}-${groupIndex}-${optionIndex}`;
+                  return (
+                    <Field key={option} className="tw:flex-row tw:items-center">
+                      <Checkbox id={id} defaultChecked={optionIndex === 0} size="sm" />
+                      <FieldLabel htmlFor={id}>{option}</FieldLabel>
+                    </Field>
+                  );
+                })}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         ))}
         <Button block>اعمال فیلترها</Button>
       </CardContent>
