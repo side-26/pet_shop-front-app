@@ -168,6 +168,23 @@ inherit the surrounding foreground or use an unrelated neutral text color.
 `variant="elevated|filled|outlined|glass"`. Compose it with `CardHeader`,
 `CardTitle`, `CardDescription`, `CardAction`, `CardContent`, and `CardFooter`.
 
+`ExpandableCard` is the client-side compound composition for vertically clipped
+card content. Compose `ExpandableCard.Root`, `ExpandableCard.Content`, and
+`ExpandableCard.Trigger` together; content and trigger must remain inside the
+root. Root inherits the shared `Card` props and accepts `defaultExpanded`.
+Content requires a pixel `collapsedHeight`, supports `fadeHeight` and
+`showFade`, and uses `ResizeObserver` to keep its expanded height synchronized
+with dynamic content. Trigger inherits the shared `Button` props, uses the
+Button `block` API, and supports state-specific `collapsedLabel` and
+`expandedLabel`; explicit children remain unchanged across states. Preserve its
+native button behavior, `aria-expanded`/`aria-controls` relationship, focus,
+and cancellable `onClick` contract: a consumer that calls `preventDefault()`
+must prevent the internal toggle. Use semantic card colors for the trigger
+surface, and keep both height and fade transitions disabled under reduced
+motion. Represent collapsed and initially expanded states in `/ui-components`;
+cover the React contract with Vitest and focus/browser interaction with Cypress
+Component Testing.
+
 `Price` accepts a numeric `number`, `prefix="$|ریال|تومان"`, and root
 `className`. It formats values with Persian thousands separators, isolates the
 numeric run as LTR, places `$` before the number, and places rial/toman after it.

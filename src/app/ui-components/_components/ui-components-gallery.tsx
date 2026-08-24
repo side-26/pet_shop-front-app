@@ -22,11 +22,13 @@ import { CountdownShowcase } from './countdown-showcase';
 import { HoverCardShowcase } from './hover-card-showcase';
 import { PriceShowcase } from './price-showcase';
 import { BreadcrumbShowcase } from './breadcrumb-showcase';
+import { ExpandableCardShowcase } from './expandable-card-showcase';
 
 const navigation = [
   ['#buttons', 'Button'],
   ['#badges', 'Badge'],
   ['#cards', 'Card'],
+  ['#expandable-cards', 'Expandable Card'],
   ['#prices', 'Price'],
   ['#breadcrumbs', 'Breadcrumb'],
   ['#alert-dialogs', 'Alert Dialog'],
@@ -87,6 +89,7 @@ export function UiComponentsGallery() {
         <ButtonShowcase />
         <BadgeShowcase />
         <CardShowcase />
+        <ExpandableCardShowcase />
         <PriceShowcase />
         <BreadcrumbShowcase />
         <AlertDialogShowcase />
