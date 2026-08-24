@@ -231,6 +231,18 @@ left chevron, ArrowRight moves previous, and ArrowLeft moves next. `ButtonGroup`
 supports horizontal and vertical orientations and joins child borders using
 logical start/end properties.
 
+`Toggle` and `ToggleGroup` use Base UI and share Button's
+`size="xs|sm|md|lg|xl"`,
+`variant="fill|outlined|tonal|flat|text|transparent"`, and
+`color="primary|secondary|info|success|warning|error"` axes. They default to
+`md`, `flat`, and `primary`. A single-select Base UI `ToggleGroup` uses an
+array value without a `multiple` prop; add `multiple` for multi-selection.
+`ToggleGroup` supports horizontal or vertical orientation and numeric spacing;
+spacing zero joins item borders with logical RTL-safe start/end radii. Preserve
+native `aria-pressed`, roving keyboard focus, disabled behavior, and visible
+focus/selected states. Use `ToggleGroup` for option sets of two to seven choices
+instead of manually coordinating Button pressed state.
+
 `Menubar` composes Base UI Menubar with the shared Dropdown Menu parts and is
 non-modal by default. Labels and checkbox items belong inside `MenubarGroup`;
 radio items belong inside `MenubarRadioGroup`. Preserve RTL arrow-key movement,
