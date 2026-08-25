@@ -1,7 +1,7 @@
 'use client';
 
-import { Minus, Plus } from 'lucide-react';
-import { useState } from 'react';
+import { Minus, Plus, Trash2 } from 'lucide-react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
 import { Button } from '@/components/ui/button';
@@ -135,35 +135,47 @@ type CounterProps = Omit<React.ComponentProps<'div'>, 'color' | 'defaultValue' |
     locale?: Intl.LocalesArgument;
     incrementLabel?: string;
     decrementLabel?: string;
+    removeLabel?: string;
   };
+
+type CounterRef = {
+  value: number;
+};
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
-function Counter({
-  value,
-  defaultValue = 0,
-  min = 0,
-  max = Number.MAX_SAFE_INTEGER,
-  onValueChange,
-  locale = 'fa-IR',
-  incrementLabel = 'افزایش مقدار',
-  decrementLabel = 'کاهش مقدار',
-  variant = 'fill',
-  color = 'primary',
-  size = 'md',
-  className,
-  'aria-label': ariaLabel = 'شمارنده',
-  ...props
-}: CounterProps) {
+const Counter = forwardRef<CounterRef, CounterProps>(function Counter(
+  {
+    value,
+    defaultValue = 0,
+    min = 0,
+    max = Number.MAX_SAFE_INTEGER,
+    onValueChange,
+    locale = 'fa-IR',
+    incrementLabel = 'افزایش مقدار',
+    decrementLabel = 'کاهش مقدار',
+    removeLabel = 'حذف مقدار',
+    variant = 'fill',
+    color = 'primary',
+    size = 'md',
+    className,
+    'aria-label': ariaLabel = 'شمارنده',
+    ...props
+  }: CounterProps,
+  ref,
+) {
   const lowerBound = Math.min(min, max);
   const upperBound = Math.max(min, max);
   const [internalValue, setInternalValue] = useState(() =>
     clamp(defaultValue, lowerBound, upperBound),
   );
   const currentValue = clamp(value ?? internalValue, lowerBound, upperBound);
+  const isRemoveAction = lowerBound === 0 && currentValue === 1;
   const styles = counterVariants({ variant, color, size });
+
+  useImperativeHandle(ref, () => ({ value: currentValue }), [currentValue]);
 
   function updateValue(nextValue: number) {
     const clampedValue = clamp(nextValue, lowerBound, upperBound);
@@ -201,14 +213,23 @@ function Counter({
         size={size}
         variant={variant}
         color={color}
-        aria-label={decrementLabel}
+        aria-label={isRemoveAction ? removeLabel : decrementLabel}
+        data-counter-action={isRemoveAction ? 'remove' : 'decrement'}
         disabled={currentValue <= lowerBound}
         onClick={() => updateValue(currentValue - 1)}
       >
-        <Minus aria-hidden="true" />
+        {isRemoveAction ? (
+          <Trash2
+            aria-hidden="true"
+            data-counter-icon="trash"
+            className={variant === 'fill' ? undefined : 'tw:text-error'}
+          />
+        ) : (
+          <Minus aria-hidden="true" data-counter-icon="minus" />
+        )}
       </Button>
     </ButtonGroup>
   );
-}
+});
 
-export { Counter, counterVariants, type CounterProps };
+export { Counter, counterVariants, type CounterProps, type CounterRef };

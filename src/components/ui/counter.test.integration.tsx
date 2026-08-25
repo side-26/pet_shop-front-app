@@ -1,7 +1,8 @@
+import { act, createRef } from 'react';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { Counter } from './counter';
+import { Counter, type CounterRef } from './counter';
 
 afterEach(cleanup);
 
@@ -36,5 +37,44 @@ describe('Counter', () => {
 
     rerender(<Counter value={-10} min={2} max={5} />);
     expect(screen.getByText('۲')).toBeTruthy();
+  });
+
+  it('exposes the latest clamped value through its imperative ref', () => {
+    const ref = createRef<CounterRef>();
+    const { rerender } = render(<Counter ref={ref} defaultValue={2} min={1} max={3} />);
+
+    expect(ref.current?.value).toBe(2);
+
+    act(() => fireEvent.click(screen.getByRole('button', { name: 'افزایش مقدار' })));
+    expect(ref.current?.value).toBe(3);
+
+    rerender(<Counter ref={ref} value={10} min={1} max={3} />);
+    expect(ref.current?.value).toBe(3);
+  });
+
+  it('uses a stable-size removal action at one when the minimum is zero', () => {
+    render(<Counter defaultValue={1} min={0} max={3} variant="outlined" color="success" />);
+
+    const removeButton = screen.getByRole('button', { name: 'حذف مقدار' });
+    const classNameBeforeRemoval = removeButton.className;
+
+    expect(removeButton.getAttribute('data-counter-action')).toBe('remove');
+    expect(removeButton.querySelector('svg')?.getAttribute('data-counter-icon')).toBe('trash');
+    expect(removeButton.querySelector('svg')?.className.baseVal).toContain('tw:text-error');
+
+    fireEvent.click(removeButton);
+
+    const decrementButton = screen.getByRole('button', { name: 'کاهش مقدار' });
+    expect(decrementButton.className).toBe(classNameBeforeRemoval);
+    expect(decrementButton.getAttribute('data-counter-action')).toBe('decrement');
+    expect(decrementButton.querySelector('svg')?.getAttribute('data-counter-icon')).toBe('minus');
+  });
+
+  it('uses the current filled-action foreground when error icon contrast is not assured', () => {
+    render(<Counter defaultValue={1} min={0} variant="fill" color="success" />);
+
+    const trashIcon = screen.getByRole('button', { name: 'حذف مقدار' }).querySelector('svg');
+
+    expect(trashIcon?.className.baseVal).not.toContain('tw:text-error');
   });
 });

@@ -326,7 +326,10 @@ the numeric run LTR in RTL interfaces, and becomes immediate under reduced motio
 the shared `size="xs|sm|md|lg|xl"`,
 `variant="fill|outlined|tonal|flat|text|transparent"`, and
 `color="primary|secondary|info|success|warning|error"` axes. Keep its icon actions accessibly
-named and its localized numeric output isolated as LTR.
+named and its localized numeric output isolated as LTR. Its forwarded `CounterRef` exposes the
+latest clamped `value` through `useImperativeHandle`. When `min={0}` and the value is `1`, its
+decrement action becomes an equal-sized trash-can removal action. Prefer the error icon color
+except on filled surfaces, where it inherits the current action foreground for accessible contrast.
 
 `ThemeToggle` provides `light|dark|system` appearance modes. It persists the
 preference under `petshop-theme`, applies `.dark` to the root element, and keeps
