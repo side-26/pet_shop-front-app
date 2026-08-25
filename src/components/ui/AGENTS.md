@@ -243,6 +243,14 @@ native `aria-pressed`, roving keyboard focus, disabled behavior, and visible
 focus/selected states. Use `ToggleGroup` for option sets of two to seven choices
 instead of manually coordinating Button pressed state.
 
+`Tabs` composes Base UI `Tabs`, `TabsList`, `TabsTrigger`, and `TabsContent`.
+Set only `color="primary|secondary|info|success|warning|error"` and
+`size="xs|sm|md|lg|xl"` on the `Tabs` root; child parts inherit both values.
+`TabsList` supports the native `variant="default|line"`; its line indicator inherits the
+root color and trigger size. Keep every `TabsTrigger` inside a
+`TabsList`, pair every trigger value with its `TabsContent`, and preserve Base UI
+keyboard, disabled, focus, orientation, and RTL behavior.
+
 `Menubar` composes Base UI Menubar with the shared Dropdown Menu parts and is
 non-modal by default. Labels and checkbox items belong inside `MenubarGroup`;
 radio items belong inside `MenubarRadioGroup`. Preserve RTL arrow-key movement,

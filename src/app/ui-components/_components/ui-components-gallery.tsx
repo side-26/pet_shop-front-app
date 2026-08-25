@@ -25,6 +25,7 @@ import { PriceShowcase } from './price-showcase';
 import { BreadcrumbShowcase } from './breadcrumb-showcase';
 import { ExpandableCardShowcase } from './expandable-card-showcase';
 import { ToggleGroupShowcase } from './toggle-group-showcase';
+import { TabsShowcase } from './tabs-showcase';
 
 const navigation = [
   ['#buttons', 'Button'],
@@ -47,6 +48,7 @@ const navigation = [
   ['#carousels', 'Carousel'],
   ['#button-groups', 'Button Group'],
   ['#toggle-groups', 'Toggle Group'],
+  ['#tabs', 'Tabs'],
   ['#menubars', 'Menubar'],
   ['#forms', 'Form'],
   ['#input-otp-fields', 'Input OTP Field'],
@@ -112,6 +114,7 @@ export function UiComponentsGallery() {
         <CarouselShowcase />
         <ButtonGroupShowcase />
         <ToggleGroupShowcase />
+        <TabsShowcase />
         <MenubarShowcase />
         <FormShowcase />
         <InputOtpShowcase />

@@ -77,6 +77,8 @@ describe(routePaths.uiComponents, () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Carousel' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Button Group' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Toggle / Toggle Group' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 3, name: 'Tabs' })).toBeTruthy();
+    expect(screen.getByRole('tablist', { name: 'اطلاعات محصول' })).toBeTruthy();
     expect(screen.getByRole('group', { name: 'وزن محصول · outlined' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Menubar' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Form' })).toBeTruthy();
