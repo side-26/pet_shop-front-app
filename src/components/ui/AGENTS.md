@@ -330,6 +330,8 @@ named and its localized numeric output isolated as LTR. Its forwarded `CounterRe
 latest clamped `value` through `useImperativeHandle`. When `min={0}` and the value is `1`, its
 decrement action becomes an equal-sized trash-can removal action. Prefer the error icon color
 except on filled surfaces, where it inherits the current action foreground for accessible contrast.
+Its numeric value transitions vertically with Framer Motion on increment and decrement while the
+fixed-size action controls and counter group remain stable; reduced motion disables the transition.
 
 `ThemeToggle` provides `light|dark|system` appearance modes. It persists the
 preference under `petshop-theme`, applies `.dark` to the root element, and keeps

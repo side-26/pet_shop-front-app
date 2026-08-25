@@ -1,7 +1,8 @@
 'use client';
 
+import { AnimatePresence, motion, useReducedMotion, type Variants } from 'framer-motion';
 import { Minus, Plus, Trash2 } from 'lucide-react';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
 import { Button } from '@/components/ui/button';
@@ -146,6 +147,17 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
+const valueTransition = {
+  duration: 0.2,
+  ease: [0.22, 1, 0.36, 1],
+} as const;
+
+const valueAnimationVariants = {
+  enter: (direction: number) => ({ opacity: 0, y: direction > 0 ? 8 : -8 }),
+  center: { opacity: 1, y: 0 },
+  exit: (direction: number) => ({ opacity: 0, y: direction > 0 ? -8 : 8 }),
+} satisfies Variants;
+
 const Counter = forwardRef<CounterRef, CounterProps>(function Counter(
   {
     value,
@@ -172,10 +184,17 @@ const Counter = forwardRef<CounterRef, CounterProps>(function Counter(
     clamp(defaultValue, lowerBound, upperBound),
   );
   const currentValue = clamp(value ?? internalValue, lowerBound, upperBound);
+  const previousValueRef = useRef(currentValue);
+  const animationDirection = currentValue >= previousValueRef.current ? 1 : -1;
+  const reduceMotion = Boolean(useReducedMotion());
+  const formattedValue = currentValue.toLocaleString(locale);
   const isRemoveAction = lowerBound === 0 && currentValue === 1;
   const styles = counterVariants({ variant, color, size });
 
   useImperativeHandle(ref, () => ({ value: currentValue }), [currentValue]);
+  useEffect(() => {
+    previousValueRef.current = currentValue;
+  }, [currentValue]);
 
   function updateValue(nextValue: number) {
     const clampedValue = clamp(nextValue, lowerBound, upperBound);
@@ -205,7 +224,27 @@ const Counter = forwardRef<CounterRef, CounterProps>(function Counter(
       </Button>
       <ButtonGroupText className={styles.value()}>
         <output aria-live="polite" dir="ltr">
-          {currentValue.toLocaleString(locale)}
+          <span
+            data-counter-value
+            data-testid="counter-value"
+            data-direction={animationDirection > 0 ? 'increase' : 'decrease'}
+            className="tw:relative tw:grid tw:min-h-[1lh] tw:min-w-full tw:place-items-center tw:tabular-nums"
+          >
+            <AnimatePresence initial={false} mode="popLayout" custom={animationDirection}>
+              <motion.span
+                key={formattedValue}
+                custom={animationDirection}
+                className="tw:col-start-1 tw:row-start-1"
+                variants={valueAnimationVariants}
+                initial={reduceMotion ? false : 'enter'}
+                animate="center"
+                exit={reduceMotion ? undefined : 'exit'}
+                transition={reduceMotion ? { duration: 0 } : valueTransition}
+              >
+                {formattedValue}
+              </motion.span>
+            </AnimatePresence>
+          </span>
         </output>
       </ButtonGroupText>
       <Button

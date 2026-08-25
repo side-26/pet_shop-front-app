@@ -77,4 +77,24 @@ describe('Counter', () => {
 
     expect(trashIcon?.className.baseVal).not.toContain('tw:text-error');
   });
+
+  it('animates value changes directionally without changing the counter controls layout', () => {
+    render(<Counter defaultValue={2} min={0} max={4} />);
+
+    const counter = screen.getByRole('group', { name: 'شمارنده' });
+    const incrementButton = screen.getByRole('button', { name: 'افزایش مقدار' });
+    const decrementButton = screen.getByRole('button', { name: 'کاهش مقدار' });
+    const counterClassName = counter.className;
+    const incrementClassName = incrementButton.className;
+    const decrementClassName = decrementButton.className;
+
+    fireEvent.click(incrementButton);
+    expect(screen.getByTestId('counter-value').getAttribute('data-direction')).toBe('increase');
+
+    fireEvent.click(decrementButton);
+    expect(screen.getByTestId('counter-value').getAttribute('data-direction')).toBe('decrease');
+    expect(counter.className).toBe(counterClassName);
+    expect(incrementButton.className).toBe(incrementClassName);
+    expect(decrementButton.className).toBe(decrementClassName);
+  });
 });
