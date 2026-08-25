@@ -60,4 +60,27 @@ describe('Tabs', () => {
     expect(onValueChange).toHaveBeenLastCalledWith('reviews', expect.anything());
     expect(reviews.getAttribute('aria-selected')).toBe('true');
   });
+
+  it('layers directional panel transitions in a stable grid with a reduced-motion fallback', () => {
+    render(
+      <Tabs defaultValue="details">
+        <TabsList aria-label="محتوا">
+          <TabsTrigger value="details">جزئیات</TabsTrigger>
+          <TabsTrigger value="reviews">دیدگاه‌ها</TabsTrigger>
+        </TabsList>
+        <TabsContent value="details">محتوای جزئیات</TabsContent>
+      </Tabs>,
+    );
+
+    const tabs = screen.getByRole('tablist').closest('[data-slot="tabs"]');
+    const content = screen.getByRole('tabpanel');
+    expect(tabs?.className).toContain('tw:grid-rows-[auto_minmax(0,1fr)]');
+    expect(content.className).toContain(
+      'tw:data-[activation-direction=left]:data-[starting-style]:-translate-x-2',
+    );
+    expect(content.className).toContain(
+      'tw:data-[activation-direction=right]:data-[ending-style]:-translate-x-2',
+    );
+    expect(content.className).toContain('tw:motion-reduce:transition-none');
+  });
 });

@@ -249,7 +249,10 @@ Set only `color="primary|secondary|info|success|warning|error"` and
 `TabsList` supports the native `variant="default|line"`; its line indicator inherits the
 root color and trigger size. Keep every `TabsTrigger` inside a
 `TabsList`, pair every trigger value with its `TabsContent`, and preserve Base UI
-keyboard, disabled, focus, orientation, and RTL behavior.
+keyboard, disabled, focus, orientation, and RTL behavior. `TabsContent` uses Base UI's
+activation-direction data state for short transform/opacity-only slide transitions. The root
+uses a shared grid cell for panels so entering and exiting content does not stack or shift the
+layout during the transition; reduced motion disables the transition.
 
 `Menubar` composes Base UI Menubar with the shared Dropdown Menu parts and is
 non-modal by default. Labels and checkbox items belong inside `MenubarGroup`;

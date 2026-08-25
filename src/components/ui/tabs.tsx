@@ -83,7 +83,11 @@ function Tabs({
       data-color={color}
       data-size={size}
       orientation={orientation}
-      className={cn('tw:group/tabs tw:flex tw:gap-2 tw:data-horizontal:flex-col', className)}
+      className={cn(
+        'tw:group/tabs tw:grid tw:grid-cols-1 tw:grid-rows-[auto_minmax(0,1fr)] tw:gap-2',
+        'tw:data-[orientation=vertical]:grid-cols-[auto_minmax(0,1fr)] tw:data-[orientation=vertical]:grid-rows-1',
+        className,
+      )}
     >
       <TabsContext.Provider value={{ color, size }}>{children}</TabsContext.Provider>
     </TabsPrimitive.Root>
@@ -100,7 +104,11 @@ function TabsList({ className, variant = 'default', ...props }: TabsListProps) {
       data-slot="tabs-list"
       data-size={size}
       data-variant={variant}
-      className={cn(tabsListVariants({ size, variant }), className)}
+      className={cn(
+        'tw:col-start-1 tw:row-start-1',
+        tabsListVariants({ size, variant }),
+        className,
+      )}
     />
   );
 }
@@ -125,7 +133,21 @@ function TabsContent({ className, ...props }: TabsContentProps) {
     <TabsPrimitive.Panel
       {...props}
       data-slot="tabs-content"
-      className={cn('tw:flex-1 tw:outline-none', className)}
+      className={cn(
+        'tw:col-start-1 tw:row-start-2 tw:flex-1 tw:outline-none',
+        'tw:transition-[transform,opacity] tw:duration-200 tw:ease-out',
+        'tw:group-data-[orientation=vertical]/tabs:col-start-2 tw:group-data-[orientation=vertical]/tabs:row-start-1',
+        'tw:data-[starting-style]:opacity-0 tw:data-[activation-direction=left]:data-[starting-style]:-translate-x-2',
+        'tw:data-[activation-direction=right]:data-[starting-style]:translate-x-2',
+        'tw:data-[activation-direction=up]:data-[starting-style]:-translate-y-2',
+        'tw:data-[activation-direction=down]:data-[starting-style]:translate-y-2',
+        'tw:data-[ending-style]:opacity-0 tw:data-[activation-direction=left]:data-[ending-style]:translate-x-2',
+        'tw:data-[activation-direction=right]:data-[ending-style]:-translate-x-2',
+        'tw:data-[activation-direction=up]:data-[ending-style]:translate-y-2',
+        'tw:data-[activation-direction=down]:data-[ending-style]:-translate-y-2',
+        'tw:motion-reduce:transition-none',
+        className,
+      )}
     />
   );
 }
