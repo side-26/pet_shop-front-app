@@ -16,6 +16,9 @@ describe(routePaths.petsList, () => {
     expect(screen.getAllByRole('heading', { level: 3 }).length).toBeGreaterThan(6);
     expect(screen.getByTestId('pets-grid').className).toContain('tw:md:grid-cols-3');
     expect(screen.getAllByText('واگذار شده')).toHaveLength(2);
+    const maxDetailLink = screen.getAllByText('مشاهده جزئیات')[0].closest('a');
+    expect(maxDetailLink).not.toBeNull();
+    expect(maxDetailLink?.getAttribute('href')).toBe(routePaths.petDetail('max'));
   });
 
   it('exposes mobile and tablet filters and sorting as dialog actions', () => {

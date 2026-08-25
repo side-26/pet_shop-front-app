@@ -1,5 +1,6 @@
 import { ShoppingCart, UserRound } from 'lucide-react';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 import { buttonVariants } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -7,7 +8,7 @@ import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
 
 import { Brand } from './brand';
-import { DesktopNavigation } from './desktop-navigation';
+import { DesktopNavigation, DesktopNavigationView } from './desktop-navigation';
 import { HeaderProductSearch } from './header-product-search';
 
 export function DefaultHeader() {
@@ -19,7 +20,9 @@ export function DefaultHeader() {
           <Brand size="compact" className="tw:hidden tw:lg:inline-flex" />
         </div>
 
-        <DesktopNavigation />
+        <Suspense fallback={<DesktopNavigationView />}>
+          <DesktopNavigation />
+        </Suspense>
 
         <div className="tw:flex tw:min-w-0 tw:items-center tw:gap-1 tw:sm:gap-1.5">
           <HeaderProductSearch />

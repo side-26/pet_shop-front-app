@@ -1,6 +1,8 @@
+import { Suspense } from 'react';
+
 import { DefaultFooter } from './default-footer';
 import { DefaultHeader } from './default-header';
-import { MobileBottomNavigation } from './mobile-bottom-navigation';
+import { MobileBottomNavigation, MobileBottomNavigationView } from './mobile-bottom-navigation';
 
 type DefaultLayoutShellProps = Readonly<{
   children: React.ReactNode;
@@ -14,7 +16,9 @@ export function DefaultLayoutShell({ children }: DefaultLayoutShellProps) {
         {children}
       </main>
       <DefaultFooter />
-      <MobileBottomNavigation />
+      <Suspense fallback={<MobileBottomNavigationView />}>
+        <MobileBottomNavigation />
+      </Suspense>
     </div>
   );
 }

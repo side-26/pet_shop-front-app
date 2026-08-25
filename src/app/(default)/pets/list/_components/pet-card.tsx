@@ -1,11 +1,13 @@
 import { Heart, MapPin, Mars, Venus } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Price } from '@/components/ui/price';
 import { cn } from '@/lib/utils';
+import { routePaths } from '@/configs/route.path';
 
 import type { PetListItem } from './pet-list-data';
 
@@ -83,6 +85,8 @@ export function PetCard({ pet, eager = false }: PetCardProps) {
       </CardContent>
       <CardFooter className="tw:mt-auto">
         <Button
+          render={<Link href={routePaths.petDetail(pet.id)} />}
+          nativeButton={false}
           block
           size="sm"
           variant={pet.available ? 'tonal' : 'outlined'}

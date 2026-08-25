@@ -7,9 +7,7 @@ import { cn } from '@/lib/utils';
 
 import { isNavigationItemActive, mobileNavigationItems } from './navigation-items';
 
-export function MobileBottomNavigation() {
-  const pathname = usePathname();
-
+export function MobileBottomNavigationView({ pathname }: Readonly<{ pathname?: string }>) {
   return (
     <nav
       className="tw:fixed tw:inset-x-0 tw:bottom-0 tw:z-40 tw:border-t tw:border-border/70 tw:bg-background/92 tw:px-1 tw:pb-[max(0.5rem,env(safe-area-inset-bottom))] tw:shadow-lg tw:supports-backdrop-filter:backdrop-blur-2xl tw:sm:inset-x-auto tw:sm:bottom-4 tw:sm:left-1/2 tw:sm:w-[calc(100%_-_3rem)] tw:sm:max-w-3xl tw:sm:-translate-x-1/2 tw:sm:rounded-2xl tw:sm:border tw:sm:px-3 tw:sm:pb-2 tw:lg:hidden"
@@ -17,7 +15,7 @@ export function MobileBottomNavigation() {
     >
       <ul className="tw:mx-auto tw:grid tw:h-16 tw:grid-cols-6 tw:items-center tw:sm:h-[68px]">
         {mobileNavigationItems.map(({ href, label, icon: Icon }) => {
-          const isActive = isNavigationItemActive(pathname, href);
+          const isActive = pathname ? isNavigationItemActive(pathname, href) : false;
 
           return (
             <li key={href}>
@@ -50,4 +48,8 @@ export function MobileBottomNavigation() {
       </ul>
     </nav>
   );
+}
+
+export function MobileBottomNavigation() {
+  return <MobileBottomNavigationView pathname={usePathname()} />;
 }

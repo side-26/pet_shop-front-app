@@ -7,16 +7,14 @@ import { cn } from '@/lib/utils';
 
 import { desktopNavigationItems, isNavigationItemActive } from './navigation-items';
 
-export function DesktopNavigation() {
-  const pathname = usePathname();
-
+export function DesktopNavigationView({ pathname }: Readonly<{ pathname?: string }>) {
   return (
     <nav
       className="tw:hidden tw:items-center tw:gap-5 tw:lg:flex tw:xl:gap-7"
       aria-label="ناوبری اصلی"
     >
       {desktopNavigationItems.map(({ href, label }) => {
-        const isActive = isNavigationItemActive(pathname, href);
+        const isActive = pathname ? isNavigationItemActive(pathname, href) : false;
 
         return (
           <Link
@@ -34,4 +32,8 @@ export function DesktopNavigation() {
       })}
     </nav>
   );
+}
+
+export function DesktopNavigation() {
+  return <DesktopNavigationView pathname={usePathname()} />;
 }

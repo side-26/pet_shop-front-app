@@ -22,6 +22,7 @@ export const routePaths = {
   pets: PATHS.PETS,
   petsLanding: PATHS.PETS_LANDING,
   petsList: PATHS.PETS_LIST,
+  petDetail: (slug: string) => `${PATHS.PETS}/${encodeURIComponent(slug)}`,
   products: PATHS.PRODUCTS,
   productsList: PATHS.PRODUCTS_LIST,
   productDetail: (slug: string) => `${PATHS.PRODUCTS}/${encodeURIComponent(slug)}`,
