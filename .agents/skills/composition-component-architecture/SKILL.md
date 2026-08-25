@@ -7,6 +7,8 @@ description: Design, implement, refactor, or review React and Next.js UI composi
 
 Build the largest practical prerenderable server tree and hydrate only the smallest interactive islands. Treat responsibility boundaries and rendering/cache boundaries as equally important.
 
+This project skill incorporates the supplied “Next.js Component Composition & Cache Architecture” guidance. For substantial page creation, page refactoring, or cache/render-boundary review, also read [references/architecture-decision-guide.md](references/architecture-decision-guide.md).
+
 Use this priority unless the product requirements or repository conventions demand otherwise:
 
 ```text
