@@ -19,6 +19,7 @@ import { MenubarShowcase } from './menubar-showcase';
 import { FormShowcase } from './form-showcase';
 import { InputOtpShowcase } from './input-otp-showcase';
 import { CountdownShowcase } from './countdown-showcase';
+import { CounterShowcase } from './counter-showcase';
 import { HoverCardShowcase } from './hover-card-showcase';
 import { PriceShowcase } from './price-showcase';
 import { BreadcrumbShowcase } from './breadcrumb-showcase';
@@ -50,6 +51,7 @@ const navigation = [
   ['#forms', 'Form'],
   ['#input-otp-fields', 'Input OTP Field'],
   ['#countdowns', 'Countdown'],
+  ['#counters', 'Counter'],
 ] as const;
 
 export function UiComponentsGallery() {
@@ -104,7 +106,9 @@ export function UiComponentsGallery() {
         <CollapsibleShowcase />
         <DropdownMenuShowcase />
         <PaginationShowcase />
-        <DataTableShowcase />
+        <Suspense fallback={null}>
+          <DataTableShowcase />
+        </Suspense>
         <CarouselShowcase />
         <ButtonGroupShowcase />
         <ToggleGroupShowcase />
@@ -112,7 +116,9 @@ export function UiComponentsGallery() {
         <FormShowcase />
         <InputOtpShowcase />
         <CountdownShowcase />
+        <CounterShowcase />
       </div>
     </main>
   );
 }
+import { Suspense } from 'react';

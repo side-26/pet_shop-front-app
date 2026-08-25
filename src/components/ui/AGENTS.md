@@ -321,6 +321,13 @@ of the active counter's forced LTR direction. Its split-flap digit transition us
 Framer Motion, corrects interval drift against a deadline, stops at zero, keeps
 the numeric run LTR in RTL interfaces, and becomes immediate under reduced motion.
 
+`Counter` supports controlled `value` and uncontrolled `defaultValue`, clamps values to
+`min` and `max`, and disables increment/decrement actions at their respective bounds. It uses
+the shared `size="xs|sm|md|lg|xl"`,
+`variant="fill|outlined|tonal|flat|text|transparent"`, and
+`color="primary|secondary|info|success|warning|error"` axes. Keep its icon actions accessibly
+named and its localized numeric output isolated as LTR.
+
 `ThemeToggle` provides `light|dark|system` appearance modes. It persists the
 preference under `petshop-theme`, applies `.dark` to the root element, and keeps
 the browser `color-scheme` synchronized. Use the default `segmented` variant

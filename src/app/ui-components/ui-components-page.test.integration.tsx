@@ -82,6 +82,8 @@ describe(routePaths.uiComponents, () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Form' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Input OTP Field' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Countdown' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 3, name: 'Counter' })).toBeTruthy();
+    expect(screen.getByRole('group', { name: 'tonal' })).toBeTruthy();
     expect(screen.getByLabelText('کد تأیید')).toBeTruthy();
     expect(screen.getAllByRole('timer').length).toBeGreaterThan(0);
     expect(screen.getByText('زمان به پایان رسید')).toBeTruthy();

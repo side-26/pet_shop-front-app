@@ -1,10 +1,9 @@
 'use client';
 
-import { Minus, Plus, ShoppingCart } from 'lucide-react';
-import { useState } from 'react';
+import { ShoppingCart } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { ButtonGroup, ButtonGroupText } from '@/components/ui/button-group';
+import { Counter } from '@/components/ui/counter';
 import { Price } from '@/components/ui/price';
 import { cn } from '@/lib/utils';
 
@@ -15,58 +14,12 @@ type ProductPurchaseControlsProps = Readonly<{
   mode: 'desktop' | 'mobile';
 }>;
 
-function QuantityControl({
-  quantity,
-  stock,
-  onChange,
-}: Readonly<{
-  quantity: number;
-  stock: number;
-  onChange: (quantity: number) => void;
-}>) {
-  return (
-    <ButtonGroup
-      className="tw:h-11 tw:shrink-0 tw:overflow-hidden tw:rounded-xl tw:border tw:border-border-strong tw:bg-background"
-      aria-label="تعداد محصول"
-    >
-      <Button
-        iconOnly
-        size="md"
-        variant="flat"
-        color="secondary"
-        aria-label="افزایش تعداد"
-        className="tw:size-10 tw:rounded-none tw:border-0 tw:bg-transparent tw:text-primary tw:shadow-none"
-        disabled={quantity >= stock}
-        onClick={() => onChange(quantity + 1)}
-      >
-        <Plus aria-hidden="true" />
-      </Button>
-      <ButtonGroupText className="tw:min-w-10 tw:justify-center tw:rounded-none tw:border-y-0 tw:border-border/70 tw:bg-transparent tw:px-2 tw:text-title-s">
-        <output aria-live="polite">{quantity.toLocaleString('fa-IR')}</output>
-      </ButtonGroupText>
-      <Button
-        iconOnly
-        size="md"
-        variant="flat"
-        color="secondary"
-        aria-label="کاهش تعداد"
-        className="tw:size-10 tw:rounded-none tw:border-0 tw:bg-transparent tw:text-muted-foreground tw:shadow-none"
-        disabled={quantity <= 1}
-        onClick={() => onChange(quantity - 1)}
-      >
-        <Minus aria-hidden="true" />
-      </Button>
-    </ButtonGroup>
-  );
-}
-
 export function ProductPurchaseControls({
   price,
   previousPrice,
   stock,
   mode,
 }: ProductPurchaseControlsProps) {
-  const [quantity, setQuantity] = useState(1);
   const isDesktop = mode === 'desktop';
 
   return (
@@ -102,7 +55,16 @@ export function ProductPurchaseControls({
             className="tw:hidden tw:text-price-s tw:text-primary tw:sm:inline-flex"
           />
         ) : null}
-        <QuantityControl quantity={quantity} stock={stock} onChange={setQuantity} />
+        <Counter
+          min={1}
+          max={stock}
+          defaultValue={1}
+          size="lg"
+          variant="outlined"
+          aria-label="تعداد محصول"
+          incrementLabel="افزایش تعداد"
+          decrementLabel="کاهش تعداد"
+        />
         <Button size="lg" className="tw:min-w-0 tw:flex-1">
           <ShoppingCart data-icon="inline-start" aria-hidden="true" />
           افزودن به سبد خرید
