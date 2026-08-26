@@ -174,7 +174,13 @@ export function CartOrder({ initialItems }: CartOrderProps) {
             </div>
           </CardContent>
           <CardFooter className="tw:flex-col tw:items-stretch">
-            <Button block size="lg" disabled={items.length === 0}>
+            <Button
+              nativeButton={false}
+              render={<Link href={routePaths.checkout} />}
+              block
+              size="lg"
+              disabled={items.length === 0}
+            >
               ادامه فرایند خرید
             </Button>
             <p className="tw:flex tw:items-center tw:justify-center tw:gap-1.5 tw:text-label-s tw:text-muted-foreground">

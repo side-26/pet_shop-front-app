@@ -8,6 +8,7 @@ export const PATHS = {
   SERVICES: '/services',
   ABOUT: '/about',
   CART: '/cart',
+  CHECKOUT: '/checkout',
   PROFILE: '/profile',
   AUTH: {
     LOGIN: '/login',
@@ -30,6 +31,7 @@ export const routePaths = {
   services: PATHS.SERVICES,
   about: PATHS.ABOUT,
   cart: PATHS.CART,
+  checkout: PATHS.CHECKOUT,
   profile: PATHS.PROFILE,
   login: PATHS.AUTH.LOGIN,
   register: PATHS.AUTH.REGISTER,
