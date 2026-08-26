@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PATHS } from '@/configs/route.path';
+import { USER_ROLES } from '@/configs/user-role';
 import {
   deleteTemporaryTokenCookie,
   getTemporaryToken,
@@ -56,7 +57,7 @@ const loginSession = {
   refreshToken: 'refresh-token',
   sessionExp: 1787561783000,
   userId: 'user-1',
-  role: 'customer',
+  role: USER_ROLES.CUSTOMER,
   accessExp: 1786982183000,
 };
 

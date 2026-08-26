@@ -3,6 +3,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { AuthSessionModel } from '@/_types';
+import { USER_ROLES } from '@/configs/user-role';
 
 const { cookieDeleteMock, cookieGetMock, cookieSetMock, cookiesMock } = vi.hoisted(() => ({
   cookieDeleteMock: vi.fn(),
@@ -31,7 +32,7 @@ const session: AuthSessionModel = {
   accessExp: Date.UTC(2026, 7, 17, 12, 0, 10),
   sessionExp: Date.UTC(2026, 7, 24, 12, 0, 0),
   userId: 'user-1',
-  role: 'customer',
+  role: USER_ROLES.CUSTOMER,
 };
 
 describe('session helpers', () => {

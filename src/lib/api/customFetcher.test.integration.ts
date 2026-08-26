@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getSession } from '@/utils/session';
+import { USER_ROLES } from '@/configs/user-role';
 
 import { customFetcher } from './customFetcher';
 
@@ -78,7 +79,7 @@ describe('customFetcher', () => {
       refreshToken: 'refresh-token',
       sessionExp: 1,
       userId: '1',
-      role: 'customer',
+      role: USER_ROLES.CUSTOMER,
     });
     fetchMock.mockResolvedValueOnce(
       jsonResponse({ isSuccess: true, message: null, data: { id: 1 } }),

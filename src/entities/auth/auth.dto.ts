@@ -1,3 +1,5 @@
+import type { UserRole } from '@/configs/user-role';
+
 import type {
   LoginUserInput,
   RegisterUserInput,
@@ -30,7 +32,7 @@ export type LoginUserResponseDTO = {
   refreshToken: string;
   sessionExp: number;
   userId: string;
-  role: string;
+  role: UserRole;
   accessExp: number;
 };
 

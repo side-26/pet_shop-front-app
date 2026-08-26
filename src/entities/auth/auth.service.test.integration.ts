@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { customFetcher } from '@/lib/api/customFetcher';
+import { USER_ROLES } from '@/configs/user-role';
 
 import {
   loginUser,
@@ -54,7 +55,7 @@ describe('loginUser service', () => {
       refreshToken: 'refresh-token',
       sessionExp: 1787561783000,
       userId: 'user-1',
-      role: 'customer',
+      role: USER_ROLES.CUSTOMER,
       accessExp: 1786982183000,
     };
     customFetcherMock.mockResolvedValue({
