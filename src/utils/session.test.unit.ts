@@ -49,7 +49,7 @@ describe('session helpers', () => {
     });
   });
 
-  it('encrypts the session and saves it until the access token expires', async () => {
+  it('encrypts the session and saves it until the refresh session expires', async () => {
     await saveSessionToCookie(session);
 
     expect(cookieSetMock).toHaveBeenCalledOnce();
@@ -61,14 +61,14 @@ describe('session helpers', () => {
     expect(options).toEqual({
       httpOnly: true,
       secure: true,
-      maxAge: 10,
+      maxAge: 604800,
       sameSite: 'strict',
       path: '/',
     });
   });
 
-  it('expires the cookie immediately when accessExp is in the past', async () => {
-    await saveSessionToCookie({ ...session, accessExp: Date.now() - 1 });
+  it('expires the cookie immediately when sessionExp is in the past', async () => {
+    await saveSessionToCookie({ ...session, sessionExp: Date.now() - 1 });
 
     expect(cookieSetMock).toHaveBeenCalledWith(
       'petshop-session',

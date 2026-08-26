@@ -33,3 +33,11 @@ export type LoginUserResponseDTO = {
   role: string;
   accessExp: number;
 };
+
+export type RefreshTokenDTO = {
+  refreshToken: string;
+};
+
+export type RefreshTokenResponseDTO = {
+  accessToken: string;
+};

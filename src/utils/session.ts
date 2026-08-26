@@ -59,19 +59,29 @@ export async function getSession(): Promise<AuthSessionModel | null> {
   }
 }
 
-export async function saveSessionToCookie(session: AuthSessionModel): Promise<void> {
-  const encryptedSession = await encryptSession(session);
-  const maxAge = Math.max(0, Math.floor((session.accessExp - Date.now()) / 1_000));
-  const cookieStore = await cookies();
-  const sessionCookieName = getRequiredEnvironmentVariable('NEXT_PUBLIC_SESSION_COOKIE_NAME');
+export function getSessionCookieName(): string {
+  return getRequiredEnvironmentVariable('NEXT_PUBLIC_SESSION_COOKIE_NAME');
+}
 
-  cookieStore.set(sessionCookieName, encryptedSession, {
-    httpOnly: true,
-    secure: true,
-    maxAge,
-    sameSite: 'strict',
-    path: '/',
-  });
+export async function createSessionCookie(session: AuthSessionModel) {
+  return {
+    name: getSessionCookieName(),
+    value: await encryptSession(session),
+    options: {
+      httpOnly: true,
+      secure: true,
+      maxAge: Math.max(0, Math.floor((session.sessionExp - Date.now()) / 1_000)),
+      sameSite: 'strict' as const,
+      path: '/',
+    },
+  };
+}
+
+export async function saveSessionToCookie(session: AuthSessionModel): Promise<void> {
+  const sessionCookie = await createSessionCookie(session);
+  const cookieStore = await cookies();
+
+  cookieStore.set(sessionCookie.name, sessionCookie.value, sessionCookie.options);
 }
 
 const TEMPORARY_TOKEN_COOKIE_NAME = 'temp_token';

@@ -3,6 +3,8 @@ import 'server-only';
 import type {
   LoginUserDTO,
   LoginUserResponseDTO,
+  RefreshTokenDTO,
+  RefreshTokenResponseDTO,
   RegisterUserDTO,
   ResetPasswordDTO,
   SendOtpDTO,
@@ -25,6 +27,16 @@ export function registerUser(input: RegisterUserDTO) {
 export function loginUser(input: LoginUserDTO) {
   return customFetcher<LoginUserResponseDTO, unknown, LoginUserDTO>({
     url: '/users/login',
+    method: 'POST',
+    body: input,
+    auth: false,
+    cache: 'no-store',
+  });
+}
+
+export function refreshAccessToken(input: RefreshTokenDTO) {
+  return customFetcher<RefreshTokenResponseDTO, unknown, RefreshTokenDTO>({
+    url: '/users/refresh-token',
     method: 'POST',
     body: input,
     auth: false,

@@ -4,6 +4,7 @@ import { customFetcher } from '@/lib/api/customFetcher';
 
 import {
   loginUser,
+  refreshAccessToken,
   registerUser,
   resetPassword,
   sendOtp,
@@ -70,6 +71,34 @@ describe('loginUser service', () => {
     });
     expect(customFetcherMock).toHaveBeenCalledWith({
       url: '/users/login',
+      method: 'POST',
+      body: input,
+      auth: false,
+      cache: 'no-store',
+    });
+  });
+});
+
+describe('refreshAccessToken service', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('posts the refresh token without authentication or caching', async () => {
+    const input = { refreshToken: 'refresh-token' };
+    customFetcherMock.mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: { accessToken: 'new-access-token' },
+    });
+
+    await expect(refreshAccessToken(input)).resolves.toEqual({
+      isSuccess: true,
+      message: null,
+      data: { accessToken: 'new-access-token' },
+    });
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/users/refresh-token',
       method: 'POST',
       body: input,
       auth: false,
