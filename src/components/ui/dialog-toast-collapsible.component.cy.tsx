@@ -10,8 +10,42 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Toaster, toast } from '@/components/ui/toast';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer';
 
 describe('Dialog, Toast, and animated Collapsible', () => {
+  it('opens a semantic Drawer with managed focus and closes via Escape or its action', () => {
+    cy.mount(
+      <Drawer>
+        <DrawerTrigger render={<Button />}>Open drawer</DrawerTrigger>
+        <DrawerContent color="success">
+          <DrawerTitle>Delivery options</DrawerTitle>
+          <DrawerDescription>Choose a delivery window.</DrawerDescription>
+          <DrawerClose render={<Button />}>Close drawer</DrawerClose>
+        </DrawerContent>
+      </Drawer>,
+    );
+
+    cy.contains('button', 'Open drawer').as('drawerTrigger').click();
+    cy.get('[role="dialog"]')
+      .should('be.visible')
+      .and('have.attr', 'data-color', 'success')
+      .and('have.class', 'tw:bg-success-muted')
+      .and('be.focused');
+    cy.get('body').type('{esc}');
+    cy.get('[role="dialog"]').should('not.exist');
+    cy.get('@drawerTrigger').should('have.attr', 'aria-expanded', 'false').click();
+    cy.contains('button', 'Close drawer').click();
+    cy.get('[role="dialog"]').should('not.exist');
+    cy.get('@drawerTrigger').should('have.attr', 'aria-expanded', 'false');
+  });
+
   it('opens a labeled modal Dialog and closes with Escape or its close action', () => {
     cy.mount(
       <Dialog>

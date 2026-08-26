@@ -1,6 +1,7 @@
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 import { BadgeShowcase } from './badge-showcase';
+import { AvatarShowcase } from './avatar-showcase';
 import { ButtonShowcase } from './button-showcase';
 import { CardShowcase } from './card-showcase';
 import { AlertDialogShowcase } from './alert-dialog-showcase';
@@ -9,6 +10,7 @@ import { SpinnerShowcase } from './spinner-showcase';
 import { TooltipShowcase } from './tooltip-showcase';
 import { CollapsibleShowcase } from './collapsible-showcase';
 import { DialogShowcase } from './dialog-showcase';
+import { DrawerShowcase } from './drawer-showcase';
 import { ToastShowcase } from './toast-showcase';
 import { DropdownMenuShowcase } from './dropdown-menu-showcase';
 import { PaginationShowcase } from './pagination-showcase';
@@ -28,6 +30,7 @@ import { ToggleGroupShowcase } from './toggle-group-showcase';
 import { TabsShowcase } from './tabs-showcase';
 
 const navigation = [
+  ['#avatars', 'Avatar'],
   ['#buttons', 'Button'],
   ['#badges', 'Badge'],
   ['#cards', 'Card'],
@@ -40,6 +43,7 @@ const navigation = [
   ['#tooltips', 'Tooltip'],
   ['#spinners', 'Spinner'],
   ['#dialogs', 'Dialog'],
+  ['#drawers', 'Drawer'],
   ['#toasts', 'Toast'],
   ['#collapsibles', 'Collapsible'],
   ['#dropdown-menus', 'Dropdown Menu'],
@@ -92,6 +96,7 @@ export function UiComponentsGallery() {
           </nav>
         </header>
 
+        <AvatarShowcase />
         <ButtonShowcase />
         <BadgeShowcase />
         <CardShowcase />
@@ -104,6 +109,7 @@ export function UiComponentsGallery() {
         <TooltipShowcase />
         <SpinnerShowcase />
         <DialogShowcase />
+        <DrawerShowcase />
         <ToastShowcase />
         <CollapsibleShowcase />
         <DropdownMenuShowcase />

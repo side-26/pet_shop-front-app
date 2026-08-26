@@ -77,6 +77,12 @@ popular-search and debounced-suggestion renderer. Keep product search links on
 the canonical `routePaths.productsSearch()` builder and debounce input through
 the focused `useSetDefaultValue` hook.
 
+The admin shell lives under `components/layouts/admin` and is composed by
+`app/admin/layout.tsx`. It is RTL-first, uses a persistent collapsible navigation rail from
+`md` upward, and uses the shared Drawer below `md`. The full rail shows identity and link
+labels; compact mode preserves the avatar and accessible icon controls with tooltips. Keep
+new admin pages under `/admin/[page]`, backed by canonical `routePaths` entries.
+
 Reusable authentication structure lives under `components/layouts/auth` and is
 composed by `app/(auth)/layout.tsx`. `AuthLayoutShell` owns the responsive,
 RTL-first brand and content regions while nested routes own headings, forms,

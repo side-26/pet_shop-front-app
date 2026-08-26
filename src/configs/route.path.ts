@@ -16,6 +16,7 @@ export const PATHS = {
     FORGET_PASSWORD: '/forget-password',
   },
   UI_COMPONENTS: '/ui-components',
+  ADMIN: '/admin',
 } as const;
 
 export const routePaths = {
@@ -37,4 +38,6 @@ export const routePaths = {
   register: PATHS.AUTH.REGISTER,
   forgetPassword: PATHS.AUTH.FORGET_PASSWORD,
   uiComponents: PATHS.UI_COMPONENTS,
+  admin: PATHS.ADMIN,
+  adminPage: (page: string) => `${PATHS.ADMIN}/${encodeURIComponent(page)}`,
 } as const;

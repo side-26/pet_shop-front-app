@@ -52,6 +52,7 @@ describe(routePaths.uiComponents, () => {
       screen.getByRole('heading', { level: 1, name: 'کتابخانه اجزای رابط کاربری' }),
     ).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Button' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 3, name: 'Avatar' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Badge' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Card' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Expandable Card' })).toBeTruthy();
@@ -69,6 +70,8 @@ describe(routePaths.uiComponents, () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Tooltip' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Spinner' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Dialog' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 3, name: 'Drawer' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'کشوی error' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Toast' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Collapsible' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Dropdown Menu' })).toBeTruthy();

@@ -185,6 +185,9 @@ motion. Represent collapsed and initially expanded states in `/ui-components`;
 cover the React contract with Vitest and focus/browser interaction with Cypress
 Component Testing.
 
+`Avatar` composes Base UI Avatar with `size="sm|default|lg"`, defaulting to `default`.
+Always provide `AvatarFallback`; use `AvatarBadge` for a separately named status when needed.
+
 `Price` accepts a numeric `number`, `prefix="$|ریال|تومان"`, and root
 `className`. It formats values with Persian thousands separators, isolates the
 numeric run as LTR, places `$` before the number, and places rial/toman after it.
@@ -210,6 +213,10 @@ RTL positioning, configurable trigger delays, and reduced-motion-safe transition
 `DialogContent` uses `size="sm|md|lg|xl"` and always requires `DialogTitle`;
 include `DialogDescription` for explanatory content. Toast uses the Base UI toast
 manager and resolves `fill|outlined|tonal` foregrounds from semantic color.
+`DrawerContent` supports only `color="primary|secondary|info|success|warning|error"`;
+it intentionally has no `variant` or `size` API. Every drawer requires a `DrawerTitle`,
+should include `DrawerDescription`, and preserves Base UI swipe direction, snap points,
+nested drawers, focus management, and Escape behavior.
 Its viewport is top-centered, and its close control inherits the resolved toast
 foreground so error, success, info, and warning notifications remain visually aligned.
 `CollapsibleContent` preserves Base UI state/ARIA behavior while Framer Motion
