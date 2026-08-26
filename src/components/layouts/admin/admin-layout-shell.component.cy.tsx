@@ -14,7 +14,7 @@ describe('AdminLayoutShell', () => {
     cy.get('aside').should('be.visible').and('have.attr', 'data-collapsed', 'false');
     cy.get('button[aria-label="جمع کردن نوار مدیریت"]').click();
     cy.get('aside').should('have.attr', 'data-collapsed', 'true');
-    cy.get('aside').find('a[aria-label="محصولات"]').should('be.visible');
+    cy.get('aside').find('a[aria-label="سفارش‌ها"]').should('be.visible');
     cy.get('button[aria-label="باز کردن نوار مدیریت"]').click();
     cy.get('aside').should('have.attr', 'data-collapsed', 'false');
   });

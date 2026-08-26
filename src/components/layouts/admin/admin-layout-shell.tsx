@@ -17,6 +17,7 @@ import {
   adminLogoutItem,
   adminNavigationItems,
   adminUtilityItems,
+  getAdminNavigationItem,
   isAdminNavigationItemActive,
 } from './admin-navigation-items';
 
@@ -58,6 +59,7 @@ function AdminIdentity({ collapsed = false }: Readonly<{ collapsed?: boolean }>)
 
 function AdminNavigationLink({
   collapsed = false,
+  disabled = false,
   href,
   icon: Icon,
   isActive,
@@ -65,13 +67,46 @@ function AdminNavigationLink({
   onNavigate,
 }: Readonly<{
   collapsed?: boolean;
+  disabled?: boolean;
   href: string;
   icon: (typeof adminNavigationItems)[number]['icon'];
   isActive: boolean;
   label: string;
   onNavigate?: () => void;
 }>) {
-  const link = (
+  const linkClassName = cn(
+    buttonVariants({
+      variant: isActive ? 'fill' : 'flat',
+      color: isActive ? 'primary' : 'secondary',
+      size: 'sm',
+      block: !collapsed,
+    }),
+    'tw:h-10 tw:text-label-s',
+    isActive
+      ? 'tw:bg-primary tw:text-primary-foreground tw:hover:bg-primary/80 tw:hover:text-primary-foreground'
+      : 'tw:text-foreground tw:hover:bg-primary/80 tw:hover:text-primary-foreground tw:active:text-primary-foreground',
+    disabled && 'tw:pointer-events-none tw:opacity-50',
+    collapsed ? 'tw:justify-center' : 'tw:justify-start',
+  );
+
+  const linkContent = (
+    <>
+      <Icon data-icon="inline-start" aria-hidden="true" />
+      {!collapsed && <span className="tw:truncate">{label}</span>}
+    </>
+  );
+
+  const link = disabled ? (
+    <span
+      aria-disabled="true"
+      aria-label={collapsed ? label : undefined}
+      data-slot="admin-navigation-link"
+      data-icon-only={collapsed || undefined}
+      className={linkClassName}
+    >
+      {linkContent}
+    </span>
+  ) : (
     <Link
       href={href}
       onClick={onNavigate}
@@ -79,26 +114,13 @@ function AdminNavigationLink({
       aria-current={isActive ? 'page' : undefined}
       data-slot="admin-navigation-link"
       data-icon-only={collapsed || undefined}
-      className={cn(
-        buttonVariants({
-          variant: isActive ? 'fill' : 'flat',
-          color: isActive ? 'primary' : 'secondary',
-          size: 'sm',
-          block: !collapsed,
-        }),
-        'tw:h-10 tw:text-label-s',
-        isActive
-          ? 'tw:bg-primary tw:text-primary-foreground tw:hover:bg-primary/80 tw:hover:text-primary-foreground'
-          : 'tw:text-foreground tw:hover:bg-primary/80 tw:hover:text-primary-foreground tw:active:text-primary-foreground',
-        collapsed ? 'tw:justify-center' : 'tw:justify-start',
-      )}
+      className={linkClassName}
     >
-      <Icon data-icon="inline-start" aria-hidden="true" />
-      {!collapsed && <span className="tw:truncate">{label}</span>}
+      {linkContent}
     </Link>
   );
 
-  if (!collapsed) return link;
+  if (!collapsed || disabled) return link;
 
   return (
     <Tooltip>
@@ -164,6 +186,8 @@ export function AdminLayoutShellView({
 }: AdminLayoutShellProps & { pathname: string }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
+  const currentNavigationItem = getAdminNavigationItem(pathname);
+  const CurrentNavigationIcon = currentNavigationItem.icon;
 
   return (
     <div className="tw:flex tw:min-h-svh tw:bg-muted/50 tw:text-foreground">
@@ -178,7 +202,7 @@ export function AdminLayoutShellView({
       </aside>
 
       <div className="tw:flex tw:min-w-0 tw:flex-1 tw:flex-col">
-        <header className="tw:px-3 tw:pt-3 tw:pb-1 tw:sm:px-5 tw:sm:pt-4 tw:md:px-6 tw:md:pt-4 tw:md:pb-[5px]">
+        <header className="tw:px-4 tw:pt-3 tw:pb-1 tw:sm:pt-4 tw:md:pt-4 tw:md:pb-[5px]">
           <Card variant="elevated" size="xs" data-slot="admin-header-card" className="tw:h-16">
             <CardContent className="tw:flex tw:flex-1 tw:items-center tw:justify-between tw:gap-3">
               <div className="tw:flex tw:items-center tw:gap-2">
@@ -206,7 +230,16 @@ export function AdminLayoutShellView({
                     <PanelRightClose aria-hidden="true" />
                   )}
                 </Button>
-                <h1 className="tw:truncate tw:text-title-s tw:font-extrabold">داشبورد</h1>
+                <div className="tw:flex tw:min-w-0 tw:items-center tw:gap-2">
+                  <CurrentNavigationIcon
+                    data-slot="admin-page-title-icon"
+                    aria-hidden="true"
+                    className="tw:size-5 tw:shrink-0"
+                  />
+                  <h1 className="tw:truncate tw:text-title-s tw:font-extrabold">
+                    {currentNavigationItem.label}
+                  </h1>
+                </div>
               </div>
 
               <Button iconOnly variant="tonal" aria-label="تازه‌سازی صفحه">
@@ -216,7 +249,15 @@ export function AdminLayoutShellView({
           </Card>
         </header>
 
-        <main className="tw:min-h-0 tw:flex-1 tw:p-3 tw:sm:p-5 tw:lg:p-8">{children}</main>
+        <main className="tw:flex tw:min-h-0 tw:flex-1 tw:px-4 tw:pt-3 tw:md:pt-[11px]">
+          <Card
+            variant="elevated"
+            data-slot="admin-content-card"
+            className="tw:min-h-0 tw:w-full tw:flex-1 tw:gap-0 tw:rounded-b-none tw:p-[6px]"
+          >
+            <CardContent className="tw:min-h-0 tw:flex-1 tw:p-0">{children}</CardContent>
+          </Card>
+        </main>
       </div>
 
       <Drawer
