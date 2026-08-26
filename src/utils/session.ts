@@ -84,6 +84,12 @@ export async function saveSessionToCookie(session: AuthSessionModel): Promise<vo
   cookieStore.set(sessionCookie.name, sessionCookie.value, sessionCookie.options);
 }
 
+export async function deleteSessionCookie(): Promise<void> {
+  const cookieStore = await cookies();
+
+  cookieStore.delete(getSessionCookieName());
+}
+
 const TEMPORARY_TOKEN_COOKIE_NAME = 'temp_token';
 const TEMPORARY_TOKEN_TTL_SECONDS = 5 * 60;
 

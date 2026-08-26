@@ -12,6 +12,7 @@ export const PATHS = {
   PROFILE: '/profile',
   AUTH: {
     LOGIN: '/login',
+    LOGIN_AFTER_LOGOUT: '/login?logout=success',
     REGISTER: '/register',
     FORGET_PASSWORD: '/forget-password',
     RESET_PASSWORD: '/reset-password',

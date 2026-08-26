@@ -48,7 +48,6 @@ export const adminUtilityItems = [
 
 export const adminLogoutItem = {
   label: 'خروج',
-  href: routePaths.login,
   icon: LogOut,
 } as const;
 

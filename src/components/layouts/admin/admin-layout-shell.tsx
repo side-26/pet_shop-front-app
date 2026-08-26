@@ -6,12 +6,15 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { ConfirmDialog } from '@/components/common/confirm-dialog/main';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/components/ui/drawer';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { logoutUser } from '@/entities/auth/auth.client';
+import { useCommonStore } from '@/stores/common.store';
 
 import {
   adminLogoutItem,
@@ -131,6 +134,8 @@ function AdminNavigationLink({
 }
 
 function AdminNavigation({ collapsed = false, pathname, onNavigate }: AdminNavigationProps) {
+  const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
+
   return (
     <TooltipProvider>
       <div className="tw:flex tw:h-full tw:min-h-0 tw:flex-col">
@@ -166,12 +171,31 @@ function AdminNavigation({ collapsed = false, pathname, onNavigate }: AdminNavig
               </li>
             ))}
             <li className={cn(collapsed && 'tw:flex tw:justify-center')}>
-              <AdminNavigationLink
-                {...adminLogoutItem}
-                collapsed={collapsed}
-                isActive={false}
-                onNavigate={onNavigate}
-              />
+              <Button
+                aria-label={collapsed ? adminLogoutItem.label : undefined}
+                block={!collapsed}
+                color="error"
+                data-icon-only={collapsed || undefined}
+                size="sm"
+                variant="flat"
+                className={cn(
+                  'tw:h-10 tw:text-label-s tw:text-foreground tw:hover:bg-error tw:hover:text-error-foreground tw:active:text-error-foreground',
+                  collapsed ? 'tw:justify-center' : 'tw:justify-start',
+                )}
+                onClick={() => {
+                  onNavigate?.();
+                  showConfirmDialog({
+                    title: 'از پنل خارج می‌شوید؟',
+                    message: 'برای ادامه، لازم است دوباره وارد حساب کاربری خود شوید.',
+                    icon: adminLogoutItem.icon,
+                    variant: 'warning',
+                    onSuccess: logoutUser,
+                  });
+                }}
+              >
+                <adminLogoutItem.icon data-icon="inline-start" aria-hidden="true" />
+                {!collapsed && <span className="tw:truncate">{adminLogoutItem.label}</span>}
+              </Button>
             </li>
           </ul>
         </nav>
@@ -271,6 +295,7 @@ export function AdminLayoutShellView({
           <AdminNavigation pathname={pathname} onNavigate={() => setMobileNavigationOpen(false)} />
         </DrawerContent>
       </Drawer>
+      <ConfirmDialog />
     </div>
   );
 }

@@ -2,9 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { customFetcher } from '@/lib/api/customFetcher';
 import { USER_ROLES } from '@/configs/user-role';
+import { deleteSessionCookie } from '@/utils/session';
 
 import {
   loginUser,
+  logoutUser,
   refreshAccessToken,
   registerUser,
   resetPassword,
@@ -13,8 +15,23 @@ import {
 } from './auth.service';
 
 vi.mock('@/lib/api/customFetcher', () => ({ customFetcher: vi.fn() }));
+vi.mock('@/utils/session', () => ({ deleteSessionCookie: vi.fn() }));
 
 const customFetcherMock = vi.mocked(customFetcher);
+const deleteSessionCookieMock = vi.mocked(deleteSessionCookie);
+
+describe('logoutUser service', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('deletes the encrypted session cookie without calling an API', async () => {
+    await logoutUser();
+
+    expect(deleteSessionCookieMock).toHaveBeenCalledOnce();
+    expect(customFetcherMock).not.toHaveBeenCalled();
+  });
+});
 
 describe('registerUser service', () => {
   beforeEach(() => {

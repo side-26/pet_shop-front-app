@@ -5,6 +5,7 @@ import { globalErrorHandler } from '@/utils/helpers';
 
 import {
   loginUserAction,
+  logoutUserAction,
   redirectToLoginAction,
   registerUserAction,
   resetPasswordAction,
@@ -12,6 +13,7 @@ import {
   verifyResetPasswordOtpAction,
 } from './auth.actions';
 import {
+  logoutUser,
   submitLoginUser,
   submitRegisterUser,
   submitResetPassword,
@@ -21,6 +23,7 @@ import {
 
 vi.mock('./auth.actions', () => ({
   loginUserAction: vi.fn(),
+  logoutUserAction: vi.fn(),
   registerUserAction: vi.fn(),
   resetPasswordAction: vi.fn(),
   redirectToLoginAction: vi.fn(),
@@ -32,6 +35,7 @@ vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
 
 const registerUserActionMock = vi.mocked(registerUserAction);
 const loginUserActionMock = vi.mocked(loginUserAction);
+const logoutUserActionMock = vi.mocked(logoutUserAction);
 const redirectToLoginActionMock = vi.mocked(redirectToLoginAction);
 const sendOtpActionMock = vi.mocked(sendOtpAction);
 const resetPasswordActionMock = vi.mocked(resetPasswordAction);
@@ -130,6 +134,34 @@ describe('loginUser client orchestration', () => {
     );
 
     expect(globalErrorHandlerMock).toHaveBeenCalledWith(error, { showErrorFields: setError });
+    expect(toastAddMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('logout client orchestration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('passes a logout failure to the global error handler', async () => {
+    const error = {
+      isSuccess: false as const,
+      message: 'خروج ناموفق بود.',
+      data: { messages: {}, details: {} },
+    };
+    logoutUserActionMock.mockResolvedValue(error);
+
+    await logoutUser();
+
+    expect(globalErrorHandlerMock).toHaveBeenCalledWith(error);
+  });
+
+  it('does not show a local toast before the successful server redirect', async () => {
+    logoutUserActionMock.mockResolvedValue(undefined as never);
+
+    await logoutUser();
+
+    expect(globalErrorHandlerMock).not.toHaveBeenCalled();
     expect(toastAddMock).not.toHaveBeenCalled();
   });
 });

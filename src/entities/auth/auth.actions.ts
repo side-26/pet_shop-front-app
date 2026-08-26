@@ -19,6 +19,7 @@ import {
 } from '@/entities/auth/auth.schema';
 import {
   loginUser,
+  logoutUser,
   registerUser,
   resetPassword,
   sendOtp,
@@ -78,6 +79,20 @@ export async function loginUserAction(input: LoginUserInput) {
 
     throw error;
   }
+}
+
+export async function logoutUserAction() {
+  try {
+    await logoutUser();
+  } catch (error: unknown) {
+    return {
+      isSuccess: false as const,
+      message: error instanceof Error ? error.message : 'خروج از حساب کاربری ناموفق بود.',
+      data: { messages: {}, details: {} },
+    };
+  }
+
+  redirect(PATHS.AUTH.LOGIN_AFTER_LOGOUT);
 }
 
 export async function sendOtpAction(input: SendOtpInput) {

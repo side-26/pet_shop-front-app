@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PATHS } from '@/configs/route.path';
 import { USER_ROLES } from '@/configs/user-role';
 import {
+  deleteSessionCookie,
   deleteTemporaryTokenCookie,
   getTemporaryToken,
   saveSessionToCookie,
@@ -11,6 +12,7 @@ import {
 
 import {
   loginUserAction,
+  logoutUserAction,
   redirectToLoginAction,
   registerUserAction,
   resetPasswordAction,
@@ -19,6 +21,7 @@ import {
 } from './auth.actions';
 import {
   loginUser,
+  logoutUser,
   registerUser,
   resetPassword,
   sendOtp,
@@ -28,12 +31,14 @@ import { redirect } from 'next/navigation';
 
 vi.mock('./auth.service', () => ({
   loginUser: vi.fn(),
+  logoutUser: vi.fn(),
   registerUser: vi.fn(),
   resetPassword: vi.fn(),
   sendOtp: vi.fn(),
   verifyResetPasswordOtp: vi.fn(),
 }));
 vi.mock('@/utils/session', () => ({
+  deleteSessionCookie: vi.fn(),
   saveSessionToCookie: vi.fn(),
   saveTemporaryTokenToCookie: vi.fn(),
   getTemporaryToken: vi.fn(),
@@ -43,6 +48,7 @@ vi.mock('next/navigation', () => ({ redirect: vi.fn() }));
 
 const registerUserMock = vi.mocked(registerUser);
 const loginUserMock = vi.mocked(loginUser);
+const logoutUserMock = vi.mocked(logoutUser);
 const sendOtpMock = vi.mocked(sendOtp);
 const resetPasswordMock = vi.mocked(resetPassword);
 const verifyResetPasswordOtpMock = vi.mocked(verifyResetPasswordOtp);
@@ -50,6 +56,7 @@ const saveSessionToCookieMock = vi.mocked(saveSessionToCookie);
 const saveTemporaryTokenToCookieMock = vi.mocked(saveTemporaryTokenToCookie);
 const getTemporaryTokenMock = vi.mocked(getTemporaryToken);
 const deleteTemporaryTokenCookieMock = vi.mocked(deleteTemporaryTokenCookie);
+const deleteSessionCookieMock = vi.mocked(deleteSessionCookie);
 const redirectMock = vi.mocked(redirect);
 
 const loginSession = {
@@ -273,5 +280,30 @@ describe('auth actions', () => {
 
     await expect(redirectToLoginAction()).rejects.toThrow('NEXT_REDIRECT');
     expect(redirectMock).toHaveBeenCalledWith(PATHS.AUTH.LOGIN);
+  });
+
+  it('deletes the session and redirects with the logout success marker', async () => {
+    logoutUserMock.mockResolvedValue(undefined);
+    redirectMock.mockImplementation(() => {
+      throw new Error('NEXT_REDIRECT');
+    });
+
+    await expect(logoutUserAction()).rejects.toThrow('NEXT_REDIRECT');
+
+    expect(logoutUserMock).toHaveBeenCalledOnce();
+    expect(redirectMock).toHaveBeenCalledWith(PATHS.AUTH.LOGIN_AFTER_LOGOUT);
+    expect(deleteSessionCookieMock).not.toHaveBeenCalled();
+  });
+
+  it('returns the deletion error without redirecting', async () => {
+    logoutUserMock.mockRejectedValue(new Error('امکان حذف نشست وجود ندارد.'));
+
+    await expect(logoutUserAction()).resolves.toEqual({
+      isSuccess: false,
+      message: 'امکان حذف نشست وجود ندارد.',
+      data: { messages: {}, details: {} },
+    });
+
+    expect(redirectMock).not.toHaveBeenCalled();
   });
 });

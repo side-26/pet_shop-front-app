@@ -59,6 +59,7 @@ describe('AdminLayoutShell', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'داشبورد' })).toBeTruthy();
     expect(document.querySelector('[data-slot="admin-page-title-icon"]')).toBeTruthy();
     expect(screen.queryByText('خوش آمدید، مدیر ارشد')).toBeNull();
+    expect(screen.getByRole('button', { name: 'خروج' })).toBeTruthy();
     const navigationToggle = screen.getByRole('button', { name: 'جمع کردن نوار مدیریت' });
     expect(navigationToggle.getAttribute('data-variant')).toBe('flat');
     expect(navigationToggle.getAttribute('data-size')).toBe('sm');
@@ -105,5 +106,14 @@ describe('AdminLayoutShell', () => {
     expect(aside?.getAttribute('data-collapsed')).toBe('true');
     expect(screen.getByRole('link', { name: 'سفارش‌ها' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'باز کردن نوار مدیریت' })).toBeTruthy();
+  });
+
+  it('asks for confirmation before logging out', async () => {
+    render(<AdminLayoutShellView pathname={routePaths.admin}>داشبورد</AdminLayoutShellView>);
+
+    fireEvent.click(screen.getByRole('button', { name: 'خروج' }));
+
+    expect(await screen.findByRole('alertdialog')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'از پنل خارج می‌شوید؟' })).toBeTruthy();
   });
 });

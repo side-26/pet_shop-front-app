@@ -13,6 +13,11 @@ import type {
   VerifyResetPasswordOtpResponseDTO,
 } from '@/entities/auth/auth.dto';
 import { customFetcher } from '@/lib/api/customFetcher';
+import { deleteSessionCookie } from '@/utils/session';
+
+export async function logoutUser(): Promise<void> {
+  await deleteSessionCookie();
+}
 
 export function registerUser(input: RegisterUserDTO) {
   return customFetcher<null, unknown, RegisterUserDTO>({

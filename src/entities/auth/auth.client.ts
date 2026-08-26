@@ -7,6 +7,7 @@ import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
 import {
   loginUserAction,
+  logoutUserAction,
   redirectToLoginAction,
   registerUserAction,
   resetPasswordAction,
@@ -26,6 +27,14 @@ import { globalErrorHandler } from '@/utils/helpers';
 import { wait } from '@/utils/wait';
 
 const SUCCESS_TOAST_DURATION_MS = 3_000;
+
+export async function logoutUser(): Promise<void> {
+  const result = await logoutUserAction();
+
+  if (result && !result.isSuccess) {
+    globalErrorHandler(result);
+  }
+}
 
 export async function submitRegisterUser(
   input: RegisterUserInput,
