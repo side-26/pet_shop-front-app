@@ -5,6 +5,7 @@ import { AvatarShowcase } from './avatar-showcase';
 import { ButtonShowcase } from './button-showcase';
 import { CardShowcase } from './card-showcase';
 import { AlertDialogShowcase } from './alert-dialog-showcase';
+import { ConfirmDialogShowcase } from './confirm-dialog-showcase';
 import { PopoverShowcase } from './popover-showcase';
 import { SpinnerShowcase } from './spinner-showcase';
 import { TooltipShowcase } from './tooltip-showcase';
@@ -38,6 +39,7 @@ const navigation = [
   ['#prices', 'Price'],
   ['#breadcrumbs', 'Breadcrumb'],
   ['#alert-dialogs', 'Alert Dialog'],
+  ['#confirm-dialogs', 'Confirm Dialog'],
   ['#popovers', 'Popover'],
   ['#hover-cards', 'Hover Card'],
   ['#tooltips', 'Tooltip'],
@@ -104,6 +106,7 @@ export function UiComponentsGallery() {
         <PriceShowcase />
         <BreadcrumbShowcase />
         <AlertDialogShowcase />
+        <ConfirmDialogShowcase />
         <PopoverShowcase />
         <HoverCardShowcase />
         <TooltipShowcase />
