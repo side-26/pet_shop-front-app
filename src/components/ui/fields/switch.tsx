@@ -45,7 +45,7 @@ function Switch({
         'tw:group/switch tw:peer tw:inline-flex tw:shrink-0 tw:items-center tw:rounded-full tw:border tw:p-0.5 tw:outline-none tw:transition-colors tw:focus-visible:ring-3 tw:focus-visible:ring-ring/25 tw:aria-invalid:border-error tw:aria-invalid:ring-error/20 tw:disabled:cursor-not-allowed tw:data-readonly:cursor-default tw:motion-reduce:transition-none',
         switchSizes[size].root,
         selectionStateClasses(variant, checkedColor, uncheckedColor),
-        neutralInteractionClasses,
+        neutralInteractionClasses({ preserveReadOnlyColors: true }),
         className,
       )}
       {...props}
@@ -53,7 +53,7 @@ function Switch({
       <SwitchPrimitive.Thumb
         data-slot="switch-thumb"
         className={cn(
-          'tw:pointer-events-none tw:block tw:rounded-full tw:bg-background tw:shadow-sm tw:ring-1 tw:ring-foreground/10 tw:transition-transform tw:group-disabled/switch:bg-muted-foreground tw:group-data-readonly/switch:bg-muted-foreground tw:motion-reduce:transition-none',
+          'tw:pointer-events-none tw:block tw:rounded-full tw:bg-background tw:shadow-sm tw:ring-1 tw:ring-foreground/10 tw:transition-transform tw:group-disabled/switch:bg-muted-foreground tw:motion-reduce:transition-none',
           switchSizes[size].thumb,
         )}
       />

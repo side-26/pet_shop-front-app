@@ -331,3 +331,15 @@ Codex/Claude Code must:
 [ ] TypeScript passes
 [ ] ESLint passes
 ```
+
+## Form dialog content
+
+`FormDialogContent` composes `DialogContent` with a filled `Card`, a `CardHeader` containing the
+required `DialogTitle`, a customizable `CardContent`, and a `CardFooter` action row. The submit
+button is `fill + primary`, supports an optional external `formId`, owns Button loading through
+`isLoading`, and defaults its label to `agree`. The cancel button is `outlined + error`, invokes the
+required `onClose`, and is disabled while submission is loading. Both actions occupy equal width
+with an 8px gap.
+
+`FilterFormDialogContent` builds on that contract for filter forms, defaulting to the Persian
+`فیلترها` title and `اعمال فیلتر` submit label while leaving both customizable.

@@ -1,7 +1,11 @@
-import { cacheTag, updateTag } from 'next/cache';
+import { cacheLife as nextCacheLife, cacheTag, updateTag } from 'next/cache';
 
 export class EntityTag {
   constructor(private readonly entityName: string) {}
+
+  cacheLife(profile: Parameters<typeof nextCacheLife>[0]) {
+    nextCacheLife(profile);
+  }
 
   get all() {
     return this.entityName;

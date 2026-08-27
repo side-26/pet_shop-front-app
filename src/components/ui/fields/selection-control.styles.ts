@@ -61,5 +61,12 @@ export function selectionStateClasses(
   return `${state(tonal[checkedColor], 'data-checked')} ${state(tonal[uncheckedColor], 'not-data-checked')}`;
 }
 
-export const neutralInteractionClasses =
-  'tw:disabled:border-disabled-border tw:disabled:bg-disabled tw:disabled:text-disabled-foreground tw:data-readonly:border-border tw:data-readonly:bg-muted tw:data-readonly:text-muted-foreground';
+export function neutralInteractionClasses({ preserveReadOnlyColors = false } = {}) {
+  return [
+    'tw:disabled:border-disabled-border tw:disabled:bg-disabled tw:disabled:text-disabled-foreground',
+    !preserveReadOnlyColors &&
+      'tw:data-readonly:border-border tw:data-readonly:bg-muted tw:data-readonly:text-muted-foreground',
+  ]
+    .filter(Boolean)
+    .join(' ');
+}

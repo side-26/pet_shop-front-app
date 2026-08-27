@@ -11,7 +11,7 @@
 
 @layer base {
   .skeleton *:not(:has(*)) {
-    @apply tw:rounded-md tw:bg-muted! tw:text-transparent!;
+    @apply tw:text-gray-200! tw:bg-gray-200! tw:animate-pulse! tw:rounded-md;
   }
   .skeleton img {
     @apply tw:relative;

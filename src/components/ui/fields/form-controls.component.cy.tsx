@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/fields/select';
+import { SelectField } from '@/components/ui/fields/select-field';
 import { Switch } from '@/components/ui/fields/switch';
 import { TextareaField } from '@/components/ui/fields/textarea-field';
 import { TextField } from '@/components/ui/fields/text-field';
@@ -20,6 +21,9 @@ const items = [
   { label: 'Dog', value: 'dog' },
   { label: 'Cat', value: 'cat' },
 ];
+const options = items.filter(
+  (item): item is { label: string; value: string } => item.value !== null,
+);
 
 describe('Form controls', () => {
   it('uses the compact field typography scale and tighter message spacing', () => {
@@ -78,7 +82,7 @@ describe('Form controls', () => {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {items.slice(1).map((item) => (
+              {options.map((item) => (
                 <SelectItem key={item.value} value={item.value}>
                   {item.label}
                 </SelectItem>
@@ -86,6 +90,14 @@ describe('Form controls', () => {
             </SelectGroup>
           </SelectContent>
         </Select>
+        <Form<Record<string, string>> handleSubmit={() => undefined}>
+          <SelectField
+            id="pet-type-field"
+            name="petType"
+            label="Pet type field"
+            options={options}
+          />
+        </Form>
         <Field className="tw:flex-row">
           <Checkbox id="agreement" />
           <FieldLabel htmlFor="agreement">Terms</FieldLabel>
@@ -99,8 +111,12 @@ describe('Form controls', () => {
     );
 
     cy.get('[role="combobox"][aria-label="Pet type"]').click();
-    cy.contains('[role="option"]', 'Cat').click();
+    cy.get('[data-slot="select-content"]:visible').contains('[role="option"]', 'Cat').click();
     cy.get('[role="combobox"][aria-label="Pet type"]').should('contain.text', 'Cat');
+    cy.get('label[for="pet-type-field"]').should('have.text', 'Pet type field');
+    cy.get('#pet-type-field[role="combobox"]').click();
+    cy.get('[data-slot="select-content"]:visible').contains('[role="option"]', 'Dog').click();
+    cy.get('#pet-type-field[role="combobox"]').should('contain.text', 'Dog');
     cy.contains('label', 'Terms').click();
     cy.get('[role="checkbox"]').should('have.attr', 'aria-checked', 'true');
     cy.get('[role="switch"][aria-label="Notifications"]')

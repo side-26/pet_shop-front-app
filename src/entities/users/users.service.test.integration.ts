@@ -3,15 +3,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { customFetcher } from '@/lib/api/customFetcher';
 import { getAllPaginatedUsers } from './users.service';
 
-const { registerListMock } = vi.hoisted(() => ({ registerListMock: vi.fn() }));
+const { cacheLifeMock, registerListMock } = vi.hoisted(() => ({
+  cacheLifeMock: vi.fn(),
+  registerListMock: vi.fn(),
+}));
 
 vi.mock('@/lib/api/customFetcher', () => ({ customFetcher: vi.fn() }));
 vi.mock('@/utils/entityCache', () => ({
   EntityTag: vi.fn(function EntityTagMock(this: {
-    list: string;
+    cacheLife: ReturnType<typeof vi.fn>;
     registerList: ReturnType<typeof vi.fn>;
   }) {
-    this.list = 'users:list';
+    this.cacheLife = cacheLifeMock;
     this.registerList = registerListMock;
   }),
 }));
@@ -22,7 +25,7 @@ describe('getAllPaginatedUsers service', () => {
     vi.clearAllMocks();
   });
 
-  it('gets the paginated users with the exact cached query contract', async () => {
+  it('gets paginated users through an authenticated private cache', async () => {
     const query = {
       fullName: 'Ali',
       role: 'admin' as const,
@@ -39,32 +42,32 @@ describe('getAllPaginatedUsers service', () => {
     await expect(getAllPaginatedUsers(query)).resolves.toEqual(response);
 
     expect(customFetcherMock).toHaveBeenCalledWith({
-      url: '/users/all-paginate',
+      url: '/users/paginate',
       method: 'GET',
       query,
-      auth: false,
-      cache: 'force-cache',
-      next: { tags: ['users:list'] },
+      auth: true,
+      cache: 'no-store',
     });
+    expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 600 });
     expect(registerListMock).toHaveBeenCalledWith(
       'fullName=Ali&isEnable=true&limit=20&nationalCode=0012345678&page=2&phoneNumber=09123456789&role=admin&sort=asc',
     );
   });
 
-  it('applies endpoint defaults before fetching and caching', async () => {
+  it('applies endpoint defaults before the authenticated request', async () => {
     customFetcherMock.mockResolvedValue({ isSuccess: true, message: null, data: [] });
 
     await getAllPaginatedUsers();
 
     const query = { page: 1, limit: 20, isEnable: true };
     expect(customFetcherMock).toHaveBeenCalledWith({
-      url: '/users/all-paginate',
+      url: '/users/paginate',
       method: 'GET',
       query,
-      auth: false,
-      cache: 'force-cache',
-      next: { tags: ['users:list'] },
+      auth: true,
+      cache: 'no-store',
     });
+    expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 600 });
     expect(registerListMock).toHaveBeenCalledWith('isEnable=true&limit=20&page=1');
   });
 });

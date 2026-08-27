@@ -56,7 +56,7 @@ function RadioGroupItem<Value>({
         'tw:peer tw:flex tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:border tw:outline-none tw:transition-colors tw:focus-visible:ring-3 tw:focus-visible:ring-ring/25 tw:aria-invalid:border-error tw:aria-invalid:ring-error/20 tw:disabled:cursor-not-allowed tw:data-readonly:cursor-default tw:motion-reduce:transition-none',
         radioSizes[size].root,
         selectionStateClasses(variant, checkedColor, uncheckedColor),
-        neutralInteractionClasses,
+        neutralInteractionClasses(),
         className,
       )}
       {...props}

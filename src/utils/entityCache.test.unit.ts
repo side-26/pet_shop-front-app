@@ -2,12 +2,14 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { cacheTagMock, updateTagMock } = vi.hoisted(() => ({
+const { cacheLifeMock, cacheTagMock, updateTagMock } = vi.hoisted(() => ({
+  cacheLifeMock: vi.fn(),
   cacheTagMock: vi.fn(),
   updateTagMock: vi.fn(),
 }));
 
 vi.mock('next/cache', () => ({
+  cacheLife: cacheLifeMock,
   cacheTag: cacheTagMock,
   updateTag: updateTagMock,
 }));
@@ -35,6 +37,15 @@ describe('EntityTag', () => {
     expect(products.detail('42')).toBe('products:detail:42');
     expect(pets.detail('42')).toBe('pets:detail:42');
     expect(products.query('featured')).not.toBe(pets.query('featured'));
+  });
+
+  it('sets the cache lifetime through the Next.js cache primitive', () => {
+    const products = new EntityTag('products');
+
+    products.cacheLife({ stale: 60 });
+
+    expect(cacheLifeMock).toHaveBeenCalledOnce();
+    expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 60 });
   });
 
   it('registers the entity and list tags without an optional query key', () => {

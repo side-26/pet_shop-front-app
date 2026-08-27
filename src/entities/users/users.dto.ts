@@ -1,5 +1,6 @@
 import type { PaginateDataDTO, PaginateResponseDTO } from '@/lib/api/pagination.dto';
 import type { OrderDTO } from '@/entities/orders/orders.dto';
+import type { UserRole } from '@/configs/user-role';
 
 import type { GetAllPaginatedUsersInput } from './users.schema';
 
@@ -53,6 +54,7 @@ export interface UserDTO {
   isEnable: boolean;
   phoneNumber: string;
   email: string;
+  role: UserRole;
   orders: OrderDTO[];
   wishlist: OrderDTO[];
   age: number;

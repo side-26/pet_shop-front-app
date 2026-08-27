@@ -6,7 +6,7 @@ import { USER_ROLES } from '@/configs/user-role';
 import { routePaths } from '@/configs/route.path';
 
 import { UsersPaginateTable } from './_components/users-paginate-table';
-import { usersTableSkeletonData } from './_components/users-table.mock';
+import { usersTableSkeletonData } from './_components/users-table-skeleton-data';
 import { UsersTableContainer } from './_components/users-table-container';
 import type { UserTableRow } from './_components/users-table.types';
 
@@ -67,6 +67,14 @@ describe(routePaths.adminUsers, () => {
     expect(screen.getByText('مشتری')).toBeTruthy();
     expect(screen.getByRole('switch', { name: 'مریم احمدی: فعال' })).toBeTruthy();
     expect(screen.getByRole('switch', { name: 'سارا کریمی: غیرفعال' })).toBeTruthy();
+    expect(
+      screen.getByRole('switch', { name: 'مریم احمدی: فعال' }).getAttribute('data-checked-color'),
+    ).toBe('success');
+    expect(
+      screen
+        .getByRole('switch', { name: 'سارا کریمی: غیرفعال' })
+        .getAttribute('data-unchecked-color'),
+    ).toBe('error');
     expect(screen.getByRole('button', { name: 'عملیات مریم احمدی' })).toBeTruthy();
     expect(screen.getByRole('link', { name: 'رفتن به صفحه قبلی' }).getAttribute('href')).toBe(
       routePaths.adminUsersPage(1),
@@ -74,7 +82,7 @@ describe(routePaths.adminUsers, () => {
   });
 
   it('reuses mock rows for a busy, non-interactive skeleton table', () => {
-    renderTable({
+    const { container } = renderTable({
       users: usersTableSkeletonData,
       page: 1,
       pageCount: 1,
@@ -82,7 +90,7 @@ describe(routePaths.adminUsers, () => {
       isLoading: true,
     });
 
-    const region = screen.getByRole('region', { name: 'فهرست کاربران' });
+    const region = container.querySelector('section')!;
     expect(region.getAttribute('aria-busy')).toBe('true');
     expect(region.className).toContain('skeleton');
     expect(
@@ -100,21 +108,111 @@ describe(routePaths.adminUsers, () => {
     ).toBe(true);
   });
 
-  it('handles empty and normalized error results outside the table renderer', async () => {
+  it('handles empty and normalized error results', async () => {
     const empty = await UsersTableContainer({
       usersPromise: Promise.resolve({
         isSuccess: true,
-        data: { users: [], page: 1, pageCount: 1, total: 0 },
+        message: null,
+        data: {
+          result: [],
+          pagination: {
+            currentPage: 1,
+            totalPages: 0,
+            totalItems: 0,
+            itemsPerPage: 20,
+            hasNextPage: false,
+            hasPrevPage: false,
+            nextPage: null,
+            prevPage: null,
+          },
+        },
       }),
     });
     const error = await UsersTableContainer({
-      usersPromise: Promise.resolve({ isSuccess: false, message: 'خطا در ارتباط با سرور' }),
+      usersPromise: Promise.resolve({
+        isSuccess: false,
+        message: 'خطا در ارتباط با سرور',
+        data: { messages: {}, details: {} },
+      }),
     });
 
     const { rerender } = render(empty);
-    expect(screen.getByText('کاربری پیدا نشد')).toBeTruthy();
+    expect(screen.getByRole('cell', { name: '_' })).toBeTruthy();
     rerender(error);
     expect(screen.getByText('دریافت کاربران انجام نشد')).toBeTruthy();
     expect(screen.getByText('خطا در ارتباط با سرور')).toBeTruthy();
+  });
+
+  it('uses an underscore for empty user values and reserves footer space for the item count', () => {
+    renderTable({
+      users: [
+        {
+          ...users[0],
+          fullName: '',
+          phoneNumber: '',
+          nationalCode: '',
+        },
+      ],
+    });
+
+    expect(screen.getAllByText('_')).toHaveLength(4);
+    expect(screen.getByText('نمایش 1 کاربر از 20').className).toContain('tw:flex-none');
+    expect(screen.getByText('نمایش 1 کاربر از 20').className).toContain('tw:text-label-s');
+  });
+
+  it('gives the table and pagination wrapper the required main-content height', () => {
+    const { container } = renderTable();
+
+    const region = container.querySelector('section')!;
+    expect(region.getAttribute('aria-label')).toBeNull();
+    expect(region.className).toContain('tw:h-10');
+    expect(region.className).toContain('tw:flex-auto');
+    expect(region.className).not.toContain('tw:flex-1');
+  });
+
+  it('maps the real paginated users response into the shared table renderer', async () => {
+    const loaded = await UsersTableContainer({
+      usersPromise: Promise.resolve({
+        isSuccess: true,
+        message: null,
+        data: {
+          result: [
+            {
+              _id: 'real-user-1',
+              firstName: 'مریم',
+              lastName: 'احمدی',
+              nationalCode: '0012345678',
+              cart: [],
+              isEnable: true,
+              phoneNumber: '09121234567',
+              email: 'maryam@example.com',
+              role: USER_ROLES.ADMIN,
+              orders: [],
+              wishlist: [],
+              age: 32,
+              addresses: [],
+            },
+          ],
+          pagination: {
+            currentPage: 2,
+            totalPages: 4,
+            totalItems: 61,
+            itemsPerPage: 20,
+            hasNextPage: true,
+            hasPrevPage: true,
+            nextPage: 3,
+            prevPage: 1,
+          },
+        },
+      }),
+    });
+
+    render(<DirectionProvider direction="rtl">{loaded}</DirectionProvider>);
+
+    expect(screen.getByText('مریم احمدی')).toBeTruthy();
+    expect(screen.getByText('نمایش 1 کاربر از 61')).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'رفتن به صفحه قبلی' }).getAttribute('href')).toBe(
+      routePaths.adminUsersPage(1),
+    );
   });
 });

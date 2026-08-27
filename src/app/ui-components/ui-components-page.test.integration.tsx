@@ -70,6 +70,12 @@ describe(routePaths.uiComponents, () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Tooltip' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Spinner' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Dialog' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 3, name: 'Form Dialog Content' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'نمایش فرم گفتگو' })).toBeTruthy();
+    expect(
+      screen.getByRole('heading', { level: 3, name: 'Filter Form Dialog Content' }),
+    ).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'نمایش فیلتر' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Drawer' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'کشوی error' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Toast' })).toBeTruthy();
@@ -107,7 +113,7 @@ describe(routePaths.uiComponents, () => {
     expect(screen.getByRole('button', { name: 'روشن' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'تیره' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'سیستم' })).toBeTruthy();
-  }, 10_000);
+  }, 15_000);
 
   it('defines route metadata without making the page a Client Component', () => {
     expect(metadata.title).toBe('کتابخانه اجزای رابط کاربری | پت‌شاپ');

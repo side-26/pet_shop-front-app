@@ -21,6 +21,8 @@ export type AdminHeaderActions = Readonly<
 export type AdminLayoutContextValue = Readonly<{
   entityName: string;
   headerActions: AdminHeaderActions;
+  resetHeaderActions: () => void;
+  setHeaderActions: (headerActions: AdminHeaderActions) => void;
 }>;
 
 const AdminLayoutContext = createContext<AdminLayoutContextValue | null>(null);

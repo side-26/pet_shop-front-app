@@ -12,15 +12,7 @@ import { CheckboxField } from '@/components/ui/fields/checkbox-field';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/fields/input-group';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/fields/radio-group';
 import { RadioGroupField } from '@/components/ui/fields/radio-group-field';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/fields/select';
+import { SelectField } from '@/components/ui/fields/select-field';
 import { Switch } from '@/components/ui/fields/switch';
 import { SwitchField } from '@/components/ui/fields/switch-field';
 import { TextareaField } from '@/components/ui/fields/textarea-field';
@@ -43,8 +35,7 @@ type ProfileFormValues = yup.InferType<typeof profileSchema>;
 
 const inputColors = ['primary', 'secondary', 'info', 'success', 'warning', 'error'] as const;
 const inputSizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const;
-const petTypes = [
-  { label: 'انتخاب نوع حیوان', value: null },
+const petTypeOptions = [
   { label: 'سگ', value: 'dog' },
   { label: 'گربه', value: 'cat' },
   { label: 'پرنده', value: 'bird' },
@@ -234,24 +225,19 @@ export function FormShowcase() {
             <InputGroupInput id="form-search" placeholder="نام یا کد پرونده" />
           </InputGroup>
         </Field>
-        <Field>
-          <FieldLabel htmlFor="form-pet-type">نوع حیوان</FieldLabel>
-          <Select items={petTypes}>
-            <SelectTrigger id="form-pet-type">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>حیوانات خانگی</SelectLabel>
-                {petTypes.slice(1).map((item) => (
-                  <SelectItem key={item.value} value={item.value}>
-                    {item.label}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </Field>
+        <Form<{ petType: string }>
+          handleSubmit={() => undefined}
+          options={{ defaultValues: { petType: '' } }}
+        >
+          <SelectField
+            name="petType"
+            label="نوع حیوان در فرم"
+            hint="انتخاب شما در React Hook Form ذخیره می‌شود."
+            rules={{ required: 'انتخاب نوع حیوان الزامی است.' }}
+            options={petTypeOptions}
+          />
+          <Button type="submit">بررسی انتخاب</Button>
+        </Form>
       </div>
 
       <div className="tw:grid tw:gap-6 tw:md:grid-cols-3">
@@ -374,7 +360,7 @@ export function FormShowcase() {
           </Field>
           <Field className="tw:w-auto tw:flex-row tw:items-center tw:gap-3">
             <Switch id="switch-readonly-neutral" defaultChecked readOnly />
-            <FieldLabel htmlFor="switch-readonly-neutral">فقط‌خواندنی</FieldLabel>
+            <FieldLabel htmlFor="switch-readonly-neutral">وضعیت فقط‌خواندنی</FieldLabel>
           </Field>
           <RadioGroup defaultValue="locked" readOnly aria-label="نمونه فقط‌خواندنی">
             <RadioGroupItem value="locked" aria-label="رادیوی فقط‌خواندنی" />

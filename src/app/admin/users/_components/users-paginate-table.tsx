@@ -55,6 +55,10 @@ function getInitials(fullName: string) {
     .join('');
 }
 
+function displayValue(value: string) {
+  return value.trim() || '_';
+}
+
 export function UsersPaginateTable({
   users,
   page,
@@ -64,15 +68,14 @@ export function UsersPaginateTable({
 }: UsersPaginateTableProps) {
   return (
     <section
-      aria-label="فهرست کاربران"
       aria-busy={isLoading || undefined}
       className={cn(
-        'tw:flex tw:min-h-0 tw:flex-1 tw:flex-col tw:gap-4',
+        'tw:flex tw:h-10 tw:min-h-0 tw:flex-auto tw:flex-col tw:gap-4',
         isLoading && 'skeleton tw:pointer-events-none tw:select-none',
       )}
     >
-      <div className="tw:overflow-hidden tw:rounded-2xl tw:border tw:border-border">
-        <Table>
+      <div className="tw:min-h-0 tw:flex-1 tw:overflow-auto tw:rounded-2xl tw:border tw:border-border">
+        <Table className="tw:h-full">
           <TableHeader>
             <TableRow>
               <TableHead className="tw:w-16">تصویر</TableHead>
@@ -87,77 +90,91 @@ export function UsersPaginateTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user) => {
-              const role = rolePresentation[user.role];
+            {users.length ? (
+              users.map((user) => {
+                const role = rolePresentation[user.role];
+                const fullName = displayValue(user.fullName);
 
-              return (
-                <TableRow key={user.id}>
-                  <TableCell>
-                    <Avatar>
-                      <AvatarFallback>{getInitials(user.fullName)}</AvatarFallback>
-                    </Avatar>
-                  </TableCell>
-                  <TableCell className="tw:font-medium">{user.fullName}</TableCell>
-                  <TableCell>
-                    <bdi dir="ltr">{user.phoneNumber}</bdi>
-                  </TableCell>
-                  <TableCell>
-                    <bdi dir="ltr">{user.nationalCode}</bdi>
-                  </TableCell>
-                  <TableCell>
-                    <Badge color={role.color} variant="tonal">
-                      {role.label}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Switch
-                      checked={user.isEnable}
-                      readOnly
-                      disabled={isLoading}
-                      size="sm"
-                      aria-label={`${user.fullName}: ${user.isEnable ? 'فعال' : 'غیرفعال'}`}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger
+                return (
+                  <TableRow key={user.id}>
+                    <TableCell>
+                      <Avatar>
+                        <AvatarFallback>{getInitials(user.fullName) || '_'}</AvatarFallback>
+                      </Avatar>
+                    </TableCell>
+                    <TableCell className="tw:font-medium">{fullName}</TableCell>
+                    <TableCell>
+                      <bdi dir="ltr">{displayValue(user.phoneNumber)}</bdi>
+                    </TableCell>
+                    <TableCell>
+                      <bdi dir="ltr">{displayValue(user.nationalCode)}</bdi>
+                    </TableCell>
+                    <TableCell>
+                      <Badge color={role.color} variant="tonal">
+                        {role.label}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Switch
+                        checked={user.isEnable}
+                        readOnly
                         disabled={isLoading}
-                        render={
-                          <Button
-                            type="button"
-                            iconOnly
-                            size="sm"
-                            variant="flat"
-                            color="secondary"
-                            aria-label={`عملیات ${user.fullName}`}
-                          />
-                        }
-                      >
-                        <MoreHorizontalIcon aria-hidden="true" />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem>
-                            <EyeIcon aria-hidden="true" />
-                            مشاهده اطلاعات کاربر
-                          </DropdownMenuItem>
-                          <DropdownMenuItem variant="destructive">
-                            <Trash2Icon aria-hidden="true" />
-                            حذف کاربر
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+                        size="sm"
+                        checkedColor="success"
+                        uncheckedColor="error"
+                        aria-label={`${fullName}: ${user.isEnable ? 'فعال' : 'غیرفعال'}`}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger
+                          disabled={isLoading}
+                          render={
+                            <Button
+                              type="button"
+                              iconOnly
+                              size="sm"
+                              variant="flat"
+                              color="secondary"
+                              aria-label={`عملیات ${fullName}`}
+                            />
+                          }
+                        >
+                          <MoreHorizontalIcon aria-hidden="true" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuGroup>
+                            <DropdownMenuItem>
+                              <EyeIcon aria-hidden="true" />
+                              مشاهده اطلاعات کاربر
+                            </DropdownMenuItem>
+                            <DropdownMenuItem variant="destructive">
+                              <Trash2Icon aria-hidden="true" />
+                              حذف کاربر
+                            </DropdownMenuItem>
+                          </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={7}
+                  className="tw:h-full tw:text-center tw:text-muted-foreground"
+                >
+                  _
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
 
-      <footer className="tw:flex tw:flex-col tw:items-center tw:justify-between tw:gap-3 tw:px-1 tw:sm:flex-row">
-        <p className="tw:text-body-s tw:text-muted-foreground">
+      <footer className="tw:flex tw:flex-none tw:flex-col tw:items-center tw:justify-between tw:gap-3 tw:px-1 tw:sm:flex-row">
+        <p className="tw:flex-none tw:text-label-s tw:text-muted-foreground">
           نمایش {users.length} کاربر از {total}
         </p>
         <Pagination>

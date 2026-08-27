@@ -1,19 +1,22 @@
 import { Suspense } from 'react';
 
+import { getAllPaginatedUsersAction } from '@/entities/users/users.actions';
+
 import { UsersPaginateTable } from './users-paginate-table';
-import { getMockUsersPage, usersTableSkeletonData } from './users-table.mock';
+import { usersTableSkeletonData } from './users-table-skeleton-data';
 import { UsersTableContainer } from './users-table-container';
 
 type UsersTableWrapperProps = {
   page: number;
+  query: Record<string, string>;
 };
 
-export function UsersTableWrapper({ page }: UsersTableWrapperProps) {
-  const usersPromise = getMockUsersPage(page);
+export function UsersTableWrapper({ page, query }: UsersTableWrapperProps) {
+  const usersPromise = getAllPaginatedUsersAction(query);
 
   return (
     <Suspense
-      key={page}
+      key={JSON.stringify(query)}
       fallback={
         <UsersPaginateTable
           users={usersTableSkeletonData}

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { UsersPageContentWrapper } from './_components/users-page-content-wrapper';
+import { UsersHeaderActionsWrapper } from './_components/users-header-actions-wrapper';
 
 export const metadata: Metadata = {
   title: 'مدیریت کاربران | پت‌شاپ',
@@ -15,6 +16,7 @@ export default function AdminUsersPage({ searchParams }: AdminUsersPageProps) {
   return (
     <div className="tw:flex tw:min-h-0 tw:flex-1 tw:flex-col tw:p-4 tw:sm:p-6">
       <h2 className="tw:sr-only">فهرست کاربران</h2>
+      <UsersHeaderActionsWrapper searchParams={searchParams} />
       <UsersPageContentWrapper searchParams={searchParams} />
     </div>
   );

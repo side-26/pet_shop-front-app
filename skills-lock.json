@@ -49,6 +49,12 @@
       "skillPath": "plugins/frontend-mobile-development/skills/nextjs-app-router-patterns/SKILL.md",
       "computedHash": "3a46e9093baecb3a85819529ce05006f817663f48d9e872868c32ae6049c0d5c"
     },
+    "seo-optimizer": {
+      "source": "ailabs-393/ai-labs-claude-skills",
+      "sourceType": "github",
+      "skillPath": "packages/skills/seo-optimizer/SKILL.md",
+      "computedHash": "af2fb1f7b3163d8803ef61f835def7a0cc77c31800b2739b73df0aa5acecfba7"
+    },
     "shadcn": {
       "source": "shadcn/ui",
       "sourceType": "github",

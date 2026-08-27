@@ -15,6 +15,3 @@ export type UsersPageViewModel = {
   pageCount: number;
   total: number;
 };
-
-export type UsersPageResult =
-  { isSuccess: true; data: UsersPageViewModel } | { isSuccess: false; message: string };

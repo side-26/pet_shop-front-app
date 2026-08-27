@@ -86,7 +86,7 @@ describe('AdminLayoutShell', () => {
     render(
       <AdminLayoutShellView
         pathname={routePaths.adminPage('products')}
-        entityName="Product"
+        entityName="محصول"
         headerActions={{
           lastVisibleOrder: 2,
           filter: { order: 3, action: filter },
@@ -104,8 +104,11 @@ describe('AdminLayoutShell', () => {
       </AdminLayoutShellView>,
     );
 
-    const addButton = screen.getByRole('button', { name: 'Add new Product' });
+    const addButton = screen.getByRole('button', { name: 'افزودن محصول' });
     const reloadButton = screen.getByRole('button', { name: 'Reload' });
+    expect(document.querySelector('[data-slot="admin-header-actions"]')?.className).toContain(
+      'tw:flex-row-reverse',
+    );
     expect(addButton.compareDocumentPosition(reloadButton) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
     );

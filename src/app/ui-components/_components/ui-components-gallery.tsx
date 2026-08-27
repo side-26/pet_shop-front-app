@@ -30,6 +30,8 @@ import { ExpandableCardShowcase } from './expandable-card-showcase';
 import { ToggleGroupShowcase } from './toggle-group-showcase';
 import { TabsShowcase } from './tabs-showcase';
 import { EmptyShowcase } from './empty-showcase';
+import { FormDialogContentShowcase } from './form-dialog-content-showcase';
+import { FilterFormDialogContentShowcase } from './filter-form-dialog-content-showcase';
 
 const navigation = [
   ['#avatars', 'Avatar'],
@@ -46,6 +48,8 @@ const navigation = [
   ['#tooltips', 'Tooltip'],
   ['#spinners', 'Spinner'],
   ['#dialogs', 'Dialog'],
+  ['#form-dialog-content', 'Form Dialog Content'],
+  ['#filter-form-dialog-content', 'Filter Form Dialog Content'],
   ['#drawers', 'Drawer'],
   ['#toasts', 'Toast'],
   ['#collapsibles', 'Collapsible'],
@@ -114,6 +118,8 @@ export function UiComponentsGallery() {
         <TooltipShowcase />
         <SpinnerShowcase />
         <DialogShowcase />
+        <FormDialogContentShowcase />
+        <FilterFormDialogContentShowcase />
         <DrawerShowcase />
         <ToastShowcase />
         <CollapsibleShowcase />

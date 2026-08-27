@@ -275,6 +275,12 @@ Form controls live under `ui/fields`: `Input`, `InputGroup`, `Select`, `Switch`,
 and `InputGroupAddon`; place every `SelectItem` in `SelectGroup`. Base UI Select
 roots require the complete `items` collection. Controls use native/ARIA invalid
 and disabled state and are designed RTL-first.
+`SelectField` is the React Hook Form composition for single-value selects. It
+consumes the nearest `FormProvider`, accepts a typed `name` and `{ value, label,
+disabled? }` options, owns the `Field`, label, Select parts, and a persistent
+hint/error description. It binds the Select hidden input and selected value to
+React Hook Form, and exposes placeholder, required, disabled, and read-only
+states without duplicating select markup at call sites.
 `Input` supports `color="primary|secondary|info|success|warning|error"` and
 `size="xs|sm|md|lg|xl"`, defaulting to primary/md. Color controls border, caret,
 and focus ring; `aria-invalid` always resolves to the error treatment. Input and
@@ -309,8 +315,11 @@ Slot geometry and typography scale together from 28px/12px to 48px/16px.
 `Checkbox`, `Switch`, and `RadioGroupItem` support `fill|outlined|tonal` through
 `variant`, plus independent `checkedColor` and `uncheckedColor` semantic colors.
 Checked/on/ticked and unchecked/off/unticked states must resolve their own
-surface and foreground. Disabled and read-only states always override both
-colors with readable neutral border, surface, foreground, and cursor treatment.
+surface and foreground. Disabled states always override both colors with a
+readable neutral border, surface, foreground, and cursor treatment. Read-only
+Checkbox and RadioGroupItem states do the same; read-only Switches remain
+non-interactive while preserving their checked/unchecked semantic colors for
+status display.
 All three controls also support `size="xs|sm|md|lg|xl"`. Size scales Checkbox
 and Radio indicators or the Switch track/thumb, writes `data-size` on the
 control, and causes the associated `FieldLabel` typography to scale with it.

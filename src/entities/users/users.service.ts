@@ -14,21 +14,24 @@ import { getAllPaginatedUsersSchema } from './users.schema';
 const usersCache = new EntityTag('users');
 
 async function fetchAllPaginatedUsers(query: GetAllPaginatedUsersQueryDTO) {
-  'use cache';
+  'use cache: private';
 
+  usersCache.cacheLife({ stale: 600 });
   usersCache.registerList(createUsersListCacheKey(query));
 
-  return customFetcher<AllPaginatedUsersDTO>({
-    url: '/users/all-paginate',
+  const res = await customFetcher<AllPaginatedUsersDTO>({
+    url: '/users/paginate',
     method: 'GET',
     query,
-    auth: false,
-    cache: 'force-cache',
-    next: { tags: [usersCache.list] },
+    auth: true,
+    cache: 'no-store',
   });
+  console.log(res, 'res');
+  return res;
 }
 
 export async function getAllPaginatedUsers(params: GetAllPaginatedUsersParams = {}) {
   const query = await getAllPaginatedUsersSchema.validate(params, { stripUnknown: true });
+  console.log(query, 'query');
   return fetchAllPaginatedUsers(query);
 }

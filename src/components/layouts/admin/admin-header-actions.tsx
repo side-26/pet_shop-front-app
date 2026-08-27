@@ -45,7 +45,7 @@ function isHeaderAction(value: AdminHeaderAction | number | undefined): value is
 }
 
 function getBuiltInActionName(key: BuiltInActionKey, entityName: string): string {
-  if (key === 'add-new-item') return `Add new ${entityName}`;
+  if (key === 'add-new-item') return `افزودن ${entityName}`;
   if (key === 'filter') return 'Filter';
   return 'Reload';
 }
@@ -111,7 +111,10 @@ export function AdminHeaderActions() {
   if (actions.length === 0) return null;
 
   return (
-    <div className="tw:flex tw:items-center tw:gap-2" data-slot="admin-header-actions">
+    <div
+      className="tw:flex tw:flex-row-reverse tw:items-center tw:gap-2"
+      data-slot="admin-header-actions"
+    >
       {visibleActions.map((action) => (
         <VisibleHeaderAction key={action.key} action={action} />
       ))}

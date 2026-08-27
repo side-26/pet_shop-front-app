@@ -1,10 +1,11 @@
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty';
+import type { getAllPaginatedUsersAction } from '@/entities/users/users.actions';
 
 import { UsersPaginateTable } from './users-paginate-table';
-import type { UsersPageResult } from './users-table.types';
+import { mapUsersPageViewModel } from './users-table.mapper';
 
 type UsersTableContainerProps = {
-  usersPromise: Promise<UsersPageResult>;
+  usersPromise: ReturnType<typeof getAllPaginatedUsersAction>;
 };
 
 export async function UsersTableContainer({ usersPromise }: UsersTableContainerProps) {
@@ -15,22 +16,13 @@ export async function UsersTableContainer({ usersPromise }: UsersTableContainerP
       <Empty>
         <EmptyHeader>
           <EmptyTitle>دریافت کاربران انجام نشد</EmptyTitle>
-          <EmptyDescription>{result.message}</EmptyDescription>
+          <EmptyDescription>{result.message ?? 'خطایی در دریافت کاربران رخ داد.'}</EmptyDescription>
         </EmptyHeader>
       </Empty>
     );
   }
 
-  if (result.data.users.length === 0) {
-    return (
-      <Empty>
-        <EmptyHeader>
-          <EmptyTitle>کاربری پیدا نشد</EmptyTitle>
-          <EmptyDescription>هنوز کاربری مطابق این صفحه وجود ندارد.</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
-    );
-  }
+  const usersPage = mapUsersPageViewModel(result.data);
 
-  return <UsersPaginateTable {...result.data} />;
+  return <UsersPaginateTable {...usersPage} />;
 }

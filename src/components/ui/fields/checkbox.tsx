@@ -48,7 +48,7 @@ function Checkbox({
         checkboxSizes[size],
         stateClasses,
         stateClasses.replaceAll('data-checked', 'data-indeterminate'),
-        neutralInteractionClasses,
+        neutralInteractionClasses(),
         className,
       )}
       {...props}

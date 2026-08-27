@@ -116,6 +116,12 @@ describe('Pet Shop UI primitives', () => {
     expect(
       screen.getByRole('switch', { name: 'Dual switch' }).getAttribute('data-unchecked-color'),
     ).toBe('warning');
+    expect(screen.getByRole('switch', { name: 'Dual switch' }).className).toContain(
+      'tw:data-checked:bg-success-muted',
+    );
+    expect(screen.getByRole('switch', { name: 'Dual switch' }).className).not.toContain(
+      'tw:data-readonly:bg-muted',
+    );
     expect(screen.getByRole('radio', { name: 'Dual radio' }).className).toContain(
       'tw:disabled:bg-disabled',
     );

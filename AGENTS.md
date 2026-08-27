@@ -42,7 +42,16 @@ Use `block` for full-width buttons instead of passing `tw:w-full` through `class
 Configure admin header controls through `AdminLayoutContextValue.headerActions`. An action is rendered
 only when its configuration exists. `lastVisibleOrder` is the inclusive visible-order boundary; actions
 with a larger `order` are placed in the three-dots dropdown. `add-new-item`, `filter`, and `reload` have
-default icons and labels; custom actions must provide `name`, `icon`, `order`, and `action`.
+default icons and labels; custom actions must provide `name`, `icon`, `order`, and `action`. Visible
+action order increases from left to right, including in the RTL admin header. The default
+`add-new-item` label is Persian and includes the configured entity name.
+
+### Admin API authentication
+
+Every backend GET request used by an `/admin/*` route must pass `auth: true` to `customFetcher` and use
+Next.js `'use cache: private'` with an explicit `cacheLife`. Keep the underlying authenticated fetch at
+`cache: 'no-store'`; cache the service result privately so bearer-token responses never enter a shared
+server cache. Register deterministic entity/query tags for targeted invalidation.
 
 ### Badge neutral color
 
