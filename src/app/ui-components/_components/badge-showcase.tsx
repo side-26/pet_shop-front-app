@@ -3,6 +3,7 @@ import { Badge, type BadgeProps } from '@/components/ui/badge';
 import { ShowcaseSection } from './showcase-section';
 
 const colors = [
+  ['neutral', 'خنثی'],
   ['primary', 'اصلی'],
   ['secondary', 'ثانویه'],
   ['info', 'اطلاع‌رسانی'],

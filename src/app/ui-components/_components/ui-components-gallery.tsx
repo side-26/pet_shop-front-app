@@ -29,6 +29,7 @@ import { BreadcrumbShowcase } from './breadcrumb-showcase';
 import { ExpandableCardShowcase } from './expandable-card-showcase';
 import { ToggleGroupShowcase } from './toggle-group-showcase';
 import { TabsShowcase } from './tabs-showcase';
+import { EmptyShowcase } from './empty-showcase';
 
 const navigation = [
   ['#avatars', 'Avatar'],
@@ -60,6 +61,7 @@ const navigation = [
   ['#input-otp-fields', 'Input OTP Field'],
   ['#countdowns', 'Countdown'],
   ['#counters', 'Counter'],
+  ['#empty-states', 'Empty'],
 ] as const;
 
 export function UiComponentsGallery() {
@@ -129,6 +131,7 @@ export function UiComponentsGallery() {
         <InputOtpShowcase />
         <CountdownShowcase />
         <CounterShowcase />
+        <EmptyShowcase />
       </div>
     </main>
   );

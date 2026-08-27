@@ -43,3 +43,8 @@ Configure admin header controls through `AdminLayoutContextValue.headerActions`.
 only when its configuration exists. `lastVisibleOrder` is the inclusive visible-order boundary; actions
 with a larger `order` are placed in the three-dots dropdown. `add-new-item`, `filter`, and `reload` have
 default icons and labels; custom actions must provide `name`, `icon`, `order`, and `action`.
+
+### Badge neutral color
+
+The shared `Badge` supports `color="neutral"` across every existing visual variant. Use the neutral
+color for informational categories that should not imply priority, success, warning, or error.

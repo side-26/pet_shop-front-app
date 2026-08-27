@@ -88,12 +88,18 @@ describe(routePaths.uiComponents, () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Input OTP Field' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Countdown' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Counter' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 3, name: 'Empty' })).toBeTruthy();
+    expect(
+      screen.getByRole('heading', { level: 4, name: 'هنوز محصولی ثبت نشده است' }),
+    ).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'افزودن محصول' })).toBeTruthy();
     expect(screen.getByRole('group', { name: 'tonal' })).toBeTruthy();
     expect(screen.getByLabelText('کد تأیید')).toBeTruthy();
     expect(screen.getAllByRole('timer').length).toBeGreaterThan(0);
     expect(screen.getByText('زمان به پایان رسید')).toBeTruthy();
 
     expect(screen.getAllByText('خیلی کوچک').length).toBeGreaterThan(0);
+    expect(screen.getByText('خنثی · tonal')).toBeTruthy();
     expect(screen.getByText('ناموجود · tonal')).toBeTruthy();
     expect(screen.getByText('کارت شیشه‌ای')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'نمایش گفت‌وگوی بزرگ' })).toBeTruthy();

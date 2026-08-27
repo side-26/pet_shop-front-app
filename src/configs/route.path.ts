@@ -19,6 +19,7 @@ export const PATHS = {
   },
   UI_COMPONENTS: '/ui-components',
   ADMIN: '/admin',
+  ADMIN_USERS: '/admin/users',
 } as const;
 
 export const routePaths = {
@@ -42,5 +43,7 @@ export const routePaths = {
   resetPassword: PATHS.AUTH.RESET_PASSWORD,
   uiComponents: PATHS.UI_COMPONENTS,
   admin: PATHS.ADMIN,
+  adminUsers: PATHS.ADMIN_USERS,
+  adminUsersPage: (page: number) => `${PATHS.ADMIN_USERS}?page=${page}`,
   adminPage: (page: string) => `${PATHS.ADMIN}/${encodeURIComponent(page)}`,
 } as const;

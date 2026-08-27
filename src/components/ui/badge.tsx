@@ -24,6 +24,7 @@ const badgeVariants = tv({
         'tw:bg-background/45 tw:supports-backdrop-filter:backdrop-blur-xl tw:[a]:hover:bg-background/70',
     },
     color: {
+      neutral: 'tw:focus-visible:border-foreground tw:focus-visible:ring-foreground/20',
       primary: 'tw:focus-visible:border-primary tw:focus-visible:ring-primary/25',
       secondary: 'tw:focus-visible:border-secondary tw:focus-visible:ring-secondary/25',
       info: 'tw:focus-visible:border-info tw:focus-visible:ring-info/25',
@@ -40,6 +41,31 @@ const badgeVariants = tv({
     },
   },
   compoundVariants: [
+    {
+      color: 'neutral',
+      variant: 'fill',
+      class: 'tw:bg-foreground tw:text-background tw:[a]:hover:bg-foreground/85',
+    },
+    {
+      color: 'neutral',
+      variant: 'outlined',
+      class: 'tw:border-border-strong tw:text-foreground tw:[a]:hover:bg-muted',
+    },
+    {
+      color: 'neutral',
+      variant: 'tonal',
+      class: 'tw:bg-muted tw:text-muted-foreground tw:[a]:hover:bg-muted-hover',
+    },
+    {
+      color: 'neutral',
+      variant: ['flat', 'text'],
+      class: 'tw:text-muted-foreground tw:[a]:hover:bg-muted',
+    },
+    {
+      color: 'neutral',
+      variant: 'transparent',
+      class: 'tw:border-border tw:text-foreground',
+    },
     {
       color: 'primary',
       variant: 'fill',
