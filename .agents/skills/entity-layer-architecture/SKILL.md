@@ -16,7 +16,7 @@ Allow Server Components and Route Handlers to call an entity service directly wh
 ## Inspect before changing code
 
 1. Read the entity, its consumers, `src/lib/api/customFetcher.ts`, and nearby tests.
-2. Read the relevant installed Next.js guide in `node_modules/next/dist/docs/` before using Server Actions, caching, or invalidation APIs. Do not rely on remembered Next.js behavior.
+2. Read the relevant installed Next.js guide in `node_modules/next/dist/docs/` before using Server Actions, caching, or invalidation APIs. Do not rely on remembered Next.js behavior. Load `entity-service-action-workflow` for this repository's required `EntityTag` cache and mutation-invalidation convention; that more specific skill owns cache placement when both apply.
 3. Follow the repository `AGENTS.md`. For UI work, also load `shadcn-pet-ui-component`; for routed navigation, also load `manage-route-paths`; for test implementation, load the applicable testing skill.
 4. Preserve established project conventions unless they violate the boundaries below.
 
@@ -74,23 +74,18 @@ Allow Server Components and Route Handlers to call an entity service directly wh
 - Default every request to `cache: 'no-store'`. Make caching an explicit opt-in for data proven safe to cache; never depend on Next.js's implicit fetch default.
 - When the fetcher exposes a boolean no-store option, default it to `true`. Only an explicit `false` or explicit cache policy may enable caching, and the resulting fetch options must not combine `no-store` with revalidation settings.
 - Require one or more cache tags whenever a read opts into persistent caching. Tags on `no-store` requests do not create cached data and therefore provide nothing to invalidate.
-- Define cache tags once in a project-owned server-safe registry, such as `src/lib/cache/cache-tags.ts`, using constants for collections and functions for identifiers. Do not scatter string literals across services and actions.
-- Import the same tag definitions in entity services when tagging cached reads and in Server Actions or Route Handlers when invalidating them. Keep the registry free of service, action, UI, and Next.js runtime calls so all server layers can reuse it without circular imports.
-- After mutations, choose the current documented Next.js primitive according to required consistency: prefer `updateTag(tag)` inside a Server Action for immediate read-your-own-writes; use `revalidateTag(tag, 'max')` for stale-while-revalidate, including Route Handlers; use `revalidatePath` for path-scoped invalidation; use `refresh` only when refetching uncached current-route data is the actual requirement.
+- Define each entity's cache tags once with the shared `EntityTag` class from `src/utils/entityCache.ts`. Reuse one module-level instance in its service for cached-read registration and successful mutation invalidation; do not scatter string literals or create a parallel tag registry.
+- Invalidate only after a successful mutation result and choose the narrowest complete combination of list, detail, or all scopes. The Server Action calls the service and must not repeat service-owned invalidation.
+- `EntityTag` invalidation delegates to `updateTag`, so invalidating mutation services must execute within a Server Action. Route Handlers require a separately reviewed `revalidateTag` design because `updateTag` is not legal there.
 - Keep endpoint-specific business interpretation in the entity service, not the generic fetcher.
 
-Use a registry shaped like this, adapting names to the project:
+Use a module-level tag owner shaped like this, adapting names to the entity:
 
 ```ts
-export const cacheTags = {
-  products: {
-    all: 'products',
-    detail: (productId: string) => `products:${productId}`,
-  },
-} as const;
+const productCache = new EntityTag('products');
 ```
 
-Treat tag builders as identifiers, not cache operations. A service passes `cacheTags.products.all` to the cached read; an action passes that exact value to `updateTag` or `revalidateTag` after a successful mutation.
+Register cached reads with `productCache.registerList(queryKey)` or `productCache.registerDetail(id)`. After a successful mutation, invalidate the affected scopes with `invalidateList()`, `invalidateDetail(id)`, or `invalidateAll()` inside the service.
 
 ## Use explicit result contracts
 
@@ -148,7 +143,7 @@ Do not unit-test TypeScript types at runtime. Run TypeScript checking, and add c
 2. Confirm authenticated requests obtain tokens only through the shared transport/session mechanism.
 3. Confirm action input is validated and authorization is enforced independently of UI visibility.
 4. Confirm `no-store` is the explicit default, every cached read opts in, and private data is not shared-cached.
-5. Confirm every cached read and its invalidation import the same centralized tag constant or builder; do not accept duplicate tag strings.
+5. Confirm every cached read and successful mutation reuse the entity service's module-level `EntityTag`; do not accept duplicate tag strings, direct cache primitives, or parallel registries.
 6. Confirm client effects are absent from server modules and services are not exported as actions.
 7. Add or update tests in proportion to changed behavior, including default `no-store`, cache opt-in, shared tags, invalidation, and a regression test for a bug fix.
 8. Run typecheck (or `tsc --noEmit` if no script exists), lint, applicable Vitest/Cypress suites, and the production build as required by `AGENTS.md`.

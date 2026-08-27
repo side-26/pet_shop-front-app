@@ -1,0 +1,4 @@
+interface:
+  display_name: "Entity Service & Action Workflow"
+  short_description: "Build entity services, actions, clients, and cache invalidation"
+  default_prompt: "Create or update this entity flow using the repository layer boundaries and EntityTag cache conventions."
