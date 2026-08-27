@@ -36,3 +36,10 @@ For every layout, page, template, or content-section task, also run that skill's
 Use the shared `Button` loading contract instead of composing loading markup at call sites. Pass
 `isLoading` with the required `loadingText`; Button replaces its children and owns the busy state.
 Use `block` for full-width buttons instead of passing `tw:w-full` through `className`.
+
+### Admin header actions
+
+Configure admin header controls through `AdminLayoutContextValue.headerActions`. An action is rendered
+only when its configuration exists. `lastVisibleOrder` is the inclusive visible-order boundary; actions
+with a larger `order` are placed in the three-dots dropdown. `add-new-item`, `filter`, and `reload` have
+default icons and labels; custom actions must provide `name`, `icon`, `order`, and `action`.

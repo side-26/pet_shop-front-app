@@ -1,9 +1,9 @@
 'use client';
 
-import { Menu, PanelRightClose, PanelRightOpen, RotateCcw } from 'lucide-react';
+import { Menu, PanelRightClose, PanelRightOpen } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useCallback, useState } from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ConfirmDialog } from '@/components/common/confirm-dialog/main';
@@ -14,6 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { logoutUser } from '@/entities/auth/auth.client';
+import type { AdminHeaderActions as AdminHeaderActionsValue } from '@/contexts/admin/layout/admin-layout-context';
 import { useCommonStore } from '@/stores/common.store';
 
 import {
@@ -23,6 +24,8 @@ import {
   getAdminNavigationItem,
   isAdminNavigationItemActive,
 } from './admin-navigation-items';
+import { AdminLayoutContent } from './admin-layout-content';
+import { AdminHeaderActions } from './admin-header-actions';
 
 type AdminLayoutShellProps = Readonly<{ children: React.ReactNode }>;
 
@@ -206,100 +209,124 @@ function AdminNavigation({ collapsed = false, pathname, onNavigate }: AdminNavig
 
 export function AdminLayoutShellView({
   children,
+  entityName = 'item',
+  headerActions = { lastVisibleOrder: 0 },
   pathname,
-}: AdminLayoutShellProps & { pathname: string }) {
+}: AdminLayoutShellProps & {
+  pathname: string;
+  entityName?: string;
+  headerActions?: AdminHeaderActionsValue;
+}) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
   const currentNavigationItem = getAdminNavigationItem(pathname);
   const CurrentNavigationIcon = currentNavigationItem.icon;
 
   return (
-    <div className="tw:flex tw:min-h-svh tw:bg-muted/50 tw:text-foreground">
-      <aside
-        data-collapsed={collapsed}
-        className={cn(
-          'tw:sticky tw:top-0 tw:hidden tw:h-svh tw:shrink-0 tw:overflow-hidden tw:border-e tw:border-sidebar-border tw:bg-sidebar tw:shadow-sm tw:transition-[width] tw:duration-300 tw:ease-out tw:motion-reduce:transition-none tw:md:block',
-          collapsed ? 'tw:w-20' : 'tw:w-64 tw:xl:w-72',
-        )}
-      >
-        <AdminNavigation collapsed={collapsed} pathname={pathname} />
-      </aside>
+    <AdminLayoutContent entityName={entityName} headerActions={headerActions}>
+      <div className="tw:flex tw:min-h-svh tw:bg-muted/50 tw:text-foreground">
+        <aside
+          data-collapsed={collapsed}
+          className={cn(
+            'tw:sticky tw:top-0 tw:hidden tw:h-svh tw:shrink-0 tw:overflow-hidden tw:border-e tw:border-sidebar-border tw:bg-sidebar tw:shadow-sm tw:transition-[width] tw:duration-300 tw:ease-out tw:motion-reduce:transition-none tw:md:block',
+            collapsed ? 'tw:w-20' : 'tw:w-64 tw:xl:w-72',
+          )}
+        >
+          <AdminNavigation collapsed={collapsed} pathname={pathname} />
+        </aside>
 
-      <div className="tw:flex tw:min-w-0 tw:flex-1 tw:flex-col">
-        <header className="tw:px-4 tw:pt-3 tw:pb-1 tw:sm:pt-4 tw:md:pt-4 tw:md:pb-[5px]">
-          <Card variant="elevated" size="xs" data-slot="admin-header-card" className="tw:h-16">
-            <CardContent className="tw:flex tw:flex-1 tw:items-center tw:justify-between tw:gap-3">
-              <div className="tw:flex tw:items-center tw:gap-2">
-                <Button
-                  iconOnly
-                  variant="tonal"
-                  aria-label="باز کردن منوی مدیریت"
-                  onClick={() => setMobileNavigationOpen(true)}
-                  className="tw:md:hidden"
-                >
-                  <Menu aria-hidden="true" />
-                </Button>
-                <Button
-                  iconOnly
-                  variant="flat"
-                  size="sm"
-                  aria-label={collapsed ? 'باز کردن نوار مدیریت' : 'جمع کردن نوار مدیریت'}
-                  aria-expanded={!collapsed}
-                  onClick={() => setCollapsed((value) => !value)}
-                  className="tw:hidden tw:md:inline-flex"
-                >
-                  {collapsed ? (
-                    <PanelRightOpen aria-hidden="true" />
-                  ) : (
-                    <PanelRightClose aria-hidden="true" />
-                  )}
-                </Button>
-                <div className="tw:flex tw:min-w-0 tw:items-center tw:gap-2">
-                  <CurrentNavigationIcon
-                    data-slot="admin-page-title-icon"
-                    aria-hidden="true"
-                    className="tw:size-5 tw:shrink-0"
-                  />
-                  <h1 className="tw:truncate tw:text-title-s tw:font-extrabold">
-                    {currentNavigationItem.label}
-                  </h1>
+        <div className="tw:flex tw:min-w-0 tw:flex-1 tw:flex-col">
+          <header className="tw:px-4 tw:pt-3 tw:pb-1 tw:sm:pt-4 tw:md:pt-4 tw:md:pb-[5px]">
+            <Card variant="elevated" size="xs" data-slot="admin-header-card" className="tw:h-16">
+              <CardContent className="tw:flex tw:flex-1 tw:items-center tw:justify-between tw:gap-3">
+                <div className="tw:flex tw:items-center tw:gap-2">
+                  <Button
+                    iconOnly
+                    variant="tonal"
+                    aria-label="باز کردن منوی مدیریت"
+                    onClick={() => setMobileNavigationOpen(true)}
+                    className="tw:md:hidden"
+                  >
+                    <Menu aria-hidden="true" />
+                  </Button>
+                  <Button
+                    iconOnly
+                    variant="flat"
+                    size="sm"
+                    aria-label={collapsed ? 'باز کردن نوار مدیریت' : 'جمع کردن نوار مدیریت'}
+                    aria-expanded={!collapsed}
+                    onClick={() => setCollapsed((value) => !value)}
+                    className="tw:hidden tw:md:inline-flex"
+                  >
+                    {collapsed ? (
+                      <PanelRightOpen aria-hidden="true" />
+                    ) : (
+                      <PanelRightClose aria-hidden="true" />
+                    )}
+                  </Button>
+                  <div className="tw:flex tw:min-w-0 tw:items-center tw:gap-2">
+                    <CurrentNavigationIcon
+                      data-slot="admin-page-title-icon"
+                      aria-hidden="true"
+                      className="tw:size-5 tw:shrink-0"
+                    />
+                    <h1 className="tw:truncate tw:text-title-s tw:font-extrabold">
+                      {currentNavigationItem.label}
+                    </h1>
+                  </div>
                 </div>
-              </div>
 
-              <Button iconOnly variant="tonal" aria-label="تازه‌سازی صفحه">
-                <RotateCcw aria-hidden="true" />
-              </Button>
-            </CardContent>
-          </Card>
-        </header>
+                <AdminHeaderActions />
+              </CardContent>
+            </Card>
+          </header>
 
-        <main className="tw:flex tw:min-h-0 tw:flex-1 tw:px-4 tw:pt-3 tw:md:pt-[11px]">
-          <Card
-            variant="elevated"
-            data-slot="admin-content-card"
-            className="tw:min-h-0 tw:w-full tw:flex-1 tw:gap-0 tw:rounded-b-none tw:p-[6px]"
-          >
-            <CardContent className="tw:min-h-0 tw:flex-1 tw:p-0">{children}</CardContent>
-          </Card>
-        </main>
+          <main className="tw:flex tw:min-h-0 tw:flex-1 tw:px-4 tw:pt-3 tw:md:pt-[11px]">
+            <Card
+              variant="elevated"
+              data-slot="admin-content-card"
+              className="tw:min-h-0 tw:w-full tw:flex-1 tw:gap-0 tw:rounded-b-none tw:p-[6px]"
+            >
+              <CardContent className="tw:min-h-0 tw:flex-1 tw:p-0">{children}</CardContent>
+            </Card>
+          </main>
+        </div>
+
+        <Drawer
+          open={mobileNavigationOpen}
+          onOpenChange={setMobileNavigationOpen}
+          swipeDirection="left"
+        >
+          <DrawerContent color="primary">
+            <DrawerTitle className="tw:sr-only">منوی مدیریت</DrawerTitle>
+            <DrawerDescription className="tw:sr-only">
+              دسترسی به بخش‌های پنل مدیریت
+            </DrawerDescription>
+            <AdminNavigation
+              pathname={pathname}
+              onNavigate={() => setMobileNavigationOpen(false)}
+            />
+          </DrawerContent>
+        </Drawer>
+        <ConfirmDialog />
       </div>
-
-      <Drawer
-        open={mobileNavigationOpen}
-        onOpenChange={setMobileNavigationOpen}
-        swipeDirection="left"
-      >
-        <DrawerContent color="primary">
-          <DrawerTitle className="tw:sr-only">منوی مدیریت</DrawerTitle>
-          <DrawerDescription className="tw:sr-only">دسترسی به بخش‌های پنل مدیریت</DrawerDescription>
-          <AdminNavigation pathname={pathname} onNavigate={() => setMobileNavigationOpen(false)} />
-        </DrawerContent>
-      </Drawer>
-      <ConfirmDialog />
-    </div>
+    </AdminLayoutContent>
   );
 }
 
 export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
-  return <AdminLayoutShellView pathname={usePathname()}>{children}</AdminLayoutShellView>;
+  const pathname = usePathname();
+  const router = useRouter();
+  const reloadData = useCallback(() => {
+    router.refresh();
+  }, [router]);
+
+  return (
+    <AdminLayoutShellView
+      pathname={pathname}
+      headerActions={{ lastVisibleOrder: 1, reload: { order: 1, action: reloadData } }}
+    >
+      {children}
+    </AdminLayoutShellView>
+  );
 }

@@ -77,6 +77,86 @@ describe('AdminLayoutShell', () => {
     expect(screen.getByRole('link', { name: 'محصولات' }).getAttribute('aria-current')).toBe('page');
   });
 
+  it('renders configured header actions by order and moves later actions into overflow', async () => {
+    const addNewItem = vi.fn();
+    const filter = vi.fn();
+    const reload = vi.fn();
+    const exportItems = vi.fn();
+
+    render(
+      <AdminLayoutShellView
+        pathname={routePaths.adminPage('products')}
+        entityName="Product"
+        headerActions={{
+          lastVisibleOrder: 2,
+          filter: { order: 3, action: filter },
+          reload: { order: 2, action: reload },
+          'add-new-item': { order: 1, action: addNewItem },
+          export: {
+            order: 4,
+            name: 'Export products',
+            icon: <span aria-hidden="true">E</span>,
+            action: exportItems,
+          },
+        }}
+      >
+        Products
+      </AdminLayoutShellView>,
+    );
+
+    const addButton = screen.getByRole('button', { name: 'Add new Product' });
+    const reloadButton = screen.getByRole('button', { name: 'Reload' });
+    expect(addButton.compareDocumentPosition(reloadButton) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(screen.queryByRole('button', { name: 'Filter' })).toBeNull();
+
+    fireEvent.click(addButton);
+    fireEvent.click(screen.getByRole('button', { name: 'More header actions' }));
+
+    const filterMenuItem = await screen.findByRole('menuitem', { name: 'Filter' });
+    const exportMenuItem = screen.getByRole('menuitem', { name: 'Export products' });
+    expect(
+      filterMenuItem.compareDocumentPosition(exportMenuItem) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+
+    fireEvent.click(filterMenuItem);
+    expect(addNewItem).toHaveBeenCalledOnce();
+    expect(filter).toHaveBeenCalledOnce();
+    expect(reload).not.toHaveBeenCalled();
+    expect(exportItems).not.toHaveBeenCalled();
+  });
+
+  it('does not render header controls when no related actions exist', () => {
+    const { container } = render(
+      <AdminLayoutShellView pathname={routePaths.admin} headerActions={{ lastVisibleOrder: 2 }}>
+        Dashboard
+      </AdminLayoutShellView>,
+    );
+
+    expect(container.querySelector('[data-slot="admin-header-actions"]')).toBeNull();
+  });
+
+  it('renders a visible filter as an icon-only tooltip trigger', () => {
+    const filter = vi.fn();
+
+    render(
+      <AdminLayoutShellView
+        pathname={routePaths.admin}
+        headerActions={{ lastVisibleOrder: 1, filter: { order: 1, action: filter } }}
+      >
+        Dashboard
+      </AdminLayoutShellView>,
+    );
+
+    const filterButton = screen.getByRole('button', { name: 'Filter' });
+    expect(filterButton.getAttribute('data-icon-only')).toBe('true');
+    expect(filterButton.getAttribute('data-slot')).toBe('tooltip-trigger');
+
+    fireEvent.click(filterButton);
+    expect(filter).toHaveBeenCalledOnce();
+  });
+
   it('defines the requested admin navigation in one canonical list', () => {
     expect(adminNavigationItems.map(({ label }) => label)).toEqual([
       'داشبورد',
