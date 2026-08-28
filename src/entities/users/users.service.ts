@@ -8,12 +8,28 @@ import type {
   CreateUserDTO,
   GetAllPaginatedUsersParams,
   GetAllPaginatedUsersQueryDTO,
+  UserDetailDTO,
+  UserGetDetailByIdDTO,
   UserDTO,
 } from './users.dto';
 import { createUsersListCacheKey } from './users.helpers';
 import { getAllPaginatedUsersSchema } from './users.schema';
 
 const usersCache = new EntityTag('users');
+
+export async function userGetDetailById(id: UserGetDetailByIdDTO['id']) {
+  'use cache: private';
+
+  usersCache.cacheLife({ stale: 360 });
+  usersCache.registerDetail(id);
+
+  return customFetcher<UserDetailDTO>({
+    url: `/users/${id}`,
+    method: 'GET',
+    auth: true,
+    cache: 'no-store',
+  });
+}
 
 async function fetchAllPaginatedUsers(query: GetAllPaginatedUsersQueryDTO) {
   'use cache: private';

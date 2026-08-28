@@ -7,8 +7,12 @@ import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
 import type { FetcherError } from '@/lib/api/customFetcher';
 import { getSession } from '@/utils/session';
 
-import { createUserSchema, getAllPaginatedUsersSchema } from './users.schema';
-import { createUser, getAllPaginatedUsers } from './users.service';
+import {
+  createUserSchema,
+  getAllPaginatedUsersSchema,
+  userGetDetailByIdSchema,
+} from './users.schema';
+import { createUser, getAllPaginatedUsers, userGetDetailById } from './users.service';
 
 const ALLOWED_ADMIN_ROLES = new Set<UserRole>([USER_ROLES.ADMIN, USER_ROLES.SELLER]);
 
@@ -18,6 +22,33 @@ function accessError(message: string): FetcherError {
     message,
     data: { messages: {}, details: {} },
   };
+}
+
+export async function userGetDetailByIdAction(input: unknown) {
+  const session = await getSession();
+
+  if (!session) {
+    return accessError('برای مشاهده کاربر وارد حساب مدیریتی شوید.');
+  }
+
+  if (!ALLOWED_ADMIN_ROLES.has(session.role)) {
+    return accessError('شما اجازه مشاهده این کاربر را ندارید.');
+  }
+
+  try {
+    const { id } = await userGetDetailByIdSchema.validate(input, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+
+    return userGetDetailById(id);
+  } catch (error: unknown) {
+    if (error instanceof ValidationError) {
+      return validationErrorToFetcherError(error);
+    }
+
+    throw error;
+  }
 }
 
 export async function getAllPaginatedUsersAction(input: unknown = {}) {

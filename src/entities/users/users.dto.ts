@@ -2,11 +2,16 @@ import type { PaginateDataDTO, PaginateResponseDTO } from '@/lib/api/pagination.
 import type { OrderDTO } from '@/entities/orders/orders.dto';
 import type { UserRole } from '@/configs/user-role';
 
-import type { CreateUserInput, GetAllPaginatedUsersInput } from './users.schema';
+import type {
+  CreateUserInput,
+  GetAllPaginatedUsersInput,
+  UserGetDetailByIdInput,
+} from './users.schema';
 
 export type GetAllPaginatedUsersQueryDTO = GetAllPaginatedUsersInput;
 export type GetAllPaginatedUsersParams = Partial<GetAllPaginatedUsersInput>;
 export type CreateUserDTO = CreateUserInput;
+export type UserGetDetailByIdDTO = UserGetDetailByIdInput;
 
 export interface AddressDTO {
   province: string;
@@ -60,6 +65,27 @@ export interface UserDTO {
   wishlist: OrderDTO[];
   age: number;
   addresses: AddressDTO[];
+}
+
+export type WishlistItemDTO = Record<string, unknown>;
+
+export interface UserDetailDTO {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  isEnable: boolean;
+  avatar: string;
+  nationalCode: string;
+  addresses: AddressDTO[];
+  age: number | null;
+  role: UserRole;
+  orders: unknown[];
+  cart: CartDTO;
+  wishlist: WishlistItemDTO[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type AllPaginatedUsersResponseDTO = PaginateResponseDTO<UserDTO>;

@@ -5,6 +5,16 @@ import { iranianPhoneNumberSchema } from '@/entities/auth/auth.schema';
 
 export const USER_SORT_ORDERS = ['asc', 'dsc'] as const;
 
+export const userGetDetailByIdSchema = yup.object({
+  id: yup
+    .string()
+    .trim()
+    .required('شناسه کاربر الزامی است.')
+    .matches(/^[a-f\d]{24}$/i, 'شناسه کاربر معتبر نیست.'),
+});
+
+export type UserGetDetailByIdInput = yup.InferType<typeof userGetDetailByIdSchema>;
+
 export const getAllPaginatedUsersSchema = yup.object({
   fullName: yup.string().trim().optional(),
   role: yup

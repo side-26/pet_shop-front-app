@@ -1,7 +1,26 @@
 import { describe, expect, it } from 'vitest';
 
 import { createUsersListCacheKey } from './users.helpers';
-import { createUserSchema, getAllPaginatedUsersSchema } from './users.schema';
+import {
+  createUserSchema,
+  getAllPaginatedUsersSchema,
+  userGetDetailByIdSchema,
+} from './users.schema';
+
+describe('userGetDetailByIdSchema', () => {
+  it('accepts and trims a MongoDB ObjectId', async () => {
+    await expect(
+      userGetDetailByIdSchema.validate({ id: '  507f1f77bcf86cd799439011  ' }),
+    ).resolves.toEqual({ id: '507f1f77bcf86cd799439011' });
+  });
+
+  it.each([{}, { id: '' }, { id: 'user-42' }, { id: '507f1f77bcf86cd79943901z' }])(
+    'rejects an invalid user id %#',
+    async (input) => {
+      await expect(userGetDetailByIdSchema.validate(input)).rejects.toThrow();
+    },
+  );
+});
 
 describe('getAllPaginatedUsersSchema', () => {
   it('applies the documented pagination and enabled defaults', async () => {

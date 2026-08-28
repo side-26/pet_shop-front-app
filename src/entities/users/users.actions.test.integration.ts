@@ -4,16 +4,25 @@ import type { AuthSessionModel } from '@/_types';
 import { USER_ROLES } from '@/configs/user-role';
 import { getSession } from '@/utils/session';
 
-import { createUserAction, getAllPaginatedUsersAction } from './users.actions';
-import type { UserDTO } from './users.dto';
-import { createUser, getAllPaginatedUsers } from './users.service';
+import {
+  createUserAction,
+  getAllPaginatedUsersAction,
+  userGetDetailByIdAction,
+} from './users.actions';
+import type { UserDetailDTO, UserDTO } from './users.dto';
+import { createUser, getAllPaginatedUsers, userGetDetailById } from './users.service';
 
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
-vi.mock('./users.service', () => ({ createUser: vi.fn(), getAllPaginatedUsers: vi.fn() }));
+vi.mock('./users.service', () => ({
+  createUser: vi.fn(),
+  getAllPaginatedUsers: vi.fn(),
+  userGetDetailById: vi.fn(),
+}));
 
 const getSessionMock = vi.mocked(getSession);
 const getAllPaginatedUsersMock = vi.mocked(getAllPaginatedUsers);
 const createUserMock = vi.mocked(createUser);
+const userGetDetailByIdMock = vi.mocked(userGetDetailById);
 
 const successResponse = {
   isSuccess: true as const,
@@ -33,6 +42,35 @@ const successResponse = {
   },
 };
 
+const userDetail: UserDetailDTO = {
+  _id: '507f1f77bcf86cd799439011',
+  firstName: 'Ali',
+  lastName: 'Rezaei',
+  phoneNumber: '09123456789',
+  email: 'ali@example.com',
+  isEnable: true,
+  avatar: '',
+  nationalCode: '0012345678',
+  addresses: [],
+  age: null,
+  role: USER_ROLES.CUSTOMER,
+  orders: [],
+  cart: {
+    totalPrice: 0,
+    items: [],
+    discountPrice: 0,
+    userAddress: null,
+    deliveringDateToShipping: null,
+    shippingPrice: 0,
+    shippingInfo: { name: '', trackingCode: '', estimateDeliveryDate: null },
+    paymentType: 0,
+    instalmentCompany: null,
+  },
+  wishlist: [],
+  createdAt: '2026-08-28T00:00:00.000Z',
+  updatedAt: '2026-08-28T00:00:00.000Z',
+};
+
 function session(role: AuthSessionModel['role']): AuthSessionModel {
   return {
     accessExp: 1,
@@ -47,6 +85,48 @@ function session(role: AuthSessionModel['role']): AuthSessionModel {
 describe('users actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(
+    'validates a user id and gets its detail for the %s role',
+    async (role) => {
+      const response = { isSuccess: true as const, message: null, data: userDetail };
+      getSessionMock.mockResolvedValue(session(role));
+      userGetDetailByIdMock.mockResolvedValue(response);
+
+      await expect(
+        userGetDetailByIdAction({ id: '  507f1f77bcf86cd799439011  ', unknown: 'removed' }),
+      ).resolves.toBe(response);
+      expect(userGetDetailByIdMock).toHaveBeenCalledWith('507f1f77bcf86cd799439011');
+    },
+  );
+
+  it('rejects an invalid user id without calling the detail service', async () => {
+    getSessionMock.mockResolvedValue(session(USER_ROLES.ADMIN));
+
+    const result = await userGetDetailByIdAction({ id: 'user-1' });
+
+    expect(result).toMatchObject({ isSuccess: false });
+    expect(userGetDetailByIdMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects unauthenticated and customer user-detail calls', async () => {
+    getSessionMock.mockResolvedValue(null);
+    await expect(
+      userGetDetailByIdAction({ id: '507f1f77bcf86cd799439011' }),
+    ).resolves.toMatchObject({
+      isSuccess: false,
+      message: 'برای مشاهده کاربر وارد حساب مدیریتی شوید.',
+    });
+
+    getSessionMock.mockResolvedValue(session(USER_ROLES.CUSTOMER));
+    await expect(
+      userGetDetailByIdAction({ id: '507f1f77bcf86cd799439011' }),
+    ).resolves.toMatchObject({
+      isSuccess: false,
+      message: 'شما اجازه مشاهده این کاربر را ندارید.',
+    });
+    expect(userGetDetailByIdMock).not.toHaveBeenCalled();
   });
 
   it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(

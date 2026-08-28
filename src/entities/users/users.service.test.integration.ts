@@ -1,28 +1,56 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { customFetcher } from '@/lib/api/customFetcher';
-import { createUser, getAllPaginatedUsers } from './users.service';
+import { createUser, getAllPaginatedUsers, userGetDetailById } from './users.service';
 
-const { cacheLifeMock, invalidateListMock, registerListMock } = vi.hoisted(() => ({
-  cacheLifeMock: vi.fn(),
-  invalidateListMock: vi.fn(),
-  registerListMock: vi.fn(),
-}));
+const { cacheLifeMock, invalidateListMock, registerDetailMock, registerListMock } = vi.hoisted(
+  () => ({
+    cacheLifeMock: vi.fn(),
+    invalidateListMock: vi.fn(),
+    registerDetailMock: vi.fn(),
+    registerListMock: vi.fn(),
+  }),
+);
 
 vi.mock('@/lib/api/customFetcher', () => ({ customFetcher: vi.fn() }));
 vi.mock('@/utils/entityCache', () => ({
   EntityTag: vi.fn(function EntityTagMock(this: {
     cacheLife: ReturnType<typeof vi.fn>;
+    registerDetail: ReturnType<typeof vi.fn>;
     registerList: ReturnType<typeof vi.fn>;
     invalidateList: ReturnType<typeof vi.fn>;
   }) {
     this.cacheLife = cacheLifeMock;
+    this.registerDetail = registerDetailMock;
     this.registerList = registerListMock;
     this.invalidateList = invalidateListMock;
   }),
 }));
 
 const customFetcherMock = vi.mocked(customFetcher);
+
+describe('userGetDetailById service', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('gets a user detail through an authenticated six-minute private cache', async () => {
+    const response = { isSuccess: true as const, message: null, data: { _id: 'user-42' } };
+    customFetcherMock.mockResolvedValue(response);
+
+    await expect(userGetDetailById('user-42')).resolves.toBe(response);
+
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/users/user-42',
+      method: 'GET',
+      auth: true,
+      cache: 'no-store',
+    });
+    expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 360 });
+    expect(registerDetailMock).toHaveBeenCalledWith('user-42');
+  });
+});
+
 describe('getAllPaginatedUsers service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
