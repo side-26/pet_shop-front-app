@@ -14,7 +14,7 @@ export function ToastShowcase() {
     <ShowcaseSection
       id="toasts"
       title="Toast"
-      description="اعلان‌های موقت Base UI با وضعیت‌های معنایی، خوانایی هوشمند، پشته‌سازی و بستن دسترس‌پذیر."
+      description="اعلان‌های موقت Base UI با وضعیت‌های معنایی، خوانایی هوشمند، نمایش بالاتر از همه هم‌پوشان‌ها و بستن دسترس‌پذیر."
     >
       <Toaster>
         <div className="tw:flex tw:flex-wrap tw:gap-3">

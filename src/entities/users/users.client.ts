@@ -1,0 +1,46 @@
+'use client';
+
+import { useCallback, useRef, useTransition } from 'react';
+import type { UseFormSetError } from 'react-hook-form';
+
+import type { FormHandle } from '@/components/ui/form';
+import { toast } from '@/components/ui/toast';
+import { globalErrorHandler } from '@/utils/helpers';
+
+import { createUserAction } from './users.actions';
+import type { CreateUserInput } from './users.schema';
+
+export async function submitCreateUser(
+  input: CreateUserInput,
+  showErrorFields: UseFormSetError<CreateUserInput>,
+): Promise<boolean> {
+  const result = await createUserAction(input);
+
+  if (!result.isSuccess) {
+    globalErrorHandler(result, { showErrorFields });
+    return false;
+  }
+
+  toast.add({ type: 'success', title: result.message });
+  return true;
+}
+
+export function useCreateUser(onSuccess: () => void) {
+  const formRef = useRef<FormHandle<CreateUserInput>>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const handleSubmit = useCallback(
+    (input: CreateUserInput) => {
+      const form = formRef.current;
+      if (!form || isPending) return;
+
+      startTransition(async () => {
+        const created = await submitCreateUser(input, form.setError);
+        if (created) onSuccess();
+      });
+    },
+    [isPending, onSuccess],
+  );
+
+  return { formRef, handleSubmit, isPending } as const;
+}

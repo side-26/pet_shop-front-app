@@ -35,12 +35,17 @@ describe('UsersHeaderActions', () => {
     );
 
     expect(await screen.findByRole('button', { name: 'افزودن کاربر' })).toBeTruthy();
+    expect(screen.queryByRole('dialog', { name: 'ایجاد کاربر جدید' })).toBeNull();
     expect(screen.getByRole('button', { name: 'Filter' })).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'بارگذاری مجدد' })).toBeNull();
 
     fireEvent.click(screen.getByRole('button', { name: 'More header actions' }));
     fireEvent.click(await screen.findByRole('menuitem', { name: 'بارگذاری مجدد' }));
     expect(refresh).toHaveBeenCalledOnce();
+
+    fireEvent.click(screen.getByRole('button', { name: 'افزودن کاربر' }));
+    expect(await screen.findByRole('dialog', { name: 'ایجاد کاربر جدید' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'انصراف' }));
 
     fireEvent.click(screen.getByRole('button', { name: 'Filter' }));
     expect(await screen.findByRole('dialog', { name: 'فیلتر کاربران' })).toBeTruthy();

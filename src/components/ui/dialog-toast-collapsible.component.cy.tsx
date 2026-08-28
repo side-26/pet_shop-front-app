@@ -89,7 +89,8 @@ describe('Dialog, Toast, and animated Collapsible', () => {
       .and('have.class', 'tw:text-error-muted-foreground');
     cy.get('[data-slot="toast-viewport"]')
       .should('have.css', 'top', '16px')
-      .and('have.css', 'left', '250px');
+      .and('have.css', 'left', '250px')
+      .and('have.css', 'z-index', '2147483647');
     cy.get('[data-slot="toast-close"]')
       .should('have.css', 'color')
       .then((closeColor) => {
