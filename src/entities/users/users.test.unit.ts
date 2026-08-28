@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { createUsersListCacheKey } from './users.helpers';
-import { getAllPaginatedUsersSchema } from './users.schema';
+import { createUserSchema, getAllPaginatedUsersSchema } from './users.schema';
 
 describe('getAllPaginatedUsersSchema', () => {
   it('applies the documented pagination and enabled defaults', async () => {
@@ -36,6 +36,43 @@ describe('getAllPaginatedUsersSchema', () => {
       await expect(getAllPaginatedUsersSchema.validate(input)).rejects.toThrow();
     },
   );
+});
+
+describe('createUserSchema', () => {
+  const validInput = {
+    phoneNumber: '09123456789',
+    password: 'password123',
+    confirmPassword: 'password123',
+    role: 'customer',
+  } as const;
+
+  it('accepts every supported user role', async () => {
+    for (const role of ['admin', 'seller', 'customer'] as const) {
+      await expect(createUserSchema.validate({ ...validInput, role })).resolves.toEqual({
+        ...validInput,
+        role,
+      });
+    }
+  });
+
+  it.each(['phoneNumber', 'password', 'confirmPassword', 'role'] as const)(
+    'requires %s',
+    async (field) => {
+      const input: Record<string, unknown> = { ...validInput };
+      delete input[field];
+
+      await expect(createUserSchema.validate(input)).rejects.toThrow();
+    },
+  );
+
+  it.each([
+    { ...validInput, phoneNumber: '123' },
+    { ...validInput, password: 'short', confirmPassword: 'short' },
+    { ...validInput, confirmPassword: 'different-password' },
+    { ...validInput, role: 'owner' },
+  ])('rejects invalid create-user input %#', async (input) => {
+    await expect(createUserSchema.validate(input)).rejects.toThrow();
+  });
 });
 
 describe('createUsersListCacheKey', () => {

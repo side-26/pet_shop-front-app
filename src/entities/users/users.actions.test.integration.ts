@@ -4,14 +4,16 @@ import type { AuthSessionModel } from '@/_types';
 import { USER_ROLES } from '@/configs/user-role';
 import { getSession } from '@/utils/session';
 
-import { getAllPaginatedUsersAction } from './users.actions';
-import { getAllPaginatedUsers } from './users.service';
+import { createUserAction, getAllPaginatedUsersAction } from './users.actions';
+import type { UserDTO } from './users.dto';
+import { createUser, getAllPaginatedUsers } from './users.service';
 
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
-vi.mock('./users.service', () => ({ getAllPaginatedUsers: vi.fn() }));
+vi.mock('./users.service', () => ({ createUser: vi.fn(), getAllPaginatedUsers: vi.fn() }));
 
 const getSessionMock = vi.mocked(getSession);
 const getAllPaginatedUsersMock = vi.mocked(getAllPaginatedUsers);
+const createUserMock = vi.mocked(createUser);
 
 const successResponse = {
   isSuccess: true as const,
@@ -45,6 +47,71 @@ function session(role: AuthSessionModel['role']): AuthSessionModel {
 describe('users actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(
+    'validates and creates a user for the %s role',
+    async (role) => {
+      const input = {
+        phoneNumber: '09123456789',
+        password: 'password123',
+        confirmPassword: 'password123',
+        role: USER_ROLES.CUSTOMER,
+      };
+      const createdUser: UserDTO = {
+        _id: 'user-1',
+        firstName: '',
+        lastName: '',
+        nationalCode: '',
+        cart: [],
+        isEnable: true,
+        phoneNumber: input.phoneNumber,
+        email: '',
+        role: input.role,
+        orders: [],
+        wishlist: [],
+        age: 0,
+        addresses: [],
+      };
+      const response = { isSuccess: true as const, message: 'created', data: createdUser };
+      getSessionMock.mockResolvedValue(session(role));
+      createUserMock.mockResolvedValue(response);
+
+      await expect(createUserAction({ ...input, unknown: 'removed' })).resolves.toBe(response);
+      expect(createUserMock).toHaveBeenCalledWith(input);
+    },
+  );
+
+  it('returns all create-user validation errors without calling the service', async () => {
+    getSessionMock.mockResolvedValue(session(USER_ROLES.ADMIN));
+
+    const result = await createUserAction({
+      phoneNumber: 'invalid',
+      password: 'short',
+      confirmPassword: 'different',
+      role: 'owner',
+    });
+
+    expect(result.isSuccess).toBe(false);
+    if (!result.isSuccess) {
+      expect(result.data.messages).toHaveLength(4);
+    }
+    expect(createUserMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects unauthenticated and customer create-user calls', async () => {
+    getSessionMock.mockResolvedValue(null);
+    await expect(createUserAction({})).resolves.toMatchObject({
+      isSuccess: false,
+      message: 'برای ایجاد کاربر وارد حساب مدیریتی شوید.',
+    });
+
+    getSessionMock.mockResolvedValue(session(USER_ROLES.CUSTOMER));
+    await expect(createUserAction({})).resolves.toMatchObject({
+      isSuccess: false,
+      message: 'شما اجازه ایجاد کاربر را ندارید.',
+    });
+    expect(createUserMock).not.toHaveBeenCalled();
   });
 
   it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(

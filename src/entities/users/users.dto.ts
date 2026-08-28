@@ -2,10 +2,11 @@ import type { PaginateDataDTO, PaginateResponseDTO } from '@/lib/api/pagination.
 import type { OrderDTO } from '@/entities/orders/orders.dto';
 import type { UserRole } from '@/configs/user-role';
 
-import type { GetAllPaginatedUsersInput } from './users.schema';
+import type { CreateUserInput, GetAllPaginatedUsersInput } from './users.schema';
 
 export type GetAllPaginatedUsersQueryDTO = GetAllPaginatedUsersInput;
 export type GetAllPaginatedUsersParams = Partial<GetAllPaginatedUsersInput>;
+export type CreateUserDTO = CreateUserInput;
 
 export interface AddressDTO {
   province: string;

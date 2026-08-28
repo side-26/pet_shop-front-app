@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 
 import { USER_ROLES } from '@/configs/user-role';
+import { iranianPhoneNumberSchema } from '@/entities/auth/auth.schema';
 
 export const USER_SORT_ORDERS = ['asc', 'dsc'] as const;
 
@@ -19,3 +20,22 @@ export const getAllPaginatedUsersSchema = yup.object({
 });
 
 export type GetAllPaginatedUsersInput = yup.InferType<typeof getAllPaginatedUsersSchema>;
+
+export const createUserSchema = yup.object({
+  phoneNumber: iranianPhoneNumberSchema,
+  password: yup
+    .string()
+    .required('کلمه عبور الزامی است.')
+    .min(8, 'کلمه عبور باید حداقل ۸ نویسه باشد.'),
+  confirmPassword: yup
+    .string()
+    .required('تکرار کلمه عبور الزامی است.')
+    .min(8, 'تکرار کلمه عبور باید حداقل ۸ نویسه باشد.')
+    .oneOf([yup.ref('password')], 'تکرار کلمه عبور با کلمه عبور یکسان نیست.'),
+  role: yup
+    .mixed<(typeof USER_ROLES)[keyof typeof USER_ROLES]>()
+    .oneOf(Object.values(USER_ROLES), 'نقش کاربر معتبر نیست.')
+    .required('نقش کاربر الزامی است.'),
+});
+
+export type CreateUserInput = yup.InferType<typeof createUserSchema>;
