@@ -12,14 +12,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/fields/switch';
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
-import {
   Table,
   TableBody,
   TableCell,
@@ -27,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { TablePagination } from '@/components/common/table-pagination';
 import { USER_ROLES, type UserRole } from '@/configs/user-role';
 import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
@@ -44,6 +37,7 @@ type UsersPaginateTableProps = {
   page: number;
   pageCount: number;
   total: number;
+  query?: Record<string, string>;
   isLoading?: boolean;
 };
 
@@ -64,6 +58,7 @@ export function UsersPaginateTable({
   page,
   pageCount,
   total,
+  query = {},
   isLoading = false,
 }: UsersPaginateTableProps) {
   return (
@@ -173,36 +168,17 @@ export function UsersPaginateTable({
         </Table>
       </div>
 
-      <footer className="tw:flex tw:flex-none tw:flex-col tw:items-center tw:justify-between tw:gap-3 tw:px-1 tw:sm:flex-row">
-        <p className="tw:flex-none tw:text-label-s tw:text-muted-foreground">
-          نمایش {users.length} کاربر از {total}
-        </p>
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href={routePaths.adminUsersPage(Math.max(1, page - 1))}
-                aria-disabled={page <= 1 || isLoading}
-                className={cn((page <= 1 || isLoading) && 'tw:pointer-events-none tw:opacity-50')}
-              />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href={routePaths.adminUsersPage(page)} isActive>
-                {page}
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext
-                href={routePaths.adminUsersPage(Math.min(pageCount, page + 1))}
-                aria-disabled={page >= pageCount || isLoading}
-                className={cn(
-                  (page >= pageCount || isLoading) && 'tw:pointer-events-none tw:opacity-50',
-                )}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </footer>
+      <TablePagination
+        basePath={routePaths.adminUsers}
+        query={query}
+        page={page}
+        pageCount={pageCount}
+        total={total}
+        itemCount={users.length}
+        itemLabel="کاربر"
+        limitOptions={[20, 40, 60, 100]}
+        disabled={isLoading}
+      />
     </section>
   );
 }

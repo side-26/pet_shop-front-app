@@ -42,6 +42,7 @@ export function UsersPageContentWrapper({ searchParams }: UsersPageContentWrappe
           page={1}
           pageCount={1}
           total={usersTableSkeletonData.length}
+          query={{}}
           isLoading
         />
       }

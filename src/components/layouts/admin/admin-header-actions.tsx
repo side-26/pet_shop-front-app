@@ -47,7 +47,7 @@ function isHeaderAction(value: AdminHeaderAction | number | undefined): value is
 function getBuiltInActionName(key: BuiltInActionKey, entityName: string): string {
   if (key === 'add-new-item') return `افزودن ${entityName}`;
   if (key === 'filter') return 'Filter';
-  return 'Reload';
+  return 'بارگذاری مجدد';
 }
 
 function resolveHeaderActions(

@@ -45,6 +45,10 @@ export const routePaths = {
   admin: PATHS.ADMIN,
   adminUsers: PATHS.ADMIN_USERS,
   adminUsersQuery: (query: URLSearchParams) => `${PATHS.ADMIN_USERS}?${query.toString()}`,
-  adminUsersPage: (page: number) => `${PATHS.ADMIN_USERS}?page=${page}`,
+  adminUsersPage: (page: number, query = new URLSearchParams()) => {
+    const searchParams = new URLSearchParams(query);
+    searchParams.set('page', String(page));
+    return `${PATHS.ADMIN_USERS}?${searchParams.toString()}`;
+  },
   adminPage: (page: string) => `${PATHS.ADMIN}/${encodeURIComponent(page)}`,
 } as const;

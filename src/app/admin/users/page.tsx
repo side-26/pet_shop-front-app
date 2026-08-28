@@ -14,10 +14,9 @@ type AdminUsersPageProps = {
 
 export default function AdminUsersPage({ searchParams }: AdminUsersPageProps) {
   return (
-    <div className="tw:flex tw:min-h-0 tw:flex-1 tw:flex-col tw:p-4 tw:sm:p-6">
-      <h2 className="tw:sr-only">فهرست کاربران</h2>
+    <article className="tw:flex tw:min-h-0 tw:size-full tw:flex-col tw:p-3 tw:sm:p-4">
       <UsersHeaderActionsWrapper searchParams={searchParams} />
       <UsersPageContentWrapper searchParams={searchParams} />
-    </div>
+    </article>
   );
 }

@@ -6,9 +6,10 @@ import { mapUsersPageViewModel } from './users-table.mapper';
 
 type UsersTableContainerProps = {
   usersPromise: ReturnType<typeof getAllPaginatedUsersAction>;
+  query: Record<string, string>;
 };
 
-export async function UsersTableContainer({ usersPromise }: UsersTableContainerProps) {
+export async function UsersTableContainer({ usersPromise, query }: UsersTableContainerProps) {
   const result = await usersPromise;
 
   if (!result.isSuccess) {
@@ -24,5 +25,5 @@ export async function UsersTableContainer({ usersPromise }: UsersTableContainerP
 
   const usersPage = mapUsersPageViewModel(result.data);
 
-  return <UsersPaginateTable {...usersPage} />;
+  return <UsersPaginateTable {...usersPage} query={query} />;
 }

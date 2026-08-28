@@ -23,11 +23,12 @@ export function UsersTableWrapper({ page, query }: UsersTableWrapperProps) {
           page={page}
           pageCount={1}
           total={usersTableSkeletonData.length}
+          query={query}
           isLoading
         />
       }
     >
-      <UsersTableContainer usersPromise={usersPromise} />
+      <UsersTableContainer usersPromise={usersPromise} query={query} />
     </Suspense>
   );
 }

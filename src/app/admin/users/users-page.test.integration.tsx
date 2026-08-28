@@ -1,6 +1,6 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { cleanup, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { USER_ROLES } from '@/configs/user-role';
 import { routePaths } from '@/configs/route.path';
@@ -9,6 +9,8 @@ import { UsersPaginateTable } from './_components/users-paginate-table';
 import { usersTableSkeletonData } from './_components/users-table-skeleton-data';
 import { UsersTableContainer } from './_components/users-table-container';
 import type { UserTableRow } from './_components/users-table.types';
+
+vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 const users: UserTableRow[] = [
   {
@@ -40,7 +42,7 @@ const users: UserTableRow[] = [
 function renderTable(props?: Partial<React.ComponentProps<typeof UsersPaginateTable>>) {
   return render(
     <DirectionProvider direction="rtl">
-      <UsersPaginateTable users={users} page={2} pageCount={4} total={20} {...props} />
+      <UsersPaginateTable users={users} page={2} pageCount={4} total={20} query={{}} {...props} />
     </DirectionProvider>,
   );
 }
@@ -79,6 +81,10 @@ describe(routePaths.adminUsers, () => {
     expect(screen.getByRole('link', { name: 'رفتن به صفحه قبلی' }).getAttribute('href')).toBe(
       routePaths.adminUsersPage(1),
     );
+    expect(screen.getByRole('link', { name: 'رفتن به صفحه قبلی' }).getAttribute('data-size')).toBe(
+      'sm',
+    );
+    expect(screen.getByRole('navigation', { name: 'صفحه‌بندی' }).className).toContain('tw:ms-auto');
   });
 
   it('reuses mock rows for a busy, non-interactive skeleton table', () => {
@@ -127,6 +133,7 @@ describe(routePaths.adminUsers, () => {
           },
         },
       }),
+      query: {},
     });
     const error = await UsersTableContainer({
       usersPromise: Promise.resolve({
@@ -134,6 +141,7 @@ describe(routePaths.adminUsers, () => {
         message: 'خطا در ارتباط با سرور',
         data: { messages: {}, details: {} },
       }),
+      query: {},
     });
 
     const { rerender } = render(empty);
@@ -205,6 +213,7 @@ describe(routePaths.adminUsers, () => {
           },
         },
       }),
+      query: {},
     });
 
     render(<DirectionProvider direction="rtl">{loaded}</DirectionProvider>);

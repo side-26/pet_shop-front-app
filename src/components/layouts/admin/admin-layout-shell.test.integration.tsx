@@ -105,7 +105,7 @@ describe('AdminLayoutShell', () => {
     );
 
     const addButton = screen.getByRole('button', { name: 'افزودن محصول' });
-    const reloadButton = screen.getByRole('button', { name: 'Reload' });
+    const reloadButton = screen.getByRole('button', { name: 'بارگذاری مجدد' });
     expect(document.querySelector('[data-slot="admin-header-actions"]')?.className).toContain(
       'tw:flex-row-reverse',
     );
