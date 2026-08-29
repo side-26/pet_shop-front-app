@@ -1,17 +1,17 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, TargetingSpecificStates } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, TargetingSpecificStates } from '@/components/content.tsx';
 
-export const title = "text-decoration-line";
-export const description = "Utilities for controlling the decoration of text.";
+export const title = 'text-decoration-line';
+export const description = 'Utilities for controlling the decoration of text.';
 
 <ApiTable
   rows={[
-    ["underline", "text-decoration-line: underline;"],
-    ["overline", "text-decoration-line: overline;"],
-    ["line-through", "text-decoration-line: line-through;"],
-    ["no-underline", "text-decoration-line: none;"],
+    ['underline', 'text-decoration-line: underline;'],
+    ['overline', 'text-decoration-line: overline;'],
+    ['line-through', 'text-decoration-line: line-through;'],
+    ['no-underline', 'text-decoration-line: none;'],
   ]}
 />
 
@@ -110,14 +110,14 @@ Use the `no-underline` utility to remove a line from the text of an element:
 <Example>
   {
     <div className="text-center text-lg font-medium text-gray-900 no-underline dark:text-gray-200">
-      The{" "}
+      The{' '}
       <a
         href="https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog"
         target="blank"
         className="text-sky-600 no-underline hover:underline dark:text-sky-400"
       >
         quick brown fox
-      </a>{" "}
+      </a>{' '}
       jumps over the lazy dog.
     </div>
   }
@@ -125,7 +125,10 @@ Use the `no-underline` utility to remove a line from the text of an element:
 
 ```html
 <!-- [!code classes:hover:underline] -->
-<p>The <a href="..." class="no-underline hover:underline ...">quick brown fox</a> jumps over the lazy dog.</p>
+<p>
+  The <a href="..." class="no-underline hover:underline ...">quick brown fox</a> jumps over the lazy
+  dog.
+</p>
 ```
 
 </Figure>
@@ -136,7 +139,7 @@ Use the `no-underline` utility to remove a line from the text of an element:
 
 <ResponsiveDesign
   element="a"
-  elementAttributes={{ href: "..." }}
+  elementAttributes={{ href: '...' }}
   property="text-decoration-line"
   defaultClass="no-underline"
   featuredClass="underline"

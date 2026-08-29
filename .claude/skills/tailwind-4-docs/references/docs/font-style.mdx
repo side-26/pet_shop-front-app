@@ -1,15 +1,15 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "font-style";
-export const description = "Utilities for controlling the style of text.";
+export const title = 'font-style';
+export const description = 'Utilities for controlling the style of text.';
 
 <ApiTable
   rows={[
-    ["italic", "font-style: italic;"],
-    ["not-italic", "font-style: normal;"],
+    ['italic', 'font-style: italic;'],
+    ['not-italic', 'font-style: normal;'],
   ]}
 />
 
@@ -59,4 +59,9 @@ Use the `not-italic` utility to display text normally:
 
 ### Responsive design
 
-<ResponsiveDesign property="font-style" defaultClass="italic" featuredClass="not-italic" element="p" />
+<ResponsiveDesign
+  property="font-style"
+  defaultClass="italic"
+  featuredClass="not-italic"
+  element="p"
+/>

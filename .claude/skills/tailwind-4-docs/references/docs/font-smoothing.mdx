@@ -1,15 +1,15 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "font-smoothing";
-export const description = "Utilities for controlling the font smoothing of an element.";
+export const title = 'font-smoothing';
+export const description = 'Utilities for controlling the font smoothing of an element.';
 
 <ApiTable
   rows={[
-    ["antialiased", "-webkit-font-smoothing: antialiased;\n-moz-osx-font-smoothing: grayscale;"],
-    ["subpixel-antialiased", "-webkit-font-smoothing: auto;\n-moz-osx-font-smoothing: auto;"],
+    ['antialiased', '-webkit-font-smoothing: antialiased;\n-moz-osx-font-smoothing: grayscale;'],
+    ['subpixel-antialiased', '-webkit-font-smoothing: auto;\n-moz-osx-font-smoothing: auto;'],
   ]}
 />
 
@@ -61,7 +61,7 @@ Use the `subpixel-antialiased` utility to render text using subpixel antialiasin
 
 <ResponsiveDesign
   element="p"
-  properties={["-webkit-font-smoothing", "-moz-osx-font-smoothing"]}
+  properties={['-webkit-font-smoothing', '-moz-osx-font-smoothing']}
   defaultClass="antialiased"
   featuredClass="subpixel-antialiased"
 />

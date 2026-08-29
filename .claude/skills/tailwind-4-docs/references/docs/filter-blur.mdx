@@ -1,23 +1,27 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourTheme, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourTheme,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
 
-export const title = "filter: blur()";
-export const description = "Utilities for applying blur filters to an element.";
+export const title = 'filter: blur()';
+export const description = 'Utilities for applying blur filters to an element.';
 
 <ApiTable
   rows={[
-    ["blur-xs", "filter: blur(var(--blur-xs)); /* 4px */"],
-    ["blur-sm", "filter: blur(var(--blur-sm)); /* 8px */"],
-    ["blur-md", "filter: blur(var(--blur-md)); /* 12px */"],
-    ["blur-lg", "filter: blur(var(--blur-lg)); /* 16px */"],
-    ["blur-xl", "filter: blur(var(--blur-xl)); /* 24px */"],
-    ["blur-2xl", "filter: blur(var(--blur-2xl)); /* 40px */"],
-    ["blur-3xl", "filter: blur(var(--blur-3xl)); /* 64px */"],
-    ["blur-none", "filter: ;"],
-    ["blur-(<custom-property>)", "filter: blur(var(<custom-property>));"],
-    ["blur-[<value>]", "filter: blur(<value>);"],
+    ['blur-xs', 'filter: blur(var(--blur-xs)); /* 4px */'],
+    ['blur-sm', 'filter: blur(var(--blur-sm)); /* 8px */'],
+    ['blur-md', 'filter: blur(var(--blur-md)); /* 12px */'],
+    ['blur-lg', 'filter: blur(var(--blur-lg)); /* 16px */'],
+    ['blur-xl', 'filter: blur(var(--blur-xl)); /* 24px */'],
+    ['blur-2xl', 'filter: blur(var(--blur-2xl)); /* 40px */'],
+    ['blur-3xl', 'filter: blur(var(--blur-3xl)); /* 64px */'],
+    ['blur-none', 'filter: ;'],
+    ['blur-(<custom-property>)', 'filter: blur(var(<custom-property>));'],
+    ['blur-[<value>]', 'filter: blur(<value>);'],
   ]}
 />
 
@@ -34,7 +38,9 @@ Use utilities like `blur-sm` and `blur-lg` to blur an element:
     <div className="flex scroll-p-8 overflow-scroll sm:block sm:overflow-visible">
       <div className="flex shrink-0 items-center justify-around gap-12 p-8 font-mono font-bold sm:gap-4">
         <div className="flex shrink-0 flex-col items-center">
-          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">blur-none</p>
+          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+            blur-none
+          </p>
           <div className="relative blur-none">
             <img
               className="size-24 rounded-lg object-cover"
@@ -44,7 +50,9 @@ Use utilities like `blur-sm` and `blur-lg` to blur an element:
           </div>
         </div>
         <div className="flex shrink-0 flex-col items-center">
-          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">blur-sm</p>
+          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+            blur-sm
+          </p>
           <div className="relative blur-sm">
             <img
               className="size-24 rounded-lg object-cover"
@@ -54,7 +62,9 @@ Use utilities like `blur-sm` and `blur-lg` to blur an element:
           </div>
         </div>
         <div className="flex shrink-0 flex-col items-center">
-          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">blur-lg</p>
+          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+            blur-lg
+          </p>
           <div className="relative blur-lg">
             <img
               className="size-24 rounded-lg object-cover"
@@ -64,7 +74,9 @@ Use utilities like `blur-sm` and `blur-lg` to blur an element:
           </div>
         </div>
         <div className="flex shrink-0 flex-col items-center">
-          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">blur-2xl</p>
+          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+            blur-2xl
+          </p>
           <div className="relative blur-2xl">
             <img
               className="size-24 rounded-lg object-cover"
@@ -90,13 +102,18 @@ Use utilities like `blur-sm` and `blur-lg` to blur an element:
 
 ### Using a custom value
 
-<UsingACustomValue element="img" elementAttributes={{ src: "/img/mountains.jpg" }} utility="blur" value="2px" />
+<UsingACustomValue
+  element="img"
+  elementAttributes={{ src: '/img/mountains.jpg' }}
+  utility="blur"
+  value="2px"
+/>
 
 ### Responsive design
 
 <ResponsiveDesign
   element="img"
-  elementAttributes={{ src: "/img/mountains.jpg" }}
+  elementAttributes={{ src: '/img/mountains.jpg' }}
   property="filter: blur()"
   defaultClass="blur-none"
   featuredClass="blur-lg"
@@ -106,7 +123,7 @@ Use utilities like `blur-sm` and `blur-lg` to blur an element:
 
 <CustomizingYourTheme
   element="img"
-  elementAttributes={{ src: "/img/mountains.jpg" }}
+  elementAttributes={{ src: '/img/mountains.jpg' }}
   utility="blur"
   name="blur"
   customName="2xs"

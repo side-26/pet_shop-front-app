@@ -1,59 +1,66 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourSpacingScale, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourSpacingScale,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
 
-export const title = "width";
-export const description = "Utilities for setting the width of an element.";
+export const title = 'width';
+export const description = 'Utilities for setting the width of an element.';
 
 <ApiTable
   rows={[
-    ["w-<number>", "width: calc(var(--spacing) * <number>);"],
-    ["w-<fraction>", "width: calc(<fraction> * 100%);"],
-    ["w-3xs", "width: var(--container-3xs); /* 16rem (256px) */"],
-    ["w-2xs", "width: var(--container-2xs); /* 18rem (288px) */"],
-    ["w-xs", "width: var(--container-xs); /* 20rem (320px) */"],
-    ["w-sm", "width: var(--container-sm); /* 24rem (384px) */"],
-    ["w-md", "width: var(--container-md); /* 28rem (448px) */"],
-    ["w-lg", "width: var(--container-lg); /* 32rem (512px) */"],
-    ["w-xl", "width: var(--container-xl); /* 36rem (576px) */"],
-    ["w-2xl", "width: var(--container-2xl); /* 42rem (672px) */"],
-    ["w-3xl", "width: var(--container-3xl); /* 48rem (768px) */"],
-    ["w-4xl", "width: var(--container-4xl); /* 56rem (896px) */"],
-    ["w-5xl", "width: var(--container-5xl); /* 64rem (1024px) */"],
-    ["w-6xl", "width: var(--container-6xl); /* 72rem (1152px) */"],
-    ["w-7xl", "width: var(--container-7xl); /* 80rem (1280px) */"],
-    ["w-auto", "width: auto;"],
-    ["w-px", "width: 1px;"],
-    ["w-full", "width: 100%;"],
-    ["w-screen", "width: 100vw;"],
-    ["w-dvw", "width: 100dvw;"],
-    ["w-dvh", "width: 100dvh;"],
-    ["w-lvw", "width: 100lvw;"],
-    ["w-lvh", "width: 100lvh;"],
-    ["w-svw", "width: 100svw;"],
-    ["w-svh", "width: 100svh;"],
-    ["w-min", "width: min-content;"],
-    ["w-max", "width: max-content;"],
-    ["w-fit", "width: fit-content;"],
-    ["w-(<custom-property>)", "width: var(<custom-property>);"],
-    ["w-[<value>]", "width: <value>;"],
-    ["size-<number>", "width: calc(var(--spacing) * <number>);\nheight: calc(var(--spacing) * <number>);"],
-    ["size-<fraction>", "width: calc(<fraction> * 100%);\nheight: calc(<fraction> * 100%);"],
-    ["size-auto", "width: auto;\nheight: auto;"],
-    ["size-px", "width: 1px;\nheight: 1px;"],
-    ["size-full", "width: 100%;\nheight: 100%;"],
-    ["size-dvw", "width: 100dvw;\nheight: 100dvw;"],
-    ["size-dvh", "width: 100dvh;\nheight: 100dvh;"],
-    ["size-lvw", "width: 100lvw;\nheight: 100lvw;"],
-    ["size-lvh", "width: 100lvh;\nheight: 100lvh;"],
-    ["size-svw", "width: 100svw;\nheight: 100svw;"],
-    ["size-svh", "width: 100svh;\nheight: 100svh;"],
-    ["size-min", "width: min-content;\nheight: min-content;"],
-    ["size-max", "width: max-content;\nheight: max-content;"],
-    ["size-fit", "width: fit-content;\nheight: fit-content;"],
-    ["size-(<custom-property>)", "width: var(<custom-property>);\nheight: var(<custom-property>);"],
-    ["size-[<value>]", "width: <value>;\nheight: <value>;"],
+    ['w-<number>', 'width: calc(var(--spacing) * <number>);'],
+    ['w-<fraction>', 'width: calc(<fraction> * 100%);'],
+    ['w-3xs', 'width: var(--container-3xs); /* 16rem (256px) */'],
+    ['w-2xs', 'width: var(--container-2xs); /* 18rem (288px) */'],
+    ['w-xs', 'width: var(--container-xs); /* 20rem (320px) */'],
+    ['w-sm', 'width: var(--container-sm); /* 24rem (384px) */'],
+    ['w-md', 'width: var(--container-md); /* 28rem (448px) */'],
+    ['w-lg', 'width: var(--container-lg); /* 32rem (512px) */'],
+    ['w-xl', 'width: var(--container-xl); /* 36rem (576px) */'],
+    ['w-2xl', 'width: var(--container-2xl); /* 42rem (672px) */'],
+    ['w-3xl', 'width: var(--container-3xl); /* 48rem (768px) */'],
+    ['w-4xl', 'width: var(--container-4xl); /* 56rem (896px) */'],
+    ['w-5xl', 'width: var(--container-5xl); /* 64rem (1024px) */'],
+    ['w-6xl', 'width: var(--container-6xl); /* 72rem (1152px) */'],
+    ['w-7xl', 'width: var(--container-7xl); /* 80rem (1280px) */'],
+    ['w-auto', 'width: auto;'],
+    ['w-px', 'width: 1px;'],
+    ['w-full', 'width: 100%;'],
+    ['w-screen', 'width: 100vw;'],
+    ['w-dvw', 'width: 100dvw;'],
+    ['w-dvh', 'width: 100dvh;'],
+    ['w-lvw', 'width: 100lvw;'],
+    ['w-lvh', 'width: 100lvh;'],
+    ['w-svw', 'width: 100svw;'],
+    ['w-svh', 'width: 100svh;'],
+    ['w-min', 'width: min-content;'],
+    ['w-max', 'width: max-content;'],
+    ['w-fit', 'width: fit-content;'],
+    ['w-(<custom-property>)', 'width: var(<custom-property>);'],
+    ['w-[<value>]', 'width: <value>;'],
+    [
+      'size-<number>',
+      'width: calc(var(--spacing) * <number>);\nheight: calc(var(--spacing) * <number>);',
+    ],
+    ['size-<fraction>', 'width: calc(<fraction> * 100%);\nheight: calc(<fraction> * 100%);'],
+    ['size-auto', 'width: auto;\nheight: auto;'],
+    ['size-px', 'width: 1px;\nheight: 1px;'],
+    ['size-full', 'width: 100%;\nheight: 100%;'],
+    ['size-dvw', 'width: 100dvw;\nheight: 100dvw;'],
+    ['size-dvh', 'width: 100dvh;\nheight: 100dvh;'],
+    ['size-lvw', 'width: 100lvw;\nheight: 100lvw;'],
+    ['size-lvh', 'width: 100lvh;\nheight: 100lvh;'],
+    ['size-svw', 'width: 100svw;\nheight: 100svw;'],
+    ['size-svh', 'width: 100svh;\nheight: 100svh;'],
+    ['size-min', 'width: min-content;\nheight: min-content;'],
+    ['size-max', 'width: max-content;\nheight: max-content;'],
+    ['size-fit', 'width: fit-content;\nheight: fit-content;'],
+    ['size-(<custom-property>)', 'width: var(<custom-property>);\nheight: var(<custom-property>);'],
+    ['size-[<value>]', 'width: <value>;\nheight: <value>;'],
   ]}
 />
 
@@ -127,7 +134,9 @@ Use `w-full` or `w-<fraction>` utilities like `w-1/2` and `w-2/5` to give an ele
         <div className="w-1/6 rounded-lg bg-violet-500 px-4 py-2 text-center">w-1/6</div>
         <div className="w-5/6 rounded-lg bg-violet-500 px-4 py-2 text-center">w-5/6</div>
       </div>
-      <div className="w-full rounded-lg bg-violet-500 px-4 py-2 text-center font-mono text-white">w-full</div>
+      <div className="w-full rounded-lg bg-violet-500 px-4 py-2 text-center font-mono text-white">
+        w-full
+      </div>
     </div>
   }
 </Example>
@@ -231,11 +240,21 @@ Use utilities like `size-px`, `size-4`, and `size-full` to set both the width an
 <Example>
   {
     <div className="grid grid-flow-col justify-center gap-4 text-center font-mono text-xs font-bold text-white">
-      <div className="grid size-16 items-center justify-center rounded-lg bg-indigo-500">size-16</div>
-      <div className="grid size-20 items-center justify-center rounded-lg bg-indigo-500">size-20</div>
-      <div className="grid size-24 items-center justify-center rounded-lg bg-indigo-500">size-24</div>
-      <div className="hidden size-32 items-center justify-center rounded-lg bg-indigo-500 sm:grid">size-32</div>
-      <div className="hidden size-40 items-center justify-center rounded-lg bg-indigo-500 md:grid">size-40</div>
+      <div className="grid size-16 items-center justify-center rounded-lg bg-indigo-500">
+        size-16
+      </div>
+      <div className="grid size-20 items-center justify-center rounded-lg bg-indigo-500">
+        size-20
+      </div>
+      <div className="grid size-24 items-center justify-center rounded-lg bg-indigo-500">
+        size-24
+      </div>
+      <div className="hidden size-32 items-center justify-center rounded-lg bg-indigo-500 sm:grid">
+        size-32
+      </div>
+      <div className="hidden size-40 items-center justify-center rounded-lg bg-indigo-500 md:grid">
+        size-40
+      </div>
     </div>
   }
 </Example>
@@ -261,4 +280,4 @@ Use utilities like `size-px`, `size-4`, and `size-full` to set both the width an
 
 ## Customizing your theme
 
-<CustomizingYourSpacingScale utilities={["w", "size"]} />
+<CustomizingYourSpacingScale utilities={['w', 'size']} />

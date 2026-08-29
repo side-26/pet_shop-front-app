@@ -1,20 +1,20 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "mask-clip";
+export const title = 'mask-clip';
 export const description = "Utilities for controlling the bounding box of an element's mask.";
 
 <ApiTable
   rows={[
-    ["mask-clip-border", "mask-clip: border-box;"],
-    ["mask-clip-padding", "mask-clip: padding-box;"],
-    ["mask-clip-content", "mask-clip: content-box;"],
-    ["mask-clip-fill", "mask-clip: fill-box;"],
-    ["mask-clip-stroke", "mask-clip: stroke-box;"],
-    ["mask-clip-view", "mask-clip: view-box;"],
-    ["mask-no-clip", "mask-clip: no-clip;"],
+    ['mask-clip-border', 'mask-clip: border-box;'],
+    ['mask-clip-padding', 'mask-clip: padding-box;'],
+    ['mask-clip-content', 'mask-clip: content-box;'],
+    ['mask-clip-fill', 'mask-clip: fill-box;'],
+    ['mask-clip-stroke', 'mask-clip: stroke-box;'],
+    ['mask-clip-view', 'mask-clip: view-box;'],
+    ['mask-no-clip', 'mask-clip: no-clip;'],
   ]}
 />
 
@@ -63,4 +63,8 @@ Use utilities like `mask-clip-border`, `mask-clip-padding`, and `mask-clip-conte
 
 ### Responsive design
 
-<ResponsiveDesign property="mask-clip" defaultClass="mask-clip-border" featuredClass="mask-clip-padding" />
+<ResponsiveDesign
+  property="mask-clip"
+  defaultClass="mask-clip-border"
+  featuredClass="mask-clip-padding"
+/>

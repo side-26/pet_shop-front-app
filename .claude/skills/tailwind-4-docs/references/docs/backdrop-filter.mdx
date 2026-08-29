@@ -1,16 +1,20 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, TargetingSpecificStates, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import {
+  ResponsiveDesign,
+  TargetingSpecificStates,
+  UsingACustomValue,
+} from '@/components/content.tsx';
 
-export const title = "backdrop-filter";
-export const description = "Utilities for applying backdrop filters to an element.";
+export const title = 'backdrop-filter';
+export const description = 'Utilities for applying backdrop filters to an element.';
 
 <ApiTable
   rows={[
-    ["backdrop-filter-none", "backdrop-filter: none;"],
-    ["backdrop-filter-(<custom-property>)", "backdrop-filter: var(<custom-property>);"],
-    ["backdrop-filter-[<value>]", "backdrop-filter: <value>;"],
+    ['backdrop-filter-none', 'backdrop-filter: none;'],
+    ['backdrop-filter-(<custom-property>)', 'backdrop-filter: var(<custom-property>);'],
+    ['backdrop-filter-[<value>]', 'backdrop-filter: <value>;'],
   ]}
 />
 
@@ -98,7 +102,11 @@ Use the `backdrop-filter-none` utility to remove all of the backdrop filters app
 
 ### Using a custom value
 
-<UsingACustomValue utility="backdrop-filter" value="url('filters.svg#filter-id')" name="backdrop filter" />
+<UsingACustomValue
+  utility="backdrop-filter"
+  value="url('filters.svg#filter-id')"
+  name="backdrop filter"
+/>
 
 ### Applying on hover
 
@@ -110,4 +118,8 @@ Use the `backdrop-filter-none` utility to remove all of the backdrop filters app
 
 ### Responsive design
 
-<ResponsiveDesign property="backdrop-filter" defaultClass="backdrop-blur-sm" featuredClass="backdrop-filter-none" />
+<ResponsiveDesign
+  property="backdrop-filter"
+  defaultClass="backdrop-blur-sm"
+  featuredClass="backdrop-filter-none"
+/>

@@ -1,16 +1,16 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { UsingACustomValue, ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { UsingACustomValue, ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "filter: contrast()";
-export const description = "Utilities for applying contrast filters to an element.";
+export const title = 'filter: contrast()';
+export const description = 'Utilities for applying contrast filters to an element.';
 
 <ApiTable
   rows={[
-    ["contrast-<number>", "filter: contrast(<number>%);"],
-    ["contrast-(<custom-property>)", "filter: contrast(var(<custom-property>));"],
-    ["contrast-[<value>]", "filter: contrast(<value>);"],
+    ['contrast-<number>', 'filter: contrast(<number>%);'],
+    ['contrast-(<custom-property>)', 'filter: contrast(var(<custom-property>));'],
+    ['contrast-[<value>]', 'filter: contrast(<value>);'],
   ]}
 />
 
@@ -27,7 +27,9 @@ Use utilities like `contrast-50` and `contrast-100` to control an element's cont
     <div className="flex scroll-p-8 justify-start overflow-scroll sm:block sm:overflow-visible">
       <div className="flex shrink-0 items-center justify-around gap-6 p-8 font-mono font-bold sm:gap-4">
         <div className="flex shrink-0 flex-col items-center">
-          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">contrast-50</p>
+          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+            contrast-50
+          </p>
           <div className="relative contrast-50">
             <img
               className="size-24 rounded-lg object-cover"
@@ -89,13 +91,18 @@ Use utilities like `contrast-50` and `contrast-100` to control an element's cont
 
 ### Using a custom value
 
-<UsingACustomValue element="img" elementAttributes={{ src: "/img/mountains.jpg" }} utility="contrast" value=".25" />
+<UsingACustomValue
+  element="img"
+  elementAttributes={{ src: '/img/mountains.jpg' }}
+  utility="contrast"
+  value=".25"
+/>
 
 ### Responsive design
 
 <ResponsiveDesign
   element="img"
-  elementAttributes={{ src: "/img/mountains.jpg" }}
+  elementAttributes={{ src: '/img/mountains.jpg' }}
   property="filter: contrast()"
   defaultClass="contrast-125"
   featuredClass="contrast-150"

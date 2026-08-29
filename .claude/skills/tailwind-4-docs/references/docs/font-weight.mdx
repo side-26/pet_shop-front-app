@@ -1,25 +1,29 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourTheme, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { CodeExample } from "@/components/code-example.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourTheme,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { CodeExample } from '@/components/code-example.tsx';
 
-export const title = "font-weight";
-export const description = "Utilities for controlling the font weight of an element.";
+export const title = 'font-weight';
+export const description = 'Utilities for controlling the font weight of an element.';
 
 <ApiTable
   rows={[
-    ["font-thin", "font-weight: 100;"],
-    ["font-extralight", "font-weight: 200;"],
-    ["font-light", "font-weight: 300;"],
-    ["font-normal", "font-weight: 400;"],
-    ["font-medium", "font-weight: 500;"],
-    ["font-semibold", "font-weight: 600;"],
-    ["font-bold", "font-weight: 700;"],
-    ["font-extrabold", "font-weight: 800;"],
-    ["font-black", "font-weight: 900;"],
-    ["font-(<custom-property>)", "font-weight: var(<custom-property>);"],
-    ["font-[<value>]", "font-weight: <value>;"],
+    ['font-thin', 'font-weight: 100;'],
+    ['font-extralight', 'font-weight: 200;'],
+    ['font-light', 'font-weight: 300;'],
+    ['font-normal', 'font-weight: 400;'],
+    ['font-medium', 'font-weight: 500;'],
+    ['font-semibold', 'font-weight: 600;'],
+    ['font-bold', 'font-weight: 700;'],
+    ['font-extrabold', 'font-weight: 800;'],
+    ['font-black', 'font-weight: 900;'],
+    ['font-(<custom-property>)', 'font-weight: var(<custom-property>);'],
+    ['font-[<value>]', 'font-weight: <value>;'],
   ]}
 />
 
@@ -35,31 +39,41 @@ Use utilities like `font-thin` and `font-bold` to set the font weight of an elem
   {
     <div className="flex flex-col gap-8">
       <div>
-        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">font-light</span>
+        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          font-light
+        </span>
         <p className="text-lg font-light text-gray-900 dark:text-gray-200">
           The quick brown fox jumps over the lazy dog.
         </p>
       </div>
       <div>
-        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">font-normal</span>
+        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          font-normal
+        </span>
         <p className="text-lg font-normal text-gray-900 dark:text-gray-200">
           The quick brown fox jumps over the lazy dog.
         </p>
       </div>
       <div>
-        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">font-medium</span>
+        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          font-medium
+        </span>
         <p className="text-lg font-medium text-gray-900 dark:text-gray-200">
           The quick brown fox jumps over the lazy dog.
         </p>
       </div>
       <div>
-        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">font-semibold</span>
+        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          font-semibold
+        </span>
         <p className="text-lg font-semibold text-gray-900 dark:text-gray-200">
           The quick brown fox jumps over the lazy dog.
         </p>
       </div>
       <div>
-        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">font-bold</span>
+        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          font-bold
+        </span>
         <p className="text-lg font-bold text-gray-900 dark:text-gray-200">
           The quick brown fox jumps over the lazy dog.
         </p>
@@ -92,7 +106,12 @@ Use utilities like `font-thin` and `font-bold` to set the font weight of an elem
 
 ### Responsive design
 
-<ResponsiveDesign element="p" property="font-weight" defaultClass="font-normal" featuredClass="font-bold" />
+<ResponsiveDesign
+  element="p"
+  property="font-weight"
+  defaultClass="font-normal"
+  featuredClass="font-bold"
+/>
 
 ## Customizing your theme
 

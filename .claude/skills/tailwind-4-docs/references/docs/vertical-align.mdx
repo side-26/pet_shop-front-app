@@ -1,23 +1,24 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "vertical-align";
-export const description = "Utilities for controlling the vertical alignment of an inline or table-cell box.";
+export const title = 'vertical-align';
+export const description =
+  'Utilities for controlling the vertical alignment of an inline or table-cell box.';
 
 <ApiTable
   rows={[
-    ["align-baseline", "vertical-align: baseline;"],
-    ["align-top", "vertical-align: top;"],
-    ["align-middle", "vertical-align: middle;"],
-    ["align-bottom", "vertical-align: bottom;"],
-    ["align-text-top", "vertical-align: text-top;"],
-    ["align-text-bottom", "vertical-align: text-bottom;"],
-    ["align-sub", "vertical-align: sub;"],
-    ["align-super", "vertical-align: super;"],
-    ["align-(<custom-property>)", "vertical-align: var(<custom-property>);"],
-    ["align-[<value>]", "vertical-align: <value>;"],
+    ['align-baseline', 'vertical-align: baseline;'],
+    ['align-top', 'vertical-align: top;'],
+    ['align-middle', 'vertical-align: middle;'],
+    ['align-bottom', 'vertical-align: bottom;'],
+    ['align-text-top', 'vertical-align: text-top;'],
+    ['align-text-bottom', 'vertical-align: text-bottom;'],
+    ['align-sub', 'vertical-align: sub;'],
+    ['align-super', 'vertical-align: super;'],
+    ['align-(<custom-property>)', 'vertical-align: var(<custom-property>);'],
+    ['align-[<value>]', 'vertical-align: <value>;'],
   ]}
 />
 
@@ -187,8 +188,19 @@ Use the `align-text-bottom` utility to align the bottom of an element with the b
 
 ### Using a custom value
 
-<UsingACustomValue element="span" utility="align" name="vertical alignment" value="4px" variable="alignment" />
+<UsingACustomValue
+  element="span"
+  utility="align"
+  name="vertical alignment"
+  value="4px"
+  variable="alignment"
+/>
 
 ### Responsive design
 
-<ResponsiveDesign element="span" property="vertical-align" defaultClass="align-middle" featuredClass="align-top" />
+<ResponsiveDesign
+  element="span"
+  property="vertical-align"
+  defaultClass="align-middle"
+  featuredClass="align-top"
+/>

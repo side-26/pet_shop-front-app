@@ -1,17 +1,17 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "filter: sepia()";
-export const description = "Utilities for applying sepia filters to an element.";
+export const title = 'filter: sepia()';
+export const description = 'Utilities for applying sepia filters to an element.';
 
 <ApiTable
   rows={[
-    ["sepia", "filter: sepia(100%);"],
-    ["sepia-<number>", "filter: sepia(<number>%);"],
-    ["sepia-(<custom-property>)", "filter: sepia(var(<custom-property>));"],
-    ["sepia-[<value>]", "filter: sepia(<value>);"],
+    ['sepia', 'filter: sepia(100%);'],
+    ['sepia-<number>', 'filter: sepia(<number>%);'],
+    ['sepia-(<custom-property>)', 'filter: sepia(var(<custom-property>));'],
+    ['sepia-[<value>]', 'filter: sepia(<value>);'],
   ]}
 />
 
@@ -28,7 +28,9 @@ Use utilities like `sepia` and `sepia-50` to control the sepia effect applied to
     <div className="flex scroll-p-8 justify-center overflow-scroll sm:block sm:overflow-visible">
       <div className="flex shrink-0 items-center justify-around gap-6 p-8 font-mono font-bold sm:gap-4">
         <div className="flex shrink-0 flex-col items-center">
-          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">sepia-0</p>
+          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+            sepia-0
+          </p>
           <div className="relative sepia-0">
             <img
               className="size-24 rounded-lg object-cover"
@@ -38,7 +40,9 @@ Use utilities like `sepia` and `sepia-50` to control the sepia effect applied to
           </div>
         </div>
         <div className="flex shrink-0 flex-col items-center">
-          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">sepia-50</p>
+          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+            sepia-50
+          </p>
           <div className="relative sepia-50">
             <img
               className="size-24 rounded-lg object-cover"
@@ -48,7 +52,9 @@ Use utilities like `sepia` and `sepia-50` to control the sepia effect applied to
           </div>
         </div>
         <div className="flex shrink-0 flex-col items-center">
-          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">sepia</p>
+          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+            sepia
+          </p>
           <div className="relative sepia">
             <img
               className="size-24 rounded-lg object-cover"
@@ -75,7 +81,7 @@ Use utilities like `sepia` and `sepia-50` to control the sepia effect applied to
 
 <UsingACustomValue
   element="img"
-  elementAttributes={{ src: "/img/mountains.jpg" }}
+  elementAttributes={{ src: '/img/mountains.jpg' }}
   utility="sepia"
   name="sepia amount"
   value=".25"
@@ -85,7 +91,7 @@ Use utilities like `sepia` and `sepia-50` to control the sepia effect applied to
 
 <ResponsiveDesign
   element="img"
-  elementAttributes={{ src: "/img/mountains.jpg" }}
+  elementAttributes={{ src: '/img/mountains.jpg' }}
   property="filter: sepia()"
   defaultClass="sepia"
   featuredClass="sepia-0"

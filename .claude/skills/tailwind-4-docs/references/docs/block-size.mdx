@@ -1,32 +1,36 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourSpacingScale, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourSpacingScale,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "block-size";
-export const description = "Utilities for setting the block size of an element.";
+export const title = 'block-size';
+export const description = 'Utilities for setting the block size of an element.';
 
 <ApiTable
   rows={[
-    ["block-<number>", "block-size: calc(var(--spacing) * <number>);"],
-    ["block-<fraction>", "block-size: calc(<fraction> * 100%);"],
-    ["block-auto", "block-size: auto;"],
-    ["block-px", "block-size: 1px;"],
-    ["block-full", "block-size: 100%;"],
-    ["block-screen", "block-size: 100vh;"],
-    ["block-dvh", "block-size: 100dvh;"],
-    ["block-dvw", "block-size: 100dvw;"],
-    ["block-lvh", "block-size: 100lvh;"],
-    ["block-lvw", "block-size: 100lvw;"],
-    ["block-svh", "block-size: 100svh;"],
-    ["block-svw", "block-size: 100svw;"],
-    ["block-min", "block-size: min-content;"],
-    ["block-max", "block-size: max-content;"],
-    ["block-fit", "block-size: fit-content;"],
-    ["block-lh", "block-size: 1lh;"],
-    ["block-(<custom-property>)", "block-size: var(<custom-property>);"],
-    ["block-[<value>]", "block-size: <value>;"],
+    ['block-<number>', 'block-size: calc(var(--spacing) * <number>);'],
+    ['block-<fraction>', 'block-size: calc(<fraction> * 100%);'],
+    ['block-auto', 'block-size: auto;'],
+    ['block-px', 'block-size: 1px;'],
+    ['block-full', 'block-size: 100%;'],
+    ['block-screen', 'block-size: 100vh;'],
+    ['block-dvh', 'block-size: 100dvh;'],
+    ['block-dvw', 'block-size: 100dvw;'],
+    ['block-lvh', 'block-size: 100lvh;'],
+    ['block-lvw', 'block-size: 100lvw;'],
+    ['block-svh', 'block-size: 100svh;'],
+    ['block-svw', 'block-size: 100svw;'],
+    ['block-min', 'block-size: min-content;'],
+    ['block-max', 'block-size: max-content;'],
+    ['block-fit', 'block-size: fit-content;'],
+    ['block-lh', 'block-size: 1lh;'],
+    ['block-(<custom-property>)', 'block-size: var(<custom-property>);'],
+    ['block-[<value>]', 'block-size: <value>;'],
   ]}
 />
 
@@ -42,25 +46,39 @@ Use `block-<number>` utilities like `block-24` and `block-64` to set an element 
   {
     <div className="flex items-end justify-center space-x-4 font-mono text-xs font-bold text-white">
       <div className="relative flex w-8 items-end justify-center rounded-lg bg-blue-500 block-96">
-        <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">block-96</div>
+        <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">
+          block-96
+        </div>
       </div>
       <div className="relative flex w-8 items-end justify-center rounded-lg bg-blue-500 block-80">
-        <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">block-80</div>
+        <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">
+          block-80
+        </div>
       </div>
       <div className="relative flex w-8 items-end justify-center rounded-lg bg-blue-500 block-64">
-        <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">block-64</div>
+        <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">
+          block-64
+        </div>
       </div>
       <div className="relative flex w-8 items-end justify-center rounded-lg bg-blue-500 block-48">
-        <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">block-48</div>
+        <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">
+          block-48
+        </div>
       </div>
       <div className="relative flex w-8 items-end justify-center rounded-lg bg-blue-500 block-40">
-        <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">block-40</div>
+        <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">
+          block-40
+        </div>
       </div>
       <div className="relative flex w-8 items-end justify-center rounded-lg bg-blue-500 block-32">
-        <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">block-32</div>
+        <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">
+          block-32
+        </div>
       </div>
       <div className="relative flex w-8 items-end justify-center rounded-lg bg-blue-500 block-24">
-        <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">block-24</div>
+        <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">
+          block-24
+        </div>
       </div>
     </div>
   }
@@ -91,31 +109,41 @@ Use `block-full` or `block-<fraction>` utilities like `block-1/2` and `block-2/5
       <div className="relative flex items-end block-full">
         <Stripes border className="absolute inset-0 rounded-lg block-full" />
         <div className="relative flex w-8 items-end justify-center rounded-lg bg-sky-500 block-full">
-          <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">block-full</div>
+          <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">
+            block-full
+          </div>
         </div>
       </div>
       <div className="relative flex items-end block-full">
         <Stripes border className="absolute inset-0 rounded-lg block-full" />
         <div className="relative flex w-8 items-end justify-center rounded-lg bg-sky-500 block-9/10">
-          <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">block-9/10</div>
+          <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">
+            block-9/10
+          </div>
         </div>
       </div>
       <div className="relative flex items-end block-full">
         <Stripes border className="absolute inset-0 rounded-lg block-full" />
         <div className="relative flex w-8 items-end justify-center rounded-lg bg-sky-500 block-3/4">
-          <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">block-3/4</div>
+          <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">
+            block-3/4
+          </div>
         </div>
       </div>
       <div className="relative flex items-end block-full">
         <Stripes border className="absolute inset-0 rounded-lg block-full" />
         <div className="relative flex w-8 items-end justify-center rounded-lg bg-sky-500 block-1/2">
-          <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">block-1/2</div>
+          <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">
+            block-1/2
+          </div>
         </div>
       </div>
       <div className="relative flex items-end block-full">
         <Stripes border className="absolute inset-0 rounded-lg block-full" />
         <div className="relative flex w-8 items-end justify-center rounded-lg bg-sky-500 block-1/3">
-          <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">block-1/3</div>
+          <div className="mb-1 transform-[rotate(-90deg)_translate(50%)] text-left text-nowrap">
+            block-1/3
+          </div>
         </div>
       </div>
     </div>

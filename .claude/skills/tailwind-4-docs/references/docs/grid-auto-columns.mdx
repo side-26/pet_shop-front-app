@@ -1,18 +1,18 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "grid-auto-columns";
-export const description = "Utilities for controlling the size of implicitly-created grid columns.";
+export const title = 'grid-auto-columns';
+export const description = 'Utilities for controlling the size of implicitly-created grid columns.';
 
 <ApiTable
   rows={[
-    ["auto-cols-auto", "grid-auto-columns: auto;"],
-    ["auto-cols-min", "grid-auto-columns: min-content;"],
-    ["auto-cols-max", "grid-auto-columns: max-content;"],
-    ["auto-cols-fr", "grid-auto-columns: minmax(0, 1fr);"],
-    ["auto-cols-<number>", "grid-auto-columns: calc(var(--spacing) * <number>);"],
-    ["auto-cols-(<custom-property>)", "grid-auto-columns: var(<custom-property>);"],
-    ["auto-cols-[<value>]", "grid-auto-columns: <value>;"],
+    ['auto-cols-auto', 'grid-auto-columns: auto;'],
+    ['auto-cols-min', 'grid-auto-columns: min-content;'],
+    ['auto-cols-max', 'grid-auto-columns: max-content;'],
+    ['auto-cols-fr', 'grid-auto-columns: minmax(0, 1fr);'],
+    ['auto-cols-<number>', 'grid-auto-columns: calc(var(--spacing) * <number>);'],
+    ['auto-cols-(<custom-property>)', 'grid-auto-columns: var(<custom-property>);'],
+    ['auto-cols-[<value>]', 'grid-auto-columns: <value>;'],
   ]}
 />
 
@@ -33,7 +33,11 @@ Use utilities like `auto-cols-min` and `auto-cols-max` to control the size of im
 
 ### Using a custom value
 
-<UsingACustomValue utility="auto-cols" name="size of implicitly-created grid columns" value="minmax(0,2fr)" />
+<UsingACustomValue
+  utility="auto-cols"
+  name="size of implicitly-created grid columns"
+  value="minmax(0,2fr)"
+/>
 
 ### Responsive design
 

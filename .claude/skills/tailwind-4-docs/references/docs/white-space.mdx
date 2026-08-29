@@ -1,19 +1,19 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "white-space";
+export const title = 'white-space';
 export const description = "Utilities for controlling an element's white-space property.";
 
 <ApiTable
   rows={[
-    ["whitespace-normal", "white-space: normal;"],
-    ["whitespace-nowrap", "white-space: nowrap;"],
-    ["whitespace-pre", "white-space: pre;"],
-    ["whitespace-pre-line", "white-space: pre-line;"],
-    ["whitespace-pre-wrap", "white-space: pre-wrap;"],
-    ["whitespace-break-spaces", "white-space: break-spaces;"],
+    ['whitespace-normal', 'white-space: normal;'],
+    ['whitespace-nowrap', 'white-space: nowrap;'],
+    ['whitespace-pre', 'white-space: pre;'],
+    ['whitespace-pre-line', 'white-space: pre-line;'],
+    ['whitespace-pre-wrap', 'white-space: pre-wrap;'],
+    ['whitespace-break-spaces', 'white-space: break-spaces;'],
   ]}
 />
 
@@ -31,7 +31,7 @@ Use the `whitespace-normal` utility to cause text to wrap normally within an ele
       <p
         className="whitespace-normal"
         children={
-          "Hey everyone!\n\nIt’s almost 2022       and we still don’t know if there             are aliens living among us, or do we? Maybe the person writing this is an alien.\n\nYou will never know."
+          'Hey everyone!\n\nIt’s almost 2022       and we still don’t know if there             are aliens living among us, or do we? Maybe the person writing this is an alien.\n\nYou will never know.'
         }
       />
     </div>
@@ -62,7 +62,7 @@ Use the `whitespace-nowrap` utility to prevent text from wrapping within an elem
       <p
         className="whitespace-nowrap"
         children={
-          "Hey everyone!\n\nIt’s almost 2022       and we still don’t know if there             are aliens living among us, or do we? Maybe the person writing this is an alien.\n\nYou will never know."
+          'Hey everyone!\n\nIt’s almost 2022       and we still don’t know if there             are aliens living among us, or do we? Maybe the person writing this is an alien.\n\nYou will never know.'
         }
       />
     </div>
@@ -93,7 +93,7 @@ Use the `whitespace-pre` utility to preserve newlines and spaces within an eleme
       <p
         className="whitespace-pre"
         children={
-          "Hey everyone!\n\nIt’s almost 2022       and we still don’t know if there             are aliens living among us, or do we? Maybe the person writing this is an alien.\n\nYou will never know."
+          'Hey everyone!\n\nIt’s almost 2022       and we still don’t know if there             are aliens living among us, or do we? Maybe the person writing this is an alien.\n\nYou will never know.'
         }
       />
     </div>
@@ -124,7 +124,7 @@ Use the `whitespace-pre-line` utility to preserve newlines but not spaces within
       <p
         className="whitespace-pre-line"
         children={
-          "Hey everyone!\n\nIt’s almost 2022       and we still don’t know if there             are aliens living among us, or do we? Maybe the person writing this is an alien.\n\nYou will never know."
+          'Hey everyone!\n\nIt’s almost 2022       and we still don’t know if there             are aliens living among us, or do we? Maybe the person writing this is an alien.\n\nYou will never know.'
         }
       />
     </div>
@@ -155,7 +155,7 @@ Use the `whitespace-pre-wrap` utility to preserve newlines and spaces within an 
       <p
         className="whitespace-pre-wrap"
         children={
-          "Hey everyone!\n\nIt’s almost 2022       and we still don’t know if there             are aliens living among us, or do we? Maybe the person writing this is an alien.\n\nYou will never know."
+          'Hey everyone!\n\nIt’s almost 2022       and we still don’t know if there             are aliens living among us, or do we? Maybe the person writing this is an alien.\n\nYou will never know.'
         }
       />
     </div>
@@ -187,7 +187,7 @@ Use the `whitespace-break-spaces` utility to preserve newlines and spaces within
       <p
         className="whitespace-break-spaces"
         children={
-          "Hey everyone!\n\nIt’s almost 2022       and we still don’t know if there             are aliens living among us, or do we? Maybe the person writing this is an alien.\n\nYou will never know."
+          'Hey everyone!\n\nIt’s almost 2022       and we still don’t know if there             are aliens living among us, or do we? Maybe the person writing this is an alien.\n\nYou will never know.'
         }
       />
     </div>
@@ -208,4 +208,9 @@ You will never know.</p>
 
 ### Responsive design
 
-<ResponsiveDesign element="p" property="white-space" defaultClass="whitespace-pre" featuredClass="whitespace-normal" />
+<ResponsiveDesign
+  element="p"
+  property="white-space"
+  defaultClass="whitespace-pre"
+  featuredClass="whitespace-normal"
+/>

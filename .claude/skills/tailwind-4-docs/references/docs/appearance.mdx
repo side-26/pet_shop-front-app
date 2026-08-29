@@ -1,15 +1,15 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "appearance";
-export const description = "Utilities for suppressing native form control styling.";
+export const title = 'appearance';
+export const description = 'Utilities for suppressing native form control styling.';
 
 <ApiTable
   rows={[
-    ["appearance-none", "appearance: none;"],
-    ["appearance-auto", "appearance: auto;"],
+    ['appearance-none', 'appearance: none;'],
+    ['appearance-auto', 'appearance: auto;'],
   ]}
 />
 
@@ -54,7 +54,9 @@ Use `appearance-none` to reset any browser specific styling on an element:
             <option>Maybe</option>
           </select>
         </div>
-        <div className="mx-6 text-sm font-semibold text-gray-900 dark:text-gray-200">Remove default browser styles</div>
+        <div className="mx-6 text-sm font-semibold text-gray-900 dark:text-gray-200">
+          Remove default browser styles
+        </div>
       </div>
     </div>
   }
@@ -110,7 +112,12 @@ Use `appearance-auto` to restore the default browser specific styling on an elem
               fill="none"
               className="invisible col-start-1 row-start-1 stroke-white peer-checked:visible dark:text-violet-300 forced-colors:hidden"
             >
-              <path d="M3 8L6 11L11 3.5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
+              <path
+                d="M3 8L6 11L11 3.5"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>
             </svg>
           </div>
           Falls back to default appearance
@@ -133,7 +140,12 @@ Use `appearance-auto` to restore the default browser specific styling on an elem
               fill="none"
               className="invisible col-start-1 row-start-1 stroke-white peer-checked:visible dark:text-violet-300"
             >
-              <path d="M3 8L6 11L11 3.5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
+              <path
+                d="M3 8L6 11L11 3.5"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>
             </svg>
           </div>
           Keeps custom appearance

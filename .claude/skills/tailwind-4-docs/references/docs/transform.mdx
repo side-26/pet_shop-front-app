@@ -1,21 +1,21 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "transform";
-export const description = "Utilities for transforming elements.";
+export const title = 'transform';
+export const description = 'Utilities for transforming elements.';
 
 <ApiTable
   rows={[
-    ["transform-(<custom-property>)", "transform: var(<custom-property>);"],
-    ["transform-[<value>]", "transform: <value>;"],
-    ["transform-none", "transform: none;"],
+    ['transform-(<custom-property>)', 'transform: var(<custom-property>);'],
+    ['transform-[<value>]', 'transform: <value>;'],
+    ['transform-none', 'transform: none;'],
     [
-      "transform-gpu",
-      "transform: translateZ(0) var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x) var(--tw-skew-y);",
+      'transform-gpu',
+      'transform: translateZ(0) var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x) var(--tw-skew-y);',
     ],
     [
-      "transform-cpu",
-      "transform: var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x) var(--tw-skew-y);",
+      'transform-cpu',
+      'transform: var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x) var(--tw-skew-y);',
     ],
   ]}
 />

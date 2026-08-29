@@ -1,17 +1,20 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "backdrop-filter: grayscale()";
-export const description = "Utilities for applying backdrop grayscale filters to an element.";
+export const title = 'backdrop-filter: grayscale()';
+export const description = 'Utilities for applying backdrop grayscale filters to an element.';
 
 <ApiTable
   rows={[
-    ["backdrop-grayscale", "backdrop-filter: grayscale(100%);"],
-    ["backdrop-grayscale-<number>", "backdrop-filter: grayscale(<number>%);"],
-    ["backdrop-grayscale-(<custom-property>)", "backdrop-filter: grayscale(var(<custom-property>));"],
-    ["backdrop-grayscale-[<value>]", "backdrop-filter: grayscale(<value>);"],
+    ['backdrop-grayscale', 'backdrop-filter: grayscale(100%);'],
+    ['backdrop-grayscale-<number>', 'backdrop-filter: grayscale(<number>%);'],
+    [
+      'backdrop-grayscale-(<custom-property>)',
+      'backdrop-filter: grayscale(var(<custom-property>));',
+    ],
+    ['backdrop-grayscale-[<value>]', 'backdrop-filter: grayscale(<value>);'],
   ]}
 />
 

@@ -1,11 +1,11 @@
-import { CodeExampleStack } from "@/components/code-example";
-import { TipGood, TipBad, TipInfo } from "@/components/tips";
-import { Iframe } from "@/components/iframe";
-import { Example } from "@/components/example";
-import { Figure } from "@/components/figure";
+import { CodeExampleStack } from '@/components/code-example';
+import { TipGood, TipBad, TipInfo } from '@/components/tips';
+import { Iframe } from '@/components/iframe';
+import { Example } from '@/components/example';
+import { Figure } from '@/components/figure';
 
-export const title = "Theme variables";
-export const description = "Using utility classes as an API for your design tokens.";
+export const title = 'Theme variables';
+export const description = 'Using utility classes as an API for your design tokens.';
 
 ## Overview
 
@@ -21,7 +21,7 @@ For example, you can add a new color to your project by defining a theme variabl
 
 ```css
 /* [!code filename:app.css] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* [!code highlight:4] */
 @theme {
@@ -71,7 +71,7 @@ For example, theme variables defined in the `--font-*` namespace determine all o
   /* [!code highlight:4] */
   /* prettier-ignore */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
   /* prettier-ignore */
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   /* ... */
@@ -84,7 +84,7 @@ If another theme variable like `--font-poppins` were defined, a `font-poppins` u
 
 ```css
 /* [!code filename:app.css] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* [!code highlight:2] */
@@ -106,7 +106,7 @@ Some theme variables are used to define variants rather than utilities. For exam
 
 ```css
 /* [!code filename:app.css] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* [!code highlight:2] */
@@ -319,9 +319,9 @@ Here's what you're actually importing when you import `tailwindcss`:
 @layer theme, base, components, utilities;
 
 /* [!code highlight:2] */
-@import "./theme.css" layer(theme);
-@import "./preflight.css" layer(base);
-@import "./utilities.css" layer(utilities);
+@import './theme.css' layer(theme);
+@import './preflight.css' layer(base);
+@import './utilities.css' layer(utilities);
 ```
 
 That `theme.css` file includes the default color palette, type scale, shadows, fonts, and more:
@@ -331,8 +331,10 @@ That `theme.css` file includes the default color palette, type scale, shadows, f
 @theme {
   /* prettier-ignore */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
 
   --color-red-50: oklch(0.971 0.013 17.38);
   --color-red-100: oklch(0.936 0.032 17.717);
@@ -360,7 +362,7 @@ Use `@theme` to define new theme variables and extend the default theme:
 
 ```css
 /* [!code filename:app.css] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* [!code highlight:2] */
@@ -384,7 +386,7 @@ Override a default theme variable value by redefining it within `@theme`:
 
 ```css
 /* [!code filename:app.css] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* [!code highlight:2] */
@@ -406,7 +408,7 @@ To completely override an entire namespace in the default theme, set the entire 
 
 ```css
 /* [!code filename:app.css] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* [!code highlight:2] */
@@ -429,7 +431,7 @@ To completely disable the default theme and use only custom values, set the glob
 
 ```css
 /* [!code filename:app.css] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* [!code highlight:2] */
@@ -455,7 +457,7 @@ Define the `@keyframes` rules for your `--animate-*` theme variables within `@th
 
 ```css
 /* [!code filename:app.css] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --animate-fade-in-scale: fade-in-scale 0.3s ease-out;
@@ -481,7 +483,7 @@ When defining theme variables that reference other variables, use the `inline` o
 
 ```css
 /* [!code filename:app.css] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* [!code word:inline] */
 @theme inline {
@@ -522,7 +524,7 @@ By default only used CSS variables will be generated in the final CSS output. If
 ```css
 /* [!code filename:app.css] */
 /* [!code word:static] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme static {
   --color-primary: var(--color-red-500);
@@ -555,9 +557,9 @@ Then you can use `@import` to include your theme variables in other projects:
 
 ```css
 /* [!code filename:./packages/admin/app.css] */
-@import "tailwindcss";
+@import 'tailwindcss';
 /* [!code highlight:2] */
-@import "../brand/theme.css";
+@import '../brand/theme.css';
 ```
 
 You can put shared theme variables like this in their own package in monorepo setups or even publish them to NPM and import them just like any other third-party CSS files.
@@ -571,8 +573,10 @@ All of your theme variables are turned into regular CSS variables when you compi
 :root {
   /* prettier-ignore */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
 
   --color-red-50: oklch(0.971 0.013 17.38);
   --color-red-100: oklch(0.936 0.032 17.717);
@@ -600,7 +604,7 @@ Use your theme variables to get access to your design tokens when you're writing
 /* [!code word:var(--font-weight-semibold)] */
 /* [!code word:var(--color-gray-950)] */
 /* [!code word:var(--text-xl)] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @layer components {
   .typography {
@@ -653,7 +657,7 @@ For example, the popular [Motion](https://motion.dev/docs/react-quick-start) lib
 ```jsx
 // [!code filename:JSX]
 // [!code word:var(--color-blue-500)]
-<motion.div animate={{ backgroundColor: "var(--color-blue-500)" }} />
+<motion.div animate={{ backgroundColor: 'var(--color-blue-500)' }} />
 ```
 
 If you need access to a resolved CSS variable value in JS, you can use `getComputedStyle` to get the value of a theme variable on the document root:
@@ -661,7 +665,7 @@ If you need access to a resolved CSS variable value in JS, you can use `getCompu
 ```js
 // [!code filename:spaghetti.js]
 let styles = getComputedStyle(document.documentElement);
-let shadow = styles.getPropertyValue("--shadow-xl");
+let shadow = styles.getPropertyValue('--shadow-xl');
 ```
 
 ## Default theme variable reference
@@ -673,8 +677,10 @@ For reference, here's a complete list of the theme variables included by default
 @theme {
   /* prettier-ignore */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
 
   --color-red-50: oklch(97.1% 0.013 17.38);
   --color-red-100: oklch(93.6% 0.032 17.717);
@@ -1093,9 +1099,12 @@ For reference, here's a complete list of the theme variables included by default
 
   --text-shadow-2xs: 0px 1px 0px rgb(0 0 0 / 0.15);
   --text-shadow-xs: 0px 1px 1px rgb(0 0 0 / 0.2);
-  --text-shadow-sm: 0px 1px 0px rgb(0 0 0 / 0.075), 0px 1px 1px rgb(0 0 0 / 0.075), 0px 2px 2px rgb(0 0 0 / 0.075);
-  --text-shadow-md: 0px 1px 1px rgb(0 0 0 / 0.1), 0px 1px 2px rgb(0 0 0 / 0.1), 0px 2px 4px rgb(0 0 0 / 0.1);
-  --text-shadow-lg: 0px 1px 2px rgb(0 0 0 / 0.1), 0px 3px 2px rgb(0 0 0 / 0.1), 0px 4px 8px rgb(0 0 0 / 0.1);
+  --text-shadow-sm:
+    0px 1px 0px rgb(0 0 0 / 0.075), 0px 1px 1px rgb(0 0 0 / 0.075), 0px 2px 2px rgb(0 0 0 / 0.075);
+  --text-shadow-md:
+    0px 1px 1px rgb(0 0 0 / 0.1), 0px 1px 2px rgb(0 0 0 / 0.1), 0px 2px 4px rgb(0 0 0 / 0.1);
+  --text-shadow-lg:
+    0px 1px 2px rgb(0 0 0 / 0.1), 0px 3px 2px rgb(0 0 0 / 0.1), 0px 4px 8px rgb(0 0 0 / 0.1);
 
   --blur-xs: 4px;
   --blur-sm: 8px;

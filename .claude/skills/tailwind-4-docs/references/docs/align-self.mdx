@@ -1,24 +1,24 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "align-self";
+export const title = 'align-self';
 export const description =
   "Utilities for controlling how an individual flex or grid item is positioned along its container's cross axis.";
 
 <ApiTable
   rows={[
-    ["self-auto", "align-self: auto;"],
-    ["self-start", "align-self: flex-start;"],
-    ["self-end", "align-self: flex-end;"],
-    ["self-end-safe", "align-self: safe flex-end;"],
-    ["self-center", "align-self: center;"],
-    ["self-center-safe", "align-self: safe center;"],
-    ["self-stretch", "align-self: stretch;"],
-    ["self-baseline", "align-self: baseline;"],
-    ["self-baseline-last", "align-self: last baseline;"],
+    ['self-auto', 'align-self: auto;'],
+    ['self-start', 'align-self: flex-start;'],
+    ['self-end', 'align-self: flex-end;'],
+    ['self-end-safe', 'align-self: safe flex-end;'],
+    ['self-center', 'align-self: center;'],
+    ['self-center-safe', 'align-self: safe center;'],
+    ['self-stretch', 'align-self: stretch;'],
+    ['self-baseline', 'align-self: baseline;'],
+    ['self-baseline-last', 'align-self: last baseline;'],
   ]}
 />
 
@@ -38,7 +38,9 @@ Use the `self-auto` utility to align an item based on the value of the container
         <div className="flex flex-1 items-center justify-center rounded-lg bg-sky-300 p-4 dark:bg-sky-800 dark:text-sky-500">
           01
         </div>
-        <div className="flex flex-1 items-center justify-center self-auto rounded-lg bg-sky-500 p-4">02</div>
+        <div className="flex flex-1 items-center justify-center self-auto rounded-lg bg-sky-500 p-4">
+          02
+        </div>
         <div className="flex flex-1 items-center justify-center rounded-lg bg-sky-300 p-4 dark:bg-sky-800 dark:text-sky-500">
           03
         </div>
@@ -72,7 +74,9 @@ Use the `self-start` utility to align an item to the start of the container's cr
         <div className="flex flex-1 items-center justify-center rounded-lg bg-pink-300 p-4 dark:bg-pink-800 dark:text-pink-400">
           01
         </div>
-        <div className="flex flex-1 items-center justify-center self-start rounded-lg bg-pink-500 p-4">02</div>
+        <div className="flex flex-1 items-center justify-center self-start rounded-lg bg-pink-500 p-4">
+          02
+        </div>
         <div className="flex flex-1 items-center justify-center rounded-lg bg-pink-300 p-4 dark:bg-pink-800 dark:text-pink-400">
           03
         </div>
@@ -106,7 +110,9 @@ Use the `self-center` utility to align an item along the center of the container
         <div className="flex flex-1 items-center justify-center rounded-lg bg-purple-300 p-4 dark:bg-purple-800 dark:text-purple-400">
           01
         </div>
-        <div className="flex flex-1 items-center justify-center self-center rounded-lg bg-purple-500 p-4">02</div>
+        <div className="flex flex-1 items-center justify-center self-center rounded-lg bg-purple-500 p-4">
+          02
+        </div>
         <div className="flex flex-1 items-center justify-center rounded-lg bg-purple-300 p-4 dark:bg-purple-800 dark:text-purple-400">
           03
         </div>
@@ -140,7 +146,9 @@ Use the `self-end` utility to align an item to the end of the container's cross 
         <div className="flex flex-1 items-center justify-center rounded-lg bg-indigo-300 p-4 dark:bg-indigo-800 dark:text-indigo-400">
           01
         </div>
-        <div className="flex flex-1 items-center justify-center self-end rounded-lg bg-indigo-500 p-4">02</div>
+        <div className="flex flex-1 items-center justify-center self-end rounded-lg bg-indigo-500 p-4">
+          02
+        </div>
         <div className="flex flex-1 items-center justify-center rounded-lg bg-indigo-300 p-4 dark:bg-indigo-800 dark:text-indigo-400">
           03
         </div>
@@ -174,7 +182,9 @@ Use the `self-stretch` utility to stretch an item to fill the container's cross 
         <div className="flex flex-1 items-center justify-center rounded-lg bg-fuchsia-300 p-4 dark:bg-fuchsia-800 dark:text-fuchsia-400">
           01
         </div>
-        <div className="flex flex-1 items-center justify-center self-stretch rounded-lg bg-fuchsia-500 p-4">02</div>
+        <div className="flex flex-1 items-center justify-center self-stretch rounded-lg bg-fuchsia-500 p-4">
+          02
+        </div>
         <div className="flex flex-1 items-center justify-center rounded-lg bg-fuchsia-300 p-4 dark:bg-fuchsia-800 dark:text-fuchsia-400">
           03
         </div>
@@ -205,7 +215,9 @@ Use the `self-baseline` utility to align an item such that its baseline aligns w
     <div className="grid grid-cols-1">
       <Stripes border className="col-start-1 row-start-1 rounded-lg" />
       <div className="col-start-1 row-start-1 flex w-full gap-4 rounded-lg text-center font-mono text-sm leading-6 font-bold text-white">
-        <div className="flex flex-1 items-center justify-center self-baseline rounded-lg bg-blue-500 pt-2 pb-6">01</div>
+        <div className="flex flex-1 items-center justify-center self-baseline rounded-lg bg-blue-500 pt-2 pb-6">
+          01
+        </div>
         <div className="flex flex-1 items-center justify-center self-baseline rounded-lg bg-blue-500 pt-8 pb-12">
           02
         </div>
@@ -243,7 +255,9 @@ Use the `self-baseline-last` utility to align an item along the container's cros
           src="https://spotlight.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar.51a13c67.jpg&w=128&q=80"
           alt=""
         />
-        <div className="font-semibold text-gray-900 sm:col-start-2 dark:text-white">Spencer Sharp</div>
+        <div className="font-semibold text-gray-900 sm:col-start-2 dark:text-white">
+          Spencer Sharp
+        </div>
         <p className="self-baseline-last text-sm sm:col-start-2">
           Working on the future of astronaut recruitment at Space Recruit.
         </p>
@@ -279,7 +293,9 @@ Use the `self-baseline-last` utility to align an item along the container's cros
   <div>
     <img src="img/spencer-sharp.jpg" />
     <h4>Spencer Sharp</h4>
-    <p class="self-baseline-last">Working on the future of astronaut recruitment at Space Recruit.</p>
+    <p class="self-baseline-last">
+      Working on the future of astronaut recruitment at Space Recruit.
+    </p>
   </div>
   <p class="self-baseline-last">spacerecruit.com</p>
 </div>

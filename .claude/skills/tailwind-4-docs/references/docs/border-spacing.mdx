@@ -1,25 +1,41 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourSpacingScale, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourSpacingScale,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
 
-export const title = "border-spacing";
-export const description = "Utilities for controlling the spacing between table borders.";
+export const title = 'border-spacing';
+export const description = 'Utilities for controlling the spacing between table borders.';
 
 <ApiTable
   rows={[
-    ["border-spacing-<number>", "border-spacing: calc(var(--spacing) * <number>);"],
-    ["border-spacing-px", "border-spacing: 1px;"],
-    ["border-spacing-(<custom-property>)", "border-spacing: var(<custom-property>);"],
-    ["border-spacing-[<value>]", "border-spacing: <value>;"],
-    ["border-spacing-x-<number>", "border-spacing: calc(var(--spacing) * <number>) var(--tw-border-spacing-y);"],
-    ["border-spacing-x-px", "border-spacing: 1px var(--tw-border-spacing-y);"],
-    ["border-spacing-x-(<custom-property>)", "border-spacing: var(<custom-property>) var(--tw-border-spacing-y);"],
-    ["border-spacing-x-[<value>]", "border-spacing: <value> var(--tw-border-spacing-y);"],
-    ["border-spacing-y-<number>", "border-spacing: var(--tw-border-spacing-x) calc(var(--spacing) * <number>);"],
-    ["border-spacing-y-px", "border-spacing: var(--tw-border-spacing-x) 1px;"],
-    ["border-spacing-y-(<custom-property>)", "border-spacing: var(--tw-border-spacing-x) var(<custom-property>);"],
-    ["border-spacing-y-[<value>]", "border-spacing: var(--tw-border-spacing-x) <value>;"],
+    ['border-spacing-<number>', 'border-spacing: calc(var(--spacing) * <number>);'],
+    ['border-spacing-px', 'border-spacing: 1px;'],
+    ['border-spacing-(<custom-property>)', 'border-spacing: var(<custom-property>);'],
+    ['border-spacing-[<value>]', 'border-spacing: <value>;'],
+    [
+      'border-spacing-x-<number>',
+      'border-spacing: calc(var(--spacing) * <number>) var(--tw-border-spacing-y);',
+    ],
+    ['border-spacing-x-px', 'border-spacing: 1px var(--tw-border-spacing-y);'],
+    [
+      'border-spacing-x-(<custom-property>)',
+      'border-spacing: var(<custom-property>) var(--tw-border-spacing-y);',
+    ],
+    ['border-spacing-x-[<value>]', 'border-spacing: <value> var(--tw-border-spacing-y);'],
+    [
+      'border-spacing-y-<number>',
+      'border-spacing: var(--tw-border-spacing-x) calc(var(--spacing) * <number>);',
+    ],
+    ['border-spacing-y-px', 'border-spacing: var(--tw-border-spacing-x) 1px;'],
+    [
+      'border-spacing-y-(<custom-property>)',
+      'border-spacing: var(--tw-border-spacing-x) var(<custom-property>);',
+    ],
+    ['border-spacing-y-[<value>]', 'border-spacing: var(--tw-border-spacing-x) <value>;'],
   ]}
 />
 
@@ -55,7 +71,9 @@ Use `border-spacing-<number>` utilities like `border-spacing-2` and `border-spac
             </td>
           </tr>
           <tr>
-            <td className="border border-gray-300 p-4 text-gray-500 dark:border-gray-700 dark:text-gray-400">Ohio</td>
+            <td className="border border-gray-300 p-4 text-gray-500 dark:border-gray-700 dark:text-gray-400">
+              Ohio
+            </td>
             <td className="border border-gray-300 p-4 text-gray-500 dark:border-gray-700 dark:text-gray-400">
               Columbus
             </td>

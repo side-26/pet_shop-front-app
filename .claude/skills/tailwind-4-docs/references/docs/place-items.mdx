@@ -1,21 +1,22 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "place-items";
-export const description = "Utilities for controlling how items are justified and aligned at the same time.";
+export const title = 'place-items';
+export const description =
+  'Utilities for controlling how items are justified and aligned at the same time.';
 
 <ApiTable
   rows={[
-    ["place-items-start", "place-items: start;"],
-    ["place-items-end", "place-items: end;"],
-    ["place-items-end-safe", "place-items: safe end;"],
-    ["place-items-center", "place-items: center;"],
-    ["place-items-center-safe", "place-items: safe center;"],
-    ["place-items-baseline", "place-items: baseline;"],
-    ["place-items-stretch", "place-items: stretch;"],
+    ['place-items-start', 'place-items: start;'],
+    ['place-items-end', 'place-items: end;'],
+    ['place-items-end-safe', 'place-items: safe end;'],
+    ['place-items-center', 'place-items: center;'],
+    ['place-items-center-safe', 'place-items: safe center;'],
+    ['place-items-baseline', 'place-items: baseline;'],
+    ['place-items-stretch', 'place-items: stretch;'],
   ]}
 />
 
@@ -266,4 +267,8 @@ Use `place-items-stretch` to stretch items along their grid areas on both axes:
 
 ## Responsive design
 
-<ResponsiveDesign property="place-items" defaultClass="grid place-items-start" featuredClass="place-items-center" />
+<ResponsiveDesign
+  property="place-items"
+  defaultClass="grid place-items-start"
+  featuredClass="place-items-center"
+/>

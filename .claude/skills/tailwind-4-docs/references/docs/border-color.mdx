@@ -1,43 +1,43 @@
-import { ApiTable } from "@/components/api-table.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
 import {
   CustomizingYourThemeColors,
   ResponsiveDesign,
   TargetingSpecificStates,
   UsingACustomValue,
-} from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import colors from "./utils/colors";
-import dedent from "dedent";
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import colors from './utils/colors';
+import dedent from 'dedent';
 
-export const title = "border-color";
+export const title = 'border-color';
 export const description = "Utilities for controlling the color of an element's borders.";
 
 <ApiTable
   rows={[
     ...[
-      ["border", (value) => `border-color: ${value}`],
-      ["border-x", (value) => `border-inline-color: ${value}`],
-      ["border-y", (value) => `border-block-color: ${value}`],
-      ["border-s", (value) => `border-inline-start-color: ${value}`],
-      ["border-e", (value) => `border-inline-end-color: ${value}`],
-      ["border-bs", (value) => `border-block-start-color: ${value}`],
-      ["border-be", (value) => `border-block-end-color: ${value}`],
-      ["border-t", (value) => `border-top-color: ${value}`],
-      ["border-r", (value) => `border-right-color: ${value}`],
-      ["border-b", (value) => `border-bottom-color: ${value}`],
-      ["border-l", (value) => `border-left-color: ${value}`],
-      ["divide", (value) => `& > :not(:last-child) {\n  border-color: ${value}\n}`],
+      ['border', (value) => `border-color: ${value}`],
+      ['border-x', (value) => `border-inline-color: ${value}`],
+      ['border-y', (value) => `border-block-color: ${value}`],
+      ['border-s', (value) => `border-inline-start-color: ${value}`],
+      ['border-e', (value) => `border-inline-end-color: ${value}`],
+      ['border-bs', (value) => `border-block-start-color: ${value}`],
+      ['border-be', (value) => `border-block-end-color: ${value}`],
+      ['border-t', (value) => `border-top-color: ${value}`],
+      ['border-r', (value) => `border-right-color: ${value}`],
+      ['border-b', (value) => `border-bottom-color: ${value}`],
+      ['border-l', (value) => `border-left-color: ${value}`],
+      ['divide', (value) => `& > :not(:last-child) {\n  border-color: ${value}\n}`],
     ].flatMap(([utility, css]) => [
-      [`${utility}-inherit`, css("inherit;")],
-      [`${utility}-current`, css("currentColor;")],
-      [`${utility}-transparent`, css("transparent;")],
+      [`${utility}-inherit`, css('inherit;')],
+      [`${utility}-current`, css('currentColor;')],
+      [`${utility}-transparent`, css('transparent;')],
       ...Object.entries(colors).map(([name, value]) => [
         `${utility}-${name}`,
         css(`var(--color-${name}); /* ${value} */`),
       ]),
-      [`${utility}-(<custom-property>)`, css("var(<custom-property>);")],
-      [`${utility}-[<value>]`, css("<value>;")],
+      [`${utility}-(<custom-property>)`, css('var(<custom-property>);')],
+      [`${utility}-[<value>]`, css('<value>;')],
     ]),
   ]}
 />
@@ -257,9 +257,15 @@ Use utilities like `divide-indigo-500` and `divide-lime-100` to control the bord
 <Example>
   {
     <div className="mx-auto grid max-w-lg grid-cols-3 divide-x-4 divide-indigo-500 rounded-lg text-center font-mono text-sm leading-6 font-bold text-gray-400">
-      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">01</div>
-      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">02</div>
-      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">03</div>
+      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">
+        01
+      </div>
+      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">
+        02
+      </div>
+      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">
+        03
+      </div>
     </div>
   }
 </Example>
@@ -309,7 +315,11 @@ Use utilities like `divide-indigo-500` and `divide-lime-100` to control the bord
 
 ### Responsive design
 
-<ResponsiveDesign property="border-color" defaultClass="border-blue-500" featuredClass="border-green-500" />
+<ResponsiveDesign
+  property="border-color"
+  defaultClass="border-blue-500"
+  featuredClass="border-green-500"
+/>
 
 ## Customizing your theme
 

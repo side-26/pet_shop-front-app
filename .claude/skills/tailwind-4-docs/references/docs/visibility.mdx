@@ -1,17 +1,17 @@
-import { Stripes } from "@/components/stripes.tsx";
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { Stripes } from '@/components/stripes.tsx';
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "visibility";
-export const description = "Utilities for controlling the visibility of an element.";
+export const title = 'visibility';
+export const description = 'Utilities for controlling the visibility of an element.';
 
 <ApiTable
   rows={[
-    ["visible", "visibility: visible;"],
-    ["invisible", "visibility: hidden;"],
-    ["collapse", "visibility: collapse;"],
+    ['visible', 'visibility: visible;'],
+    ['invisible', 'visibility: hidden;'],
+    ['collapse', 'visibility: collapse;'],
   ]}
 />
 
@@ -29,7 +29,9 @@ Use the `invisible` utility to hide an element, but still maintain its place in 
       <Stripes border className="col-start-1 row-start-1 rounded-lg" />
       <div className="col-start-1 row-start-1 grid grid-cols-3 gap-4 font-mono text-sm leading-6 font-bold text-white">
         <div className="flex items-center justify-center rounded-lg bg-cyan-500 p-4">01</div>
-        <div className="invisible flex items-center justify-center rounded-lg bg-cyan-500 p-4">02</div>
+        <div className="invisible flex items-center justify-center rounded-lg bg-cyan-500 p-4">
+          02
+        </div>
         <div className="flex items-center justify-center rounded-lg bg-cyan-500 p-4">03</div>
       </div>
     </div>
@@ -58,7 +60,9 @@ Use the `collapse` utility to hide table rows, row groups, columns, and column g
 <Example padding={false}>
   {
     <div className="py-8">
-      <div className="mb-3 pl-4 text-sm font-medium text-gray-500 dark:text-gray-400">Showing all rows</div>
+      <div className="mb-3 pl-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+        Showing all rows
+      </div>
       <table className="w-full border-collapse border-y border-gray-400 bg-white text-sm dark:border-gray-500 dark:bg-gray-800">
         <thead className="bg-gray-50 dark:bg-gray-700">
           <tr>
@@ -110,7 +114,8 @@ Use the `collapse` utility to hide table rows, row groups, columns, and column g
         </tbody>
       </table>
       <div className="mt-10 mb-3 pl-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-        Hiding a row using <code className="text-xs text-gray-700 dark:text-gray-300">`collapse`</code>
+        Hiding a row using{' '}
+        <code className="text-xs text-gray-700 dark:text-gray-300">`collapse`</code>
       </div>
       <table className="w-full border-collapse border-y border-gray-400 bg-white text-sm dark:border-gray-500 dark:bg-gray-800">
         <thead className="bg-gray-50 dark:bg-gray-700">
@@ -163,7 +168,8 @@ Use the `collapse` utility to hide table rows, row groups, columns, and column g
         </tbody>
       </table>
       <div className="mt-10 mb-3 pl-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-        Hiding a row using <code className="text-xs text-gray-700 dark:text-gray-300">`hidden`</code>
+        Hiding a row using{' '}
+        <code className="text-xs text-gray-700 dark:text-gray-300">`hidden`</code>
       </div>
       <table className="w-full border-collapse border-y border-gray-400 bg-white text-sm dark:border-gray-500 dark:bg-gray-800">
         <thead className="bg-gray-50 dark:bg-gray-700">
@@ -263,7 +269,9 @@ Use the `visible` utility to make an element visible:
   {
     <div className="grid grid-cols-3 gap-4 font-mono text-sm leading-6 font-bold text-white">
       <div className="flex items-center justify-center rounded-lg bg-fuchsia-500 p-4">01</div>
-      <div className="visible flex items-center justify-center rounded-lg bg-fuchsia-500 p-4">02</div>
+      <div className="visible flex items-center justify-center rounded-lg bg-fuchsia-500 p-4">
+        02
+      </div>
       <div className="flex items-center justify-center rounded-lg bg-fuchsia-500 p-4">03</div>
     </div>
   }

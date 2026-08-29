@@ -1,38 +1,42 @@
-import dedent from "dedent";
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourTheme, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import dedent from 'dedent';
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourTheme,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "display";
-export const description = "Utilities for controlling the display box type of an element.";
+export const title = 'display';
+export const description = 'Utilities for controlling the display box type of an element.';
 
 <ApiTable
   rows={[
-    ["inline", "display: inline;"],
-    ["block", "display: block;"],
-    ["inline-block", "display: inline-block;"],
-    ["flow-root", "display: flow-root;"],
-    ["flex", "display: flex;"],
-    ["inline-flex", "display: inline-flex;"],
-    ["grid", "display: grid;"],
-    ["inline-grid", "display: inline-grid;"],
-    ["contents", "display: contents;"],
-    ["table", "display: table;"],
-    ["inline-table", "display: inline-table;"],
-    ["table-caption", "display: table-caption;"],
-    ["table-cell", "display: table-cell;"],
-    ["table-column", "display: table-column;"],
-    ["table-column-group", "display: table-column-group;"],
-    ["table-footer-group", "display: table-footer-group;"],
-    ["table-header-group", "display: table-header-group;"],
-    ["table-row-group", "display: table-row-group;"],
-    ["table-row", "display: table-row;"],
-    ["list-item", "display: list-item;"],
-    ["hidden", "display: none;"],
+    ['inline', 'display: inline;'],
+    ['block', 'display: block;'],
+    ['inline-block', 'display: inline-block;'],
+    ['flow-root', 'display: flow-root;'],
+    ['flex', 'display: flex;'],
+    ['inline-flex', 'display: inline-flex;'],
+    ['grid', 'display: grid;'],
+    ['inline-grid', 'display: inline-grid;'],
+    ['contents', 'display: contents;'],
+    ['table', 'display: table;'],
+    ['inline-table', 'display: inline-table;'],
+    ['table-caption', 'display: table-caption;'],
+    ['table-cell', 'display: table-cell;'],
+    ['table-column', 'display: table-column;'],
+    ['table-column-group', 'display: table-column-group;'],
+    ['table-footer-group', 'display: table-footer-group;'],
+    ['table-header-group', 'display: table-header-group;'],
+    ['table-row-group', 'display: table-row-group;'],
+    ['table-row', 'display: table-row;'],
+    ['list-item', 'display: list-item;'],
+    ['hidden', 'display: none;'],
     [
-      "sr-only",
+      'sr-only',
       dedent`
         position: absolute;
         width: 1px;
@@ -46,7 +50,7 @@ export const description = "Utilities for controlling the display box type of an
       `,
     ],
     [
-      "not-sr-only",
+      'not-sr-only',
       dedent`
         position: static;
         width: auto;
@@ -72,24 +76,24 @@ Use the `inline`, `inline-block`, and `block` utilities to control the flow of t
 <Example>
   {
     <div className="mx-auto max-w-xs px-4 text-sm leading-6 text-gray-500 sm:text-base sm:leading-7 dark:text-gray-300">
-      When controlling the flow of text, using the CSS property{" "}
+      When controlling the flow of text, using the CSS property{' '}
       <span className="inline rounded bg-sky-100 font-mono text-sm font-bold text-gray-900 dark:bg-white/15 dark:text-gray-200">
         display: inline
-      </span>{" "}
+      </span>{' '}
       will cause the text inside the element to wrap normally.
       <br />
       <br />
-      While using the property{" "}
+      While using the property{' '}
       <span className="inline-block rounded bg-sky-100 font-mono text-sm font-bold text-gray-900 dark:bg-white/15 dark:text-gray-200">
         display: inline-block
-      </span>{" "}
+      </span>{' '}
       will wrap the element to prevent the text inside from extending beyond its parent.
       <br />
       <br />
-      Lastly, using the property{" "}
+      Lastly, using the property{' '}
       <span className="block rounded bg-sky-100 font-mono text-sm font-bold text-gray-900 dark:bg-white/15 dark:text-gray-200">
         display: block
-      </span>{" "}
+      </span>{' '}
       will put the element on its own line and fill its parent.
     </div>
   }
@@ -98,16 +102,17 @@ Use the `inline`, `inline-block`, and `block` utilities to control the flow of t
 ```html
 <!-- [!code classes:inline,inline-block,block] -->
 <p>
-  When controlling the flow of text, using the CSS property <span class="inline">display: inline</span> will cause the
-  text inside the element to wrap normally.
+  When controlling the flow of text, using the CSS property
+  <span class="inline">display: inline</span> will cause the text inside the element to wrap
+  normally.
 </p>
 <p>
-  While using the property <span class="inline-block">display: inline-block</span> will wrap the element to prevent the
-  text inside from extending beyond its parent.
+  While using the property <span class="inline-block">display: inline-block</span> will wrap the
+  element to prevent the text inside from extending beyond its parent.
 </p>
 <p>
-  Lastly, using the property <span class="block">display: block</span> will put the element on its own line and fill its
-  parent.
+  Lastly, using the property <span class="block">display: block</span> will put the element on its
+  own line and fill its parent.
 </p>
 ```
 
@@ -130,8 +135,9 @@ Use the `flow-root` utility to create a block-level element with its own [block 
           <Stripes border className="h-4" />
         </div>
         <div className="my-4">
-          Well, let me tell you something, funny boy. Y'know that little stamp, the one that says "New York Public
-          Library"? Well that may not mean anything to you, but that means a lot to me. One whole hell of a lot.
+          Well, let me tell you something, funny boy. Y'know that little stamp, the one that says
+          "New York Public Library"? Well that may not mean anything to you, but that means a lot to
+          me. One whole hell of a lot.
         </div>
       </div>
       <div className="relative mt-0.5 flow-root">
@@ -142,9 +148,9 @@ Use the `flow-root` utility to create a block-level element with its own [block 
           <Stripes border className="h-4" />
         </div>
         <div className="my-4">
-          Sure, go ahead, laugh if you want to. I've seen your type before: Flashy, making the scene, flaunting
-          convention. Yeah, I know what you're thinking. What's this guy making such a big stink about old library
-          books? Well, let me give you a hint, junior.
+          Sure, go ahead, laugh if you want to. I've seen your type before: Flashy, making the
+          scene, flaunting convention. Yeah, I know what you're thinking. What's this guy making
+          such a big stink about old library books? Well, let me give you a hint, junior.
         </div>
       </div>
     </div>
@@ -210,8 +216,8 @@ Use the `inline-flex` utility to create an inline flex container that flows with
 <Example padding={false}>
   {
     <p className="mx-auto max-w-lg p-4 text-sm leading-6 text-gray-500 sm:text-base/7 dark:text-gray-300">
-      Today I spent most of the day researching ways to take advantage of the fact that bottles can be returned for 10
-      cents in Michigan, but only 5 cents here.{" "}
+      Today I spent most of the day researching ways to take advantage of the fact that bottles can
+      be returned for 10 cents in Michigan, but only 5 cents here.{' '}
       <span className="ml-1 inline-flex items-baseline">
         <img
           src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=80"
@@ -219,9 +225,10 @@ Use the `inline-flex` utility to create an inline flex container that flows with
           className="mr-1 size-5 self-center rounded-full"
         />
         <span className="font-medium text-gray-900 dark:text-gray-100">Kramer</span>
-      </span>{" "}
-      keeps telling me there is no way to make it work, that he has run the numbers on every possible approach, but I
-      just have to believe there's a way to make it work, there's simply too much opportunity here.
+      </span>{' '}
+      keeps telling me there is no way to make it work, that he has run the numbers on every
+      possible approach, but I just have to believe there's a way to make it work, there's simply
+      too much opportunity here.
     </p>
   }
 </Example>

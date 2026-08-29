@@ -1,19 +1,23 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { UsingACustomValue, ResponsiveDesign, CustomizingYourTheme } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import {
+  UsingACustomValue,
+  ResponsiveDesign,
+  CustomizingYourTheme,
+} from '@/components/content.tsx';
 
-export const title = "aspect-ratio";
-export const description = "Utilities for controlling the aspect ratio of an element.";
+export const title = 'aspect-ratio';
+export const description = 'Utilities for controlling the aspect ratio of an element.';
 
 <ApiTable
   rows={[
-    ["aspect-<ratio>", "aspect-ratio: <ratio>;"],
-    ["aspect-square", "aspect-ratio: 1 / 1;"],
-    ["aspect-video", "aspect-ratio: var(--aspect-video); /* 16 / 9 */"],
-    ["aspect-auto", "aspect-ratio: auto;"],
-    ["aspect-(<custom-property>)", "aspect-ratio: var(<custom-property>);"],
-    ["aspect-[<value>]", "aspect-ratio: <value>;"],
+    ['aspect-<ratio>', 'aspect-ratio: <ratio>;'],
+    ['aspect-square', 'aspect-ratio: 1 / 1;'],
+    ['aspect-video', 'aspect-ratio: var(--aspect-video); /* 16 / 9 */'],
+    ['aspect-auto', 'aspect-ratio: auto;'],
+    ['aspect-(<custom-property>)', 'aspect-ratio: var(<custom-property>);'],
+    ['aspect-[<value>]', 'aspect-ratio: <value>;'],
   ]}
 />
 
@@ -69,7 +73,7 @@ Use the `aspect-video` utility to give a video element a 16 / 9 aspect ratio:
 
 <UsingACustomValue
   element="img"
-  elementAttributes={{ src: "/img/villas.jpg" }}
+  elementAttributes={{ src: '/img/villas.jpg' }}
   utility="aspect"
   name="aspect ratio"
   value="calc(4*3+1)/3"
@@ -80,7 +84,7 @@ Use the `aspect-video` utility to give a video element a 16 / 9 aspect ratio:
 
 <ResponsiveDesign
   element="iframe"
-  elementAttributes={{ src: "https://www.youtube.com/embed/dQw4w9WgXcQ" }}
+  elementAttributes={{ src: 'https://www.youtube.com/embed/dQw4w9WgXcQ' }}
   property="aspect-ratio"
   defaultClass="aspect-video"
   featuredClass="aspect-square"
@@ -90,7 +94,7 @@ Use the `aspect-video` utility to give a video element a 16 / 9 aspect ratio:
 
 <CustomizingYourTheme
   element="iframe"
-  elementAttributes={{ src: "https://www.youtube.com/embed/dQw4w9WgXcQ" }}
+  elementAttributes={{ src: 'https://www.youtube.com/embed/dQw4w9WgXcQ' }}
   utility="aspect"
   name="aspect ratio"
   customName="retro"

@@ -1,21 +1,26 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourTheme, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourTheme,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
 
-export const title = "perspective";
-export const description = "Utilities for controlling an element's perspective when placed in 3D space.";
+export const title = 'perspective';
+export const description =
+  "Utilities for controlling an element's perspective when placed in 3D space.";
 
 <ApiTable
   rows={[
-    ["perspective-dramatic", "perspective: var(--perspective-dramatic); /* 100px */"],
-    ["perspective-near", "perspective: var(--perspective-near); /* 300px */"],
-    ["perspective-normal", "perspective: var(--perspective-normal); /* 500px */"],
-    ["perspective-midrange", "perspective: var(--perspective-midrange); /* 800px */"],
-    ["perspective-distant", "perspective: var(--perspective-distant); /* 1200px */"],
-    ["perspective-none", "perspective: none;"],
-    ["perspective-(<custom-property>)", "perspective: var(<custom-property>);"],
-    ["perspective-[<value>]", "perspective: <value>;"],
+    ['perspective-dramatic', 'perspective: var(--perspective-dramatic); /* 100px */'],
+    ['perspective-near', 'perspective: var(--perspective-near); /* 300px */'],
+    ['perspective-normal', 'perspective: var(--perspective-normal); /* 500px */'],
+    ['perspective-midrange', 'perspective: var(--perspective-midrange); /* 800px */'],
+    ['perspective-distant', 'perspective: var(--perspective-distant); /* 1200px */'],
+    ['perspective-none', 'perspective: none;'],
+    ['perspective-(<custom-property>)', 'perspective: var(<custom-property>);'],
+    ['perspective-[<value>]', 'perspective: <value>;'],
   ]}
 />
 
@@ -130,8 +135,17 @@ Use the `perspective-none` utility to remove a perspective transform from an ele
 
 ### Responsive design
 
-<ResponsiveDesign property="perspective" defaultClass="perspective-midrange" featuredClass="perspective-dramatic" />
+<ResponsiveDesign
+  property="perspective"
+  defaultClass="perspective-midrange"
+  featuredClass="perspective-dramatic"
+/>
 
 ## Customizing your theme
 
-<CustomizingYourTheme utility="perspective" name="perspective" customName="remote" customValue="1800px" />
+<CustomizingYourTheme
+  utility="perspective"
+  name="perspective"
+  customName="remote"
+  customValue="1800px"
+/>

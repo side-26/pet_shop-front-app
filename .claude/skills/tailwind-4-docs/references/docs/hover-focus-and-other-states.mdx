@@ -1,12 +1,19 @@
-import dedent from "dedent";
-import { CodeExample, CodeExampleGroup, CodeBlock, svelte, html, css } from "@/components/code-example.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { Iframe } from "@/components/iframe.tsx";
-import { TipGood, TipBad, TipInfo } from "@/components/tips";
+import dedent from 'dedent';
+import {
+  CodeExample,
+  CodeExampleGroup,
+  CodeBlock,
+  svelte,
+  html,
+  css,
+} from '@/components/code-example.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { Iframe } from '@/components/iframe.tsx';
+import { TipGood, TipBad, TipInfo } from '@/components/tips';
 
-export const title = "Hover, focus, and other states";
-export const description = "Using utilities to style elements on hover, focus, and more.";
+export const title = 'Hover, focus, and other states';
+export const description = 'Using utilities to style elements on hover, focus, and more.';
 
 Every utility class in Tailwind can be applied _conditionally_ by adding a variant to the beginning of the class name that describes the condition you want to target.
 
@@ -50,7 +57,9 @@ When writing CSS the traditional way, a single class name would do different thi
 
 In Tailwind, rather than adding the styles for a hover state to an existing class, you add another class to the element that _only_ does something on hover:
 
-<TipGood>{<>In Tailwind, separate classes are used for the default state and the hover state</>}</TipGood>
+<TipGood>
+  {<>In Tailwind, separate classes are used for the default state and the hover state</>}
+</TipGood>
 
 ```css
 .bg-sky-500 {
@@ -139,7 +148,9 @@ Style an element when it is the first-child or last-child using the `first` and 
             />
             <div className="ml-3 overflow-hidden">
               <p className="text-sm font-medium text-gray-900 dark:text-white">Kristen Ramos</p>
-              <p className="truncate text-sm text-gray-500 dark:text-gray-400">kristen.ramos@example.com</p>
+              <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                kristen.ramos@example.com
+              </p>
             </div>
           </li>
           <li className="flex py-4 first:pt-0 last:pb-0">
@@ -150,7 +161,9 @@ Style an element when it is the first-child or last-child using the `first` and 
             />
             <div className="ml-3 overflow-hidden">
               <p className="text-sm font-medium text-gray-900 dark:text-white">Floyd Miles</p>
-              <p className="truncate text-sm text-gray-500 dark:text-gray-400">floyd.miles@example.com</p>
+              <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                floyd.miles@example.com
+              </p>
             </div>
           </li>
           <li className="flex py-4 first:pt-0 last:pb-0">
@@ -161,7 +174,9 @@ Style an element when it is the first-child or last-child using the `first` and 
             />
             <div className="ml-3 overflow-hidden">
               <p className="text-sm font-medium text-gray-900 dark:text-white">Courtney Henry</p>
-              <p className="truncate text-sm text-gray-500 dark:text-gray-400">courtney.henry@example.com</p>
+              <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                courtney.henry@example.com
+              </p>
             </div>
           </li>
           <li className="flex py-4 first:pt-0 last:pb-0">
@@ -172,7 +187,9 @@ Style an element when it is the first-child or last-child using the `first` and 
             />
             <div className="ml-3 overflow-hidden">
               <p className="text-sm font-medium text-gray-900 dark:text-white">Ted Fox</p>
-              <p className="truncate text-sm text-gray-500 dark:text-gray-400">ted.fox@example.com</p>
+              <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                ted.fox@example.com
+              </p>
             </div>
           </li>
         </ul>
@@ -213,13 +230,22 @@ You can also style an element when it's an odd or even child using the `odd` and
               <table className="min-w-full">
                 <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-950">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-gray-900 dark:text-white">
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-sm font-medium text-gray-900 dark:text-white"
+                    >
                       Name
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-gray-900 dark:text-white">
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-sm font-medium text-gray-900 dark:text-white"
+                    >
                       Title
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-gray-900 dark:text-white">
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-sm font-medium text-gray-900 dark:text-white"
+                    >
                       Email
                     </th>
                   </tr>
@@ -344,7 +370,10 @@ Style form elements in different states using variants like `required`, `invalid
     <div className="mx-auto max-w-md border-x border-x-gray-200 px-6 py-5 dark:border-x-gray-800 dark:bg-gray-950/10">
       <form>
         <div>
-          <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="username"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             Username
           </label>
           <div className="mt-1">
@@ -359,7 +388,10 @@ Style form elements in different states using variants like `required`, `invalid
           </div>
         </div>
         <div className="mt-6">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             Email
           </label>
           <div className="mt-1">
@@ -374,7 +406,10 @@ Style form elements in different states using variants like `required`, `invalid
           </div>
         </div>
         <div className="mt-6">
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             Password
           </label>
           <div className="mt-1">
@@ -426,7 +461,9 @@ Use the `has-*` variant to style an element based on the state or content of its
   {
     <div className="mx-auto max-w-md border-x border-x-gray-200 px-4 py-6 text-gray-700 dark:border-x-gray-800 dark:bg-gray-950/10 dark:text-gray-200">
       <fieldset>
-        <legend className="text-base font-semibold text-gray-900 dark:text-white">Payment method</legend>
+        <legend className="text-base font-semibold text-gray-900 dark:text-white">
+          Payment method
+        </legend>
         <div className="mt-4 space-y-2">
           <label
             htmlFor="apple"
@@ -528,10 +565,14 @@ If you need to style an element based on the descendants of a parent element, yo
           stroke="currentColor"
           className="hidden size-4 group-has-[a]:block"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+          />
         </svg>
         <p className="col-start-2 text-sm">
-          Product Designer at{" "}
+          Product Designer at{' '}
           <a href="#" className="dark;text-blue-400 text-blue-500 underline">
             planeteria.tech
           </a>
@@ -552,7 +593,11 @@ If you need to style an element based on the descendants of a parent element, yo
           stroke="currentColor"
           className="hidden size-4 group-has-[a]:block"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+          />
         </svg>
         <p className="col-start-2 text-sm">Just happy to be here.</p>
       </div>
@@ -571,7 +616,11 @@ If you need to style an element based on the descendants of a parent element, yo
           stroke="currentColor"
           className="hidden size-4 group-has-[a]:block"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+          />
         </svg>
         <p className="col-start-2 text-sm">
           A multidisciplinary designer, working at the intersection of art and technology. <br />
@@ -596,7 +645,11 @@ If you need to style an element based on the descendants of a parent element, yo
           stroke="currentColor"
           className="hidden size-4 group-has-[a]:block"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+          />
         </svg>
         <p className="col-start-2 text-sm">Pushing pixels. Slinging divs.</p>
       </div>
@@ -747,7 +800,11 @@ When you need to style an element based on the state of some _parent_ element, m
       className="group mx-auto block max-w-xs space-y-3 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-900/5 hover:bg-sky-500 hover:ring-sky-500 dark:bg-white/5 dark:ring-white/10"
     >
       <div className="flex items-center space-x-3">
-        <svg className="h-6 w-6 stroke-sky-500 group-hover:stroke-white" fill="none" viewBox="0 0 24 24">
+        <svg
+          className="h-6 w-6 stroke-sky-500 group-hover:stroke-white"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -762,7 +819,9 @@ When you need to style an element based on the state of some _parent_ element, m
           />
         </svg>
         {/* This is not an h3 because we're converting h3's to links in MDX files */}
-        <div className="text-sm font-semibold text-gray-900 group-hover:text-white dark:text-white">New project</div>
+        <div className="text-sm font-semibold text-gray-900 group-hover:text-white dark:text-white">
+          New project
+        </div>
       </div>
       <p className="text-sm text-gray-500 group-hover:text-white dark:text-gray-400">
         Create a new project from a variety of starting templates.
@@ -783,7 +842,9 @@ When you need to style an element based on the state of some _parent_ element, m
     </svg>
     <h3 class="text-gray-900 group-hover:text-white ...">New project</h3>
   </div>
-  <p class="text-gray-500 group-hover:text-white ...">Create a new project from a variety of starting templates.</p>
+  <p class="text-gray-500 group-hover:text-white ...">
+    Create a new project from a variety of starting templates.
+  </p>
 </a>
 ```
 
@@ -815,7 +876,8 @@ When nesting groups, you can style something based on the state of a _specific_ 
             </div>
             <div className="w-full text-sm leading-6">
               <a href="#" className="font-semibold text-gray-900 dark:text-white">
-                <span className="absolute inset-0 rounded-xl" aria-hidden="true"></span>Leslie Abbott
+                <span className="absolute inset-0 rounded-xl" aria-hidden="true"></span>Leslie
+                Abbott
               </a>
               <div className="text-gray-500">Co-Founder / CEO</div>
             </div>
@@ -883,7 +945,8 @@ When nesting groups, you can style something based on the state of a _specific_ 
             </div>
             <div className="w-full text-sm leading-6">
               <a href="#" className="font-semibold text-gray-900 dark:text-white">
-                <span className="absolute inset-0 rounded-xl" aria-hidden="true"></span>Blake Alexander
+                <span className="absolute inset-0 rounded-xl" aria-hidden="true"></span>Blake
+                Alexander
               </a>
               <div className="text-gray-500">Account Coordinator</div>
             </div>
@@ -1020,7 +1083,10 @@ When you need to style an element based on the state of a _sibling_ element, mar
     <div className="mx-auto max-w-md border-x border-x-gray-200 px-6 pt-6 pb-5 dark:border-x-gray-800 dark:bg-gray-950/10">
       <form>
         <div>
-          <label htmlFor="email-2" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="email-2"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             Email
           </label>
           <div className="mt-1">
@@ -1132,7 +1198,9 @@ When using multiple peers, you can style something on the state of a _specific_ 
   <input id="published" class="peer/published" type="radio" name="status" />
   <label for="published" class="peer-checked/published:text-sky-500">Published</label>
   <div class="hidden peer-checked/draft:block">Drafts are only visible to administrators.</div>
-  <div class="hidden peer-checked/published:block">Your post will be publicly visible on your site.</div>
+  <div class="hidden peer-checked/published:block">
+    Your post will be publicly visible on your site.
+  </div>
 </fieldset>
 ```
 
@@ -1250,10 +1318,10 @@ When using these variants, Tailwind will automatically add `content: ''` by defa
     <div className="px-6">
       <div className="mx-auto max-w-lg border-x border-x-gray-200 px-6 py-8 dark:border-x-gray-800 dark:bg-gray-950/10">
         <blockquote className="text-center text-2xl font-semibold text-gray-900 italic dark:text-white">
-          When you look{" "}
+          When you look{' '}
           <span className="relative inline-block before:absolute before:-inset-1 before:block before:-skew-y-3 before:bg-pink-500">
             <span className="relative text-white dark:text-gray-950">annoyed</span>
-          </span>{" "}
+          </span>{' '}
           all the time, people think that you're busy.
         </blockquote>
       </div>
@@ -1269,7 +1337,9 @@ When using these variants, Tailwind will automatically add `content: ''` by defa
 <!-- [!code classes:before:bg-pink-500] -->
 <blockquote class="text-center text-2xl font-semibold text-gray-900 italic dark:text-white">
   When you look
-  <span class="relative inline-block before:absolute before:-inset-1 before:block before:-skew-y-3 before:bg-pink-500">
+  <span
+    class="relative inline-block before:absolute before:-inset-1 before:block before:-skew-y-3 before:bg-pink-500"
+  >
     <span class="relative text-white dark:text-gray-950">annoyed</span>
   </span>
   all the time, people think that you're busy.
@@ -1393,7 +1463,10 @@ Style the counters or bullets in lists using the `marker` variant:
     <div className="px-6">
       <div className="mx-auto max-w-sm border-x border-x-gray-200 px-8 py-8 dark:border-x-gray-800 dark:bg-gray-950/10">
         <h2 className="text-base font-semibold text-gray-900 dark:text-gray-200">Ingredients</h2>
-        <ul role="list" className="mt-3 list-disc space-y-3 pl-5 text-gray-500 marker:text-sky-400 dark:text-gray-400">
+        <ul
+          role="list"
+          className="mt-3 list-disc space-y-3 pl-5 text-gray-500 marker:text-sky-400 dark:text-gray-400"
+        >
           <li>5 cups chopped Porcini mushrooms</li>
           <li>1/2 cup of olive oil</li>
           <li>3lb of celery</li>
@@ -1427,9 +1500,10 @@ Style the active text selection using the `selection` variant:
     <div className="px-6">
       <div className="mx-auto max-w-lg border-x border-x-gray-200 px-6 py-8 text-gray-700 selection:bg-fuchsia-300 selection:text-fuchsia-900 dark:border-x-gray-800 dark:bg-gray-950/10 dark:text-gray-300">
         <p>
-          So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made
-          my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the
-          kinship of all living things but I tell you Jerry at that moment, I <em>was</em> a marine biologist.
+          So I started to walk into the water. I won't lie to you boys, I was terrified. But I
+          pressed on, and as I made my way past the breakers a strange calm came over me. I don't
+          know if it was divine intervention or the kinship of all living things but I tell you
+          Jerry at that moment, I <em>was</em> a marine biologist.
         </p>
       </div>
     </div>
@@ -1441,9 +1515,10 @@ Style the active text selection using the `selection` variant:
 <!-- [!code classes:selection:text-fuchsia-900] -->
 <div class="selection:bg-fuchsia-300 selection:text-fuchsia-900">
   <p>
-    So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made my
-    way past the breakers a strange calm came over me. I don't know if it was divine intervention or the kinship of all
-    living things but I tell you Jerry at that moment, I <em>was</em> a marine biologist.
+    So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on,
+    and as I made my way past the breakers a strange calm came over me. I don't know if it was
+    divine intervention or the kinship of all living things but I tell you Jerry at that moment, I
+    <em>was</em> a marine biologist.
   </p>
 </div>
 ```
@@ -1508,9 +1583,12 @@ Style the first line in a block of content using the `first-line` variant, and t
   <p
     class="first-letter:float-left first-letter:mr-3 first-letter:text-7xl first-letter:font-bold first-letter:text-gray-900 first-line:tracking-widest first-line:uppercase"
   >
-    Well, let me tell you something, funny boy. Y'know that little stamp, the one that says "New York Public Library"?
+    Well, let me tell you something, funny boy. Y'know that little stamp, the one that says "New
+    York Public Library"?
   </p>
-  <p class="mt-6">Well that may not mean anything to you, but that means a lot to me. One whole hell of a lot.</p>
+  <p class="mt-6">
+    Well that may not mean anything to you, but that means a lot to me. One whole hell of a lot.
+  </p>
 </div>
 ```
 
@@ -1592,10 +1670,12 @@ Use utilities with no variant to target light mode, and use the `dark` variant t
             </span>
           </div>
           {/* This is not an h3 because we're converting h3's to links in MDX files */}
-          <div className="mt-5 text-base font-medium tracking-tight text-gray-900">Writes upside-down</div>
+          <div className="mt-5 text-base font-medium tracking-tight text-gray-900">
+            Writes upside-down
+          </div>
           <p className="mt-2 text-sm text-gray-500">
-            The Zero Gravity Pen can be used to write in any orientation, including upside-down. It even works in outer
-            space.
+            The Zero Gravity Pen can be used to write in any orientation, including upside-down. It
+            even works in outer space.
           </p>
         </div>
       </div>
@@ -1621,10 +1701,12 @@ Use utilities with no variant to target light mode, and use the `dark` variant t
             </span>
           </div>
           {/* This is not an h3 because we're converting h3's to links in MDX files */}
-          <div className="mt-5 text-base font-medium tracking-tight text-white">Writes upside-down</div>
+          <div className="mt-5 text-base font-medium tracking-tight text-white">
+            Writes upside-down
+          </div>
           <p className="mt-2 text-sm text-gray-400">
-            The Zero Gravity Pen can be used to write in any orientation, including upside-down. It even works in outer
-            space.
+            The Zero Gravity Pen can be used to write in any orientation, including upside-down. It
+            even works in outer space.
           </p>
         </div>
       </div>
@@ -1640,7 +1722,8 @@ Use utilities with no variant to target light mode, and use the `dark` variant t
   <!-- ... -->
   <h3 class="text-gray-900 dark:text-white ...">Writes upside-down</h3>
   <p class="text-gray-500 dark:text-gray-400 ...">
-    The Zero Gravity Pen can be used to write in any orientation, including upside-down. It even works in outer space.
+    The Zero Gravity Pen can be used to write in any orientation, including upside-down. It even
+    works in outer space.
   </p>
 </div>
 ```
@@ -1670,7 +1753,14 @@ Use the `motion-reduce` variant to conditionally add styles when the user has re
           fill="none"
           viewBox="0 0 24 24"
         >
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
           <path
             className="opacity-75"
             fill="currentColor"
@@ -1701,7 +1791,9 @@ Tailwind also includes a `motion-safe` variant that only adds styles when the us
 <!-- [!code classes:motion-safe:hover:-translate-x-0.5] -->
 <!-- [!code classes:motion-safe:transition] -->
 <!-- Using `motion-reduce` can mean lots of "undoing" styles -->
-<button class="transition hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ...">
+<button
+  class="transition hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ..."
+>
   Save changes
 </button>
 
@@ -1722,7 +1814,10 @@ Use the `contrast-more` variant to conditionally add styles when the user has re
     <div className="mx-auto max-w-sm border-x border-x-gray-200 px-6 pt-6 pb-4 dark:border-x-gray-800 dark:bg-gray-950/10">
       <form>
         <div>
-          <label htmlFor="contrast-example" className="block text-sm font-medium text-gray-700 dark:text-white">
+          <label
+            htmlFor="contrast-example"
+            className="block text-sm font-medium text-gray-700 dark:text-white"
+          >
             Social Security Number
           </label>
           <div className="mt-1">
@@ -1750,7 +1845,9 @@ Use the `contrast-more` variant to conditionally add styles when the user has re
   <input
     class="border-gray-200 placeholder-gray-400 contrast-more:border-gray-400 contrast-more:placeholder-gray-500 ..."
   />
-  <p class="text-gray-600 opacity-10 contrast-more:opacity-100 ...">We need this to steal your identity.</p>
+  <p class="text-gray-600 opacity-10 contrast-more:opacity-100 ...">
+    We need this to steal your identity.
+  </p>
 </label>
 ```
 
@@ -1881,7 +1978,10 @@ Use the `pointer-fine` variant to target an accurate pointing device, like a mou
     <fieldset aria-label="Choose a memory option" className="mx-auto max-w-md">
       <div className="flex items-center justify-between">
         <div className="text-sm/6 font-medium text-gray-900 dark:text-white">RAM</div>
-        <a href="#" className="text-sm/6 font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
+        <a
+          href="#"
+          className="text-sm/6 font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
+        >
           See performance specs
         </a>
       </div>
@@ -1891,7 +1991,13 @@ Use the `pointer-fine` variant to target an accurate pointing device, like a mou
           <span>4 GB</span>
         </label>
         <label className="flex items-center justify-center rounded-md bg-white p-2 text-sm font-semibold text-gray-900 uppercase ring-1 ring-gray-300 not-data-focus:not-has-checked:ring-inset hover:bg-gray-50 has-checked:bg-indigo-600 has-checked:text-white has-checked:ring-0 has-checked:hover:bg-indigo-500 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-indigo-600 data-focus:ring-2 data-focus:ring-indigo-600 data-focus:ring-offset-2 data-focus:has-checked:ring-2 sm:flex-1 dark:bg-transparent dark:text-white dark:ring-white/20 dark:hover:bg-gray-950/50 pointer-coarse:p-4">
-          <input type="radio" name="memory-option" value="8 GB" className="sr-only" defaultChecked />
+          <input
+            type="radio"
+            name="memory-option"
+            value="8 GB"
+            className="sr-only"
+            defaultChecked
+          />
           <span>8 GB</span>
         </label>
         <label className="flex items-center justify-center rounded-md bg-white p-2 text-sm font-semibold text-gray-900 uppercase ring-1 ring-gray-300 not-data-focus:not-has-checked:ring-inset hover:bg-gray-50 has-checked:bg-indigo-600 has-checked:text-white has-checked:ring-0 has-checked:hover:bg-indigo-500 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-indigo-600 data-focus:ring-2 data-focus:ring-indigo-600 data-focus:ring-offset-2 data-focus:has-checked:ring-2 sm:flex-1 dark:bg-transparent dark:text-white dark:ring-white/20 dark:hover:bg-gray-950/50 pointer-coarse:p-4">
@@ -1922,7 +2028,9 @@ Use the `pointer-fine` variant to target an accurate pointing device, like a mou
     <div>RAM</div>
     <a href="#"> See performance specs </a>
   </div>
-  <div class="mt-4 grid grid-cols-6 gap-2 pointer-coarse:mt-6 pointer-coarse:grid-cols-3 pointer-coarse:gap-4">
+  <div
+    class="mt-4 grid grid-cols-6 gap-2 pointer-coarse:mt-6 pointer-coarse:grid-cols-3 pointer-coarse:gap-4"
+  >
     <label class="p-2 pointer-coarse:p-4 ...">
       <input type="radio" name="memory-option" value="4 GB" className="sr-only" />
       <span>4 GB</span>
@@ -1949,7 +2057,10 @@ Use the `portrait` and `landscape` variants to conditionally add styles when the
     <!-- ... -->
   </div>
   <div class="landscape:hidden">
-    <p>This experience is designed to be viewed in landscape. Please rotate your device to view the site.</p>
+    <p>
+      This experience is designed to be viewed in landscape. Please rotate your device to view the
+      site.
+    </p>
   </div>
 </div>
 ```
@@ -1961,7 +2072,10 @@ Use the `noscript` variant to conditionally add styles based on whether the user
 ```html
 <!-- [!code classes:noscript:block] -->
 <div class="hidden noscript:block">
-  <p>This experience requires JavaScript to function. Please enable JavaScript in your browser settings.</p>
+  <p>
+    This experience requires JavaScript to function. Please enable JavaScript in your browser
+    settings.
+  </p>
 </div>
 ```
 
@@ -1999,7 +2113,9 @@ For terseness, if you only need to check if a property is supported (and not a s
 
 ```html
 <!-- [!code classes:supports-backdrop-filter:bg-black/25,supports-backdrop-filter:backdrop-blur] -->
-<div class="bg-black/75 supports-backdrop-filter:bg-black/25 supports-backdrop-filter:backdrop-blur ...">
+<div
+  class="bg-black/75 supports-backdrop-filter:bg-black/25 supports-backdrop-filter:backdrop-blur ..."
+>
   <!-- ... -->
 </div>
 ```
@@ -2070,7 +2186,10 @@ Use the `starting` variant to set the appearance of an element when it is first 
               </svg>
             </div>
             <div className="mt-3 text-center sm:mt-5">
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white" id="modal-title">
+              <h3
+                className="text-base font-semibold text-gray-900 dark:text-white"
+                id="modal-title"
+              >
                 Update available
               </h3>
               <div className="mt-2">
@@ -2536,7 +2655,9 @@ Use the `open` variant to conditionally add styles when a `<details>` or `<dialo
 ```html
 <!-- [!code classes:open:border-black/10,open:bg-gray-100] -->
 <details class="border border-transparent open:border-black/10 open:bg-gray-100 ..." open>
-  <summary class="text-sm leading-6 font-semibold text-gray-900 select-none">Why do they call it Ovaltine?</summary>
+  <summary class="text-sm leading-6 font-semibold text-gray-900 select-none">
+    Why do they call it Ovaltine?
+  </summary>
   <div class="mt-3 text-sm leading-6 text-gray-600">
     <p>The mug is round. The jar is round. They should call it Roundtine.</p>
   </div>
@@ -2576,7 +2697,10 @@ The `inert` variant lets you style elements marked with the `inert` attribute:
             type="radio"
             className="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 dark:border-gray-700 dark:bg-gray-950 forced-colors:appearance-auto forced-colors:before:hidden"
           />
-          <label htmlFor="push-everything" className="block text-sm/6 font-medium text-gray-900 dark:text-white">
+          <label
+            htmlFor="push-everything"
+            className="block text-sm/6 font-medium text-gray-900 dark:text-white"
+          >
             Custom
           </label>
         </div>
@@ -2675,7 +2799,10 @@ The `inert` variant lets you style elements marked with the `inert` attribute:
             type="radio"
             className="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 dark:border-gray-700 dark:bg-gray-950 forced-colors:appearance-auto forced-colors:before:hidden"
           />
-          <label htmlFor="push-everything" className="block text-sm/6 font-medium text-gray-900 dark:text-white">
+          <label
+            htmlFor="push-everything"
+            className="block text-sm/6 font-medium text-gray-900 dark:text-white"
+          >
             Everything
           </label>
         </div>
@@ -2794,7 +2921,8 @@ Like `*`, the `**` variant can be used to style children of an element. The main
             </div>
             <div className="w-full text-sm leading-6">
               <a href="#" className="font-semibold text-gray-900 dark:text-white">
-                <span className="absolute inset-0 rounded-xl" aria-hidden="true"></span>Leslie Abbott
+                <span className="absolute inset-0 rounded-xl" aria-hidden="true"></span>Leslie
+                Abbott
               </a>
               <div className="text-gray-500">Co-Founder / CEO</div>
             </div>
@@ -2828,7 +2956,8 @@ Like `*`, the `**` variant can be used to style children of an element. The main
             </div>
             <div className="w-full text-sm leading-6">
               <a href="#" className="font-semibold text-gray-900 dark:text-white">
-                <span className="absolute inset-0 rounded-xl" aria-hidden="true"></span>Blake Alexander
+                <span className="absolute inset-0 rounded-xl" aria-hidden="true"></span>Blake
+                Alexander
               </a>
               <div className="text-gray-500">Account Coordinator</div>
             </div>
@@ -3015,7 +3144,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @media (hover: hover) {"{ "} <span className="text-gray-400">&</span>:hover {" }"}
+            @media (hover: hover) {'{ '} <span className="text-gray-400">&</span>:hover {' }'}
           </code>
         </td>
       </tr>
@@ -3099,7 +3228,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            :is(<span className="text-gray-400">&</span> {" > *"})
+            :is(<span className="text-gray-400">&</span> {' > *'})
           </code>
         </td>
       </tr>
@@ -3111,7 +3240,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            :is(<span className="text-gray-400">&</span> {" *"})
+            :is(<span className="text-gray-400">&</span> {' *'})
           </code>
         </td>
       </tr>
@@ -3135,7 +3264,8 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            <span className="text-gray-400">&</span>:is(:where(.group)<span className="text-gray-400">...</span> *)
+            <span className="text-gray-400">&</span>:is(:where(.group)
+            <span className="text-gray-400">...</span> *)
           </code>
         </td>
       </tr>
@@ -3147,7 +3277,8 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            <span className="text-gray-400">&</span>:is(:where(.peer)<span className="text-gray-400">...</span> ~ *)
+            <span className="text-gray-400">&</span>:is(:where(.peer)
+            <span className="text-gray-400">...</span> ~ *)
           </code>
         </td>
       </tr>
@@ -3159,7 +3290,8 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            :where(<span className="text-gray-400">...</span>) <span className="text-gray-400">&</span>
+            :where(<span className="text-gray-400">...</span>){' '}
+            <span className="text-gray-400">&</span>
           </code>
         </td>
       </tr>
@@ -3291,7 +3423,8 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            <span className="text-gray-400">&</span>:nth-child(<span className="text-gray-400">...</span>)
+            <span className="text-gray-400">&</span>:nth-child(
+            <span className="text-gray-400">...</span>)
           </code>
         </td>
       </tr>
@@ -3303,7 +3436,8 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            <span className="text-gray-400">&</span>:nth-last-child(<span className="text-gray-400">...</span>)
+            <span className="text-gray-400">&</span>:nth-last-child(
+            <span className="text-gray-400">...</span>)
           </code>
         </td>
       </tr>
@@ -3315,7 +3449,8 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            <span className="text-gray-400">&</span>:nth-of-type(<span className="text-gray-400">...</span>)
+            <span className="text-gray-400">&</span>:nth-of-type(
+            <span className="text-gray-400">...</span>)
           </code>
         </td>
       </tr>
@@ -3327,7 +3462,8 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            <span className="text-gray-400">&</span>:nth-last-of-type(<span className="text-gray-400">...</span>)
+            <span className="text-gray-400">&</span>:nth-last-of-type(
+            <span className="text-gray-400">...</span>)
           </code>
         </td>
       </tr>
@@ -3603,7 +3739,8 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            <span className="text-gray-400">&</span>::marker, <span className="text-gray-400">&</span> *::marker
+            <span className="text-gray-400">&</span>::marker,{' '}
+            <span className="text-gray-400">&</span> *::marker
           </code>
         </td>
       </tr>
@@ -3662,7 +3799,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (width {">="} 40rem)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (width {'>='} 40rem)
+          </code>
         </td>
       </tr>
       <tr>
@@ -3672,7 +3811,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (width {">="} 48rem)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (width {'>='} 48rem)
+          </code>
         </td>
       </tr>
       <tr>
@@ -3682,7 +3823,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (width {">="} 64rem)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (width {'>='} 64rem)
+          </code>
         </td>
       </tr>
       <tr>
@@ -3692,7 +3835,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (width {">="} 80rem)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (width {'>='} 80rem)
+          </code>
         </td>
       </tr>
       <tr>
@@ -3702,7 +3847,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (width {">="} 96rem)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (width {'>='} 96rem)
+          </code>
         </td>
       </tr>
       <tr>
@@ -3713,7 +3860,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @media (width {">= "} <span className="text-gray-400">...</span>)
+            @media (width {'>= '} <span className="text-gray-400">...</span>)
           </code>
         </td>
       </tr>
@@ -3724,7 +3871,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (width {"<"} 40rem)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (width {'<'} 40rem)
+          </code>
         </td>
       </tr>
       <tr>
@@ -3734,7 +3883,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (width {"<"} 48rem)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (width {'<'} 48rem)
+          </code>
         </td>
       </tr>
       <tr>
@@ -3744,7 +3895,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (width {"<"} 64rem)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (width {'<'} 64rem)
+          </code>
         </td>
       </tr>
       <tr>
@@ -3754,7 +3907,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (width {"<"} 80rem)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (width {'<'} 80rem)
+          </code>
         </td>
       </tr>
       <tr>
@@ -3764,7 +3919,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (width {"<"} 96rem)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (width {'<'} 96rem)
+          </code>
         </td>
       </tr>
       <tr>
@@ -3775,7 +3932,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @media (width {"< "} <span className="text-gray-400">...</span>)
+            @media (width {'< '} <span className="text-gray-400">...</span>)
           </code>
         </td>
       </tr>
@@ -3787,7 +3944,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {">="} 16rem)
+            @container (width {'>='} 16rem)
           </code>
         </td>
       </tr>
@@ -3799,7 +3956,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {">="} 18rem)
+            @container (width {'>='} 18rem)
           </code>
         </td>
       </tr>
@@ -3811,7 +3968,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {">="} 20rem)
+            @container (width {'>='} 20rem)
           </code>
         </td>
       </tr>
@@ -3823,7 +3980,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {">="} 24rem)
+            @container (width {'>='} 24rem)
           </code>
         </td>
       </tr>
@@ -3835,7 +3992,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {">="} 28rem)
+            @container (width {'>='} 28rem)
           </code>
         </td>
       </tr>
@@ -3847,7 +4004,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {">="} 32rem)
+            @container (width {'>='} 32rem)
           </code>
         </td>
       </tr>
@@ -3859,7 +4016,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {">="} 36rem)
+            @container (width {'>='} 36rem)
           </code>
         </td>
       </tr>
@@ -3871,7 +4028,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {">="} 42rem)
+            @container (width {'>='} 42rem)
           </code>
         </td>
       </tr>
@@ -3883,7 +4040,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {">="} 48rem)
+            @container (width {'>='} 48rem)
           </code>
         </td>
       </tr>
@@ -3895,7 +4052,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {">="} 56rem)
+            @container (width {'>='} 56rem)
           </code>
         </td>
       </tr>
@@ -3907,7 +4064,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {">="} 64rem)
+            @container (width {'>='} 64rem)
           </code>
         </td>
       </tr>
@@ -3919,7 +4076,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {">="} 72rem)
+            @container (width {'>='} 72rem)
           </code>
         </td>
       </tr>
@@ -3931,7 +4088,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {">="} 80rem)
+            @container (width {'>='} 80rem)
           </code>
         </td>
       </tr>
@@ -3943,7 +4100,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {">= "} <span className="text-gray-400">...</span>)
+            @container (width {'>= '} <span className="text-gray-400">...</span>)
           </code>
         </td>
       </tr>
@@ -3955,7 +4112,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {"<"} 16rem)
+            @container (width {'<'} 16rem)
           </code>
         </td>
       </tr>
@@ -3967,7 +4124,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {"<"} 18rem)
+            @container (width {'<'} 18rem)
           </code>
         </td>
       </tr>
@@ -3979,7 +4136,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {"<"} 20rem)
+            @container (width {'<'} 20rem)
           </code>
         </td>
       </tr>
@@ -3991,7 +4148,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {"<"} 24rem)
+            @container (width {'<'} 24rem)
           </code>
         </td>
       </tr>
@@ -4003,7 +4160,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {"<"} 28rem)
+            @container (width {'<'} 28rem)
           </code>
         </td>
       </tr>
@@ -4015,7 +4172,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {"<"} 32rem)
+            @container (width {'<'} 32rem)
           </code>
         </td>
       </tr>
@@ -4027,7 +4184,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {"<"} 36rem)
+            @container (width {'<'} 36rem)
           </code>
         </td>
       </tr>
@@ -4039,7 +4196,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {"<"} 42rem)
+            @container (width {'<'} 42rem)
           </code>
         </td>
       </tr>
@@ -4051,7 +4208,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {"<"} 48rem)
+            @container (width {'<'} 48rem)
           </code>
         </td>
       </tr>
@@ -4063,7 +4220,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {"<"} 56rem)
+            @container (width {'<'} 56rem)
           </code>
         </td>
       </tr>
@@ -4075,7 +4232,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {"<"} 64rem)
+            @container (width {'<'} 64rem)
           </code>
         </td>
       </tr>
@@ -4087,7 +4244,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {"<"} 72rem)
+            @container (width {'<'} 72rem)
           </code>
         </td>
       </tr>
@@ -4099,7 +4256,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {"<"} 80rem)
+            @container (width {'<'} 80rem)
           </code>
         </td>
       </tr>
@@ -4111,7 +4268,7 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            @container (width {"< "} <span className="text-gray-400">...</span>)
+            @container (width {'< '} <span className="text-gray-400">...</span>)
           </code>
         </td>
       </tr>
@@ -4206,7 +4363,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (pointer: fine)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (pointer: fine)
+          </code>
         </td>
       </tr>
       <tr>
@@ -4216,7 +4375,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (pointer: coarse)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (pointer: coarse)
+          </code>
         </td>
       </tr>
       <tr>
@@ -4226,7 +4387,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (pointer: none)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (pointer: none)
+          </code>
         </td>
       </tr>
       <tr>
@@ -4236,7 +4399,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (any-pointer: fine)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (any-pointer: fine)
+          </code>
         </td>
       </tr>
       <tr>
@@ -4246,7 +4411,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (any-pointer: coarse)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (any-pointer: coarse)
+          </code>
         </td>
       </tr>
       <tr>
@@ -4256,7 +4423,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (any-pointer: none)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (any-pointer: none)
+          </code>
         </td>
       </tr>
       <tr>
@@ -4290,7 +4459,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media (scripting: none)</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media (scripting: none)
+          </code>
         </td>
       </tr>
       <tr>
@@ -4300,7 +4471,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@media print</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @media print
+          </code>
         </td>
       </tr>
       <tr>
@@ -4431,7 +4604,8 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            <span className="text-gray-400">&</span>[aria-<span className="text-gray-400">&hellip;</span>]
+            <span className="text-gray-400">&</span>[aria-
+            <span className="text-gray-400">&hellip;</span>]
           </code>
         </td>
       </tr>
@@ -4443,7 +4617,8 @@ A quick reference table of every single variant included in Tailwind by default.
         </td>
         <td>
           <code className="whitespace-nowrap before:content-none after:content-none">
-            <span className="text-gray-400">&</span>[data-<span className="text-gray-400">&hellip;</span>]
+            <span className="text-gray-400">&</span>[data-
+            <span className="text-gray-400">&hellip;</span>]
           </code>
         </td>
       </tr>
@@ -4490,7 +4665,9 @@ A quick reference table of every single variant included in Tailwind by default.
           </a>
         </td>
         <td>
-          <code className="whitespace-nowrap before:content-none after:content-none">@starting-style</code>
+          <code className="whitespace-nowrap before:content-none after:content-none">
+            @starting-style
+          </code>
         </td>
       </tr>
     </tbody>
@@ -4558,7 +4735,9 @@ Style a link when it has already been visited using the `visited` variant:
 
 ```html
 <!-- [!code classes:visited:text-purple-600] -->
-<a href="https://seinfeldquotes.com" class="text-blue-600 visited:text-purple-600 ..."> Inspiration </a>
+<a href="https://seinfeldquotes.com" class="text-blue-600 visited:text-purple-600 ...">
+  Inspiration
+</a>
 ```
 
 #### :target

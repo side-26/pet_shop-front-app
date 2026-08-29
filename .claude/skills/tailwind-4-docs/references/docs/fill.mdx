@@ -1,21 +1,28 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourThemeColors, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import colors from "./utils/colors";
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourThemeColors,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import colors from './utils/colors';
 
-export const title = "fill";
-export const description = "Utilities for styling the fill of SVG elements.";
+export const title = 'fill';
+export const description = 'Utilities for styling the fill of SVG elements.';
 
 <ApiTable
   rows={[
-    ["fill-none", "fill: none;"],
-    ["fill-inherit", "fill: inherit;"],
-    ["fill-current", "fill: currentColor;"],
-    ["fill-transparent", "fill: transparent;"],
-    ...Object.entries(colors).map(([name, value]) => [`fill-${name}`, `fill: var(--color-${name}); /* ${value} */`]),
-    ["fill-(<custom-property>)", "fill: var(<custom-property>);"],
-    ["fill-[<color>]", "fill: <color>;"],
+    ['fill-none', 'fill: none;'],
+    ['fill-inherit', 'fill: inherit;'],
+    ['fill-current', 'fill: currentColor;'],
+    ['fill-transparent', 'fill: transparent;'],
+    ...Object.entries(colors).map(([name, value]) => [
+      `fill-${name}`,
+      `fill: var(--color-${name}); /* ${value} */`,
+    ]),
+    ['fill-(<custom-property>)', 'fill: var(<custom-property>);'],
+    ['fill-[<color>]', 'fill: <color>;'],
   ]}
 />
 
@@ -89,11 +96,22 @@ Use the `fill-current` utility to set the fill color to the current text color:
 
 ### Using a custom value
 
-<UsingACustomValue element="svg" utility="fill" name="fill color" value="#243c5a" variable="fill-color" />
+<UsingACustomValue
+  element="svg"
+  utility="fill"
+  name="fill color"
+  value="#243c5a"
+  variable="fill-color"
+/>
 
 ### Responsive design
 
-<ResponsiveDesign element="svg" property="fill" defaultClass="fill-cyan-500" featuredClass="fill-cyan-700" />
+<ResponsiveDesign
+  element="svg"
+  property="fill"
+  defaultClass="fill-cyan-500"
+  featuredClass="fill-cyan-700"
+/>
 
 ## Customizing your theme
 

@@ -1,22 +1,22 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "font-variant-numeric";
-export const description = "Utilities for controlling the variant of numbers.";
+export const title = 'font-variant-numeric';
+export const description = 'Utilities for controlling the variant of numbers.';
 
 <ApiTable
   rows={[
-    ["normal-nums", "font-variant-numeric: normal;"],
-    ["ordinal", "font-variant-numeric: ordinal;"],
-    ["slashed-zero", "font-variant-numeric: slashed-zero;"],
-    ["lining-nums", "font-variant-numeric: lining-nums;"],
-    ["oldstyle-nums", "font-variant-numeric: oldstyle-nums;"],
-    ["proportional-nums", "font-variant-numeric: proportional-nums;"],
-    ["tabular-nums", "font-variant-numeric: tabular-nums;"],
-    ["diagonal-fractions", "font-variant-numeric: diagonal-fractions;"],
-    ["stacked-fractions", "font-variant-numeric: stacked-fractions;"],
+    ['normal-nums', 'font-variant-numeric: normal;'],
+    ['ordinal', 'font-variant-numeric: ordinal;'],
+    ['slashed-zero', 'font-variant-numeric: slashed-zero;'],
+    ['lining-nums', 'font-variant-numeric: lining-nums;'],
+    ['oldstyle-nums', 'font-variant-numeric: oldstyle-nums;'],
+    ['proportional-nums', 'font-variant-numeric: proportional-nums;'],
+    ['tabular-nums', 'font-variant-numeric: tabular-nums;'],
+    ['diagonal-fractions', 'font-variant-numeric: diagonal-fractions;'],
+    ['stacked-fractions', 'font-variant-numeric: stacked-fractions;'],
   ]}
 />
 
@@ -28,7 +28,9 @@ Use the `ordinal` utility to enable special glyphs for the ordinal markers in fo
 
 <Figure>
 
-<Example>{<p className="text-center font-source text-lg text-gray-900 ordinal dark:text-gray-200">1st</p>}</Example>
+<Example>
+  {<p className="text-center font-source text-lg text-gray-900 ordinal dark:text-gray-200">1st</p>}
+</Example>
 
 ```html
 <!-- [!code classes:ordinal] -->
@@ -43,7 +45,13 @@ Use the `slashed-zero` utility to force a zero with a slash in fonts that suppor
 
 <Figure>
 
-<Example>{<p className="text-center font-source text-lg text-gray-900 slashed-zero dark:text-gray-200">0</p>}</Example>
+<Example>
+  {
+    <p className="text-center font-source text-lg text-gray-900 slashed-zero dark:text-gray-200">
+      0
+    </p>
+  }
+</Example>
 
 ```html
 <!-- [!code classes:slashed-zero] -->
@@ -59,7 +67,11 @@ Use the `lining-nums` utility to use numeric glyphs that are aligned by their ba
 <Figure>
 
 <Example>
-  {<p className="text-center font-source text-lg text-gray-900 lining-nums dark:text-gray-200">1234567890</p>}
+  {
+    <p className="text-center font-source text-lg text-gray-900 lining-nums dark:text-gray-200">
+      1234567890
+    </p>
+  }
 </Example>
 
 ```html
@@ -76,7 +88,11 @@ Use the `oldstyle-nums` utility to use numeric glyphs where some numbers have de
 <Figure>
 
 <Example>
-  {<p className="text-center font-source text-lg text-gray-900 oldstyle-nums dark:text-gray-200">1234567890</p>}
+  {
+    <p className="text-center font-source text-lg text-gray-900 oldstyle-nums dark:text-gray-200">
+      1234567890
+    </p>
+  }
 </Example>
 
 ```html
@@ -95,8 +111,12 @@ Use the `proportional-nums` utility to use numeric glyphs that have proportional
 <Example>
   {
     <div className="max-w-xs text-right">
-      <p className="font-source text-lg text-gray-900 proportional-nums dark:text-gray-200">12121</p>
-      <p className="font-source text-lg text-gray-900 proportional-nums dark:text-gray-200">90909</p>
+      <p className="font-source text-lg text-gray-900 proportional-nums dark:text-gray-200">
+        12121
+      </p>
+      <p className="font-source text-lg text-gray-900 proportional-nums dark:text-gray-200">
+        90909
+      </p>
     </div>
   }
 </Example>
@@ -139,7 +159,11 @@ Use the `diagonal-fractions` utility to replace numbers separated by a slash wit
 <Figure>
 
 <Example>
-  {<p className="text-center font-source text-lg text-gray-900 diagonal-fractions dark:text-gray-200">1/2 3/4 5/6</p>}
+  {
+    <p className="text-center font-source text-lg text-gray-900 diagonal-fractions dark:text-gray-200">
+      1/2 3/4 5/6
+    </p>
+  }
 </Example>
 
 ```html

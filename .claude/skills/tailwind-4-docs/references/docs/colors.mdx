@@ -1,11 +1,11 @@
-import { Example } from "@/components/example";
-import { Figure } from "@/components/figure";
-import { ColorPalette } from "../components/color-palette.tsx";
-import { Stripes } from "@/components/stripes.tsx";
-import { TipGood, TipBad, TipCompat, TipInfo } from "@/components/tips";
+import { Example } from '@/components/example';
+import { Figure } from '@/components/figure';
+import { ColorPalette } from '../components/color-palette.tsx';
+import { Stripes } from '@/components/stripes.tsx';
+import { TipGood, TipBad, TipCompat, TipInfo } from '@/components/tips';
 
-export const title = "Colors";
-export const description = "Using and customizing the color palette in Tailwind CSS projects.";
+export const title = 'Colors';
+export const description = 'Using and customizing the color palette in Tailwind CSS projects.';
 
 Tailwind CSS includes a vast, beautiful color palette out of the box, carefully crafted by expert designers and suitable for a wide range of different design styles.
 
@@ -119,8 +119,8 @@ Use color utilities like `bg-white`, `border-pink-300`, and `text-gray-950` to s
         </span>
         <div>
           <p className="text-gray-700 dark:text-gray-400">
-            <span className="font-medium text-gray-950 dark:text-white">Tom Watson</span> mentioned you in{" "}
-            <span className="font-medium text-gray-950 dark:text-white">Logo redesign</span>
+            <span className="font-medium text-gray-950 dark:text-white">Tom Watson</span> mentioned
+            you in <span className="font-medium text-gray-950 dark:text-white">Logo redesign</span>
           </p>
           <p className="mt-1 text-gray-500">9:37am</p>
         </div>
@@ -131,7 +131,9 @@ Use color utilities like `bg-white`, `border-pink-300`, and `text-gray-950` to s
 
 ```html
 <!-- [!code classes:bg-white,border-pink-300,bg-pink-100,stroke-pink-700,text-gray-950,text-gray-500,outline-black/5,text-gray-700,dark:bg-gray-800,dark:border-pink-300/10,dark:bg-pink-400/10,dark:stroke-pink-500,dark:text-gray-400,dark:text-white] -->
-<div class="flex items-center gap-4 rounded-lg bg-white p-6 shadow-md outline outline-black/5 dark:bg-gray-800">
+<div
+  class="flex items-center gap-4 rounded-lg bg-white p-6 shadow-md outline outline-black/5 dark:bg-gray-800"
+>
   <!-- prettier-ignore -->
   <span class="inline-flex shrink-0 rounded-full border border-pink-300 bg-pink-100 p-2 dark:border-pink-300/10 dark:bg-pink-400/10">
     <svg class="size-6 stroke-pink-700 dark:stroke-pink-500"><!-- ... --></svg>
@@ -299,8 +301,8 @@ You can adjust the opacity of a color using syntax like `bg-black/75`, where `75
       linear-gradient(-45deg, var(--checkered-bg) 25%, transparent 25%),
       linear-gradient(45deg, transparent 75%, var(--checkered-bg) 75%),
       linear-gradient(-45deg, transparent 75%, var(--checkered-bg) 75%)`,
-      backgroundSize: "20px 20px",
-      backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px",
+      backgroundSize: '20px 20px',
+      backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
     }}
   >
     <div className="mx-auto inline-grid max-w-lg grid-cols-1 justify-center gap-3 *:*:first:size-9 *:*:first:rounded-md sm:grid-cols-10 sm:flex-row sm:*:*:first:aspect-square sm:*:*:first:w-full">
@@ -396,7 +398,9 @@ Use the `dark` variant to write classes like `dark:bg-gray-800` that only apply 
               </svg>
             </span>
           </div>
-          <p className="mt-5 text-base font-medium tracking-tight text-gray-900">Writes upside-down</p>
+          <p className="mt-5 text-base font-medium tracking-tight text-gray-900">
+            Writes upside-down
+          </p>
           <p
             className="mt-2 text-sm text-gray-500"
             children={`The Zero Gravity Pen can be used to write in any orientation,
@@ -473,7 +477,7 @@ Colors are exposed as CSS variables in the `--color-*` namespace, so you can ref
 /* [!code word:var(--color-gray-950)] */
 /* [!code word:var(--color-blue-500)] */
 /* [!code word:var(--color-blue-800)] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @layer components {
   .typography {
@@ -503,7 +507,7 @@ To quickly adjust the opacity of a color when referencing it as a variable in CS
 ```css
 /* [!code filename:CSS] */
 /* [!code word:--alpha(var(--color-gray-950) / 10%)] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @layer components {
   .DocSearch-Hit--Result {
@@ -518,7 +522,7 @@ Use `@theme` to add custom colors to your project under the `--color-*` theme na
 
 ```css
 /* [!code filename:CSS] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* [!code highlight:6] */
 @theme {
@@ -538,7 +542,7 @@ Override any of the default colors by defining new theme variables with the same
 
 ```css
 /* [!code filename:CSS] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* [!code highlight:14] */
 @theme {
@@ -562,7 +566,7 @@ Disable any default color by setting the theme namespace for that color to `init
 
 ```css
 /* [!code filename:CSS] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* [!code highlight:5] */
 @theme {
@@ -579,7 +583,7 @@ Use `--color-*: initial` to completely disable all of the default colors and def
 
 ```css
 /* [!code filename:CSS] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* [!code highlight:7] */
@@ -598,13 +602,13 @@ Use `@theme inline` when defining colors that reference other colors:
 
 ```css
 /* [!code filename:CSS] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --acme-canvas-color: oklch(0.967 0.003 264.542);
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   --acme-canvas-color: oklch(0.21 0.034 264.665);
 }
 

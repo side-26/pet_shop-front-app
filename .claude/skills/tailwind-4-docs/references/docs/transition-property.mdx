@@ -1,16 +1,16 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import dedent from "dedent";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
+import dedent from 'dedent';
 
-export const title = "transition-property";
-export const description = "Utilities for controlling which CSS properties transition.";
+export const title = 'transition-property';
+export const description = 'Utilities for controlling which CSS properties transition.';
 
 <ApiTable
   rows={[
     [
-      "transition",
+      'transition',
       dedent`
         transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
         transition-timing-function: var(--default-transition-timing-function); /* cubic-bezier(0.4, 0, 0.2, 1) */
@@ -18,7 +18,7 @@ export const description = "Utilities for controlling which CSS properties trans
       `,
     ],
     [
-      "transition-all",
+      'transition-all',
       dedent`
         transition-property: all;
         transition-timing-function: var(--default-transition-timing-function); /* cubic-bezier(0.4, 0, 0.2, 1) */
@@ -26,7 +26,7 @@ export const description = "Utilities for controlling which CSS properties trans
       `,
     ],
     [
-      "transition-colors",
+      'transition-colors',
       dedent`
         transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
         transition-timing-function: var(--default-transition-timing-function); /* cubic-bezier(0.4, 0, 0.2, 1) */
@@ -34,7 +34,7 @@ export const description = "Utilities for controlling which CSS properties trans
       `,
     ],
     [
-      "transition-opacity",
+      'transition-opacity',
       dedent`
         transition-property: opacity;
         transition-timing-function: var(--default-transition-timing-function); /* cubic-bezier(0.4, 0, 0.2, 1) */
@@ -42,7 +42,7 @@ export const description = "Utilities for controlling which CSS properties trans
       `,
     ],
     [
-      "transition-shadow",
+      'transition-shadow',
       dedent`
         transition-property: box-shadow;
         transition-timing-function: var(--default-transition-timing-function); /* cubic-bezier(0.4, 0, 0.2, 1) */
@@ -50,16 +50,16 @@ export const description = "Utilities for controlling which CSS properties trans
       `,
     ],
     [
-      "transition-transform",
+      'transition-transform',
       dedent`
         transition-property: transform, translate, scale, rotate;
         transition-timing-function: var(--default-transition-timing-function); /* cubic-bezier(0.4, 0, 0.2, 1) */
         transition-duration: var(--default-transition-duration); /* 150ms */
       `,
     ],
-    ["transition-none", "transition-property: none;"],
+    ['transition-none', 'transition-property: none;'],
     [
-      "transition-(<custom-property>)",
+      'transition-(<custom-property>)',
       dedent`
         transition-property: var(<custom-property>);
         transition-timing-function: var(--default-transition-timing-function); /* cubic-bezier(0.4, 0, 0.2, 1) */
@@ -67,7 +67,7 @@ export const description = "Utilities for controlling which CSS properties trans
       `,
     ],
     [
-      "transition-[<value>]",
+      'transition-[<value>]',
       dedent`
         transition-property: <value>;
         transition-timing-function: var(--default-transition-timing-function); /* cubic-bezier(0.4, 0, 0.2, 1) */

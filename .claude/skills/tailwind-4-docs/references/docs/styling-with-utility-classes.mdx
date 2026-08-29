@@ -1,14 +1,15 @@
-import { Example } from "@/components/example";
-import { CodeExampleWrapper, CodeExampleStack } from "@/components/code-example";
-import { Iframe } from "@/components/iframe.tsx";
-import { Figure } from "@/components/figure";
-import { TipGood, TipBad, TipCompat, TipInfo } from "@/components/tips";
-import { MultiCursorAnimation, MultiCursorPreview } from "@/components/multi-cursor/animation.tsx";
-import { MultiCursorCode } from "@/components/multi-cursor/example.tsx";
-import erinLindford from "./img/erin-lindford.jpg";
+import { Example } from '@/components/example';
+import { CodeExampleWrapper, CodeExampleStack } from '@/components/code-example';
+import { Iframe } from '@/components/iframe.tsx';
+import { Figure } from '@/components/figure';
+import { TipGood, TipBad, TipCompat, TipInfo } from '@/components/tips';
+import { MultiCursorAnimation, MultiCursorPreview } from '@/components/multi-cursor/animation.tsx';
+import { MultiCursorCode } from '@/components/multi-cursor/example.tsx';
+import erinLindford from './img/erin-lindford.jpg';
 
-export const title = "Styling with utility classes";
-export const description = "Building complex components from a constrained set of primitive utilities.";
+export const title = 'Styling with utility classes';
+export const description =
+  'Building complex components from a constrained set of primitive utilities.';
 
 ## Overview
 
@@ -126,7 +127,11 @@ This component is fully responsive and includes a button with hover and active s
 <!-- [!code classes:sm:flex-row,sm:py-4,sm:gap-6,sm:mx-0,sm:shrink-0,sm:text-left,sm:items-center] -->
 <!-- [!code classes:hover:text-white,hover:bg-purple-600,hover:border-transparent,active:bg-purple-700] -->
 <div class="flex flex-col gap-2 p-8 sm:flex-row sm:items-center sm:gap-6 sm:py-4 ...">
-  <img class="mx-auto block h-24 rounded-full sm:mx-0 sm:shrink-0" src="/img/erin-lindford.jpg" alt="" />
+  <img
+    class="mx-auto block h-24 rounded-full sm:mx-0 sm:shrink-0"
+    src="/img/erin-lindford.jpg"
+    alt=""
+  />
   <div class="space-y-2 text-center sm:text-left">
     <div class="space-y-0.5">
       <p class="text-lg font-semibold text-black">Erin Lindford</p>
@@ -278,7 +283,9 @@ Styling an element in dark mode is just a matter of adding the `dark:` prefix to
               </svg>
             </span>
           </div>
-          <p className="mt-5 text-base font-medium tracking-tight text-gray-900">Writes upside-down</p>
+          <p className="mt-5 text-base font-medium tracking-tight text-gray-900">
+            Writes upside-down
+          </p>
           <p
             className="mt-2 text-sm text-gray-500"
             children={`The Zero Gravity Pen can be used to write in any orientation,
@@ -459,8 +466,8 @@ It does this by scanning all of the files in your project looking for any symbol
 // [!code word:font-bold]
 export default function Button({ size, children }) {
   let sizeClasses = {
-    md: "px-4 py-2 rounded-md text-base",
-    lg: "px-5 py-3 rounded-lg text-lg",
+    md: 'px-4 py-2 rounded-md text-base',
+    lg: 'px-5 py-3 rounded-lg text-lg',
   }[size];
 
   return (
@@ -596,9 +603,9 @@ export function BrandedButton({ buttonColor, buttonColorHover, textColor, childr
     <button
       style={{
         // [!code highlight:4]
-        "--bg-color": buttonColor,
-        "--bg-color-hover": buttonColorHover,
-        "--text-color": textColor,
+        '--bg-color': buttonColor,
+        '--bg-color-hover': buttonColorHover,
+        '--text-color': textColor,
       }}
       // [!code classes:bg-(--bg-color),text-(--text-color),hover:bg-(--bg-color-hover)]
       className="bg-(--bg-color) text-(--text-color) hover:bg-(--bg-color-hover) ..."
@@ -622,7 +629,9 @@ For example, here the utility classes for each avatar image are repeated five se
     <div className="mx-auto w-72 px-8 py-6 sm:w-96 sm:px-12 sm:py-8">
       <div className="flex items-center space-x-2 text-base">
         <h4 className="text-base font-semibold text-slate-900">Contributors</h4>
-        <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700">204</span>
+        <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700">
+          204
+        </span>
       </div>
       <div className="mt-3 flex -space-x-2 overflow-hidden">
         <img
@@ -702,7 +711,9 @@ For example, the duplicate avatars at the beginning of this guide would almost c
     <div className="mx-auto w-72 px-8 py-6 sm:w-96 sm:px-12 sm:py-8">
       <div className="flex items-center space-x-2 text-base">
         <h4 className="text-base font-semibold text-slate-900">Contributors</h4>
-        <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700">204</span>
+        <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700">
+          204
+        </span>
       </div>
       <div className="mt-3 flex -space-x-2 overflow-hidden">
         <img
@@ -865,7 +876,7 @@ Here's what a `btn-primary` class might look like, using [theme variables](/docs
 
 ```css
 /* [!code filename:CSS] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @layer components {
   .btn-primary {
@@ -925,7 +936,7 @@ In general, you should just never add two conflicting classes to the same elemen
 // [!code filename:example.jsx]
 // [!code word:gridLayout\ \?\ \"grid\"\ \:\ \"flex\"]
 export function Example({ gridLayout }) {
-  return <div className={gridLayout ? "grid" : "flex"}>{/* ... */}</div>;
+  return <div className={gridLayout ? 'grid' : 'flex'}>{/* ... */}</div>;
 }
 ```
 
@@ -968,7 +979,7 @@ If you're adding Tailwind to a project that has existing complex CSS with high s
 ```css
 /* [!code filename:app.css] */
 /* [!code word:important] */
-@import "tailwindcss" important;
+@import 'tailwindcss' important;
 ```
 
 ```css
@@ -998,7 +1009,7 @@ If your project has class names that conflict with Tailwind CSS utilities, you c
 ```css
 /* [!code filename:app.css] */
 /* [!code word:important] */
-@import "tailwindcss" prefix(tw);
+@import 'tailwindcss' prefix(tw);
 ```
 
 ```css

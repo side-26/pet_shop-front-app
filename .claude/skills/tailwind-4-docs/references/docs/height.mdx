@@ -1,49 +1,56 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourSpacingScale, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { DynamicViewportExample } from "@/components/dynamic-viewport-example.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourSpacingScale,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { DynamicViewportExample } from '@/components/dynamic-viewport-example.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "height";
-export const description = "Utilities for setting the height of an element.";
+export const title = 'height';
+export const description = 'Utilities for setting the height of an element.';
 
 <ApiTable
   rows={[
-    ["h-<number>", "height: calc(var(--spacing) * <number>);"],
-    ["h-<fraction>", "height: calc(<fraction> * 100%);"],
-    ["h-auto", "height: auto;"],
-    ["h-px", "height: 1px;"],
-    ["h-full", "height: 100%;"],
-    ["h-screen", "height: 100vh;"],
-    ["h-dvh", "height: 100dvh;"],
-    ["h-dvw", "height: 100dvw;"],
-    ["h-lvh", "height: 100lvh;"],
-    ["h-lvw", "height: 100lvw;"],
-    ["h-svh", "height: 100svh;"],
-    ["h-svw", "height: 100svw;"],
-    ["h-min", "height: min-content;"],
-    ["h-max", "height: max-content;"],
-    ["h-fit", "height: fit-content;"],
-    ["h-lh", "height: 1lh;"],
-    ["h-(<custom-property>)", "height: var(<custom-property>);"],
-    ["h-[<value>]", "height: <value>;"],
-    ["size-<number>", "width: calc(var(--spacing) * <number>);\nheight: calc(var(--spacing) * <number>);"],
-    ["size-<fraction>", "width: calc(<fraction> * 100%);\nheight: calc(<fraction> * 100%);"],
-    ["size-auto", "width: auto;\nheight: auto;"],
-    ["size-px", "width: 1px;\nheight: 1px;"],
-    ["size-full", "width: 100%;\nheight: 100%;"],
-    ["size-dvw", "width: 100dvw;\nheight: 100dvw;"],
-    ["size-dvh", "width: 100dvh;\nheight: 100dvh;"],
-    ["size-lvw", "width: 100lvw;\nheight: 100lvw;"],
-    ["size-lvh", "width: 100lvh;\nheight: 100lvh;"],
-    ["size-svw", "width: 100svw;\nheight: 100svw;"],
-    ["size-svh", "width: 100svh;\nheight: 100svh;"],
-    ["size-min", "width: min-content;\nheight: min-content;"],
-    ["size-max", "width: max-content;\nheight: max-content;"],
-    ["size-fit", "width: fit-content;\nheight: fit-content;"],
-    ["size-(<custom-property>)", "width: var(<custom-property>);\nheight: var(<custom-property>);"],
-    ["size-[<value>]", "width: <value>;\nheight: <value>;"],
+    ['h-<number>', 'height: calc(var(--spacing) * <number>);'],
+    ['h-<fraction>', 'height: calc(<fraction> * 100%);'],
+    ['h-auto', 'height: auto;'],
+    ['h-px', 'height: 1px;'],
+    ['h-full', 'height: 100%;'],
+    ['h-screen', 'height: 100vh;'],
+    ['h-dvh', 'height: 100dvh;'],
+    ['h-dvw', 'height: 100dvw;'],
+    ['h-lvh', 'height: 100lvh;'],
+    ['h-lvw', 'height: 100lvw;'],
+    ['h-svh', 'height: 100svh;'],
+    ['h-svw', 'height: 100svw;'],
+    ['h-min', 'height: min-content;'],
+    ['h-max', 'height: max-content;'],
+    ['h-fit', 'height: fit-content;'],
+    ['h-lh', 'height: 1lh;'],
+    ['h-(<custom-property>)', 'height: var(<custom-property>);'],
+    ['h-[<value>]', 'height: <value>;'],
+    [
+      'size-<number>',
+      'width: calc(var(--spacing) * <number>);\nheight: calc(var(--spacing) * <number>);',
+    ],
+    ['size-<fraction>', 'width: calc(<fraction> * 100%);\nheight: calc(<fraction> * 100%);'],
+    ['size-auto', 'width: auto;\nheight: auto;'],
+    ['size-px', 'width: 1px;\nheight: 1px;'],
+    ['size-full', 'width: 100%;\nheight: 100%;'],
+    ['size-dvw', 'width: 100dvw;\nheight: 100dvw;'],
+    ['size-dvh', 'width: 100dvh;\nheight: 100dvh;'],
+    ['size-lvw', 'width: 100lvw;\nheight: 100lvw;'],
+    ['size-lvh', 'width: 100lvh;\nheight: 100lvh;'],
+    ['size-svw', 'width: 100svw;\nheight: 100svw;'],
+    ['size-svh', 'width: 100svh;\nheight: 100svh;'],
+    ['size-min', 'width: min-content;\nheight: min-content;'],
+    ['size-max', 'width: max-content;\nheight: max-content;'],
+    ['size-fit', 'width: fit-content;\nheight: fit-content;'],
+    ['size-(<custom-property>)', 'width: var(<custom-property>);\nheight: var(<custom-property>);'],
+    ['size-[<value>]', 'width: <value>;\nheight: <value>;'],
   ]}
 />
 
@@ -168,7 +175,12 @@ Use the `h-dvh` utility to make an element span the entire height of the viewpor
 <Figure hint="Scroll the viewport to see the viewport height change">
 
 <Example padding={false}>
-  {<DynamicViewportExample unit="dvh" colorStyles="dark:bg-pink-500 bg-pink-500 border border-pink-400" />}
+  {
+    <DynamicViewportExample
+      unit="dvh"
+      colorStyles="dark:bg-pink-500 bg-pink-500 border border-pink-400"
+    />
+  }
 </Example>
 
 ```html
@@ -187,7 +199,12 @@ Use the `h-lvh` utility to set an element's height to the largest possible heigh
 <Figure hint="Scroll the viewport to see the viewport height change">
 
 <Example padding={false}>
-  {<DynamicViewportExample unit="lvh" colorStyles="dark:bg-indigo-500 bg-indigo-500 border border-indigo-400" />}
+  {
+    <DynamicViewportExample
+      unit="lvh"
+      colorStyles="dark:bg-indigo-500 bg-indigo-500 border border-indigo-400"
+    />
+  }
 </Example>
 
 ```html
@@ -206,7 +223,12 @@ Use the `h-svh` utility to set an element's height to the smallest possible heig
 <Figure hint="Scroll the viewport to see the viewport height change">
 
 <Example padding={false}>
-  {<DynamicViewportExample unit="svh" colorStyles="dark:bg-purple-500 bg-purple-500 border border-purple-400" />}
+  {
+    <DynamicViewportExample
+      unit="svh"
+      colorStyles="dark:bg-purple-500 bg-purple-500 border border-purple-400"
+    />
+  }
 </Example>
 
 ```html
@@ -227,11 +249,21 @@ Use utilities like `size-px`, `size-4`, and `size-full` to set both the width an
 <Example>
   {
     <div className="grid grid-flow-col justify-center gap-4 text-center font-mono text-xs font-bold text-white">
-      <div className="grid size-16 items-center justify-center rounded-lg bg-indigo-500">size-16</div>
-      <div className="grid size-20 items-center justify-center rounded-lg bg-indigo-500">size-20</div>
-      <div className="grid size-24 items-center justify-center rounded-lg bg-indigo-500">size-24</div>
-      <div className="hidden size-32 items-center justify-center rounded-lg bg-indigo-500 sm:grid">size-32</div>
-      <div className="hidden size-40 items-center justify-center rounded-lg bg-indigo-500 md:grid">size-40</div>
+      <div className="grid size-16 items-center justify-center rounded-lg bg-indigo-500">
+        size-16
+      </div>
+      <div className="grid size-20 items-center justify-center rounded-lg bg-indigo-500">
+        size-20
+      </div>
+      <div className="grid size-24 items-center justify-center rounded-lg bg-indigo-500">
+        size-24
+      </div>
+      <div className="hidden size-32 items-center justify-center rounded-lg bg-indigo-500 sm:grid">
+        size-32
+      </div>
+      <div className="hidden size-40 items-center justify-center rounded-lg bg-indigo-500 md:grid">
+        size-40
+      </div>
     </div>
   }
 </Example>
@@ -257,4 +289,4 @@ Use utilities like `size-px`, `size-4`, and `size-full` to set both the width an
 
 ## Customizing your theme
 
-<CustomizingYourSpacingScale utilities={["h", "size"]} />
+<CustomizingYourSpacingScale utilities={['h', 'size']} />

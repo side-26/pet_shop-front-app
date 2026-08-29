@@ -1,10 +1,10 @@
-import { TipGood, TipBad } from "@/components/tips";
-import { Iframe } from "@/components/iframe";
-import { Example } from "@/components/example";
-import { Figure } from "@/components/figure";
+import { TipGood, TipBad } from '@/components/tips';
+import { Iframe } from '@/components/iframe';
+import { Example } from '@/components/example';
+import { Figure } from '@/components/figure';
 
-export const title = "Responsive design";
-export const description = "Using responsive utility variants to build adaptive user interfaces.";
+export const title = 'Responsive design';
+export const description = 'Using responsive utility variants to build adaptive user interfaces.';
 
 ## Overview
 
@@ -122,7 +122,10 @@ Here's a simple example of a marketing page component that uses a stacked layout
             </div>
             <div className="space-y-2 p-6 2xl:p-8">
               <div className="text-sm leading-6 font-medium text-indigo-600">Company retreats</div>
-              <a href="#" className="block text-base leading-6 font-semibold text-gray-900 hover:underline">
+              <a
+                href="#"
+                className="block text-base leading-6 font-semibold text-gray-900 hover:underline"
+              >
                 Incredible accommodation for your team
               </a>
               <p
@@ -155,13 +158,15 @@ Here's a simple example of a marketing page component that uses a stacked layout
       />
     </div>
     <div class="p-8">
-      <div class="text-sm font-semibold tracking-wide text-indigo-500 uppercase">Company retreats</div>
+      <div class="text-sm font-semibold tracking-wide text-indigo-500 uppercase">
+        Company retreats
+      </div>
       <a href="#" class="mt-1 block text-lg leading-tight font-medium text-black hover:underline">
         Incredible accommodation for your team
       </a>
       <p class="mt-2 text-gray-500">
-        Looking to take your team away on a retreat to enjoy awesome food and take in some sunshine? We have a list of
-        places to do just that.
+        Looking to take your team away on a retreat to enjoy awesome food and take in some sunshine?
+        We have a list of places to do just that.
       </p>
     </div>
   </div>
@@ -202,7 +207,9 @@ Where this approach surprises people most often is that to style something for m
 <div class="sm:text-center"></div>
 ```
 
-<TipGood>{<>Use unprefixed utilities to target mobile, and override them at larger breakpoints</>}</TipGood>
+<TipGood>
+  {<>Use unprefixed utilities to target mobile, and override them at larger breakpoints</>}
+</TipGood>
 
 ```html
 <!-- [!code filename:HTML]  -->
@@ -302,7 +309,7 @@ Use the `--breakpoint-*` theme variables to customize your breakpoints:
 
 ```css
 /* [!code filename:app.css] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* [!code highlight:4] */
@@ -336,7 +343,7 @@ To remove a default breakpoint, reset its value to the `initial` keyword:
 
 ```css
 /* [!code filename:app.css] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* [!code highlight:2] */
@@ -348,7 +355,7 @@ You can also reset all of the default breakpoints using `--breakpoint-*: initial
 
 ```css
 /* [!code filename:app.css] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* [!code highlight:5] */
@@ -467,7 +474,7 @@ Use the `--container-*` theme variables to customize your container sizes:
 
 ```css
 /* [!code filename:app.css] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* [!code highlight:2] */

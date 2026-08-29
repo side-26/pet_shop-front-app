@@ -66,13 +66,13 @@ describe('Button Component', () => {
 
 Detailed implementations in the `references/` directory:
 
-| Guide | Contents |
-|---|---|
-| [Jest Unit Testing (React)](references/jest-unit-testing-react.md) | Jest Unit Testing (React) |
+| Guide                                                                                            | Contents                                |
+| ------------------------------------------------------------------------------------------------ | --------------------------------------- |
+| [Jest Unit Testing (React)](references/jest-unit-testing-react.md)                               | Jest Unit Testing (React)               |
 | [React Testing Library Integration Tests](references/react-testing-library-integration-tests.md) | React Testing Library Integration Tests |
-| [Vitest for Vue Testing](references/vitest-for-vue-testing.md) | Vitest for Vue Testing |
-| [Cypress E2E Testing](references/cypress-e2e-testing.md) | Cypress E2E Testing |
-| [Test Coverage Configuration](references/test-coverage-configuration.md) | Test Coverage Configuration |
+| [Vitest for Vue Testing](references/vitest-for-vue-testing.md)                                   | Vitest for Vue Testing                  |
+| [Cypress E2E Testing](references/cypress-e2e-testing.md)                                         | Cypress E2E Testing                     |
+| [Test Coverage Configuration](references/test-coverage-configuration.md)                         | Test Coverage Configuration             |
 
 ## Best Practices
 

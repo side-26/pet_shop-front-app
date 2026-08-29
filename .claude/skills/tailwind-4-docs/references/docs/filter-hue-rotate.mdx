@@ -1,17 +1,17 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "filter: hue-rotate()";
-export const description = "Utilities for applying hue-rotate filters to an element.";
+export const title = 'filter: hue-rotate()';
+export const description = 'Utilities for applying hue-rotate filters to an element.';
 
 <ApiTable
   rows={[
-    ["hue-rotate-<number>", "filter: hue-rotate(<number>deg);"],
-    ["-hue-rotate-<number>", "filter: hue-rotate(calc(<number>deg * -1));"],
-    ["hue-rotate-(<custom-property>)", "filter: hue-rotate(var(<custom-property>));"],
-    ["hue-rotate-[<value>]", "filter: hue-rotate(<value>);"],
+    ['hue-rotate-<number>', 'filter: hue-rotate(<number>deg);'],
+    ['-hue-rotate-<number>', 'filter: hue-rotate(calc(<number>deg * -1));'],
+    ['hue-rotate-(<custom-property>)', 'filter: hue-rotate(var(<custom-property>));'],
+    ['hue-rotate-[<value>]', 'filter: hue-rotate(<value>);'],
   ]}
 />
 
@@ -154,7 +154,7 @@ Use utilities like `-hue-rotate-15` and `-hue-rotate-45` to set a negative hue r
 
 <UsingACustomValue
   element="img"
-  elementAttributes={{ src: "/img/mountains.jpg" }}
+  elementAttributes={{ src: '/img/mountains.jpg' }}
   utility="hue-rotate"
   value="3.142rad"
   name="hue rotation"
@@ -164,7 +164,7 @@ Use utilities like `-hue-rotate-15` and `-hue-rotate-45` to set a negative hue r
 
 <ResponsiveDesign
   element="img"
-  elementAttributes={{ src: "/img/mountains.jpg" }}
+  elementAttributes={{ src: '/img/mountains.jpg' }}
   property="filter: hue-rotate()"
   defaultClass="hue-rotate-60"
   featuredClass="hue-rotate-0"

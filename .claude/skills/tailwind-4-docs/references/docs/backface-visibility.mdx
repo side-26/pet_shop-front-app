@@ -1,15 +1,15 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "backface-visibility";
+export const title = 'backface-visibility';
 export const description = "Utilities for controlling if an element's backface is visible.";
 
 <ApiTable
   rows={[
-    ["backface-hidden", "backface-visibility: hidden;"],
-    ["backface-visible", "backface-visibility: visible;"],
+    ['backface-hidden', 'backface-visibility: hidden;'],
+    ['backface-visible', 'backface-visibility: visible;'],
   ]}
 />
 
@@ -107,4 +107,8 @@ Use the `backface-visible` utility to show the backface of an element, like a cu
 
 ### Responsive design
 
-<ResponsiveDesign property="backface-visibility" defaultClass="backface-visible" featuredClass="backface-hidden" />
+<ResponsiveDesign
+  property="backface-visibility"
+  defaultClass="backface-visible"
+  featuredClass="backface-hidden"
+/>

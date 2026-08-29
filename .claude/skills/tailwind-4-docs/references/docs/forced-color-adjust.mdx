@@ -1,17 +1,17 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
-import Image from "next/image";
-import tshirtImage from "./img/t-shirt.jpg";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
+import Image from 'next/image';
+import tshirtImage from './img/t-shirt.jpg';
 
-export const title = "forced-color-adjust";
-export const description = "Utilities for opting in and out of forced colors.";
+export const title = 'forced-color-adjust';
+export const description = 'Utilities for opting in and out of forced colors.';
 
 <ApiTable
   rows={[
-    ["forced-color-adjust-auto", "forced-color-adjust: auto;"],
-    ["forced-color-adjust-none", "forced-color-adjust: none;"],
+    ['forced-color-adjust-auto', 'forced-color-adjust: auto;'],
+    ['forced-color-adjust-none', 'forced-color-adjust: none;'],
   ]}
 />
 
@@ -58,7 +58,13 @@ Use the `forced-color-adjust-none` utility to opt an element out of the colors e
               ></span>
             </label>
             <label className="relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 ring-0 focus:outline-none has-checked:ring-1 has-checked:ring-gray-400 has-checked:ring-offset-1">
-              <input type="radio" defaultChecked name="color-choice" value="Gray" className="sr-only" />
+              <input
+                type="radio"
+                defaultChecked
+                name="color-choice"
+                value="Gray"
+                className="sr-only"
+              />
               <span id="color-choice-1-label" className="sr-only">
                 Gray
               </span>

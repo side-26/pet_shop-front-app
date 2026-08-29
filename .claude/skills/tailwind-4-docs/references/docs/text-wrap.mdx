@@ -1,17 +1,17 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "text-wrap";
-export const description = "Utilities for controlling how text wraps within an element.";
+export const title = 'text-wrap';
+export const description = 'Utilities for controlling how text wraps within an element.';
 
 <ApiTable
   rows={[
-    ["text-wrap", "text-wrap: wrap;"],
-    ["text-nowrap", "text-wrap: nowrap;"],
-    ["text-balance", "text-wrap: balance;"],
-    ["text-pretty", "text-wrap: pretty;"],
+    ['text-wrap', 'text-wrap: wrap;'],
+    ['text-nowrap', 'text-wrap: nowrap;'],
+    ['text-balance', 'text-wrap: balance;'],
+    ['text-pretty', 'text-wrap: pretty;'],
   ]}
 />
 
@@ -26,10 +26,13 @@ Use the `text-wrap` utility to wrap overflowing text onto multiple lines at logi
 <Example padding={false}>
   {
     <div className="mx-auto grid max-w-xs gap-4 border-x border-x-pink-400/30 py-8 text-gray-700 dark:text-gray-400">
-      <div className="text-xl font-semibold text-gray-900 dark:text-white">Beloved Manhattan soup stand closes</div>
+      <div className="text-xl font-semibold text-gray-900 dark:text-white">
+        Beloved Manhattan soup stand closes
+      </div>
       <p className="text-sm/6">
-        New Yorkers are facing the winter chill with less warmth this year as the city's most revered soup stand
-        unexpectedly shutters, following a series of events that have left the community puzzled.
+        New Yorkers are facing the winter chill with less warmth this year as the city's most
+        revered soup stand unexpectedly shutters, following a series of events that have left the
+        community puzzled.
       </p>
     </div>
   }
@@ -59,8 +62,9 @@ Use the `text-nowrap` utility to prevent text from wrapping, allowing it to over
           Beloved Manhattan soup stand closes
         </div>
         <p className="text-sm/6 text-nowrap">
-          New Yorkers are facing the winter chill with less warmth this year as the city's most revered soup stand
-          unexpectedly shutters, following a series of events that have left the community puzzled.
+          New Yorkers are facing the winter chill with less warmth this year as the city's most
+          revered soup stand unexpectedly shutters, following a series of events that have left the
+          community puzzled.
         </p>
       </div>
     </div>
@@ -90,8 +94,9 @@ Use the `text-balance` utility to distribute the text evenly across each line:
         Beloved Manhattan soup stand closes
       </div>
       <p className="text-sm/6">
-        New Yorkers are facing the winter chill with less warmth this year as the city's most revered soup stand
-        unexpectedly shutters, following a series of events that have left the community puzzled.
+        New Yorkers are facing the winter chill with less warmth this year as the city's most
+        revered soup stand unexpectedly shutters, following a series of events that have left the
+        community puzzled.
       </p>
     </div>
   }
@@ -122,8 +127,9 @@ Use the `text-pretty` utility to prefer better text wrapping and layout at the e
         Beloved Manhattan soup stand closes
       </div>
       <p className="text-sm/6">
-        New Yorkers are facing the winter chill with less warmth this year as the city's most revered soup stand
-        unexpectedly shutters, following a series of events that have left the community puzzled.
+        New Yorkers are facing the winter chill with less warmth this year as the city's most
+        revered soup stand unexpectedly shutters, following a series of events that have left the
+        community puzzled.
       </p>
     </div>
   }
@@ -141,4 +147,9 @@ Use the `text-pretty` utility to prefer better text wrapping and layout at the e
 
 ### Responsive design
 
-<ResponsiveDesign element="h1" property="text-wrap" defaultClass="text-pretty" featuredClass="text-balance" />
+<ResponsiveDesign
+  element="h1"
+  property="text-wrap"
+  defaultClass="text-pretty"
+  featuredClass="text-balance"
+/>

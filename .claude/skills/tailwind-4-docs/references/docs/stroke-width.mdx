@@ -1,16 +1,16 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
 
-export const title = "stroke-width";
-export const description = "Utilities for styling the stroke width of SVG elements.";
+export const title = 'stroke-width';
+export const description = 'Utilities for styling the stroke width of SVG elements.';
 
 <ApiTable
   rows={[
-    ["stroke-<number>", "stroke-width: <number>;"],
-    ["stroke-(length:<custom-property>)", "stroke-width: var(<custom-property>);"],
-    ["stroke-[<value>]", "stroke-width: <value>;"],
+    ['stroke-<number>', 'stroke-width: <number>;'],
+    ['stroke-(length:<custom-property>)', 'stroke-width: var(<custom-property>);'],
+    ['stroke-[<value>]', 'stroke-width: <value>;'],
   ]}
 />
 
@@ -67,7 +67,13 @@ This can be useful for styling icon sets like [Heroicons](https://heroicons.com)
 
 ### Using a custom value
 
-<UsingACustomValue utility="stroke" name="stroke width" value="1.5" variable="stroke-width" dataType="length" />
+<UsingACustomValue
+  utility="stroke"
+  name="stroke width"
+  value="1.5"
+  variable="stroke-width"
+  dataType="length"
+/>
 
 ### Responsive design
 

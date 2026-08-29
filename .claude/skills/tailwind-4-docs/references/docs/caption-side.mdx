@@ -1,15 +1,16 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "caption-side";
-export const description = "Utilities for controlling the alignment of a caption element inside of a table.";
+export const title = 'caption-side';
+export const description =
+  'Utilities for controlling the alignment of a caption element inside of a table.';
 
 <ApiTable
   rows={[
-    ["caption-top", "caption-side: top;"],
-    ["caption-bottom", "caption-side: bottom;"],
+    ['caption-top', 'caption-side: top;'],
+    ['caption-bottom', 'caption-side: bottom;'],
   ]}
 />
 
@@ -187,4 +188,9 @@ Use the `caption-bottom` utility to position a caption element at the bottom of 
 
 ### Responsive design
 
-<ResponsiveDesign property="caption-side" element="caption" defaultClass="caption-top" featuredClass="caption-bottom" />
+<ResponsiveDesign
+  property="caption-side"
+  element="caption"
+  defaultClass="caption-top"
+  featuredClass="caption-bottom"
+/>

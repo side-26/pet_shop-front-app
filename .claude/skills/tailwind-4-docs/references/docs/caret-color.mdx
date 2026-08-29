@@ -1,25 +1,25 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourThemeColors } from "@/components/content.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { UsingACustomValue } from "@/components/content.tsx";
-import colors from "./utils/colors";
+import { ApiTable } from '@/components/api-table.tsx';
+import { CustomizingYourThemeColors } from '@/components/content.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { UsingACustomValue } from '@/components/content.tsx';
+import colors from './utils/colors';
 
-export const title = "caret-color";
-export const description = "Utilities for controlling the color of the text input cursor.";
+export const title = 'caret-color';
+export const description = 'Utilities for controlling the color of the text input cursor.';
 
 <ApiTable
   rows={[
-    ["caret-inherit", "caret-color: inherit;"],
-    ["caret-current", "caret-color: currentColor;"],
-    ["caret-transparent", "caret-color: transparent;"],
+    ['caret-inherit', 'caret-color: inherit;'],
+    ['caret-current', 'caret-color: currentColor;'],
+    ['caret-transparent', 'caret-color: transparent;'],
     ...Object.entries(colors).map(([name, value]) => [
       `caret-${name}`,
       `caret-color: var(--color-${name}); /* ${value} */`,
     ]),
-    ["caret-<custom-property>", "caret-color: var(<custom-property>);"],
-    ["caret-[<value>]", "caret-color: <value>;"],
+    ['caret-<custom-property>', 'caret-color: var(<custom-property>);'],
+    ['caret-[<value>]', 'caret-color: <value>;'],
   ]}
 />
 ## Examples
@@ -50,7 +50,13 @@ Use utilities like `caret-rose-500` and `caret-lime-600` to change the color of 
 
 ### Using a custom value
 
-<UsingACustomValue element="textarea" utility="caret" value="#50d71e" name="caret color" variable="caret-color" />
+<UsingACustomValue
+  element="textarea"
+  utility="caret"
+  value="#50d71e"
+  name="caret color"
+  variable="caret-color"
+/>
 
 ### Responsive design
 

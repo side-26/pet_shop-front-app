@@ -1,24 +1,25 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "background-position";
-export const description = "Utilities for controlling the position of an element's background image.";
+export const title = 'background-position';
+export const description =
+  "Utilities for controlling the position of an element's background image.";
 
 <ApiTable
   rows={[
-    ["bg-top-left", "background-position: top left;"],
-    ["bg-top", "background-position: top;"],
-    ["bg-top-right", "background-position: top right;"],
-    ["bg-left", "background-position: left;"],
-    ["bg-center", "background-position: center;"],
-    ["bg-right", "background-position: right;"],
-    ["bg-bottom-left", "background-position: bottom left;"],
-    ["bg-bottom", "background-position: bottom;"],
-    ["bg-bottom-right", "background-position: bottom right;"],
-    ["bg-position-(<custom-property>)", "background-position: var(<custom-property>);"],
-    ["bg-position-[<value>]", "background-position: <value>;"],
+    ['bg-top-left', 'background-position: top left;'],
+    ['bg-top', 'background-position: top;'],
+    ['bg-top-right', 'background-position: top right;'],
+    ['bg-left', 'background-position: left;'],
+    ['bg-center', 'background-position: center;'],
+    ['bg-right', 'background-position: right;'],
+    ['bg-bottom-left', 'background-position: bottom left;'],
+    ['bg-bottom', 'background-position: bottom;'],
+    ['bg-bottom-right', 'background-position: bottom right;'],
+    ['bg-position-(<custom-property>)', 'background-position: var(<custom-property>);'],
+    ['bg-position-[<value>]', 'background-position: <value>;'],
   ]}
 />
 
@@ -164,7 +165,12 @@ Use utilities like `bg-center`, `bg-right`, and `bg-top-left` to control the pos
 
 ### Using a custom value
 
-<UsingACustomValue utility="bg-position" value="center_top_1rem" name="background position" variable="bg-position" />
+<UsingACustomValue
+  utility="bg-position"
+  value="center_top_1rem"
+  name="background position"
+  variable="bg-position"
+/>
 
 ### Responsive design
 

@@ -1,23 +1,23 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "overscroll-behavior";
+export const title = 'overscroll-behavior';
 export const description =
-  "Utilities for controlling how the browser behaves when reaching the boundary of a scrolling area.";
+  'Utilities for controlling how the browser behaves when reaching the boundary of a scrolling area.';
 
 <ApiTable
   rows={[
-    ["overscroll-auto", "overscroll-behavior: auto;"],
-    ["overscroll-contain", "overscroll-behavior: contain;"],
-    ["overscroll-none", "overscroll-behavior: none;"],
-    ["overscroll-x-auto", "overscroll-behavior-x: auto;"],
-    ["overscroll-x-contain", "overscroll-behavior-x: contain;"],
-    ["overscroll-x-none", "overscroll-behavior-x: none;"],
-    ["overscroll-y-auto", "overscroll-behavior-y: auto;"],
-    ["overscroll-y-contain", "overscroll-behavior-y: contain;"],
-    ["overscroll-y-none", "overscroll-behavior-y: none;"],
+    ['overscroll-auto', 'overscroll-behavior: auto;'],
+    ['overscroll-contain', 'overscroll-behavior: contain;'],
+    ['overscroll-none', 'overscroll-behavior: none;'],
+    ['overscroll-x-auto', 'overscroll-behavior-x: auto;'],
+    ['overscroll-x-contain', 'overscroll-behavior-x: contain;'],
+    ['overscroll-x-none', 'overscroll-behavior-x: none;'],
+    ['overscroll-y-auto', 'overscroll-behavior-y: auto;'],
+    ['overscroll-y-contain', 'overscroll-behavior-y: contain;'],
+    ['overscroll-y-none', 'overscroll-behavior-y: none;'],
   ]}
 />
 
@@ -148,4 +148,8 @@ Use the `overscroll-auto` utility to make it possible for the user to continue s
 
 ### Responsive design
 
-<ResponsiveDesign property="overscroll-behavior" defaultClass="overscroll-auto" featuredClass="overscroll-contain" />
+<ResponsiveDesign
+  property="overscroll-behavior"
+  defaultClass="overscroll-auto"
+  featuredClass="overscroll-contain"
+/>

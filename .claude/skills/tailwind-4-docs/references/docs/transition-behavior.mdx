@@ -1,15 +1,15 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "transition-behavior";
-export const description = "Utilities to control the behavior of CSS transitions.";
+export const title = 'transition-behavior';
+export const description = 'Utilities to control the behavior of CSS transitions.';
 
 <ApiTable
   rows={[
-    ["transition-normal", "transition-behavior: normal;"],
-    ["transition-discrete", "transition-behavior: allow-discrete;"],
+    ['transition-normal', 'transition-behavior: normal;'],
+    ['transition-discrete', 'transition-behavior: allow-discrete;'],
   ]}
 />
 
@@ -59,7 +59,9 @@ Use the `transition-discrete` utility to start transitions when changing propert
 <label class="peer ...">
   <input type="checkbox" checked />
 </label>
-<button class="hidden transition-all transition-discrete not-peer-has-checked:opacity-0 peer-has-checked:block ...">
+<button
+  class="hidden transition-all transition-discrete not-peer-has-checked:opacity-0 peer-has-checked:block ..."
+>
   I fade out
 </button>
 ```
