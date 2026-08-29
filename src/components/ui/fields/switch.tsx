@@ -3,6 +3,7 @@
 import { Switch as SwitchPrimitive } from '@base-ui/react/switch';
 
 import { cn } from '@/lib/utils';
+import { Spinner } from '../spinner';
 import {
   neutralInteractionClasses,
   selectionStateClasses,
@@ -16,6 +17,7 @@ type SwitchProps = SwitchPrimitive.Root.Props & {
   checkedColor?: SelectionColor;
   uncheckedColor?: SelectionColor;
   size?: SelectionSize;
+  loading?: boolean;
 };
 
 const switchSizes: Record<SelectionSize, { root: string; thumb: string }> = {
@@ -32,6 +34,8 @@ function Switch({
   checkedColor = 'primary',
   uncheckedColor = 'secondary',
   size = 'md',
+  loading = false,
+  disabled,
   ...props
 }: SwitchProps) {
   return (
@@ -41,6 +45,10 @@ function Switch({
       data-checked-color={checkedColor}
       data-unchecked-color={uncheckedColor}
       data-size={size}
+      data-loading={loading || undefined}
+      aria-busy={loading || undefined}
+      aria-disabled={disabled || loading || undefined}
+      disabled={disabled || loading}
       className={cn(
         'tw:group/switch tw:peer tw:inline-flex tw:shrink-0 tw:items-center tw:rounded-full tw:border tw:p-0.5 tw:outline-none tw:transition-colors tw:focus-visible:ring-3 tw:focus-visible:ring-ring/25 tw:aria-invalid:border-error tw:aria-invalid:ring-error/20 tw:disabled:cursor-not-allowed tw:data-readonly:cursor-default tw:motion-reduce:transition-none',
         switchSizes[size].root,
@@ -53,10 +61,18 @@ function Switch({
       <SwitchPrimitive.Thumb
         data-slot="switch-thumb"
         className={cn(
-          'tw:pointer-events-none tw:block tw:rounded-full tw:bg-background tw:shadow-sm tw:ring-1 tw:ring-foreground/10 tw:transition-transform tw:group-disabled/switch:bg-muted-foreground tw:motion-reduce:transition-none',
+          'tw:pointer-events-none tw:flex tw:items-center tw:justify-center tw:rounded-full tw:bg-background tw:shadow-sm tw:ring-1 tw:ring-foreground/10 tw:transition-transform tw:group-disabled/switch:bg-muted-foreground tw:group-data-loading/switch:bg-background tw:motion-reduce:transition-none',
           switchSizes[size].thumb,
         )}
-      />
+      >
+        {loading ? (
+          <Spinner
+            aria-hidden="true"
+            role="presentation"
+            className="tw:size-2/3 tw:text-foreground"
+          />
+        ) : null}
+      </SwitchPrimitive.Thumb>
     </SwitchPrimitive.Root>
   );
 }

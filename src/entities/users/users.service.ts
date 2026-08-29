@@ -6,6 +6,7 @@ import { EntityTag } from '@/utils/entityCache';
 import type {
   AllPaginatedUsersDTO,
   CreateUserDTO,
+  DeleteUserByIdDTO,
   GetAllPaginatedUsersParams,
   GetAllPaginatedUsersQueryDTO,
   UserDetailDTO,
@@ -62,6 +63,22 @@ export async function createUser(input: CreateUserDTO) {
   });
 
   if (result.isSuccess) {
+    usersCache.invalidateList();
+  }
+
+  return result;
+}
+
+export async function deleteUserById(id: DeleteUserByIdDTO['id']) {
+  const result = await customFetcher<void>({
+    url: `/users/${id}`,
+    method: 'DELETE',
+    auth: true,
+    cache: 'no-store',
+  });
+
+  if (result.isSuccess) {
+    usersCache.invalidateDetail(id);
     usersCache.invalidateList();
   }
 

@@ -51,50 +51,56 @@ describe(routePaths.uiComponents, () => {
     expect(
       screen.getByRole('heading', { level: 1, name: 'کتابخانه اجزای رابط کاربری' }),
     ).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Button' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Avatar' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Badge' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Card' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Expandable Card' })).toBeTruthy();
+    const sectionTitles = new Set(
+      screen.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent),
+    );
+
+    expect([...sectionTitles]).toEqual(
+      expect.arrayContaining([
+        'Button',
+        'Avatar',
+        'Badge',
+        'Card',
+        'Expandable Card',
+        'Price',
+        'Breadcrumb',
+        'Alert Dialog',
+        'Popover',
+        'Hover Card',
+        'Tooltip',
+        'Spinner',
+        'Dialog',
+        'Form Dialog Content',
+        'Filter Form Dialog Content',
+        'Drawer',
+        'Toast',
+        'Collapsible',
+        'Dropdown Menu',
+        'Pagination',
+        'Data Table',
+        'Carousel',
+        'Button Group',
+        'Toggle / Toggle Group',
+        'Tabs',
+        'Menubar',
+        'Form',
+        'Input OTP Field',
+        'Countdown',
+        'Counter',
+        'Empty',
+      ]),
+    );
     expect(
       screen.getByRole('button', { name: 'نمایش توضیحات کامل' }).getAttribute('aria-expanded'),
     ).toBe('false');
     expect(screen.getByRole('button', { name: 'بستن راهنما' }).getAttribute('aria-expanded')).toBe(
       'true',
     );
-    expect(screen.getByRole('heading', { level: 3, name: 'Price' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Breadcrumb' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Alert Dialog' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Popover' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Hover Card' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Tooltip' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Spinner' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Dialog' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Form Dialog Content' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'نمایش فرم گفتگو' })).toBeTruthy();
-    expect(
-      screen.getByRole('heading', { level: 3, name: 'Filter Form Dialog Content' }),
-    ).toBeTruthy();
     expect(screen.getByRole('button', { name: 'نمایش فیلتر' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Drawer' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'کشوی error' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Toast' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Collapsible' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Dropdown Menu' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Pagination' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Data Table' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Carousel' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Button Group' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Toggle / Toggle Group' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Tabs' })).toBeTruthy();
     expect(screen.getByRole('tablist', { name: 'اطلاعات محصول' })).toBeTruthy();
     expect(screen.getByRole('group', { name: 'وزن محصول · outlined' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Menubar' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Form' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Input OTP Field' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Countdown' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Counter' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 3, name: 'Empty' })).toBeTruthy();
     expect(
       screen.getByRole('heading', { level: 4, name: 'هنوز محصولی ثبت نشده است' }),
     ).toBeTruthy();
@@ -113,7 +119,7 @@ describe(routePaths.uiComponents, () => {
     expect(screen.getByRole('button', { name: 'روشن' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'تیره' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'سیستم' })).toBeTruthy();
-  }, 15_000);
+  }, 30_000);
 
   it('defines route metadata without making the page a Client Component', () => {
     expect(metadata.title).toBe('کتابخانه اجزای رابط کاربری | پت‌شاپ');

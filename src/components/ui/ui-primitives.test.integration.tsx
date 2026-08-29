@@ -178,6 +178,38 @@ describe('Pet Shop UI primitives', () => {
     ).toBe('true');
     expect(screen.getByRole('radio', { name: 'تلفن' }).getAttribute('aria-checked')).toBe('true');
   });
+  it('renders an accessible, non-interactive loading switch with a high-contrast thumb spinner', () => {
+    const onCheckedChange = vi.fn();
+    render(
+      <Switch
+        aria-label="به‌روزرسانی اعلان‌ها"
+        defaultChecked
+        loading
+        onCheckedChange={onCheckedChange}
+      />,
+    );
+
+    const control = screen.getByRole('switch', { name: 'به‌روزرسانی اعلان‌ها' });
+    fireEvent.click(control);
+
+    expect(control.getAttribute('data-loading')).toBe('true');
+    expect(control.getAttribute('aria-busy')).toBe('true');
+    expect(control.getAttribute('aria-disabled')).toBe('true');
+    expect(onCheckedChange).not.toHaveBeenCalled();
+    expect(control.querySelector('[data-slot="spinner"]')?.getAttribute('class')).toContain(
+      'tw:text-foreground',
+    );
+    expect(control.querySelector('[data-slot="switch-thumb"]')?.getAttribute('class')).toContain(
+      'tw:items-center',
+    );
+  });
+  it('keeps the disabled switch state exposed to assistive technology', () => {
+    render(<Switch aria-label="اعلان‌های غیرفعال" disabled />);
+
+    expect(
+      screen.getByRole('switch', { name: 'اعلان‌های غیرفعال' }).getAttribute('aria-disabled'),
+    ).toBe('true');
+  });
   it('associates FieldLabel with its control and exposes field states', () => {
     render(
       <Field data-invalid>

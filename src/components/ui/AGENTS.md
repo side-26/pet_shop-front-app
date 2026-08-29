@@ -323,6 +323,9 @@ status display.
 All three controls also support `size="xs|sm|md|lg|xl"`. Size scales Checkbox
 and Radio indicators or the Switch track/thumb, writes `data-size` on the
 control, and causes the associated `FieldLabel` typography to scale with it.
+`Switch` also supports `loading`. A loading switch disables activation, exposes
+`aria-busy`, and renders a `text-foreground` spinner within its `bg-background`
+thumb so it remains readable in both light and dark themes.
 `CheckboxField`, `SwitchField`, and `RadioGroupField` are the React Hook Form
 compositions for selection controls. They consume the nearest `FormProvider`,
 bind through typed `name`, and render a persistent hint/error description.

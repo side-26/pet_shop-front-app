@@ -15,6 +15,10 @@ export const userGetDetailByIdSchema = yup.object({
 
 export type UserGetDetailByIdInput = yup.InferType<typeof userGetDetailByIdSchema>;
 
+export const deleteUserByIdSchema = userGetDetailByIdSchema;
+
+export type DeleteUserByIdInput = yup.InferType<typeof deleteUserByIdSchema>;
+
 export const getAllPaginatedUsersSchema = yup.object({
   fullName: yup.string().trim().optional(),
   role: yup

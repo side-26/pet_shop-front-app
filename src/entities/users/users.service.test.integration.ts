@@ -1,16 +1,26 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { customFetcher } from '@/lib/api/customFetcher';
-import { createUser, getAllPaginatedUsers, userGetDetailById } from './users.service';
+import {
+  createUser,
+  deleteUserById,
+  getAllPaginatedUsers,
+  userGetDetailById,
+} from './users.service';
 
-const { cacheLifeMock, invalidateListMock, registerDetailMock, registerListMock } = vi.hoisted(
-  () => ({
-    cacheLifeMock: vi.fn(),
-    invalidateListMock: vi.fn(),
-    registerDetailMock: vi.fn(),
-    registerListMock: vi.fn(),
-  }),
-);
+const {
+  cacheLifeMock,
+  invalidateDetailMock,
+  invalidateListMock,
+  registerDetailMock,
+  registerListMock,
+} = vi.hoisted(() => ({
+  cacheLifeMock: vi.fn(),
+  invalidateDetailMock: vi.fn(),
+  invalidateListMock: vi.fn(),
+  registerDetailMock: vi.fn(),
+  registerListMock: vi.fn(),
+}));
 
 vi.mock('@/lib/api/customFetcher', () => ({ customFetcher: vi.fn() }));
 vi.mock('@/utils/entityCache', () => ({
@@ -19,11 +29,13 @@ vi.mock('@/utils/entityCache', () => ({
     registerDetail: ReturnType<typeof vi.fn>;
     registerList: ReturnType<typeof vi.fn>;
     invalidateList: ReturnType<typeof vi.fn>;
+    invalidateDetail: ReturnType<typeof vi.fn>;
   }) {
     this.cacheLife = cacheLifeMock;
     this.registerDetail = registerDetailMock;
     this.registerList = registerListMock;
     this.invalidateList = invalidateListMock;
+    this.invalidateDetail = invalidateDetailMock;
   }),
 }));
 
@@ -139,6 +151,40 @@ describe('createUser service', () => {
     customFetcherMock.mockResolvedValue(response);
 
     await expect(createUser(input)).resolves.toBe(response);
+    expect(invalidateListMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('deleteUserById service', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('deletes through an authenticated request and invalidates detail and list caches on success', async () => {
+    const response = { isSuccess: true as const, message: 'deleted', data: undefined };
+    customFetcherMock.mockResolvedValue(response);
+
+    await expect(deleteUserById('507f1f77bcf86cd799439011')).resolves.toBe(response);
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/users/507f1f77bcf86cd799439011',
+      method: 'DELETE',
+      auth: true,
+      cache: 'no-store',
+    });
+    expect(invalidateDetailMock).toHaveBeenCalledWith('507f1f77bcf86cd799439011');
+    expect(invalidateListMock).toHaveBeenCalledOnce();
+  });
+
+  it('returns the message error without invalidating caches when deletion fails', async () => {
+    const response = {
+      isSuccess: false as const,
+      message: 'user was not found',
+      data: { messages: {}, details: {} },
+    };
+    customFetcherMock.mockResolvedValue(response);
+
+    await expect(deleteUserById('507f1f77bcf86cd799439011')).resolves.toBe(response);
+    expect(invalidateDetailMock).not.toHaveBeenCalled();
     expect(invalidateListMock).not.toHaveBeenCalled();
   });
 });

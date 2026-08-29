@@ -3,15 +3,30 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { USER_ROLES } from '@/configs/user-role';
-import { userGetDetailByIdAction } from '@/entities/users/users.actions';
+import { ConfirmDialog } from '@/components/common/confirm-dialog/main';
+import { toast } from '@/components/ui/toast';
+import { deleteUserByIdAction, userGetDetailByIdAction } from '@/entities/users/users.actions';
 import type { UserDetailDTO } from '@/entities/users/users.dto';
+import { globalErrorHandler } from '@/utils/helpers';
+import { useCommonStore } from '@/stores/common.store';
 
 import { UserInfoRenderer } from './user-info-dialog';
 import { UsersRowActions } from './users-row-actions';
 
-vi.mock('@/entities/users/users.actions', () => ({ userGetDetailByIdAction: vi.fn() }));
+const refresh = vi.fn();
 
+vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh }) }));
+vi.mock('@/entities/users/users.actions', () => ({
+  deleteUserByIdAction: vi.fn(),
+  userGetDetailByIdAction: vi.fn(),
+}));
+vi.mock('@/utils/helpers', () => ({ globalErrorHandler: vi.fn() }));
+vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
+
+const deleteUserByIdActionMock = vi.mocked(deleteUserByIdAction);
 const userGetDetailByIdActionMock = vi.mocked(userGetDetailByIdAction);
+const globalErrorHandlerMock = vi.mocked(globalErrorHandler);
+const toastAddMock = vi.mocked(toast.add);
 
 const user: UserDetailDTO = {
   _id: '507f1f77bcf86cd799439011',
@@ -63,6 +78,7 @@ function renderRtl(node: React.ReactNode) {
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
+  useCommonStore.getState().hideConfirmDialog();
 });
 
 describe('UserInfoDialog', () => {
@@ -102,5 +118,55 @@ describe('UsersRowActions', () => {
     expect(await screen.findByRole('dialog', { name: 'اطلاعات کاربر' })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'بستن گفتگو' }));
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'اطلاعات کاربر' })).toBeNull());
+  });
+
+  it('confirms deletion before calling the action, then reports success and refreshes the table', async () => {
+    deleteUserByIdActionMock.mockResolvedValue({
+      isSuccess: true,
+      message: 'کاربر حذف شد.',
+      data: undefined,
+    });
+    renderRtl(
+      <>
+        <UsersRowActions userId={user._id} userName="مریم احمدی" />
+        <ConfirmDialog />
+      </>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'عملیات مریم احمدی' }));
+    fireEvent.click(await screen.findByText('حذف کاربر'));
+
+    expect(await screen.findByRole('alertdialog', { name: 'کاربر حذف شود؟' })).toBeTruthy();
+    expect(deleteUserByIdActionMock).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'تأیید' }));
+
+    await waitFor(() => expect(deleteUserByIdActionMock).toHaveBeenCalledWith({ id: user._id }));
+    expect(toastAddMock).toHaveBeenCalledWith({ type: 'success', title: 'کاربر حذف شد.' });
+    expect(refresh).toHaveBeenCalledOnce();
+    expect(globalErrorHandlerMock).not.toHaveBeenCalled();
+  });
+
+  it('shows a normalized delete error without refreshing the table', async () => {
+    const error = {
+      isSuccess: false as const,
+      message: 'حذف کاربر ناموفق بود.',
+      data: { messages: {}, details: {} },
+    };
+    deleteUserByIdActionMock.mockResolvedValue(error);
+    renderRtl(
+      <>
+        <UsersRowActions userId={user._id} userName="مریم احمدی" />
+        <ConfirmDialog />
+      </>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'عملیات مریم احمدی' }));
+    fireEvent.click(await screen.findByText('حذف کاربر'));
+    fireEvent.click(await screen.findByRole('button', { name: 'تأیید' }));
+
+    await waitFor(() => expect(globalErrorHandlerMock).toHaveBeenCalledWith(error));
+    expect(refresh).not.toHaveBeenCalled();
+    expect(toastAddMock).not.toHaveBeenCalled();
   });
 });

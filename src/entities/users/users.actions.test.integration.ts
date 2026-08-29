@@ -6,15 +6,22 @@ import { getSession } from '@/utils/session';
 
 import {
   createUserAction,
+  deleteUserByIdAction,
   getAllPaginatedUsersAction,
   userGetDetailByIdAction,
 } from './users.actions';
 import type { UserDetailDTO, UserDTO } from './users.dto';
-import { createUser, getAllPaginatedUsers, userGetDetailById } from './users.service';
+import {
+  createUser,
+  deleteUserById,
+  getAllPaginatedUsers,
+  userGetDetailById,
+} from './users.service';
 
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
 vi.mock('./users.service', () => ({
   createUser: vi.fn(),
+  deleteUserById: vi.fn(),
   getAllPaginatedUsers: vi.fn(),
   userGetDetailById: vi.fn(),
 }));
@@ -22,6 +29,7 @@ vi.mock('./users.service', () => ({
 const getSessionMock = vi.mocked(getSession);
 const getAllPaginatedUsersMock = vi.mocked(getAllPaginatedUsers);
 const createUserMock = vi.mocked(createUser);
+const deleteUserByIdMock = vi.mocked(deleteUserById);
 const userGetDetailByIdMock = vi.mocked(userGetDetailById);
 
 const successResponse = {
@@ -192,6 +200,44 @@ describe('users actions', () => {
       message: 'شما اجازه ایجاد کاربر را ندارید.',
     });
     expect(createUserMock).not.toHaveBeenCalled();
+  });
+
+  it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(
+    'validates and deletes a user for the %s role',
+    async (role) => {
+      const response = { isSuccess: true as const, message: 'deleted', data: undefined };
+      getSessionMock.mockResolvedValue(session(role));
+      deleteUserByIdMock.mockResolvedValue(response);
+
+      await expect(
+        deleteUserByIdAction({ id: '  507f1f77bcf86cd799439011  ', unknown: 'removed' }),
+      ).resolves.toBe(response);
+      expect(deleteUserByIdMock).toHaveBeenCalledWith('507f1f77bcf86cd799439011');
+    },
+  );
+
+  it('rejects an invalid delete-user id without calling the service', async () => {
+    getSessionMock.mockResolvedValue(session(USER_ROLES.ADMIN));
+
+    const result = await deleteUserByIdAction({});
+
+    expect(result).toMatchObject({ isSuccess: false });
+    expect(deleteUserByIdMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects unauthenticated and customer delete-user calls', async () => {
+    getSessionMock.mockResolvedValue(null);
+    await expect(deleteUserByIdAction({ id: '507f1f77bcf86cd799439011' })).resolves.toMatchObject({
+      isSuccess: false,
+      message: 'برای حذف کاربر وارد حساب مدیریتی شوید.',
+    });
+
+    getSessionMock.mockResolvedValue(session(USER_ROLES.CUSTOMER));
+    await expect(deleteUserByIdAction({ id: '507f1f77bcf86cd799439011' })).resolves.toMatchObject({
+      isSuccess: false,
+      message: 'شما اجازه حذف این کاربر را ندارید.',
+    });
+    expect(deleteUserByIdMock).not.toHaveBeenCalled();
   });
 
   it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(

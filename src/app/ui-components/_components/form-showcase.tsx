@@ -362,6 +362,10 @@ export function FormShowcase() {
             <Switch id="switch-readonly-neutral" defaultChecked readOnly />
             <FieldLabel htmlFor="switch-readonly-neutral">وضعیت فقط‌خواندنی</FieldLabel>
           </Field>
+          <Field className="tw:w-auto tw:flex-row tw:items-center tw:gap-3">
+            <Switch id="switch-loading" defaultChecked loading />
+            <FieldLabel htmlFor="switch-loading">در حال به‌روزرسانی</FieldLabel>
+          </Field>
           <RadioGroup defaultValue="locked" readOnly aria-label="نمونه فقط‌خواندنی">
             <RadioGroupItem value="locked" aria-label="رادیوی فقط‌خواندنی" />
           </RadioGroup>

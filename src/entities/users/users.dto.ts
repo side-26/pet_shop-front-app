@@ -4,6 +4,7 @@ import type { UserRole } from '@/configs/user-role';
 
 import type {
   CreateUserInput,
+  DeleteUserByIdInput,
   GetAllPaginatedUsersInput,
   UserGetDetailByIdInput,
 } from './users.schema';
@@ -11,6 +12,7 @@ import type {
 export type GetAllPaginatedUsersQueryDTO = GetAllPaginatedUsersInput;
 export type GetAllPaginatedUsersParams = Partial<GetAllPaginatedUsersInput>;
 export type CreateUserDTO = CreateUserInput;
+export type DeleteUserByIdDTO = DeleteUserByIdInput;
 export type UserGetDetailByIdDTO = UserGetDetailByIdInput;
 
 export interface AddressDTO {

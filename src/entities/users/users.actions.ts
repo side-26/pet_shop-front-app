@@ -9,10 +9,16 @@ import { getSession } from '@/utils/session';
 
 import {
   createUserSchema,
+  deleteUserByIdSchema,
   getAllPaginatedUsersSchema,
   userGetDetailByIdSchema,
 } from './users.schema';
-import { createUser, getAllPaginatedUsers, userGetDetailById } from './users.service';
+import {
+  createUser,
+  deleteUserById,
+  getAllPaginatedUsers,
+  userGetDetailById,
+} from './users.service';
 
 const ALLOWED_ADMIN_ROLES = new Set<UserRole>([USER_ROLES.ADMIN, USER_ROLES.SELLER]);
 
@@ -95,6 +101,33 @@ export async function createUserAction(input: unknown) {
     });
 
     return createUser(validatedInput);
+  } catch (error: unknown) {
+    if (error instanceof ValidationError) {
+      return validationErrorToFetcherError(error);
+    }
+
+    throw error;
+  }
+}
+
+export async function deleteUserByIdAction(input: unknown) {
+  const session = await getSession();
+
+  if (!session) {
+    return accessError('برای حذف کاربر وارد حساب مدیریتی شوید.');
+  }
+
+  if (!ALLOWED_ADMIN_ROLES.has(session.role)) {
+    return accessError('شما اجازه حذف این کاربر را ندارید.');
+  }
+
+  try {
+    const { id } = await deleteUserByIdSchema.validate(input, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+
+    return deleteUserById(id);
   } catch (error: unknown) {
     if (error instanceof ValidationError) {
       return validationErrorToFetcherError(error);
