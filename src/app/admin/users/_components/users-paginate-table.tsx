@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge, type BadgeProps } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/fields/switch';
 import {
   Table,
   TableBody,
@@ -16,6 +15,7 @@ import { cn } from '@/lib/utils';
 
 import type { UserTableRow } from './users-table.types';
 import { UsersRowActions } from './users-row-actions';
+import { UserEnabledSwitch } from './user-enabled-switch';
 
 const rolePresentation = {
   [USER_ROLES.ADMIN]: { label: 'مدیر', color: 'primary' },
@@ -101,14 +101,11 @@ export function UsersPaginateTable({
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Switch
-                        checked={user.isEnable}
-                        readOnly
+                      <UserEnabledSwitch
+                        userId={user.id}
+                        userName={fullName}
+                        isEnable={user.isEnable}
                         disabled={isLoading}
-                        size="sm"
-                        checkedColor="success"
-                        uncheckedColor="error"
-                        aria-label={`${fullName}: ${user.isEnable ? 'فعال' : 'غیرفعال'}`}
                       />
                     </TableCell>
                     <TableCell>

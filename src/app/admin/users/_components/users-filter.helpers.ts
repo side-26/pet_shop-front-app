@@ -37,7 +37,7 @@ function createUsersFilterFormValues(
     nationalCode: initialValues?.nationalCode ?? '',
     page: initialValues?.page ?? 1,
     limit: initialValues?.limit ?? 20,
-    isEnable: initialValues?.isEnable ?? true,
+    isEnable: initialValues?.isEnable ?? null,
     sort: initialValues?.sort ?? '',
   };
 }
@@ -54,7 +54,7 @@ function parseUsersFilterSearchParams(searchParams: SearchParams): UsersAllPagin
     nationalCode: firstValue(searchParams.nationalCode) ?? '',
     page: positiveInteger(firstValue(searchParams.page), 1),
     limit: positiveInteger(firstValue(searchParams.limit), 20),
-    isEnable: isEnable === 'false' ? false : true,
+    isEnable: isEnable === 'true' ? true : isEnable === 'false' ? false : null,
     sort: isSortOrder(sort) ? sort : '',
   };
 }

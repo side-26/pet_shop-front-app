@@ -19,6 +19,10 @@ export const deleteUserByIdSchema = userGetDetailByIdSchema;
 
 export type DeleteUserByIdInput = yup.InferType<typeof deleteUserByIdSchema>;
 
+export const updateUserStatusByIdSchema = userGetDetailByIdSchema;
+
+export type UpdateUserStatusByIdInput = yup.InferType<typeof updateUserStatusByIdSchema>;
+
 export const getAllPaginatedUsersSchema = yup.object({
   fullName: yup.string().trim().optional(),
   role: yup
@@ -29,7 +33,7 @@ export const getAllPaginatedUsersSchema = yup.object({
   nationalCode: yup.string().trim().optional(),
   page: yup.number().integer().min(1).default(1).required(),
   limit: yup.number().integer().min(1).default(20).required(),
-  isEnable: yup.boolean().default(true).required(),
+  isEnable: yup.boolean().nullable().optional(),
   sort: yup.mixed<(typeof USER_SORT_ORDERS)[number]>().oneOf(USER_SORT_ORDERS).optional(),
 });
 

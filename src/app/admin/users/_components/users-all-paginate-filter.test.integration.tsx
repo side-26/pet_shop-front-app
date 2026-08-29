@@ -18,7 +18,7 @@ afterEach(() => {
 });
 
 describe('UsersAllPaginateFilter', () => {
-  it('normalizes optional filters and resets pagination to the first page', () => {
+  it('normalizes optional filters, omits null values, and resets pagination to the first page', () => {
     expect(
       toSearchParams({
         fullName: 'Ali',
@@ -27,10 +27,10 @@ describe('UsersAllPaginateFilter', () => {
         nationalCode: '',
         page: 4,
         limit: 20,
-        isEnable: true,
+        isEnable: null,
         sort: '',
       }).toString(),
-    ).toBe('fullName=Ali&limit=20&isEnable=true&page=1');
+    ).toBe('fullName=Ali&limit=20&page=1');
   });
 
   it('submits the documented query filters and closes the dialog', async () => {
@@ -53,9 +53,7 @@ describe('UsersAllPaginateFilter', () => {
     expect(screen.getByLabelText('نام و نام خانوادگی').getAttribute('value')).toBe('علی');
     expect(screen.getByRole('combobox', { name: 'نقش' }).textContent).toContain('مدیر');
     expect(screen.getByRole('combobox', { name: 'مرتب‌سازی' }).textContent).toContain('نزولی');
-    expect(
-      screen.getByRole('switch', { name: 'فقط کاربران فعال' }).getAttribute('aria-checked'),
-    ).toBe('false');
+    expect(screen.getByRole('combobox', { name: 'وضعیت کاربر' }).textContent).toContain('غیرفعال');
 
     fireEvent.change(screen.getByLabelText('نام و نام خانوادگی'), { target: { value: 'مریم' } });
     fireEvent.click(screen.getByRole('combobox', { name: 'نقش' }));
@@ -63,13 +61,18 @@ describe('UsersAllPaginateFilter', () => {
     fireEvent.pointerDown(role, { button: 0 });
     fireEvent.pointerUp(role, { button: 0 });
     fireEvent.click(role);
+    fireEvent.click(screen.getByRole('combobox', { name: 'وضعیت کاربر' }));
+    const bothStatuses = await screen.findByRole('option', { name: 'هر دو' });
+    fireEvent.pointerDown(bothStatuses, { button: 0 });
+    fireEvent.pointerUp(bothStatuses, { button: 0 });
+    fireEvent.click(bothStatuses);
     fireEvent.click(screen.getByRole('button', { name: 'اعمال فیلتر' }));
 
     await waitFor(() =>
       expect(push).toHaveBeenCalledWith(
         routePaths.adminUsersQuery(
           new URLSearchParams(
-            'fullName=%D9%85%D8%B1%DB%8C%D9%85&role=seller&limit=50&isEnable=false&sort=dsc&page=1',
+            'fullName=%D9%85%D8%B1%DB%8C%D9%85&role=seller&limit=50&sort=dsc&page=1',
           ),
         ),
         {

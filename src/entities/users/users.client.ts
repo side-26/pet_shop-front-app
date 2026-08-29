@@ -7,7 +7,7 @@ import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
 import { globalErrorHandler } from '@/utils/helpers';
 
-import { createUserAction } from './users.actions';
+import { createUserAction, disableUserByIdAction, enableUserByIdAction } from './users.actions';
 import type { CreateUserInput } from './users.schema';
 
 export async function submitCreateUser(
@@ -43,4 +43,33 @@ export function useCreateUser(onSuccess: () => void) {
   );
 
   return { formRef, handleSubmit, isPending } as const;
+}
+
+export async function submitUserEnabledUpdate(id: string, isEnable: boolean): Promise<boolean> {
+  const result = await (isEnable ? enableUserByIdAction : disableUserByIdAction)({ id });
+
+  if (!result.isSuccess) {
+    globalErrorHandler(result);
+    return false;
+  }
+
+  toast.add({ type: 'success', title: result.message });
+  return true;
+}
+
+export function useUserEnabledUpdate(onSuccess: () => void) {
+  const [isPending, startTransition] = useTransition();
+
+  const updateUserEnabled = useCallback(
+    (id: string, isEnable: boolean) => {
+      if (isPending) return;
+
+      startTransition(async () => {
+        if (await submitUserEnabledUpdate(id, isEnable)) onSuccess();
+      });
+    },
+    [isPending, onSuccess],
+  );
+
+  return { isPending, updateUserEnabled } as const;
 }

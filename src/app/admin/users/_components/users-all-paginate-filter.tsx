@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { FilterFormDialogContent } from '@/components/common/filter-form-dialog-content';
 import { Dialog } from '@/components/ui/dialog';
 import { SelectField } from '@/components/ui/fields/select-field';
-import { SwitchField } from '@/components/ui/fields/switch-field';
 import { TextField } from '@/components/ui/fields/text-field';
 import { Form } from '@/components/ui/form';
 import { USER_ROLES } from '@/configs/user-role';
@@ -32,6 +31,12 @@ const sortOptions = [
   { label: 'نزولی', value: 'dsc' },
 ] as const;
 
+const enabledOptions = [
+  { label: 'هر دو', value: null },
+  { label: 'فعال', value: true },
+  { label: 'غیرفعال', value: false },
+] as const;
+
 type UsersAllPaginateFilterProps = {
   initialValues?: Partial<UsersAllPaginateFilterValues>;
   onOpenChange: (open: boolean) => void;
@@ -42,7 +47,7 @@ function toSearchParams(values: UsersAllPaginateFilterValues) {
   const params = new URLSearchParams();
 
   for (const [key, value] of Object.entries(values)) {
-    if (value === '' || value === undefined || key === 'page') continue;
+    if (value === '' || value == null || key === 'page') continue;
     params.set(key, String(value));
   }
 
@@ -116,10 +121,12 @@ function UsersAllPaginateFilter({
               options={sortOptions}
               placeholder="بدون مرتب‌سازی"
             />
-            <SwitchField<UsersAllPaginateFilterValues>
+            <SelectField<UsersAllPaginateFilterValues>
+              id="users-filter-enabled"
               name="isEnable"
-              label="فقط کاربران فعال"
-              hint="کاربران غیرفعال نمایش داده نمی‌شوند."
+              label="وضعیت کاربر"
+              options={enabledOptions}
+              placeholder="هر دو"
               className="tw:sm:col-span-2"
             />
           </>

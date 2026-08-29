@@ -7,6 +7,8 @@ import { getSession } from '@/utils/session';
 import {
   createUserAction,
   deleteUserByIdAction,
+  disableUserByIdAction,
+  enableUserByIdAction,
   getAllPaginatedUsersAction,
   userGetDetailByIdAction,
 } from './users.actions';
@@ -14,6 +16,8 @@ import type { UserDetailDTO, UserDTO } from './users.dto';
 import {
   createUser,
   deleteUserById,
+  disableUserById,
+  enableUserById,
   getAllPaginatedUsers,
   userGetDetailById,
 } from './users.service';
@@ -22,6 +26,8 @@ vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
 vi.mock('./users.service', () => ({
   createUser: vi.fn(),
   deleteUserById: vi.fn(),
+  disableUserById: vi.fn(),
+  enableUserById: vi.fn(),
   getAllPaginatedUsers: vi.fn(),
   userGetDetailById: vi.fn(),
 }));
@@ -30,6 +36,8 @@ const getSessionMock = vi.mocked(getSession);
 const getAllPaginatedUsersMock = vi.mocked(getAllPaginatedUsers);
 const createUserMock = vi.mocked(createUser);
 const deleteUserByIdMock = vi.mocked(deleteUserById);
+const disableUserByIdMock = vi.mocked(disableUserById);
+const enableUserByIdMock = vi.mocked(enableUserById);
 const userGetDetailByIdMock = vi.mocked(userGetDetailById);
 
 const successResponse = {
@@ -240,6 +248,55 @@ describe('users actions', () => {
     expect(deleteUserByIdMock).not.toHaveBeenCalled();
   });
 
+  it.each([
+    ['enable', enableUserByIdAction, enableUserByIdMock],
+    ['disable', disableUserByIdAction, disableUserByIdMock],
+  ] as const)(
+    'validates and updates user status through the %s action',
+    async (_, action, service) => {
+      const response = { isSuccess: true as const, message: 'updated', data: undefined };
+      getSessionMock.mockResolvedValue(session(USER_ROLES.ADMIN));
+      service.mockResolvedValue(response);
+
+      await expect(
+        action({ id: '  507f1f77bcf86cd799439011  ', unknown: 'removed' }),
+      ).resolves.toBe(response);
+      expect(service).toHaveBeenCalledWith('507f1f77bcf86cd799439011');
+    },
+  );
+
+  it.each([
+    ['enable', enableUserByIdAction, enableUserByIdMock],
+    ['disable', disableUserByIdAction, disableUserByIdMock],
+  ] as const)(
+    'rejects invalid ids before calling the %s status service',
+    async (_, action, service) => {
+      getSessionMock.mockResolvedValue(session(USER_ROLES.ADMIN));
+
+      await expect(action({ id: 'invalid' })).resolves.toMatchObject({ isSuccess: false });
+      expect(service).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([
+    ['enable', enableUserByIdAction, enableUserByIdMock],
+    ['disable', disableUserByIdAction, disableUserByIdMock],
+  ] as const)(
+    'rejects unauthenticated and customer %s status updates',
+    async (_, action, service) => {
+      getSessionMock.mockResolvedValue(null);
+      await expect(action({ id: '507f1f77bcf86cd799439011' })).resolves.toMatchObject({
+        isSuccess: false,
+      });
+
+      getSessionMock.mockResolvedValue(session(USER_ROLES.CUSTOMER));
+      await expect(action({ id: '507f1f77bcf86cd799439011' })).resolves.toMatchObject({
+        isSuccess: false,
+      });
+      expect(service).not.toHaveBeenCalled();
+    },
+  );
+
   it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(
     'validates the query and calls the users service for the %s role',
     async (role) => {
@@ -266,7 +323,6 @@ describe('users actions', () => {
     expect(getAllPaginatedUsersMock).toHaveBeenCalledWith({
       page: 1,
       limit: 20,
-      isEnable: true,
     });
   });
 

@@ -21,7 +21,7 @@ import {
 } from './select';
 
 type SelectFieldOption = {
-  value: string;
+  value: string | boolean | null;
   label: ReactNode;
   disabled?: boolean;
 };
@@ -85,8 +85,8 @@ function SelectField<
         items={options}
         name={field.name}
         inputRef={field.ref}
-        value={typeof field.value === 'string' ? field.value : null}
-        onValueChange={(value) => field.onChange(value ?? '')}
+        value={field.value ?? null}
+        onValueChange={(value) => field.onChange(value)}
         disabled={disabled}
         readOnly={readOnly}
         required={required}
@@ -102,8 +102,12 @@ function SelectField<
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {options.map((option) => (
-              <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
+            {options.map((option, index) => (
+              <SelectItem
+                key={`${option.value}-${index}`}
+                value={option.value}
+                disabled={option.disabled}
+              >
                 {option.label}
               </SelectItem>
             ))}

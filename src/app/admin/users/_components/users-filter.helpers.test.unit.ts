@@ -43,7 +43,7 @@ describe('parseUsersFilterSearchParams', () => {
       nationalCode: '',
       page: 1,
       limit: 20,
-      isEnable: true,
+      isEnable: null,
       sort: '',
     });
   });

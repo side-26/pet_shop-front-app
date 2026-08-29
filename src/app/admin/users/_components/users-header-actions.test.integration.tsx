@@ -52,8 +52,6 @@ describe('UsersHeaderActions', () => {
     expect(screen.getByLabelText('نام و نام خانوادگی').getAttribute('value')).toBe('مریم');
     expect(screen.getByRole('combobox', { name: 'نقش' }).textContent).toContain('فروشنده');
     expect(screen.getByRole('combobox', { name: 'مرتب‌سازی' }).textContent).toContain('نزولی');
-    expect(
-      screen.getByRole('switch', { name: 'فقط کاربران فعال' }).getAttribute('aria-checked'),
-    ).toBe('false');
+    expect(screen.getByRole('combobox', { name: 'وضعیت کاربر' }).textContent).toContain('غیرفعال');
   });
 });

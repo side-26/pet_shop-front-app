@@ -4,6 +4,8 @@ import { customFetcher } from '@/lib/api/customFetcher';
 import {
   createUser,
   deleteUserById,
+  disableUserById,
+  enableUserById,
   getAllPaginatedUsers,
   userGetDetailById,
 } from './users.service';
@@ -102,7 +104,7 @@ describe('getAllPaginatedUsers service', () => {
 
     await getAllPaginatedUsers();
 
-    const query = { page: 1, limit: 20, isEnable: true };
+    const query = { page: 1, limit: 20 };
     expect(customFetcherMock).toHaveBeenCalledWith({
       url: '/users/paginate',
       method: 'GET',
@@ -111,7 +113,21 @@ describe('getAllPaginatedUsers service', () => {
       cache: 'no-store',
     });
     expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 600 });
-    expect(registerListMock).toHaveBeenCalledWith('isEnable=true&limit=20&page=1');
+    expect(registerListMock).toHaveBeenCalledWith('limit=20&page=1');
+  });
+
+  it('omits a null enabled-status filter before requesting the API', async () => {
+    customFetcherMock.mockResolvedValue({ isSuccess: true, message: null, data: [] });
+
+    await getAllPaginatedUsers({ page: 1, limit: 20, isEnable: null });
+
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/users/paginate',
+      method: 'GET',
+      query: { page: 1, limit: 20 },
+      auth: true,
+      cache: 'no-store',
+    });
   });
 });
 
@@ -184,6 +200,43 @@ describe('deleteUserById service', () => {
     customFetcherMock.mockResolvedValue(response);
 
     await expect(deleteUserById('507f1f77bcf86cd799439011')).resolves.toBe(response);
+    expect(invalidateDetailMock).not.toHaveBeenCalled();
+    expect(invalidateListMock).not.toHaveBeenCalled();
+  });
+});
+
+describe.each([
+  ['enable', enableUserById],
+  ['disable', disableUserById],
+] as const)('%s user service', (status, updateUserStatus) => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('puts to the status endpoint and invalidates affected user caches on success', async () => {
+    const id = '507f1f77bcf86cd799439011';
+    customFetcherMock.mockResolvedValue({ isSuccess: true, message: 'updated', data: undefined });
+
+    await expect(updateUserStatus(id)).resolves.toMatchObject({ isSuccess: true });
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: `/users/${status}/${id}`,
+      method: 'PUT',
+      body: undefined,
+      auth: true,
+      cache: 'no-store',
+    });
+    expect(invalidateDetailMock).toHaveBeenCalledWith(id);
+    expect(invalidateListMock).toHaveBeenCalledOnce();
+  });
+
+  it('does not invalidate caches when the status request fails', async () => {
+    customFetcherMock.mockResolvedValue({
+      isSuccess: false,
+      message: 'failed',
+      data: { messages: {}, details: {} },
+    });
+
+    await updateUserStatus('507f1f77bcf86cd799439011');
     expect(invalidateDetailMock).not.toHaveBeenCalled();
     expect(invalidateListMock).not.toHaveBeenCalled();
   });

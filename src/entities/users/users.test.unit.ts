@@ -23,11 +23,10 @@ describe('userGetDetailByIdSchema', () => {
 });
 
 describe('getAllPaginatedUsersSchema', () => {
-  it('applies the documented pagination and enabled defaults', async () => {
+  it('applies pagination defaults without forcing an enabled-status filter', async () => {
     await expect(getAllPaginatedUsersSchema.validate({})).resolves.toEqual({
       page: 1,
       limit: 20,
-      isEnable: true,
     });
   });
 
@@ -100,5 +99,9 @@ describe('createUsersListCacheKey', () => {
     const second = { role: 'admin' as const, isEnable: true, limit: 20, page: 2 };
 
     expect(createUsersListCacheKey(first)).toBe(createUsersListCacheKey(second));
+  });
+
+  it('omits null status filters from the cache key', () => {
+    expect(createUsersListCacheKey({ page: 1, limit: 20, isEnable: null })).toBe('limit=20&page=1');
   });
 });

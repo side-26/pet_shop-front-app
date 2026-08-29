@@ -6,6 +6,7 @@ import type {
   CreateUserInput,
   DeleteUserByIdInput,
   GetAllPaginatedUsersInput,
+  UpdateUserStatusByIdInput,
   UserGetDetailByIdInput,
 } from './users.schema';
 
@@ -13,6 +14,7 @@ export type GetAllPaginatedUsersQueryDTO = GetAllPaginatedUsersInput;
 export type GetAllPaginatedUsersParams = Partial<GetAllPaginatedUsersInput>;
 export type CreateUserDTO = CreateUserInput;
 export type DeleteUserByIdDTO = DeleteUserByIdInput;
+export type UpdateUserStatusByIdDTO = UpdateUserStatusByIdInput;
 export type UserGetDetailByIdDTO = UserGetDetailByIdInput;
 
 export interface AddressDTO {

@@ -277,7 +277,8 @@ roots require the complete `items` collection. Controls use native/ARIA invalid
 and disabled state and are designed RTL-first.
 `SelectField` is the React Hook Form composition for single-value selects. It
 consumes the nearest `FormProvider`, accepts a typed `name` and `{ value, label,
-disabled? }` options, owns the `Field`, label, Select parts, and a persistent
+disabled? }` options. Option values may be strings, booleans, or `null`; `null`
+is preserved in React Hook Form for an explicit unfiltered state. It owns the `Field`, label, Select parts, and a persistent
 hint/error description. It binds the Select hidden input and selected value to
 React Hook Form, and exposes placeholder, required, disabled, and read-only
 states without duplicating select markup at call sites.
