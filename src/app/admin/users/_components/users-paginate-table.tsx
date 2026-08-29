@@ -1,15 +1,5 @@
-import { EyeIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
-
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge, type BadgeProps } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/fields/switch';
 import {
   Table,
@@ -25,6 +15,7 @@ import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
 
 import type { UserTableRow } from './users-table.types';
+import { UsersRowActions } from './users-row-actions';
 
 const rolePresentation = {
   [USER_ROLES.ADMIN]: { label: 'مدیر', color: 'primary' },
@@ -121,35 +112,7 @@ export function UsersPaginateTable({
                       />
                     </TableCell>
                     <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger
-                          disabled={isLoading}
-                          render={
-                            <Button
-                              type="button"
-                              iconOnly
-                              size="sm"
-                              variant="flat"
-                              color="secondary"
-                              aria-label={`عملیات ${fullName}`}
-                            />
-                          }
-                        >
-                          <MoreHorizontalIcon aria-hidden="true" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                              <EyeIcon aria-hidden="true" />
-                              مشاهده اطلاعات کاربر
-                            </DropdownMenuItem>
-                            <DropdownMenuItem variant="destructive">
-                              <Trash2Icon aria-hidden="true" />
-                              حذف کاربر
-                            </DropdownMenuItem>
-                          </DropdownMenuGroup>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <UsersRowActions userId={user.id} userName={fullName} disabled={isLoading} />
                     </TableCell>
                   </TableRow>
                 );
