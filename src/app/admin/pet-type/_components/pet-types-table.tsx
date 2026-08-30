@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 
 import { PetTypeEnabledSwitch } from './pet-type-enabled-switch';
@@ -31,6 +32,9 @@ export function PetTypesTable({ petTypes, isLoading = false }: PetTypesTableProp
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="tw:w-16">
+                <span className="tw:sr-only">تصویر</span>
+              </TableHead>
               <TableHead>عنوان</TableHead>
               <TableHead>توضیحات</TableHead>
               <TableHead>وضعیت</TableHead>
@@ -43,6 +47,23 @@ export function PetTypesTable({ petTypes, isLoading = false }: PetTypesTableProp
             {petTypes.length ? (
               petTypes.map((petType) => (
                 <TableRow key={petType.id}>
+                  <TableCell>
+                    <Avatar
+                      size="lg"
+                      aria-label={`تصویر ${displayValue(petType.title)}`}
+                      style={{
+                        backgroundImage: `url("${petType.thumbnail}")`,
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover',
+                      }}
+                    >
+                      <AvatarImage
+                        src={petType.mainImage}
+                        alt={`تصویر ${displayValue(petType.title)}`}
+                      />
+                      <AvatarFallback className="tw:bg-transparent" />
+                    </Avatar>
+                  </TableCell>
                   <TableCell className="tw:font-medium">{displayValue(petType.title)}</TableCell>
                   <TableCell className="tw:max-w-80 tw:truncate">
                     {displayValue(petType.description)}
@@ -67,7 +88,7 @@ export function PetTypesTable({ petTypes, isLoading = false }: PetTypesTableProp
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={4}
+                  colSpan={5}
                   className="tw:h-full tw:text-center tw:text-muted-foreground"
                 >
                   _

@@ -32,6 +32,7 @@ import { TabsShowcase } from './tabs-showcase';
 import { EmptyShowcase } from './empty-showcase';
 import { FormDialogContentShowcase } from './form-dialog-content-showcase';
 import { FilterFormDialogContentShowcase } from './filter-form-dialog-content-showcase';
+import { FileFieldShowcase } from './file-field-showcase';
 
 const navigation = [
   ['#avatars', 'Avatar'],
@@ -62,6 +63,7 @@ const navigation = [
   ['#tabs', 'Tabs'],
   ['#menubars', 'Menubar'],
   ['#forms', 'Form'],
+  ['#file-fields', 'FileField'],
   ['#input-otp-fields', 'Input OTP Field'],
   ['#countdowns', 'Countdown'],
   ['#counters', 'Counter'],
@@ -134,6 +136,7 @@ export function UiComponentsGallery() {
         <TabsShowcase />
         <MenubarShowcase />
         <FormShowcase />
+        <FileFieldShowcase />
         <InputOtpShowcase />
         <CountdownShowcase />
         <CounterShowcase />

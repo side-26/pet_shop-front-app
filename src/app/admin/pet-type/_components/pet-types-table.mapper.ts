@@ -7,6 +7,8 @@ export function mapPetTypesTableRows(petTypes: PetTypeDTO[]): PetTypeTableRow[] 
     id: petType.id,
     title: petType.title,
     description: petType.description,
+    mainImage: petType.mainImage,
+    thumbnail: petType.thumbnail,
     isEnabled: petType.isEnabled,
   }));
 }

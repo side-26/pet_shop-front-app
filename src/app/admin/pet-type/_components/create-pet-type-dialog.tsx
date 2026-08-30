@@ -6,6 +6,7 @@ import { TextareaField } from '@/components/ui/fields/textarea-field';
 import { Form } from '@/components/ui/form';
 import { useCreatePetType } from '@/entities/pet-types/pet-types.client';
 import { petTypeSchema, type PetTypeInput } from '@/entities/pet-types/pet-types.schema';
+import { PetTypeMainImageField } from './pet-type-main-image-field';
 const CREATE_PET_TYPE_FORM_ID = 'create-pet-type-form';
 export function CreatePetTypeDialog({
   open,
@@ -30,7 +31,7 @@ export function CreatePetTypeDialog({
           ref={formRef}
           id={CREATE_PET_TYPE_FORM_ID}
           validationSchema={petTypeSchema}
-          options={{ defaultValues: { title: '', description: '' } }}
+          options={{ defaultValues: { title: '', description: '', mainImage: undefined } }}
           handleSubmit={handleSubmit}
           aria-label="فرم ایجاد نوع حیوان"
         >
@@ -42,6 +43,7 @@ export function CreatePetTypeDialog({
             counter
             maxLength={150}
           />
+          <PetTypeMainImageField />
         </Form>
       </FormDialogContent>
     </Dialog>

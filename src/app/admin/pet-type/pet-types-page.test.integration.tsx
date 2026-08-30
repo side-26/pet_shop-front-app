@@ -6,6 +6,7 @@ import { getAllPetTypesAction } from '@/entities/pet-types/pet-types.actions';
 import type { PetTypeDTO } from '@/entities/pet-types/pet-types.dto';
 
 import { PetTypesTableContainer } from './_components/pet-types-table-container';
+import { mapPetTypesTableRows } from './_components/pet-types-table.mapper';
 import { petTypesTableSkeletonData } from './_components/pet-types-table-skeleton-data';
 import { PetTypesTable } from './_components/pet-types-table';
 import { PetTypesTableWrapper } from './_components/pet-types-table-wrapper';
@@ -22,6 +23,8 @@ const petTypes: PetTypeDTO[] = [
     id: '507f1f77bcf86cd799439011',
     title: 'سگ',
     description: 'حیوان خانگی وفادار',
+    mainImage: 'https://cdn.example.test/pet-types/dog.webp',
+    thumbnail: 'https://cdn.example.test/pet-types/dog-thumb.webp',
     isEnabled: true,
     propertyDefinitions: [],
     slug: 'dog',
@@ -76,13 +79,26 @@ describe('/admin/pet-type', () => {
       }),
     });
 
-    const { rerender } = render(<DirectionProvider direction="rtl">{loaded}</DirectionProvider>);
+    const { container, rerender } = render(
+      <DirectionProvider direction="rtl">{loaded}</DirectionProvider>,
+    );
     expect(screen.getByText('سگ')).toBeTruthy();
+    expect(screen.getAllByRole('columnheader')).toHaveLength(5);
+    expect(container.querySelector('[data-slot="avatar"]')?.getAttribute('style')).toContain(
+      petTypes[0].thumbnail,
+    );
     expect(screen.getByRole('switch', { name: 'سگ: فعال' })).toBeTruthy();
 
     rerender(<DirectionProvider direction="rtl">{error}</DirectionProvider>);
     expect(screen.getByText('دریافت انواع حیوان انجام نشد')).toBeTruthy();
     expect(screen.getByText('خطا در ارتباط با سرور')).toBeTruthy();
+  });
+
+  it('maps the main image as the avatar source and thumbnail as its placeholder', () => {
+    const [row] = mapPetTypesTableRows(petTypes);
+
+    expect(row.mainImage).toBe(petTypes[0].mainImage);
+    expect(row.thumbnail).toBe(petTypes[0].thumbnail);
   });
 
   it('keeps the table wrapper responsible for starting the list request', () => {

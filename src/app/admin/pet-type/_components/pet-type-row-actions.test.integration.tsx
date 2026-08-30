@@ -24,6 +24,8 @@ const petType: PetTypeDTO = {
   id: '507f1f77bcf86cd799439011',
   title: 'سگ',
   description: 'حیوان خانگی وفادار',
+  mainImage: 'https://cdn.example.test/pet-types/dog.webp',
+  thumbnail: 'https://cdn.example.test/pet-types/dog-thumb.webp',
   isEnabled: true,
   propertyDefinitions: [],
   slug: 'dog',
@@ -55,6 +57,9 @@ describe('PetTypeRowActions', () => {
     expect(await screen.findByRole('dialog', { name: 'مشاهده و ویرایش نوع حیوان' })).toBeTruthy();
     expect(screen.getByLabelText('عنوان').getAttribute('value')).toBe(petType.title);
     expect(screen.getByLabelText('توضیحات').textContent).toBe(petType.description);
+    expect(
+      screen.getByRole('img', { name: 'پیش‌نمایش تصویر اصلی نوع حیوان' }).getAttribute('src'),
+    ).toBe(petType.mainImage);
 
     fireEvent.click(screen.getByRole('button', { name: 'انصراف' }));
     await waitFor(() =>

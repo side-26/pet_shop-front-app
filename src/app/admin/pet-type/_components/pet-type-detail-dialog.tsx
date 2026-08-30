@@ -9,6 +9,7 @@ import { TextareaField } from '@/components/ui/fields/textarea-field';
 import { getPetTypeByIdAction } from '@/entities/pet-types/pet-types.actions';
 import { useUpdatePetType } from '@/entities/pet-types/pet-types.client';
 import { petTypeSchema, type PetTypeInput } from '@/entities/pet-types/pet-types.schema';
+import { PetTypeMainImageField } from './pet-type-main-image-field';
 
 const PET_TYPE_DETAIL_FORM_ID = 'pet-type-detail-form';
 type Props = {
@@ -22,6 +23,7 @@ type EditFormProps = Omit<Props, 'request'> & {
     id: string;
     title: string;
     description: string;
+    mainImage: string;
   };
 };
 
@@ -42,13 +44,18 @@ function EditForm({ petType, onClose, onUpdated }: EditFormProps) {
         id={PET_TYPE_DETAIL_FORM_ID}
         validationSchema={petTypeSchema}
         options={{
-          defaultValues: { title: petType.title, description: petType.description },
+          defaultValues: {
+            title: petType.title,
+            description: petType.description,
+            mainImage: undefined,
+          },
         }}
         handleSubmit={handleSubmit}
         aria-label="فرم ویرایش نوع حیوان"
       >
         <TextField<PetTypeInput> name="title" label="عنوان" required />
         <TextareaField<PetTypeInput> name="description" label="توضیحات" counter maxLength={150} />
+        <PetTypeMainImageField initialImageUrl={petType.mainImage} />
       </Form>
     </FormDialogContent>
   );

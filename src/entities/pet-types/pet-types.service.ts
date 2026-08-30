@@ -48,11 +48,20 @@ function invalidate(id?: string) {
   petTypesCache.invalidateList();
   if (id) petTypesCache.invalidateDetail(id);
 }
+
+function toPetTypeFormData(input: CreatePetTypeDTO | UpdatePetTypeDTO) {
+  const formData = new FormData();
+  formData.set('title', input.title);
+  formData.set('description', input.description ?? '');
+  formData.set('mainImage', input.mainImage);
+
+  return formData;
+}
 export async function createPetType(input: CreatePetTypeDTO) {
-  const result = await customFetcher<PetTypeDTO, unknown, CreatePetTypeDTO>({
+  const result = await customFetcher<PetTypeDTO, unknown, FormData>({
     url: '/pet-types',
     method: 'POST',
-    body: input,
+    body: toPetTypeFormData(input),
     auth: true,
     cache: 'no-store',
   });
@@ -60,10 +69,10 @@ export async function createPetType(input: CreatePetTypeDTO) {
   return result;
 }
 export async function updatePetType(id: string, input: UpdatePetTypeDTO) {
-  const result = await customFetcher<PetTypeDTO, unknown, UpdatePetTypeDTO>({
+  const result = await customFetcher<PetTypeDTO, unknown, FormData>({
     url: `/pet-types/${id}`,
     method: 'PUT',
-    body: input,
+    body: toPetTypeFormData(input),
     auth: true,
     cache: 'no-store',
   });
