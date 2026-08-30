@@ -11,10 +11,9 @@ export function PetTypesHeaderActions() {
   const [createOpen, setCreateOpen] = useState(false);
   const actions = useMemo<AdminHeaderActions>(
     () => ({
-      lastVisibleOrder: 2,
+      lastVisibleOrder: 1,
       'add-new-item': { order: 1, name: 'افزودن نوع حیوان', action: () => setCreateOpen(true) },
-      filter: { order: 2, action: () => undefined },
-      reload: { order: 3, action: router.refresh },
+      reload: { order: 2, action: router.refresh },
     }),
     [router.refresh],
   );
