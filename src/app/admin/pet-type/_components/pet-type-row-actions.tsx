@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy, Suspense, useState } from 'react';
+import { useState } from 'react';
 import { EyeIcon, ListPlusIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -21,18 +21,11 @@ import {
 import { useCommonStore } from '@/stores/common.store';
 import { globalErrorHandler } from '@/utils/helpers';
 
-const LazyPetTypeDetailDialog = lazy(async () => {
-  const dialog = await import('./pet-type-detail-dialog');
-
-  return { default: dialog.PetTypeDetailDialog };
-});
-const LazyPetTypePropertyDefinitionsDialog = lazy(async () => {
-  const dialog = await import('./pet-type-property-definitions-dialog');
-
-  return { default: dialog.PetTypePropertyDefinitionsDialog };
-});
+import { PetTypeDetailDialog } from './pet-type-detail-dialog';
+import { PetTypePropertyDefinitionsDialog } from './pet-type-property-definitions-dialog';
 
 type PetTypeDetailRequest = ReturnType<typeof getPetTypeByIdAction>;
+type PetTypePropertyDefinitionsRequest = ReturnType<typeof getPetTypePropertyDefinitionsAction>;
 
 type PetTypeRowActionsProps = {
   petTypeId: string;
@@ -48,7 +41,8 @@ export function PetTypeRowActions({
   const router = useRouter();
   const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
   const [detailRequest, setDetailRequest] = useState<PetTypeDetailRequest | null>(null);
-  const [propertyDefinitionsOpen, setPropertyDefinitionsOpen] = useState(false);
+  const [propertyDefinitionsRequest, setPropertyDefinitionsRequest] =
+    useState<PetTypePropertyDefinitionsRequest | null>(null);
 
   function openDetail() {
     if (disabled) return;
@@ -57,7 +51,7 @@ export function PetTypeRowActions({
 
   function openPropertyDefinitions() {
     if (disabled) return;
-    setPropertyDefinitionsOpen(true);
+    setPropertyDefinitionsRequest(getPetTypePropertyDefinitionsAction({ id: petTypeId }));
   }
 
   function confirmDeletion() {
@@ -119,28 +113,26 @@ export function PetTypeRowActions({
       </DropdownMenu>
 
       {detailRequest ? (
-        <Suspense fallback={null}>
-          <LazyPetTypeDetailDialog
-            request={detailRequest}
-            onClose={() => setDetailRequest(null)}
-            onUpdated={() => {
-              setDetailRequest(null);
-              router.refresh();
-            }}
-          />
-        </Suspense>
+        <PetTypeDetailDialog
+          petTypeId={petTypeId}
+          request={detailRequest}
+          onClose={() => setDetailRequest(null)}
+          onUpdated={() => {
+            setDetailRequest(null);
+            router.refresh();
+          }}
+        />
       ) : null}
-      {propertyDefinitionsOpen ? (
-        <Suspense fallback={null}>
-          <LazyPetTypePropertyDefinitionsDialog
-            petTypeId={petTypeId}
-            onClose={() => setPropertyDefinitionsOpen(false)}
-            onUpdated={() => {
-              setPropertyDefinitionsOpen(false);
-              router.refresh();
-            }}
-          />
-        </Suspense>
+      {propertyDefinitionsRequest ? (
+        <PetTypePropertyDefinitionsDialog
+          petTypeId={petTypeId}
+          request={propertyDefinitionsRequest}
+          onClose={() => setPropertyDefinitionsRequest(null)}
+          onUpdated={() => {
+            setPropertyDefinitionsRequest(null);
+            router.refresh();
+          }}
+        />
       ) : null}
     </>
   );
