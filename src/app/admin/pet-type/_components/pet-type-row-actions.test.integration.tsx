@@ -2,7 +2,10 @@ import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getPetTypeByIdAction } from '@/entities/pet-types/pet-types.actions';
+import {
+  getPetTypeByIdAction,
+  getPetTypePropertyDefinitionsAction,
+} from '@/entities/pet-types/pet-types.actions';
 import type { PetTypeDTO } from '@/entities/pet-types/pet-types.dto';
 
 import { PetTypeRowActions } from './pet-type-row-actions';
@@ -13,12 +16,19 @@ vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh }) }));
 vi.mock('@/entities/pet-types/pet-types.actions', () => ({
   deletePetTypeAction: vi.fn(),
   getPetTypeByIdAction: vi.fn(),
+  getPetTypePropertyDefinitionsAction: vi.fn(),
 }));
 vi.mock('@/entities/pet-types/pet-types.client', () => ({
   useUpdatePetType: () => ({ formRef: { current: null }, handleSubmit: vi.fn(), isPending: false }),
+  useRangePetTypePropertyDefinitions: () => ({
+    formRef: { current: null },
+    handleSubmit: vi.fn(),
+    isPending: false,
+  }),
 }));
 
 const getPetTypeByIdActionMock = vi.mocked(getPetTypeByIdAction);
+const getPetTypePropertyDefinitionsActionMock = vi.mocked(getPetTypePropertyDefinitionsAction);
 
 const petType: PetTypeDTO = {
   id: '507f1f77bcf86cd799439011',
@@ -65,5 +75,31 @@ describe('PetTypeRowActions', () => {
     await waitFor(() =>
       expect(screen.queryByRole('dialog', { name: 'مشاهده و ویرایش نوع حیوان' })).toBeNull(),
     );
+  });
+
+  it('starts the property-definition request after selection and lazy-loads its editable dialog', async () => {
+    getPetTypePropertyDefinitionsActionMock.mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: { result: [{ label: 'رنگ', value: 'قهوه‌ای' }] },
+    });
+
+    render(
+      <DirectionProvider direction="rtl">
+        <PetTypeRowActions petTypeId={petType.id} petTypeTitle={petType.title} />
+      </DirectionProvider>,
+    );
+
+    expect(getPetTypePropertyDefinitionsActionMock).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'عملیات سگ' }));
+    fireEvent.click(await screen.findByText('ویرایش ویژگی‌های اضافی'));
+
+    await waitFor(() => {
+      expect(getPetTypePropertyDefinitionsActionMock).toHaveBeenCalledWith({ id: petType.id });
+    });
+    expect(await screen.findByRole('dialog', { name: 'ویرایش ویژگی‌های اضافی' })).toBeTruthy();
+    expect((await screen.findByLabelText('عنوان')).getAttribute('value')).toBe('رنگ');
+    expect(screen.getByLabelText('مقدار').getAttribute('value')).toBe('قهوه‌ای');
   });
 });

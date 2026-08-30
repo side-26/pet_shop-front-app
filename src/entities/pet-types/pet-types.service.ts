@@ -7,7 +7,9 @@ import type {
   CreatePetTypeDTO,
   PetTypeDTO,
   PetTypeIdDTO,
+  PetTypePropertyDefinitionsResultDTO,
   PetTypeQueryDTO,
+  RangePetTypePropertyDefinitionsDTO,
   UpdatePetTypeDTO,
 } from './pet-types.dto';
 import { petTypeQuerySchema } from './pet-types.schema';
@@ -38,6 +40,18 @@ export async function getPetTypeById(id: PetTypeIdDTO['id']) {
   petTypesCache.registerDetail(id);
   return customFetcher<PetTypeDTO>({
     url: `/pet-types/${id}`,
+    method: 'GET',
+    auth: true,
+    cache: 'no-store',
+  });
+}
+
+export async function getPetTypePropertyDefinitions(id: PetTypeIdDTO['id']) {
+  'use cache: private';
+  petTypesCache.cacheLife({ stale: 600 });
+  petTypesCache.registerDetail(id);
+  return customFetcher<PetTypePropertyDefinitionsResultDTO>({
+    url: `/pet-types/property-definitions/${id}`,
     method: 'GET',
     auth: true,
     cache: 'no-store',
@@ -77,6 +91,21 @@ export async function updatePetType(id: string, input: UpdatePetTypeDTO) {
     cache: 'no-store',
   });
   if (result.isSuccess) invalidate(id);
+  return result;
+}
+export async function rangePetTypePropertyDefinitions(input: RangePetTypePropertyDefinitionsDTO) {
+  const result = await customFetcher<
+    PetTypePropertyDefinitionsResultDTO,
+    unknown,
+    RangePetTypePropertyDefinitionsDTO
+  >({
+    url: '/pet-types/range',
+    method: 'PUT',
+    body: input,
+    auth: true,
+    cache: 'no-store',
+  });
+  if (result.isSuccess) invalidate(input.id);
   return result;
 }
 export async function enablePetType(id: string) {

@@ -47,7 +47,43 @@ export const petTypeSchema = yup.object({
 // The API replaces the main image on every update, so it is required in both dialogs.
 export const updatePetTypeSchema = petTypeSchema;
 
+const propertyDefinitionValueSchema = yup
+  .mixed<string | number>()
+  .transform((value, originalValue) =>
+    typeof originalValue === 'string' ? originalValue.trim() : value,
+  )
+  .test(
+    'valid-property-definition-value',
+    'مقدار مشخصات باید متنِ غیرخالی یا عدد معتبر باشد.',
+    (value) =>
+      (typeof value === 'string' && value.length > 0) ||
+      (typeof value === 'number' && Number.isFinite(value)),
+  )
+  .required('مقدار مشخصات الزامی است.');
+
+export const petTypePropertyDefinitionSchema = yup.object({
+  label: yup.string().trim().min(1, 'عنوان مشخصات نمی‌تواند خالی باشد.').required(),
+  value: propertyDefinitionValueSchema,
+});
+
+export const rangePetTypePropertyDefinitionsSchema = petTypeIdSchema.concat(
+  yup.object({
+    propertyDefinitions: yup.array(petTypePropertyDefinitionSchema).required(),
+  }),
+);
+
+export const petTypePropertyDefinitionsFormSchema = yup.object({
+  propertyDefinitions: yup.array(petTypePropertyDefinitionSchema).required(),
+});
+
 export type PetTypeIdInput = yup.InferType<typeof petTypeIdSchema>;
 export type PetTypeQueryInput = yup.InferType<typeof petTypeQuerySchema>;
 export type PetTypeInput = yup.InferType<typeof petTypeSchema>;
 export type UpdatePetTypeInput = yup.InferType<typeof updatePetTypeSchema>;
+export type PetTypePropertyDefinitionInput = yup.InferType<typeof petTypePropertyDefinitionSchema>;
+export type RangePetTypePropertyDefinitionsInput = yup.InferType<
+  typeof rangePetTypePropertyDefinitionsSchema
+>;
+export type PetTypePropertyDefinitionsFormInput = yup.InferType<
+  typeof petTypePropertyDefinitionsFormSchema
+>;

@@ -12,7 +12,8 @@ import {
 } from './pet-types.actions';
 import { createPetTypeAction } from './pet-types.actions';
 import { updatePetTypeAction } from './pet-types.actions';
-import type { PetTypeInput } from './pet-types.schema';
+import { rangePetTypePropertyDefinitionsAction } from './pet-types.actions';
+import type { PetTypeInput, PetTypePropertyDefinitionsFormInput } from './pet-types.schema';
 
 type PetTypeRowAction =
   typeof enablePetTypeAction | typeof disablePetTypeAction | typeof deletePetTypeAction;
@@ -79,6 +80,28 @@ export function useUpdatePetType(id: string, onSuccess: () => void) {
         const result = await updatePetTypeAction({ id, ...input });
         if (!result.isSuccess)
           return globalErrorHandler(result, { showErrorFields: form.setError });
+        toast.add({ type: 'success', title: result.message });
+        onSuccess();
+      });
+    },
+    [id, isPending, onSuccess],
+  );
+  return { formRef, handleSubmit, isPending } as const;
+}
+
+export function useRangePetTypePropertyDefinitions(id: string, onSuccess: () => void) {
+  const formRef = useRef<FormHandle<PetTypePropertyDefinitionsFormInput>>(null);
+  const [isPending, startTransition] = useTransition();
+  const handleSubmit = useCallback(
+    (input: PetTypePropertyDefinitionsFormInput) => {
+      const form = formRef.current;
+      if (!form || isPending) return;
+      startTransition(async () => {
+        const result = await rangePetTypePropertyDefinitionsAction({ id, ...input });
+        if (!result.isSuccess) {
+          globalErrorHandler(result, { showErrorFields: form.setError });
+          return;
+        }
         toast.add({ type: 'success', title: result.message });
         onSuccess();
       });

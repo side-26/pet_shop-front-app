@@ -9,6 +9,7 @@ import {
   petTypeIdSchema,
   petTypeQuerySchema,
   petTypeSchema,
+  rangePetTypePropertyDefinitionsSchema,
   updatePetTypeSchema,
 } from './pet-types.schema';
 import * as service from './pet-types.service';
@@ -47,6 +48,12 @@ export async function getPetTypeByIdAction(input: unknown) {
   const value = await validate(petTypeIdSchema, input);
   return 'isSuccess' in value ? value : service.getPetTypeById(value.id);
 }
+export async function getPetTypePropertyDefinitionsAction(input: unknown) {
+  const denied = await authorize();
+  if (denied) return denied;
+  const value = await validate(petTypeIdSchema, input);
+  return 'isSuccess' in value ? value : service.getPetTypePropertyDefinitions(value.id);
+}
 export async function createPetTypeAction(input: unknown) {
   const denied = await authorize();
   if (denied) return denied;
@@ -60,6 +67,12 @@ export async function updatePetTypeAction(input: unknown) {
   if ('isSuccess' in id) return id;
   const value = await validate(updatePetTypeSchema, input);
   return 'isSuccess' in value ? value : service.updatePetType(id.id, value);
+}
+export async function rangePetTypePropertyDefinitionsAction(input: unknown) {
+  const denied = await authorize();
+  if (denied) return denied;
+  const value = await validate(rangePetTypePropertyDefinitionsSchema, input);
+  return 'isSuccess' in value ? value : service.rangePetTypePropertyDefinitions(value);
 }
 export async function enablePetTypeAction(input: unknown) {
   return status(input, service.enablePetType);

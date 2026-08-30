@@ -1,7 +1,7 @@
 'use client';
 
 import { lazy, Suspense, useState } from 'react';
-import { EyeIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
+import { EyeIcon, ListPlusIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { toast } from '@/components/ui/toast';
-import { deletePetTypeAction, getPetTypeByIdAction } from '@/entities/pet-types/pet-types.actions';
+import {
+  deletePetTypeAction,
+  getPetTypeByIdAction,
+  getPetTypePropertyDefinitionsAction,
+} from '@/entities/pet-types/pet-types.actions';
 import { useCommonStore } from '@/stores/common.store';
 import { globalErrorHandler } from '@/utils/helpers';
 
@@ -21,6 +25,11 @@ const LazyPetTypeDetailDialog = lazy(async () => {
   const dialog = await import('./pet-type-detail-dialog');
 
   return { default: dialog.PetTypeDetailDialog };
+});
+const LazyPetTypePropertyDefinitionsDialog = lazy(async () => {
+  const dialog = await import('./pet-type-property-definitions-dialog');
+
+  return { default: dialog.PetTypePropertyDefinitionsDialog };
 });
 
 type PetTypeDetailRequest = ReturnType<typeof getPetTypeByIdAction>;
@@ -39,10 +48,16 @@ export function PetTypeRowActions({
   const router = useRouter();
   const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
   const [detailRequest, setDetailRequest] = useState<PetTypeDetailRequest | null>(null);
+  const [propertyDefinitionsOpen, setPropertyDefinitionsOpen] = useState(false);
 
   function openDetail() {
     if (disabled) return;
     setDetailRequest(getPetTypeByIdAction({ id: petTypeId }));
+  }
+
+  function openPropertyDefinitions() {
+    if (disabled) return;
+    setPropertyDefinitionsOpen(true);
   }
 
   function confirmDeletion() {
@@ -91,6 +106,10 @@ export function PetTypeRowActions({
               <EyeIcon aria-hidden="true" />
               مشاهده و ویرایش
             </DropdownMenuItem>
+            <DropdownMenuItem onClick={openPropertyDefinitions}>
+              <ListPlusIcon aria-hidden="true" />
+              ویرایش ویژگی‌های اضافی
+            </DropdownMenuItem>
             <DropdownMenuItem variant="destructive" onClick={confirmDeletion}>
               <Trash2Icon aria-hidden="true" />
               حذف نوع حیوان
@@ -106,6 +125,18 @@ export function PetTypeRowActions({
             onClose={() => setDetailRequest(null)}
             onUpdated={() => {
               setDetailRequest(null);
+              router.refresh();
+            }}
+          />
+        </Suspense>
+      ) : null}
+      {propertyDefinitionsOpen ? (
+        <Suspense fallback={null}>
+          <LazyPetTypePropertyDefinitionsDialog
+            petTypeId={petTypeId}
+            onClose={() => setPropertyDefinitionsOpen(false)}
+            onUpdated={() => {
+              setPropertyDefinitionsOpen(false);
               router.refresh();
             }}
           />
