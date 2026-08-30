@@ -20,6 +20,7 @@ export const PATHS = {
   UI_COMPONENTS: '/ui-components',
   ADMIN: '/admin',
   ADMIN_USERS: '/admin/users',
+  ADMIN_PET_TYPES: '/admin/pet-type',
 } as const;
 
 export const routePaths = {
@@ -44,6 +45,7 @@ export const routePaths = {
   uiComponents: PATHS.UI_COMPONENTS,
   admin: PATHS.ADMIN,
   adminUsers: PATHS.ADMIN_USERS,
+  adminPetTypes: PATHS.ADMIN_PET_TYPES,
   adminUsersQuery: (query: URLSearchParams) => `${PATHS.ADMIN_USERS}?${query.toString()}`,
   adminUsersPage: (page: number, query = new URLSearchParams()) => {
     const searchParams = new URLSearchParams(query);
