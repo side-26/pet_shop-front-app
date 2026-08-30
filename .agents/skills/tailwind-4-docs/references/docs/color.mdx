@@ -1,25 +1,28 @@
-import { ApiTable } from "@/components/api-table.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
 import {
   CustomizingYourThemeColors,
   ResponsiveDesign,
   TargetingSpecificStates,
   UsingACustomValue,
-} from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import colors from "./utils/colors";
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import colors from './utils/colors';
 
-export const title = "color";
-export const description = "Utilities for controlling the text color of an element.";
+export const title = 'color';
+export const description = 'Utilities for controlling the text color of an element.';
 
 <ApiTable
   rows={[
-    ["text-inherit", "color: inherit;"],
-    ["text-current", "color: currentColor;"],
-    ["text-transparent", "color: transparent;"],
-    ...Object.entries(colors).map(([name, value]) => [`text-${name}`, `color: var(--color-${name}); /* ${value} */`]),
-    ["text-(<custom-property>)", "color: var(<custom-property>);"],
-    ["text-[<value>]", "color: <value>;"],
+    ['text-inherit', 'color: inherit;'],
+    ['text-current', 'color: currentColor;'],
+    ['text-transparent', 'color: transparent;'],
+    ...Object.entries(colors).map(([name, value]) => [
+      `text-${name}`,
+      `color: var(--color-${name}); /* ${value} */`,
+    ]),
+    ['text-(<custom-property>)', 'color: var(<custom-property>);'],
+    ['text-[<value>]', 'color: <value>;'],
   ]}
 />
 
@@ -34,7 +37,9 @@ Use utilities like `text-blue-600` and `text-sky-400` to control the text color 
 <Example>
   {
     <div className="relative text-center text-xl leading-6 font-medium">
-      <p className="text-blue-600 dark:text-sky-400">The quick brown fox jumps over the lazy dog.</p>
+      <p className="text-blue-600 dark:text-sky-400">
+        The quick brown fox jumps over the lazy dog.
+      </p>
     </div>
   }
 </Example>
@@ -55,10 +60,18 @@ Use the color opacity modifier to control the text color opacity of an element:
 <Example>
   {
     <div className="space-y-4 text-center text-xl leading-6 font-medium">
-      <p className="text-blue-600/100 dark:text-sky-400/100">The quick brown fox jumps over the lazy dog.</p>
-      <p className="text-blue-600/75 dark:text-sky-400/75">The quick brown fox jumps over the lazy dog.</p>
-      <p className="text-blue-600/50 dark:text-sky-400/50">The quick brown fox jumps over the lazy dog.</p>
-      <p className="text-blue-600/25 dark:text-sky-400/25">The quick brown fox jumps over the lazy dog.</p>
+      <p className="text-blue-600/100 dark:text-sky-400/100">
+        The quick brown fox jumps over the lazy dog.
+      </p>
+      <p className="text-blue-600/75 dark:text-sky-400/75">
+        The quick brown fox jumps over the lazy dog.
+      </p>
+      <p className="text-blue-600/50 dark:text-sky-400/50">
+        The quick brown fox jumps over the lazy dog.
+      </p>
+      <p className="text-blue-600/25 dark:text-sky-400/25">
+        The quick brown fox jumps over the lazy dog.
+      </p>
     </div>
   }
 </Example>
@@ -89,7 +102,7 @@ Use the color opacity modifier to control the text color opacity of an element:
 <Example>
   {
     <p className="text-center text-xl font-medium text-gray-900 dark:text-gray-200">
-      Oh I gotta get on that{" "}
+      Oh I gotta get on that{' '}
       <a
         href="https://en.wikipedia.org/wiki/Internet"
         target="_blank"
@@ -118,7 +131,12 @@ Use the color opacity modifier to control the text color opacity of an element:
 
 ### Responsive design
 
-<ResponsiveDesign element="p" property="color" defaultClass="text-blue-600" featuredClass="text-green-600" />
+<ResponsiveDesign
+  element="p"
+  property="color"
+  defaultClass="text-blue-600"
+  featuredClass="text-green-600"
+/>
 
 ## Customizing your theme
 

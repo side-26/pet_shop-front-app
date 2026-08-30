@@ -1,25 +1,30 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourSpacingScale, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourSpacingScale,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "scroll-margin";
-export const description = "Utilities for controlling the scroll offset around items in a snap container.";
+export const title = 'scroll-margin';
+export const description =
+  'Utilities for controlling the scroll offset around items in a snap container.';
 
 <ApiTable
   rows={[
-    ["scroll-m", "scroll-margin"],
-    ["scroll-mx", "scroll-margin-inline"],
-    ["scroll-my", "scroll-margin-block"],
-    ["scroll-ms", "scroll-margin-inline-start"],
-    ["scroll-me", "scroll-margin-inline-end"],
-    ["scroll-mbs", "scroll-margin-block-start"],
-    ["scroll-mbe", "scroll-margin-block-end"],
-    ["scroll-mt", "scroll-margin-top"],
-    ["scroll-mr", "scroll-margin-right"],
-    ["scroll-mb", "scroll-margin-bottom"],
-    ["scroll-ml", "scroll-margin-left"],
+    ['scroll-m', 'scroll-margin'],
+    ['scroll-mx', 'scroll-margin-inline'],
+    ['scroll-my', 'scroll-margin-block'],
+    ['scroll-ms', 'scroll-margin-inline-start'],
+    ['scroll-me', 'scroll-margin-inline-end'],
+    ['scroll-mbs', 'scroll-margin-block-start'],
+    ['scroll-mbe', 'scroll-margin-block-end'],
+    ['scroll-mt', 'scroll-margin-top'],
+    ['scroll-mr', 'scroll-margin-right'],
+    ['scroll-mb', 'scroll-margin-bottom'],
+    ['scroll-ml', 'scroll-margin-left'],
   ].flatMap(([prefix, property]) => [
     [`${prefix}-<number>`, `${property}: calc(var(--spacing) * <number>);`],
     [`-${prefix}-<number>`, `${property}: calc(var(--spacing) * -<number>);`],
@@ -245,7 +250,12 @@ Use the `scroll-mbs-<number>` and `scroll-mbe-<number>` utilities to set the `sc
 
 ### Using a custom value
 
-<UsingACustomValue utilities={["scroll-ml", "scroll-me"]} value="24rem" name="scroll margin" variable="scroll-margin" />
+<UsingACustomValue
+  utilities={['scroll-ml', 'scroll-me']}
+  value="24rem"
+  name="scroll margin"
+  variable="scroll-margin"
+/>
 
 ### Responsive design
 
@@ -255,16 +265,16 @@ Use the `scroll-mbs-<number>` and `scroll-mbe-<number>` utilities to set the `sc
 
 <CustomizingYourSpacingScale
   utilities={[
-    "scroll-m",
-    "scroll-mx",
-    "scroll-my",
-    "scroll-ms",
-    "scroll-me",
-    "scroll-mbs",
-    "scroll-mbe",
-    "scroll-mt",
-    "scroll-mr",
-    "scroll-mb",
-    "scroll-ml",
+    'scroll-m',
+    'scroll-mx',
+    'scroll-my',
+    'scroll-ms',
+    'scroll-me',
+    'scroll-mbs',
+    'scroll-mbe',
+    'scroll-mt',
+    'scroll-mr',
+    'scroll-mb',
+    'scroll-ml',
   ]}
 />

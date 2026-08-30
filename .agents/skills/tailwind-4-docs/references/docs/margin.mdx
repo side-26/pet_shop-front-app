@@ -1,11 +1,15 @@
-import dedent from "dedent";
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourSpacingScale, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import dedent from 'dedent';
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourSpacingScale,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "margin";
+export const title = 'margin';
 export const description = "Utilities for controlling an element's margin.";
 
 <ApiTable
@@ -238,7 +242,9 @@ To use a negative margin value, prefix the class name with a dash to convert it 
     <div className="flex justify-center font-mono text-sm leading-6 font-bold text-white">
       <div className="flex flex-col items-center">
         <div className="relative h-16 w-36 overflow-hidden rounded-md border border-sky-700/10 bg-sky-400/20"></div>
-        <div className="relative -mt-8 flex items-center justify-center rounded-md bg-sky-500 p-4">-mt-8</div>
+        <div className="relative -mt-8 flex items-center justify-center rounded-md bg-sky-500 p-4">
+          -mt-8
+        </div>
       </div>
     </div>
   }
@@ -325,9 +331,15 @@ Use `space-x-<number>` or `space-y-<number>` utilities like `space-x-4` and `spa
         <div className="absolute inset-0">
           <Stripes border="y" className="h-full rounded-lg" />
         </div>
-        <div className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-fuchsia-500">01</div>
-        <div className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-fuchsia-500">02</div>
-        <div className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-fuchsia-500">03</div>
+        <div className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-fuchsia-500">
+          01
+        </div>
+        <div className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-fuchsia-500">
+          02
+        </div>
+        <div className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-fuchsia-500">
+          03
+        </div>
       </div>
     </div>
   }
@@ -357,9 +369,15 @@ If your elements are in reverse order (using say `flex-row-reverse` or `flex-col
         <div className="absolute inset-0">
           <Stripes border="y" className="h-full rounded-lg" />
         </div>
-        <div className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-cyan-500">01</div>
-        <div className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-cyan-500">02</div>
-        <div className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-cyan-500">03</div>
+        <div className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-cyan-500">
+          01
+        </div>
+        <div className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-cyan-500">
+          02
+        </div>
+        <div className="relative flex h-14 w-14 items-center justify-center rounded-lg bg-cyan-500">
+          03
+        </div>
       </div>
     </div>
   }
@@ -386,7 +404,7 @@ Additionally, the space utilities are not designed to work together with the [di
 
 ### Using a custom value
 
-<UsingACustomValue utilities={["m", "mx", "mb"]} name="margin" variable="margin" value="5px" />
+<UsingACustomValue utilities={['m', 'mx', 'mb']} name="margin" variable="margin" value="5px" />
 
 ### Responsive design
 
@@ -394,4 +412,6 @@ Additionally, the space utilities are not designed to work together with the [di
 
 ## Customizing your theme
 
-<CustomizingYourSpacingScale utilities={["m", "mx", "my", "ms", "me", "mbs", "mbe", "mt", "mr", "mb", "ml"]} />
+<CustomizingYourSpacingScale
+  utilities={['m', 'mx', 'my', 'ms', 'me', 'mbs', 'mbe', 'mt', 'mr', 'mb', 'ml']}
+/>

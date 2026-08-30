@@ -1,22 +1,22 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "place-self";
+export const title = 'place-self';
 export const description =
-  "Utilities for controlling how an individual item is justified and aligned at the same time.";
+  'Utilities for controlling how an individual item is justified and aligned at the same time.';
 
 <ApiTable
   rows={[
-    ["place-self-auto", "place-self: auto;"],
-    ["place-self-start", "place-self: start;"],
-    ["place-self-end", "place-self: end;"],
-    ["place-self-end-safe", "place-self: safe end;"],
-    ["place-self-center", "place-self: center;"],
-    ["place-self-center-safe", "place-self: safe center;"],
-    ["place-self-stretch", "place-self: stretch;"],
+    ['place-self-auto', 'place-self: auto;'],
+    ['place-self-start', 'place-self: start;'],
+    ['place-self-end', 'place-self: end;'],
+    ['place-self-end-safe', 'place-self: safe end;'],
+    ['place-self-center', 'place-self: center;'],
+    ['place-self-center-safe', 'place-self: safe center;'],
+    ['place-self-stretch', 'place-self: stretch;'],
   ]}
 />
 
@@ -34,7 +34,9 @@ Use `place-self-auto` to align an item based on the value of the container's `pl
       <div className="flex items-center justify-center rounded-lg bg-indigo-300 p-8 dark:bg-indigo-800 dark:text-indigo-400">
         01
       </div>
-      <div className="flex items-center justify-center place-self-auto rounded-lg bg-indigo-500 p-8">02</div>
+      <div className="flex items-center justify-center place-self-auto rounded-lg bg-indigo-500 p-8">
+        02
+      </div>
       <div className="flex items-center justify-center rounded-lg bg-indigo-300 p-8 dark:bg-indigo-800 dark:text-indigo-400">
         03
       </div>
@@ -221,7 +223,9 @@ Use `place-self-stretch` to stretch an item on both axes:
       <div className="flex items-center justify-center rounded-lg bg-fuchsia-300 p-8 dark:bg-fuchsia-800 dark:text-fuchsia-400">
         01
       </div>
-      <div className="flex items-center justify-center place-self-stretch rounded-lg bg-fuchsia-500 p-8">02</div>
+      <div className="flex items-center justify-center place-self-stretch rounded-lg bg-fuchsia-500 p-8">
+        02
+      </div>
       <div className="flex items-center justify-center rounded-lg bg-fuchsia-300 p-8 dark:bg-fuchsia-800 dark:text-fuchsia-400">
         03
       </div>
@@ -254,4 +258,8 @@ Use `place-self-stretch` to stretch an item on both axes:
 
 ### Responsive design
 
-<ResponsiveDesign property="place-self" defaultClass="place-self-start" featuredClass="place-self-end" />
+<ResponsiveDesign
+  property="place-self"
+  defaultClass="place-self-start"
+  featuredClass="place-self-end"
+/>

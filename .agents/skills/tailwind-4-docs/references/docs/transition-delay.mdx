@@ -1,16 +1,16 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "transition-delay";
-export const description = "Utilities for controlling the delay of CSS transitions.";
+export const title = 'transition-delay';
+export const description = 'Utilities for controlling the delay of CSS transitions.';
 
 <ApiTable
   rows={[
-    ["delay-<number>", "transition-delay: <number>ms;"],
-    ["delay-(<custom-property>)", "transition-delay: var(<custom-property>);"],
-    ["delay-[<value>]", "transition-delay: <value>;"],
+    ['delay-<number>', 'transition-delay: <number>ms;'],
+    ['delay-(<custom-property>)', 'transition-delay: var(<custom-property>);'],
+    ['delay-[<value>]', 'transition-delay: <value>;'],
   ]}
 />
 
@@ -26,19 +26,25 @@ Use utilities like `delay-150` and `delay-700` to set the transition delay of an
   {
     <div className="flex flex-col justify-around gap-8 text-sm leading-6 font-bold text-white sm:flex-row sm:gap-0">
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">delay-150</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          delay-150
+        </p>
         <button className="rounded-md bg-blue-500 px-4 py-2 text-sm font-semibold text-white delay-150 duration-300 ease-in-out hover:scale-125">
           Button A
         </button>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">delay-300</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          delay-300
+        </p>
         <button className="rounded-md bg-blue-500 px-4 py-2 text-sm font-semibold text-white delay-300 duration-300 ease-in-out hover:scale-125">
           Button B
         </button>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">delay-700</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          delay-700
+        </p>
         <button className="rounded-md bg-blue-500 px-4 py-2 text-sm font-semibold text-white delay-700 duration-300 ease-in-out hover:scale-125">
           Button C
         </button>
@@ -73,4 +79,9 @@ For situations where the user has specified that they prefer reduced motion, you
 
 ### Responsive design
 
-<ResponsiveDesign element="button" property="transition-delay" defaultClass="delay-150" featuredClass="delay-300" />
+<ResponsiveDesign
+  element="button"
+  property="transition-delay"
+  defaultClass="delay-150"
+  featuredClass="delay-300"
+/>

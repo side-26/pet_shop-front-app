@@ -1,16 +1,16 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "hyphens";
-export const description = "Utilities for controlling how words should be hyphenated.";
+export const title = 'hyphens';
+export const description = 'Utilities for controlling how words should be hyphenated.';
 
 <ApiTable
   rows={[
-    ["hyphens-none", "hyphens: none;"],
-    ["hyphens-manual", "hyphens: manual;"],
-    ["hyphens-auto", "hyphens: auto;"],
+    ['hyphens-none', 'hyphens: none;'],
+    ['hyphens-manual', 'hyphens: manual;'],
+    ['hyphens-auto', 'hyphens: auto;'],
   ]}
 />
 
@@ -25,10 +25,10 @@ Use the `hyphens-none` utility to prevent words from being hyphenated even if th
 <Example padding={false}>
   {
     <p className="mx-auto max-w-xs border-x border-x-pink-400/30 py-8 break-normal hyphens-none text-gray-900 dark:text-gray-200">
-      Officially recognized by the Duden dictionary as the longest word in German,{" "}
+      Officially recognized by the Duden dictionary as the longest word in German,{' '}
       <span className="font-bold" lang="de">
         Kraftfahrzeug&shy;haftpflichtversicherung
-      </span>{" "}
+      </span>{' '}
       is a 36 letter word for motor vehicle liability insurance.
     </p>
   }
@@ -54,10 +54,10 @@ Use the `hyphens-manual` utility to only set hyphenation points where the line b
 <Example padding={false}>
   {
     <p className="mx-auto max-w-xs border-x border-x-pink-400/30 py-8 break-normal hyphens-manual text-gray-900 dark:text-gray-200">
-      Officially recognized by the Duden dictionary as the longest word in German,{" "}
+      Officially recognized by the Duden dictionary as the longest word in German,{' '}
       <span className="font-bold" lang="de">
         Kraftfahrzeug&shy;haftpflichtversicherung
-      </span>{" "}
+      </span>{' '}
       is a 36 letter word for motor vehicle liability insurance.
     </p>
   }
@@ -85,10 +85,10 @@ Use the `hyphens-auto` utility to allow the browser to automatically choose hyph
 <Example padding={false}>
   {
     <p className="mx-auto max-w-xs border-x border-x-pink-400/30 py-8 break-normal hyphens-auto text-gray-900 dark:text-gray-200">
-      Officially recognized by the Duden dictionary as the longest word in German,{" "}
+      Officially recognized by the Duden dictionary as the longest word in German,{' '}
       <span className="font-bold" lang="de">
         Kraftfahrzeughaftpflichtversicherung
-      </span>{" "}
+      </span>{' '}
       is a 36 letter word for motor vehicle liability insurance.
     </p>
   }
@@ -109,4 +109,9 @@ The line break suggestion `&shy;` will be preferred over automatic hyphenation p
 
 ### Responsive design
 
-<ResponsiveDesign element="p" property="hyphens" defaultClass="hyphens-none" featuredClass="hyphens-auto" />
+<ResponsiveDesign
+  element="p"
+  property="hyphens"
+  defaultClass="hyphens-none"
+  featuredClass="hyphens-auto"
+/>

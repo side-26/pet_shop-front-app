@@ -1,40 +1,43 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { CustomizingYourSpacingScale } from "@/components/content.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
+import { CustomizingYourSpacingScale } from '@/components/content.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "top / right / bottom / left";
-export const description = "Utilities for controlling the placement of positioned elements.";
+export const title = 'top / right / bottom / left';
+export const description = 'Utilities for controlling the placement of positioned elements.';
 
 <ApiTable
   rows={[
-    { prefix: "inset", property: "inset" },
-    { prefix: "inset-x", property: "inset-inline" },
-    { prefix: "inset-y", property: "inset-block" },
-    { prefix: "inset-s", property: "inset-inline-start" },
-    { prefix: "inset-e", property: "inset-inline-end" },
-    { prefix: "inset-bs", property: "inset-block-start" },
-    { prefix: "inset-be", property: "inset-block-end" },
-    { prefix: "top", property: "top" },
-    { prefix: "right", property: "right" },
-    { prefix: "bottom", property: "bottom" },
-    { prefix: "left", property: "left" },
+    { prefix: 'inset', property: 'inset' },
+    { prefix: 'inset-x', property: 'inset-inline' },
+    { prefix: 'inset-y', property: 'inset-block' },
+    { prefix: 'inset-s', property: 'inset-inline-start' },
+    { prefix: 'inset-e', property: 'inset-inline-end' },
+    { prefix: 'inset-bs', property: 'inset-block-start' },
+    { prefix: 'inset-be', property: 'inset-block-end' },
+    { prefix: 'top', property: 'top' },
+    { prefix: 'right', property: 'right' },
+    { prefix: 'bottom', property: 'bottom' },
+    { prefix: 'left', property: 'left' },
   ].flatMap(({ prefix, property }) =>
     [
-      ["<number>", "calc(var(--spacing) * <number>)"],
-      ["<number>", "calc(var(--spacing) * -<number>)", true],
-      ["<fraction>", "calc(<fraction> * 100%)"],
-      ["<fraction>", "calc(<fraction> * -100%)", true],
-      ["px", "1px"],
-      ["px", "-1px", true],
-      ["full", "100%"],
-      ["full", "-100%", true],
-      ["auto", "auto"],
-      ["(<custom-property>)", "var(<custom-property>)"],
-      ["[<value>]", "<value>"],
-    ].map(([suffix, value, negative]) => [`${negative ? "-" : ""}${prefix}-${suffix}`, `${property}: ${value};`]),
+      ['<number>', 'calc(var(--spacing) * <number>)'],
+      ['<number>', 'calc(var(--spacing) * -<number>)', true],
+      ['<fraction>', 'calc(<fraction> * 100%)'],
+      ['<fraction>', 'calc(<fraction> * -100%)', true],
+      ['px', '1px'],
+      ['px', '-1px', true],
+      ['full', '100%'],
+      ['full', '-100%', true],
+      ['auto', 'auto'],
+      ['(<custom-property>)', 'var(<custom-property>)'],
+      ['[<value>]', '<value>'],
+    ].map(([suffix, value, negative]) => [
+      `${negative ? '-' : ''}${prefix}-${suffix}`,
+      `${property}: ${value};`,
+    ]),
   )}
 />
 
@@ -85,7 +88,9 @@ Use `top-<number>`, `right-<number>`, `bottom-<number>`, `left-<number>`, and `i
         <div className="absolute inset-0">
           <Stripes border className="h-full rounded-lg" />
         </div>
-        <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-purple-500 p-4">05</div>
+        <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-purple-500 p-4">
+          05
+        </div>
       </div>
       <div className="relative size-18 rounded-lg sm:size-32">
         <div className="absolute inset-0">
@@ -255,23 +260,23 @@ For more control, you can also use the [LTR and RTL modifiers](/docs/hover-focus
 
 ### Using a custom value
 
-<UsingACustomValue utilities={["inset", "top"]} name="position" value="3px" variable="position" />
+<UsingACustomValue utilities={['inset', 'top']} name="position" value="3px" variable="position" />
 
 ### Responsive design
 
 <ResponsiveDesign
   properties={[
-    "inset",
-    "inset-x",
-    "inset-y",
-    "inset-s",
-    "inset-e",
-    "inset-bs",
-    "inset-be",
-    "top",
-    "left",
-    "bottom",
-    "right",
+    'inset',
+    'inset-x',
+    'inset-y',
+    'inset-s',
+    'inset-e',
+    'inset-bs',
+    'inset-be',
+    'top',
+    'left',
+    'bottom',
+    'right',
   ]}
   defaultClass="top-4"
   featuredClass="top-6"
@@ -281,16 +286,16 @@ For more control, you can also use the [LTR and RTL modifiers](/docs/hover-focus
 
 <CustomizingYourSpacingScale
   utilities={[
-    "inset",
-    "inset-x",
-    "inset-y",
-    "inset-s",
-    "inset-e",
-    "inset-bs",
-    "inset-be",
-    "top",
-    "left",
-    "bottom",
-    "right",
+    'inset',
+    'inset-x',
+    'inset-y',
+    'inset-s',
+    'inset-e',
+    'inset-bs',
+    'inset-be',
+    'top',
+    'left',
+    'bottom',
+    'right',
   ]}
 />

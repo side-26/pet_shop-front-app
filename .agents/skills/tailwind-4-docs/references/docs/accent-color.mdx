@@ -1,28 +1,28 @@
-import { ApiTable } from "@/components/api-table.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
 import {
   CustomizingYourThemeColors,
   ResponsiveDesign,
   TargetingSpecificStates,
   UsingACustomValue,
-} from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import colors from "./utils/colors";
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import colors from './utils/colors';
 
-export const title = "accent-color";
-export const description = "Utilities for controlling the accented color of a form control.";
+export const title = 'accent-color';
+export const description = 'Utilities for controlling the accented color of a form control.';
 
 <ApiTable
   rows={[
-    ["accent-inherit", "accent-color: inherit;"],
-    ["accent-current", "accent-color: currentColor;"],
-    ["accent-transparent", "accent-color: transparent;"],
+    ['accent-inherit', 'accent-color: inherit;'],
+    ['accent-current', 'accent-color: currentColor;'],
+    ['accent-transparent', 'accent-color: transparent;'],
     ...Object.entries(colors).map(([name, value]) => [
       `accent-${name}`,
       `accent-color: var(--color-${name}); /* ${value} */`,
     ]),
-    ["accent-(<custom-property>)", "accent-color: var(<custom-property>);"],
-    ["accent-[<value>]", "accent-color: <value>;"],
+    ['accent-(<custom-property>)', 'accent-color: var(<custom-property>);'],
+    ['accent-[<value>]', 'accent-color: <value>;'],
   ]}
 />
 
@@ -39,7 +39,9 @@ Use utilities like `accent-rose-500` and `accent-lime-600` to change the accent 
     <div className="flex flex-wrap justify-center gap-6">
       <label className="flex items-center space-x-2">
         <input type="checkbox" defaultChecked />
-        <div className="text-sm font-semibold text-gray-900 dark:text-gray-200">Browser default</div>
+        <div className="text-sm font-semibold text-gray-900 dark:text-gray-200">
+          Browser default
+        </div>
       </label>
       <label className="flex items-center space-x-2">
         <input type="checkbox" className="accent-pink-500" defaultChecked />
@@ -76,11 +78,15 @@ Use the color opacity modifier to control the opacity of an element's accent col
     <div className="flex flex-wrap justify-center gap-6">
       <label className="flex items-center space-x-2">
         <input type="checkbox" defaultChecked className="accent-purple-500/25" />
-        <div className="text-sm font-semibold text-gray-900 dark:text-gray-200">accent-purple-500/25</div>
+        <div className="text-sm font-semibold text-gray-900 dark:text-gray-200">
+          accent-purple-500/25
+        </div>
       </label>
       <label className="flex items-center space-x-2">
         <input type="checkbox" className="accent-purple-500/75" defaultChecked />
-        <div className="text-sm font-semibold text-gray-900 dark:text-gray-200">accent-purple-500/75</div>
+        <div className="text-sm font-semibold text-gray-900 dark:text-gray-200">
+          accent-purple-500/75
+        </div>
       </label>
     </div>
   }
@@ -101,7 +107,7 @@ Setting the accent color opacity has limited browser-support and only works in F
 
 <UsingACustomValue
   element="input"
-  elementAttributes={{ type: "checkbox" }}
+  elementAttributes={{ type: 'checkbox' }}
   utility="accent"
   value="#50d71e"
   name="accent color"
@@ -138,7 +144,7 @@ Setting the accent color opacity has limited browser-support and only works in F
 
 <ResponsiveDesign
   element="input"
-  elementAttributes={{ type: "checkbox" }}
+  elementAttributes={{ type: 'checkbox' }}
   property="accent-color"
   defaultClass="accent-black"
   featuredClass="accent-pink-500"
@@ -146,4 +152,8 @@ Setting the accent color opacity has limited browser-support and only works in F
 
 ## Customizing your theme
 
-<CustomizingYourThemeColors element="input" elementAttributes={{ type: "checkbox" }} utility="accent" />
+<CustomizingYourThemeColors
+  element="input"
+  elementAttributes={{ type: 'checkbox' }}
+  utility="accent"
+/>

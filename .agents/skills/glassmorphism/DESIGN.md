@@ -1,33 +1,33 @@
 ---
 name: Glassmorphism
 colors:
-  primary: "#1856FF"
-  secondary: "#3A344E"
-  success: "#07CA6B"
-  warning: "#E89558"
-  danger: "#EA2143"
-  surface: "#FFFFFF"
-  text: "#141414"
-  neutral: "#FFFFFF"
+  primary: '#1856FF'
+  secondary: '#3A344E'
+  success: '#07CA6B'
+  warning: '#E89558'
+  danger: '#EA2143'
+  surface: '#FFFFFF'
+  text: '#141414'
+  neutral: '#FFFFFF'
 typography:
   h1:
-    fontFamily: "Plus Jakarta Sans"
+    fontFamily: 'Plus Jakarta Sans'
     fontSize: 3rem
   body-md:
-    fontFamily: "Plus Jakarta Sans"
+    fontFamily: 'Plus Jakarta Sans'
     fontSize: 1rem
   label-caps:
-    fontFamily: "JetBrains Mono"
+    fontFamily: 'JetBrains Mono'
     fontSize: 0.75rem
-  sourceScale: "mobile-first compact scale"
-  weights: "100, 200, 300, 400, 500, 600, 700, 800, 900"
+  sourceScale: 'mobile-first compact scale'
+  weights: '100, 200, 300, 400, 500, 600, 700, 800, 900'
 rounded:
   sm: 4px
   md: 8px
 spacing:
   sm: 8px
   md: 16px
-  sourceScale: "comfortable density mode"
+  sourceScale: 'comfortable density mode'
 ---
 
 ## Overview

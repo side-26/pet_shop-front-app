@@ -1,7 +1,7 @@
-import { CodeExampleStack } from "@/components/code-example";
+import { CodeExampleStack } from '@/components/code-example';
 
-export const title = "Adding custom styles";
-export const description = "Best practices for adding your own custom styles in Tailwind projects.";
+export const title = 'Adding custom styles';
+export const description = 'Best practices for adding your own custom styles in Tailwind projects.';
 
 Often the biggest challenge when working with a framework is figuring out what you’re supposed to do when there’s something you need that the framework doesn’t handle for you.
 
@@ -16,7 +16,7 @@ If you want to change things like your color palette, spacing scale, typography 
 ```css
 /* [!code filename:CSS] */
 @theme {
-  --font-display: "Satoshi", "sans-serif";
+  --font-display: 'Satoshi', 'sans-serif';
 
   --breakpoint-3xl: 120rem;
 
@@ -212,7 +212,7 @@ While Tailwind is designed to handle the bulk of your styling needs, there is no
 
 ```css
 /* [!code filename:CSS] */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* [!code highlight:4] */
 .my-custom-style {
@@ -506,7 +506,7 @@ To support literal values, use the `--value('literal')` syntax (notice the quote
 ```css
 /* [!code filename:CSS] */
 @utility tab-* {
-  tab-size: --value("inherit", "initial", "unset");
+  tab-size: --value('inherit', 'initial', 'unset');
 }
 ```
 
@@ -675,7 +675,7 @@ In addition to using the variants that ship with Tailwind, you can also add your
 
 ```css
 @custom-variant theme-midnight {
-  &:where([data-theme="midnight"] *) {
+  &:where([data-theme='midnight'] *) {
     @slot;
   }
 }

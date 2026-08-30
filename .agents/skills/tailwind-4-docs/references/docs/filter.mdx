@@ -1,16 +1,20 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, TargetingSpecificStates, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import {
+  ResponsiveDesign,
+  TargetingSpecificStates,
+  UsingACustomValue,
+} from '@/components/content.tsx';
 
-export const title = "filter";
-export const description = "Utilities for applying filters to an element.";
+export const title = 'filter';
+export const description = 'Utilities for applying filters to an element.';
 
 <ApiTable
   rows={[
-    ["filter-none", "filter: none;"],
-    ["filter-(<custom-property>)", "filter: var(<custom-property>);"],
-    ["filter-[<value>]", "filter: <value>;"],
+    ['filter-none', 'filter: none;'],
+    ['filter-(<custom-property>)', 'filter: var(<custom-property>);'],
+    ['filter-[<value>]', 'filter: <value>;'],
   ]}
 />
 
@@ -27,7 +31,9 @@ Use utilities like `blur-xs` and `grayscale` to apply filters to an element:
     <div className="flex scroll-p-8 overflow-scroll sm:block sm:overflow-visible">
       <div className="flex shrink-0 items-center justify-around gap-12 p-8 font-mono font-bold sm:gap-4">
         <div className="flex shrink-0 flex-col items-center">
-          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">blur-xs</p>
+          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+            blur-xs
+          </p>
           <div className="relative blur-xs">
             <img
               className="size-24 rounded-lg object-cover"
@@ -37,7 +43,9 @@ Use utilities like `blur-xs` and `grayscale` to apply filters to an element:
           </div>
         </div>
         <div className="flex shrink-0 flex-col items-center">
-          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">grayscale</p>
+          <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+            grayscale
+          </p>
           <div className="relative grayscale">
             <img
               className="size-24 rounded-lg object-cover"
@@ -87,7 +95,7 @@ Use the `filter-none` utility to remove all of the filters applied to an element
 
 <UsingACustomValue
   element="img"
-  elementAttributes={{ src: "/img/mountains.jpg" }}
+  elementAttributes={{ src: '/img/mountains.jpg' }}
   utility="filter"
   value="url('filters.svg#filter-id')"
 />
@@ -96,7 +104,7 @@ Use the `filter-none` utility to remove all of the filters applied to an element
 
 <TargetingSpecificStates
   element="img"
-  elementAttributes={{ src: "/img/mountains.jpg" }}
+  elementAttributes={{ src: '/img/mountains.jpg' }}
   property="filter"
   defaultClass="blur-sm"
   featuredClass="filter-none"
@@ -106,7 +114,7 @@ Use the `filter-none` utility to remove all of the filters applied to an element
 
 <ResponsiveDesign
   element="img"
-  elementAttributes={{ src: "/img/mountains.jpg" }}
+  elementAttributes={{ src: '/img/mountains.jpg' }}
   property="filter"
   defaultClass="blur-sm"
   featuredClass="filter-none"

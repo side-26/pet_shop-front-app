@@ -1,25 +1,30 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourSpacingScale, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourSpacingScale,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "scroll-padding";
-export const description = "Utilities for controlling an element's scroll offset within a snap container.";
+export const title = 'scroll-padding';
+export const description =
+  "Utilities for controlling an element's scroll offset within a snap container.";
 
 <ApiTable
   rows={[
-    ["scroll-p", "scroll-padding"],
-    ["scroll-px", "scroll-padding-inline"],
-    ["scroll-py", "scroll-padding-block"],
-    ["scroll-ps", "scroll-padding-inline-start"],
-    ["scroll-pe", "scroll-padding-inline-end"],
-    ["scroll-pbs", "scroll-padding-block-start"],
-    ["scroll-pbe", "scroll-padding-block-end"],
-    ["scroll-pt", "scroll-padding-top"],
-    ["scroll-pr", "scroll-padding-right"],
-    ["scroll-pb", "scroll-padding-bottom"],
-    ["scroll-pl", "scroll-padding-left"],
+    ['scroll-p', 'scroll-padding'],
+    ['scroll-px', 'scroll-padding-inline'],
+    ['scroll-py', 'scroll-padding-block'],
+    ['scroll-ps', 'scroll-padding-inline-start'],
+    ['scroll-pe', 'scroll-padding-inline-end'],
+    ['scroll-pbs', 'scroll-padding-block-start'],
+    ['scroll-pbe', 'scroll-padding-block-end'],
+    ['scroll-pt', 'scroll-padding-top'],
+    ['scroll-pr', 'scroll-padding-right'],
+    ['scroll-pb', 'scroll-padding-bottom'],
+    ['scroll-pl', 'scroll-padding-left'],
   ].flatMap(([prefix, property]) => [
     [`${prefix}-<number>`, `${property}: calc(var(--spacing) * <number>);`],
     [`${prefix}-px`, `${property}: 1px;`],
@@ -215,7 +220,7 @@ Use the `scroll-pbs-<number>` and `scroll-pbe-<number>` utilities to set the `sc
 ### Using a custom value
 
 <UsingACustomValue
-  utilities={["scroll-pl", "scroll-pe"]}
+  utilities={['scroll-pl', 'scroll-pe']}
   value="24rem"
   name="scroll padding"
   variable="scroll-padding"
@@ -229,16 +234,16 @@ Use the `scroll-pbs-<number>` and `scroll-pbe-<number>` utilities to set the `sc
 
 <CustomizingYourSpacingScale
   utilities={[
-    "scroll-p",
-    "scroll-px",
-    "scroll-py",
-    "scroll-ps",
-    "scroll-pe",
-    "scroll-pbs",
-    "scroll-pbe",
-    "scroll-pt",
-    "scroll-pr",
-    "scroll-pb",
-    "scroll-pl",
+    'scroll-p',
+    'scroll-px',
+    'scroll-py',
+    'scroll-ps',
+    'scroll-pe',
+    'scroll-pbs',
+    'scroll-pbe',
+    'scroll-pt',
+    'scroll-pr',
+    'scroll-pb',
+    'scroll-pl',
   ]}
 />

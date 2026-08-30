@@ -1,16 +1,19 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "backdrop-filter: brightness()";
-export const description = "Utilities for applying backdrop brightness filters to an element.";
+export const title = 'backdrop-filter: brightness()';
+export const description = 'Utilities for applying backdrop brightness filters to an element.';
 
 <ApiTable
   rows={[
-    ["backdrop-brightness-<number>", "backdrop-filter: brightness(<number>%);"],
-    ["backdrop-brightness-(<custom-property>)", "backdrop-filter: brightness(var(<custom-property>));"],
-    ["backdrop-brightness-[<value>]", "backdrop-filter: brightness(<value>);"],
+    ['backdrop-brightness-<number>', 'backdrop-filter: brightness(<number>%);'],
+    [
+      'backdrop-brightness-(<custom-property>)',
+      'backdrop-filter: brightness(var(<custom-property>));',
+    ],
+    ['backdrop-brightness-[<value>]', 'backdrop-filter: brightness(<value>);'],
   ]}
 />
 

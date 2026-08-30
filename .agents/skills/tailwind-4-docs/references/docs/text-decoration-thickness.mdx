@@ -1,18 +1,18 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "text-decoration-thickness";
-export const description = "Utilities for controlling the thickness of text decorations.";
+export const title = 'text-decoration-thickness';
+export const description = 'Utilities for controlling the thickness of text decorations.';
 
 <ApiTable
   rows={[
-    ["decoration-<number>", "text-decoration-thickness: <number>px;"],
-    ["decoration-from-font", "text-decoration-thickness: from-font;"],
-    ["decoration-auto", "text-decoration-thickness: auto;"],
-    ["decoration-(length:<custom-property>)", "text-decoration-thickness: var(<custom-property>);"],
-    ["decoration-[<value>]", "text-decoration-thickness: <value>;"],
+    ['decoration-<number>', 'text-decoration-thickness: <number>px;'],
+    ['decoration-from-font', 'text-decoration-thickness: from-font;'],
+    ['decoration-auto', 'text-decoration-thickness: auto;'],
+    ['decoration-(length:<custom-property>)', 'text-decoration-thickness: var(<custom-property>);'],
+    ['decoration-[<value>]', 'text-decoration-thickness: <value>;'],
   ]}
 />
 
@@ -28,16 +28,28 @@ Use `decoration-<number>` utilities like `decoration-2` and `decoration-4` to ch
   {
     <div className="flex flex-col gap-8 text-gray-900 dark:text-gray-200">
       <div>
-        <div className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">decoration-1</div>
-        <p className="text-lg font-medium underline decoration-1">The quick brown fox jumps over the lazy dog.</p>
+        <div className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          decoration-1
+        </div>
+        <p className="text-lg font-medium underline decoration-1">
+          The quick brown fox jumps over the lazy dog.
+        </p>
       </div>
       <div>
-        <div className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">decoration-2</div>
-        <p className="text-lg font-medium underline decoration-2">The quick brown fox jumps over the lazy dog.</p>
+        <div className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          decoration-2
+        </div>
+        <p className="text-lg font-medium underline decoration-2">
+          The quick brown fox jumps over the lazy dog.
+        </p>
       </div>
       <div>
-        <div className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">decoration-4</div>
-        <p className="text-lg font-medium underline decoration-4">The quick brown fox jumps over the lazy dog.</p>
+        <div className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          decoration-4
+        </div>
+        <p className="text-lg font-medium underline decoration-4">
+          The quick brown fox jumps over the lazy dog.
+        </p>
       </div>
     </div>
   }

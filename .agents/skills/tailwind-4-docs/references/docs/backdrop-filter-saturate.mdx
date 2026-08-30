@@ -1,16 +1,16 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "backdrop-filter: saturate()";
-export const description = "Utilities for applying backdrop saturation filters to an element.";
+export const title = 'backdrop-filter: saturate()';
+export const description = 'Utilities for applying backdrop saturation filters to an element.';
 
 <ApiTable
   rows={[
-    ["backdrop-saturate-<number>", "backdrop-filter: saturate(<number>%);"],
-    ["backdrop-saturate-(<custom-property>)", "backdrop-filter: saturate(var(<custom-property>));"],
-    ["backdrop-saturate-[<value>]", "backdrop-filter: saturate(<value>);"],
+    ['backdrop-saturate-<number>', 'backdrop-filter: saturate(<number>%);'],
+    ['backdrop-saturate-(<custom-property>)', 'backdrop-filter: saturate(var(<custom-property>));'],
+    ['backdrop-saturate-[<value>]', 'backdrop-filter: saturate(<value>);'],
   ]}
 />
 
@@ -87,7 +87,12 @@ Use utilities like `backdrop-saturate-50` and `backdrop-saturate-100` utilities 
 
 ### Using a custom value
 
-<UsingACustomValue utility="backdrop-saturate" value=".25" name="backdrop saturation" variable="backdrop-saturation" />
+<UsingACustomValue
+  utility="backdrop-saturate"
+  value=".25"
+  name="backdrop saturation"
+  variable="backdrop-saturation"
+/>
 
 ### Responsive design
 

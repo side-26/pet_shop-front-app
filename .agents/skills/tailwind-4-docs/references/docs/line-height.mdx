@@ -1,20 +1,24 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourSpacingScale, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourSpacingScale,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
 
-export const title = "line-height";
-export const description = "Utilities for controlling the leading, or line height, of an element.";
+export const title = 'line-height';
+export const description = 'Utilities for controlling the leading, or line height, of an element.';
 
 <ApiTable
   rows={[
-    ["text-<size>/<number>", "font-size: <size>;\nline-height: calc(var(--spacing) * <number>);"],
-    ["text-<size>/(<custom-property>)", "font-size: <size>;\nline-height: var(<custom-property>);"],
-    ["text-<size>/[<value>]", "font-size: <size>;\nline-height: <value>;"],
-    ["leading-none", "line-height: 1;"],
-    ["leading-<number>", "line-height: calc(var(--spacing) * <number>);"],
-    ["leading-(<custom-property>)", "line-height: var(<custom-property>);"],
-    ["leading-[<value>]", "line-height: <value>;"],
+    ['text-<size>/<number>', 'font-size: <size>;\nline-height: calc(var(--spacing) * <number>);'],
+    ['text-<size>/(<custom-property>)', 'font-size: <size>;\nline-height: var(<custom-property>);'],
+    ['text-<size>/[<value>]', 'font-size: <size>;\nline-height: <value>;'],
+    ['leading-none', 'line-height: 1;'],
+    ['leading-<number>', 'line-height: calc(var(--spacing) * <number>);'],
+    ['leading-(<custom-property>)', 'line-height: var(<custom-property>);'],
+    ['leading-[<value>]', 'line-height: <value>;'],
   ]}
 />
 
@@ -77,27 +81,36 @@ Use `leading-<number>` utilities like `leading-6` and `leading-7` to set the lin
   {
     <div className="flex flex-col gap-8">
       <div>
-        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">leading-6</span>
+        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          leading-6
+        </span>
         <p className="leading-6 text-gray-900 dark:text-gray-200">
-          So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made
-          my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the
-          kinship of all living things but I tell you Jerry at that moment, I <em>was</em> a marine biologist.
+          So I started to walk into the water. I won't lie to you boys, I was terrified. But I
+          pressed on, and as I made my way past the breakers a strange calm came over me. I don't
+          know if it was divine intervention or the kinship of all living things but I tell you
+          Jerry at that moment, I <em>was</em> a marine biologist.
         </p>
       </div>
       <div>
-        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">leading-7</span>
+        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          leading-7
+        </span>
         <p className="leading-7 text-gray-900 dark:text-gray-200">
-          So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made
-          my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the
-          kinship of all living things but I tell you Jerry at that moment, I <em>was</em> a marine biologist.
+          So I started to walk into the water. I won't lie to you boys, I was terrified. But I
+          pressed on, and as I made my way past the breakers a strange calm came over me. I don't
+          know if it was divine intervention or the kinship of all living things but I tell you
+          Jerry at that moment, I <em>was</em> a marine biologist.
         </p>
       </div>
       <div>
-        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">leading-8</span>
+        <span className="mb-3 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          leading-8
+        </span>
         <p className="leading-8 text-gray-900 dark:text-gray-200">
-          So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made
-          my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the
-          kinship of all living things but I tell you Jerry at that moment, I <em>was</em> a marine biologist.
+          So I started to walk into the water. I won't lie to you boys, I was terrified. But I
+          pressed on, and as I made my way past the breakers a strange calm came over me. I don't
+          know if it was divine intervention or the kinship of all living things but I tell you
+          Jerry at that moment, I <em>was</em> a marine biologist.
         </p>
       </div>
     </div>
@@ -136,11 +149,22 @@ Use the `leading-none` utility to set the line height of an element equal to its
 
 ### Using a custom value
 
-<UsingACustomValue element="p" utility="leading" name="line height" variable="line-height" value="1.5" />
+<UsingACustomValue
+  element="p"
+  utility="leading"
+  name="line height"
+  variable="line-height"
+  value="1.5"
+/>
 
 ### Responsive design
 
-<ResponsiveDesign element="p" property="line-height" defaultClass="leading-5" featuredClass="leading-6" />
+<ResponsiveDesign
+  element="p"
+  property="line-height"
+  defaultClass="leading-5"
+  featuredClass="leading-6"
+/>
 
 ## Customizing your theme
 

@@ -1,17 +1,17 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "scroll-snap-align";
-export const description = "Utilities for controlling the scroll snap alignment of an element.";
+export const title = 'scroll-snap-align';
+export const description = 'Utilities for controlling the scroll snap alignment of an element.';
 
 <ApiTable
   rows={[
-    ["snap-start", "scroll-snap-align: start;"],
-    ["snap-end", "scroll-snap-align: end;"],
-    ["snap-center", "scroll-snap-align: center;"],
-    ["snap-align-none", "scroll-snap-align: none;"],
+    ['snap-start', 'scroll-snap-align: start;'],
+    ['snap-end', 'scroll-snap-align: end;'],
+    ['snap-center', 'scroll-snap-align: center;'],
+    ['snap-align-none', 'scroll-snap-align: none;'],
   ]}
 />
 
@@ -278,4 +278,8 @@ Use the `snap-end` utility to snap an element to its end when being scrolled ins
 
 ### Responsive design
 
-<ResponsiveDesign property="scroll-snap-align" defaultClass="snap-center" featuredClass="snap-start" />
+<ResponsiveDesign
+  property="scroll-snap-align"
+  defaultClass="snap-center"
+  featuredClass="snap-start"
+/>

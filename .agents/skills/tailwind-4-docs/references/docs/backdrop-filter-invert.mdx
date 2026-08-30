@@ -1,17 +1,17 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "backdrop-filter: invert()";
-export const description = "Utilities for applying backdrop invert filters to an element.";
+export const title = 'backdrop-filter: invert()';
+export const description = 'Utilities for applying backdrop invert filters to an element.';
 
 <ApiTable
   rows={[
-    ["backdrop-invert", "backdrop-filter: invert(100%);"],
-    ["backdrop-invert-<number>", "backdrop-filter: invert(<number>%);"],
-    ["backdrop-invert-(<custom-property>)", "backdrop-filter: invert(var(<custom-property>))"],
-    ["backdrop-invert-[<value>]", "backdrop-filter: invert(<value>);"],
+    ['backdrop-invert', 'backdrop-filter: invert(100%);'],
+    ['backdrop-invert-<number>', 'backdrop-filter: invert(<number>%);'],
+    ['backdrop-invert-(<custom-property>)', 'backdrop-filter: invert(var(<custom-property>))'],
+    ['backdrop-invert-[<value>]', 'backdrop-filter: invert(<value>);'],
   ]}
 />
 
@@ -88,7 +88,12 @@ Use utilities like `backdrop-invert` and `backdrop-invert-65` to control the col
 
 ### Using a custom value
 
-<UsingACustomValue utility="backdrop-invert" value=".25" name="backdrop inversion" variable="backdrop-inversion" />
+<UsingACustomValue
+  utility="backdrop-invert"
+  value=".25"
+  name="backdrop inversion"
+  variable="backdrop-inversion"
+/>
 
 ### Responsive design
 

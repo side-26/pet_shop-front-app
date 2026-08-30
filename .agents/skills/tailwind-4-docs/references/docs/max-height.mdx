@@ -1,32 +1,36 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourSpacingScale, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourSpacingScale,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "max-height";
-export const description = "Utilities for setting the maximum height of an element.";
+export const title = 'max-height';
+export const description = 'Utilities for setting the maximum height of an element.';
 
 <ApiTable
   rows={[
-    ["max-h-<number>", "max-height: calc(var(--spacing) * <number>);"],
-    ["max-h-<fraction>", "max-height: calc(<fraction> * 100%);"],
-    ["max-h-none", "max-height: none;"],
-    ["max-h-px", "max-height: 1px;"],
-    ["max-h-full", "max-height: 100%;"],
-    ["max-h-screen", "max-height: 100vh;"],
-    ["max-h-dvh", "max-height: 100dvh;"],
-    ["max-h-dvw", "max-height: 100dvw;"],
-    ["max-h-lvh", "max-height: 100lvh;"],
-    ["max-h-lvw", "max-height: 100lvw;"],
-    ["max-h-svh", "max-height: 100svh;"],
-    ["max-h-svw", "max-height: 100svw;"],
-    ["max-h-min", "max-height: min-content;"],
-    ["max-h-max", "max-height: max-content;"],
-    ["max-h-fit", "max-height: fit-content;"],
-    ["max-h-lh", "max-height: 1lh;"],
-    ["max-h-(<custom-property>)", "max-height: var(<custom-property>);"],
-    ["max-h-[<value>]", "max-height: <value>;"],
+    ['max-h-<number>', 'max-height: calc(var(--spacing) * <number>);'],
+    ['max-h-<fraction>', 'max-height: calc(<fraction> * 100%);'],
+    ['max-h-none', 'max-height: none;'],
+    ['max-h-px', 'max-height: 1px;'],
+    ['max-h-full', 'max-height: 100%;'],
+    ['max-h-screen', 'max-height: 100vh;'],
+    ['max-h-dvh', 'max-height: 100dvh;'],
+    ['max-h-dvw', 'max-height: 100dvw;'],
+    ['max-h-lvh', 'max-height: 100lvh;'],
+    ['max-h-lvw', 'max-height: 100lvw;'],
+    ['max-h-svh', 'max-height: 100svh;'],
+    ['max-h-svw', 'max-height: 100svw;'],
+    ['max-h-min', 'max-height: min-content;'],
+    ['max-h-max', 'max-height: max-content;'],
+    ['max-h-fit', 'max-height: fit-content;'],
+    ['max-h-lh', 'max-height: 1lh;'],
+    ['max-h-(<custom-property>)', 'max-height: var(<custom-property>);'],
+    ['max-h-[<value>]', 'max-height: <value>;'],
   ]}
 />
 
@@ -157,7 +161,11 @@ Use `max-h-full` or `max-h-<fraction>` utilities like `max-h-1/2` and `max-h-2/5
 
 ### Responsive design
 
-<ResponsiveDesign property="max-height" defaultClass="h-48 max-h-full" featuredClass="max-h-screen" />
+<ResponsiveDesign
+  property="max-height"
+  defaultClass="h-48 max-h-full"
+  featuredClass="max-h-screen"
+/>
 
 ## Customizing your theme
 

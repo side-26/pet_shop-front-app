@@ -12,6 +12,7 @@ This skill provides comprehensive SEO optimization capabilities for HTML/CSS web
 ## When to Use This Skill
 
 Use this skill when the user requests:
+
 - "Analyze my website for SEO issues"
 - "Optimize this page for SEO"
 - "Generate an SEO audit report"
@@ -33,6 +34,7 @@ python scripts/seo_analyzer.py <directory_or_file>
 ```
 
 This script analyzes HTML files and generates a detailed report covering:
+
 - Title tags (length, presence, uniqueness)
 - Meta descriptions (length, presence)
 - Heading structure (H1-H6 hierarchy)
@@ -46,10 +48,12 @@ This script analyzes HTML files and generates a detailed report covering:
 - Content length
 
 **Output Options**:
+
 - Default: Human-readable text report with issues, warnings, and good practices
 - `--json`: Machine-readable JSON format for programmatic processing
 
 **Example Usage**:
+
 ```bash
 # Analyze single file
 python scripts/seo_analyzer.py index.html
@@ -66,6 +70,7 @@ python scripts/seo_analyzer.py ./public --json
 The analyzer categorizes findings into three levels:
 
 **Critical Issues (🔴)** - Fix immediately:
+
 - Missing title tags
 - Missing meta descriptions
 - Missing H1 headings
@@ -73,6 +78,7 @@ The analyzer categorizes findings into three levels:
 - Missing HTML lang attribute
 
 **Warnings (⚠️)** - Fix soon for optimal SEO:
+
 - Suboptimal title/description lengths
 - Multiple H1 tags
 - Missing Open Graph or Twitter Card tags
@@ -81,6 +87,7 @@ The analyzer categorizes findings into three levels:
 - Heading hierarchy issues
 
 **Good Practices (✅)** - Already optimized:
+
 - Properly formatted elements
 - Correct lengths
 - Present required tags
@@ -92,74 +99,89 @@ Address issues in priority order:
 #### Priority 1: Critical Issues
 
 **Missing or Poor Title Tags**:
+
 ```html
 <!-- Add unique, descriptive title to <head> -->
 <title>Primary Keyword - Secondary Keyword | Brand Name</title>
 ```
+
 - Keep 50-60 characters
 - Include target keywords at the beginning
 - Make unique for each page
 
 **Missing Meta Descriptions**:
+
 ```html
 <!-- Add compelling description to <head> -->
-<meta name="description" content="Clear, concise description that includes target keywords and encourages clicks. 150-160 characters.">
+<meta
+  name="description"
+  content="Clear, concise description that includes target keywords and encourages clicks. 150-160 characters."
+/>
 ```
 
 **Missing H1 or Multiple H1s**:
+
 - Ensure exactly ONE H1 per page
 - H1 should describe the main topic
 - Should match or relate to title tag
 
 **Images Without Alt Text**:
+
 ```html
 <!-- Add descriptive alt text to all images -->
-<img src="image.jpg" alt="Descriptive text explaining image content">
+<img src="image.jpg" alt="Descriptive text explaining image content" />
 ```
 
 **Missing HTML Lang Attribute**:
+
 ```html
 <!-- Add to opening <html> tag -->
-<html lang="en">
+<html lang="en"></html>
 ```
 
 #### Priority 2: Important Optimizations
 
 **Viewport Meta Tag** (critical for mobile SEO):
+
 ```html
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 ```
 
 **Charset Declaration**:
+
 ```html
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 ```
 
 **Open Graph Tags** (for social media sharing):
+
 ```html
-<meta property="og:title" content="Your Page Title">
-<meta property="og:description" content="Your page description">
-<meta property="og:image" content="https://example.com/image.jpg">
-<meta property="og:url" content="https://example.com/page-url">
-<meta property="og:type" content="website">
+<meta property="og:title" content="Your Page Title" />
+<meta property="og:description" content="Your page description" />
+<meta property="og:image" content="https://example.com/image.jpg" />
+<meta property="og:url" content="https://example.com/page-url" />
+<meta property="og:type" content="website" />
 ```
 
 **Twitter Card Tags**:
+
 ```html
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Your Page Title">
-<meta name="twitter:description" content="Your page description">
-<meta name="twitter:image" content="https://example.com/image.jpg">
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Your Page Title" />
+<meta name="twitter:description" content="Your page description" />
+<meta name="twitter:image" content="https://example.com/image.jpg" />
 ```
 
 **Canonical URL**:
+
 ```html
-<link rel="canonical" href="https://example.com/preferred-url">
+<link rel="canonical" href="https://example.com/preferred-url" />
 ```
 
 #### Priority 3: Advanced Optimization
 
 **Schema Markup** - Refer to `references/schema_markup_guide.md` for detailed implementation. Common types:
+
 - Organization (homepage)
 - Article/BlogPosting (blog posts)
 - LocalBusiness (local businesses)
@@ -168,19 +190,20 @@ Address issues in priority order:
 - Product (e-commerce)
 
 Example implementation:
+
 ```html
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": "Article Title",
-  "author": {
-    "@type": "Person",
-    "name": "Author Name"
-  },
-  "datePublished": "2024-01-15",
-  "image": "https://example.com/image.jpg"
-}
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Article Title",
+    "author": {
+      "@type": "Person",
+      "name": "Author Name"
+    },
+    "datePublished": "2024-01-15",
+    "image": "https://example.com/image.jpg"
+  }
 </script>
 ```
 
@@ -193,6 +216,7 @@ python scripts/generate_sitemap.py <directory> <base_url> [output_file]
 ```
 
 **Example**:
+
 ```bash
 # Generate sitemap for website
 python scripts/generate_sitemap.py ./public https://example.com
@@ -202,6 +226,7 @@ python scripts/generate_sitemap.py ./public https://example.com ./public/sitemap
 ```
 
 The script:
+
 - Automatically finds all HTML files
 - Generates proper URLs
 - Includes lastmod dates
@@ -209,6 +234,7 @@ The script:
 - Creates properly formatted XML sitemap
 
 **After generation**:
+
 1. Upload sitemap.xml to website root
 2. Add reference to robots.txt
 3. Submit to Google Search Console and Bing Webmaster Tools
@@ -236,11 +262,13 @@ Place robots.txt in website root directory.
 After implementing fixes:
 
 **Local Testing**:
+
 1. Run the SEO analyzer again to verify fixes
 2. Check that all critical issues are resolved
 3. Ensure no new issues were introduced
 
 **Online Testing**:
+
 1. Deploy changes to production
 2. Test with Google Rich Results Test: https://search.google.com/test/rich-results
 3. Validate schema markup: https://validator.schema.org/
@@ -250,6 +278,7 @@ After implementing fixes:
 ### 7. Ongoing Optimization
 
 **Regular maintenance**:
+
 - Update sitemap when adding new pages
 - Keep meta descriptions fresh and compelling
 - Ensure new images have alt text
@@ -317,6 +346,7 @@ For blog posts and articles:
 
 **`references/seo_checklist.md`**:
 Comprehensive checklist covering all SEO aspects:
+
 - Title tags and meta descriptions guidelines
 - Heading structure best practices
 - Image optimization techniques
@@ -331,6 +361,7 @@ Reference this for detailed specifications on any SEO element.
 
 **`references/schema_markup_guide.md`**:
 Complete guide for implementing schema.org structured data:
+
 - JSON-LD implementation (recommended format)
 - 10+ common schema types with examples
 - Organization, LocalBusiness, Article, BlogPosting, FAQ, Product, etc.

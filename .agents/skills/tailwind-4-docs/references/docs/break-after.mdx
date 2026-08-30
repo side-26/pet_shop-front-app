@@ -1,19 +1,20 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "break-after";
-export const description = "Utilities for controlling how a column or page should break after an element.";
+export const title = 'break-after';
+export const description =
+  'Utilities for controlling how a column or page should break after an element.';
 
 <ApiTable
   rows={[
-    ["break-after-auto", "break-after: auto;"],
-    ["break-after-avoid", "break-after: avoid;"],
-    ["break-after-all", "break-after: all;"],
-    ["break-after-avoid-page", "break-after: avoid-page;"],
-    ["break-after-page", "break-after: page;"],
-    ["break-after-left", "break-after: left;"],
-    ["break-after-right", "break-after: right;"],
-    ["break-after-column", "break-after: column;"],
+    ['break-after-auto', 'break-after: auto;'],
+    ['break-after-avoid', 'break-after: avoid;'],
+    ['break-after-all', 'break-after: all;'],
+    ['break-after-avoid-page', 'break-after: avoid-page;'],
+    ['break-after-page', 'break-after: page;'],
+    ['break-after-left', 'break-after: left;'],
+    ['break-after-right', 'break-after: right;'],
+    ['break-after-column', 'break-after: column;'],
   ]}
 />
 
@@ -35,4 +36,8 @@ Use utilities like `break-after-column` and `break-after-page` to control how a 
 
 ### Responsive design
 
-<ResponsiveDesign property="break-after" defaultClass="break-after-column" featuredClass="break-after-auto" />
+<ResponsiveDesign
+  property="break-after"
+  defaultClass="break-after-column"
+  featuredClass="break-after-auto"
+/>

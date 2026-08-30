@@ -1,17 +1,17 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "background-origin";
+export const title = 'background-origin';
 export const description =
   "Utilities for controlling how an element's background is positioned relative to borders, padding, and content.";
 
 <ApiTable
   rows={[
-    ["bg-origin-border", "background-origin: border-box;"],
-    ["bg-origin-padding", "background-origin: padding-box;"],
-    ["bg-origin-content", "background-origin: content-box;"],
+    ['bg-origin-border', 'background-origin: border-box;'],
+    ['bg-origin-padding', 'background-origin: padding-box;'],
+    ['bg-origin-content', 'background-origin: content-box;'],
   ]}
 />
 
@@ -61,4 +61,8 @@ Use the `bg-origin-border`, `bg-origin-padding`, and `bg-origin-content` utiliti
 
 ### Responsive design
 
-<ResponsiveDesign property="background-origin" defaultClass="bg-origin-border" featuredClass="bg-origin-padding" />
+<ResponsiveDesign
+  property="background-origin"
+  defaultClass="bg-origin-border"
+  featuredClass="bg-origin-padding"
+/>

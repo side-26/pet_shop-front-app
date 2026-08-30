@@ -1,23 +1,24 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "align-content";
-export const description = "Utilities for controlling how rows are positioned in multi-row flex and grid containers.";
+export const title = 'align-content';
+export const description =
+  'Utilities for controlling how rows are positioned in multi-row flex and grid containers.';
 
 <ApiTable
   rows={[
-    ["content-normal", "align-content: normal;"],
-    ["content-center", "align-content: center;"],
-    ["content-start", "align-content: flex-start;"],
-    ["content-end", "align-content: flex-end;"],
-    ["content-between", "align-content: space-between;"],
-    ["content-around", "align-content: space-around;"],
-    ["content-evenly", "align-content: space-evenly;"],
-    ["content-baseline", "align-content: baseline;"],
-    ["content-stretch", "align-content: stretch;"],
+    ['content-normal', 'align-content: normal;'],
+    ['content-center', 'align-content: center;'],
+    ['content-start', 'align-content: flex-start;'],
+    ['content-end', 'align-content: flex-end;'],
+    ['content-between', 'align-content: space-between;'],
+    ['content-around', 'align-content: space-around;'],
+    ['content-evenly', 'align-content: space-evenly;'],
+    ['content-baseline', 'align-content: baseline;'],
+    ['content-stretch', 'align-content: stretch;'],
   ]}
 />
 
@@ -297,4 +298,8 @@ Use `content-normal` to pack content items in their default position as if no `a
 
 ### Responsive design
 
-<ResponsiveDesign property="align-content" defaultClass="grid content-start" featuredClass="content-around" />
+<ResponsiveDesign
+  property="align-content"
+  defaultClass="grid content-start"
+  featuredClass="content-around"
+/>

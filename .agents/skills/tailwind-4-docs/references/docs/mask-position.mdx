@@ -1,25 +1,25 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "mask-position";
+export const title = 'mask-position';
 export const description = "Utilities for controlling the position of an element's mask image.";
 
 <ApiTable
   rows={[
-    ["mask-top-left", "mask-position: top left;"],
-    ["mask-top", "mask-position: top;"],
-    ["mask-top-right", "mask-position: top right;"],
-    ["mask-left", "mask-position: left;"],
-    ["mask-center", "mask-position: center;"],
-    ["mask-right", "mask-position: right;"],
-    ["mask-bottom-left", "mask-position: bottom left;"],
-    ["mask-bottom", "mask-position: bottom;"],
-    ["mask-bottom-right", "mask-position: bottom right;"],
-    ["mask-position-(<custom-property>)", "mask-position: var(<custom-property>);"],
-    ["mask-position-[<value>]", "mask-position: <value>;"],
+    ['mask-top-left', 'mask-position: top left;'],
+    ['mask-top', 'mask-position: top;'],
+    ['mask-top-right', 'mask-position: top right;'],
+    ['mask-left', 'mask-position: left;'],
+    ['mask-center', 'mask-position: center;'],
+    ['mask-right', 'mask-position: right;'],
+    ['mask-bottom-left', 'mask-position: bottom left;'],
+    ['mask-bottom', 'mask-position: bottom;'],
+    ['mask-bottom-right', 'mask-position: bottom right;'],
+    ['mask-position-(<custom-property>)', 'mask-position: var(<custom-property>);'],
+    ['mask-position-[<value>]', 'mask-position: <value>;'],
   ]}
 />
 
@@ -110,7 +110,12 @@ Use utilities like `mask-center`, `mask-right`, and `mask-left-top` to control t
 
 ### Using a custom value
 
-<UsingACustomValue utility="mask-position" value="center_top_1rem" name="mask position" variable="mask-position" />
+<UsingACustomValue
+  utility="mask-position"
+  value="center_top_1rem"
+  name="mask position"
+  variable="mask-position"
+/>
 
 ### Responsive design
 

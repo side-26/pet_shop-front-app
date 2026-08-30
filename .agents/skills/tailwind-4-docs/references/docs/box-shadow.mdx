@@ -1,85 +1,100 @@
-import { ApiTable } from "@/components/api-table.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
 import {
   CustomizingYourTheme,
   CustomizingYourThemeColors,
   ResponsiveDesign,
   UsingACustomValue,
-} from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import colors from "./utils/colors";
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import colors from './utils/colors';
 
-export const title = "box-shadow";
-export const description = "Utilities for controlling the box shadow of an element.";
+export const title = 'box-shadow';
+export const description = 'Utilities for controlling the box shadow of an element.';
 
 <ApiTable
   rows={[
     // Shadows
-    ["shadow-2xs", "box-shadow: var(--shadow-2xs); /* 0 1px rgb(0 0 0 / 0.05) */"],
-    ["shadow-xs", "box-shadow: var(--shadow-xs); /* 0 1px 2px 0 rgb(0 0 0 / 0.05) */"],
-    ["shadow-sm", "box-shadow: var(--shadow-sm); /* 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) */"],
+    ['shadow-2xs', 'box-shadow: var(--shadow-2xs); /* 0 1px rgb(0 0 0 / 0.05) */'],
+    ['shadow-xs', 'box-shadow: var(--shadow-xs); /* 0 1px 2px 0 rgb(0 0 0 / 0.05) */'],
     [
-      "shadow-md",
-      "box-shadow: var(--shadow-md); /* 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) */",
+      'shadow-sm',
+      'box-shadow: var(--shadow-sm); /* 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) */',
     ],
     [
-      "shadow-lg",
-      "box-shadow: var(--shadow-lg); /* 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) */",
+      'shadow-md',
+      'box-shadow: var(--shadow-md); /* 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) */',
     ],
     [
-      "shadow-xl",
-      "box-shadow: var(--shadow-xl); /* 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) */",
+      'shadow-lg',
+      'box-shadow: var(--shadow-lg); /* 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) */',
     ],
-    ["shadow-2xl", "box-shadow: var(--shadow-2xl); /* 0 25px 50px -12px rgb(0 0 0 / 0.25) */"],
-    ["shadow-none", "box-shadow: 0 0 #0000;"],
-    ["shadow-(<custom-property>)", "box-shadow: var(<custom-property>);"],
-    ["shadow-(color:<custom-property>)", "--tw-shadow-color: var(<custom-property>);"],
-    ["shadow-[<value>]", "box-shadow: <value>;"],
+    [
+      'shadow-xl',
+      'box-shadow: var(--shadow-xl); /* 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) */',
+    ],
+    ['shadow-2xl', 'box-shadow: var(--shadow-2xl); /* 0 25px 50px -12px rgb(0 0 0 / 0.25) */'],
+    ['shadow-none', 'box-shadow: 0 0 #0000;'],
+    ['shadow-(<custom-property>)', 'box-shadow: var(<custom-property>);'],
+    ['shadow-(color:<custom-property>)', '--tw-shadow-color: var(<custom-property>);'],
+    ['shadow-[<value>]', 'box-shadow: <value>;'],
     // Shadow colors
-    ["shadow-inherit", "--tw-shadow-color: inherit;"],
-    ["shadow-current", "--tw-shadow-color: currentColor;"],
-    ["shadow-transparent", "--tw-shadow-color: transparent;"],
+    ['shadow-inherit', '--tw-shadow-color: inherit;'],
+    ['shadow-current', '--tw-shadow-color: currentColor;'],
+    ['shadow-transparent', '--tw-shadow-color: transparent;'],
     ...Object.entries(colors).map(([name, value]) => [
       `shadow-${name}`,
       `--tw-shadow-color: var(--color-${name}); /* ${value} */`,
     ]),
     // Inset shadows
-    ["inset-shadow-2xs", "box-shadow: var(--inset-shadow-2xs); /* inset 0 1px rgb(0 0 0 / 0.05) */"],
-    ["inset-shadow-xs", "box-shadow: var(--inset-shadow-xs); /* inset 0 1px 1px rgb(0 0 0 / 0.05) */"],
-    ["inset-shadow-sm", "box-shadow: var(--inset-shadow-sm); /* inset 0 2px 4px rgb(0 0 0 / 0.05) */"],
-    ["inset-shadow-none", "box-shadow: inset 0 0 #0000;"],
-    ["inset-shadow-(<custom-property>)", "box-shadow: var(<custom-property>);"],
-    ["inset-shadow-[<value>]", "box-shadow: <value>;"],
+    [
+      'inset-shadow-2xs',
+      'box-shadow: var(--inset-shadow-2xs); /* inset 0 1px rgb(0 0 0 / 0.05) */',
+    ],
+    [
+      'inset-shadow-xs',
+      'box-shadow: var(--inset-shadow-xs); /* inset 0 1px 1px rgb(0 0 0 / 0.05) */',
+    ],
+    [
+      'inset-shadow-sm',
+      'box-shadow: var(--inset-shadow-sm); /* inset 0 2px 4px rgb(0 0 0 / 0.05) */',
+    ],
+    ['inset-shadow-none', 'box-shadow: inset 0 0 #0000;'],
+    ['inset-shadow-(<custom-property>)', 'box-shadow: var(<custom-property>);'],
+    ['inset-shadow-[<value>]', 'box-shadow: <value>;'],
     // Inset shadow colors
-    ["inset-shadow-inherit", "--tw-inset-shadow-color: inherit;"],
-    ["inset-shadow-current", "--tw-inset-shadow-color: currentColor;"],
-    ["inset-shadow-transparent", "--tw-inset-shadow-color: transparent;"],
+    ['inset-shadow-inherit', '--tw-inset-shadow-color: inherit;'],
+    ['inset-shadow-current', '--tw-inset-shadow-color: currentColor;'],
+    ['inset-shadow-transparent', '--tw-inset-shadow-color: transparent;'],
     ...Object.entries(colors).map(([name, value]) => [
       `inset-shadow-${name}`,
       `--tw-inset-shadow-color: var(--color-${name}); /* ${value} */`,
     ]),
     // Rings
-    ["ring", "--tw-ring-shadow: 0 0 0 1px;"],
-    ["ring-<number>", "--tw-ring-shadow: 0 0 0 <number>px;"],
-    ["ring-(<custom-property>)", "--tw-ring-shadow: 0 0 0 var(<custom-property>);"],
-    ["ring-[<value>]", "--tw-ring-shadow: 0 0 0 <value>;"],
+    ['ring', '--tw-ring-shadow: 0 0 0 1px;'],
+    ['ring-<number>', '--tw-ring-shadow: 0 0 0 <number>px;'],
+    ['ring-(<custom-property>)', '--tw-ring-shadow: 0 0 0 var(<custom-property>);'],
+    ['ring-[<value>]', '--tw-ring-shadow: 0 0 0 <value>;'],
     // Ring colors
-    ["ring-inherit", "--tw-ring-color: inherit;"],
-    ["ring-current", "--tw-ring-color: currentColor;"],
-    ["ring-transparent", "--tw-ring-color: transparent;"],
+    ['ring-inherit', '--tw-ring-color: inherit;'],
+    ['ring-current', '--tw-ring-color: currentColor;'],
+    ['ring-transparent', '--tw-ring-color: transparent;'],
     ...Object.entries(colors).map(([name, value]) => [
       `ring-${name}`,
       `--tw-ring-color: var(--color-${name}); /* ${value} */`,
     ]),
     // Inset rings
-    ["inset-ring", "--tw-inset-ring-shadow: inset 0 0 0 1px"],
-    ["inset-ring-<number>", "--tw-inset-ring-shadow: inset 0 0 0 <number>px"],
-    ["inset-ring-(<custom-property>)", "--tw-inset-ring-shadow: inset 0 0 0 var(<custom-property>);"],
-    ["inset-ring-[<value>]", "--tw-inset-ring-shadow: inset 0 0 0 <value>;"],
+    ['inset-ring', '--tw-inset-ring-shadow: inset 0 0 0 1px'],
+    ['inset-ring-<number>', '--tw-inset-ring-shadow: inset 0 0 0 <number>px'],
+    [
+      'inset-ring-(<custom-property>)',
+      '--tw-inset-ring-shadow: inset 0 0 0 var(<custom-property>);',
+    ],
+    ['inset-ring-[<value>]', '--tw-inset-ring-shadow: inset 0 0 0 <value>;'],
     // Inset ring colors
-    ["inset-ring-inherit", "--tw-inset-ring-color: inherit;"],
-    ["inset-ring-current", "--tw-inset-ring-color: currentColor;"],
-    ["inset-ring-transparent", "--tw-inset-ring-color: transparent;"],
+    ['inset-ring-inherit', '--tw-inset-ring-color: inherit;'],
+    ['inset-ring-current', '--tw-inset-ring-color: currentColor;'],
+    ['inset-ring-transparent', '--tw-inset-ring-color: transparent;'],
     ...Object.entries(colors).map(([name, value]) => [
       `inset-ring-${name}`,
       `--tw-inset-ring-color: var(--color-${name}); /* ${value} */`,
@@ -217,15 +232,21 @@ Use utilities like `inset-shadow-xs` and `inset-shadow-sm` to apply an inset box
   {
     <div className="flex flex-col items-center justify-around gap-4 gap-y-6 bg-white p-6 font-mono font-bold sm:flex-row">
       <div className="flex flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500">inset-shadow-2xs</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500">
+          inset-shadow-2xs
+        </p>
         <div className="size-24 rounded-lg bg-white ring-1 inset-shadow-2xs ring-black/5"></div>
       </div>
       <div className="flex flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500">inset-shadow-xs</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500">
+          inset-shadow-xs
+        </p>
         <div className="size-24 rounded-lg bg-white ring-1 inset-shadow-xs ring-black/5"></div>
       </div>
       <div className="flex flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500">inset-shadow-sm</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500">
+          inset-shadow-sm
+        </p>
         <div className="size-24 rounded-lg bg-white ring-1 inset-shadow-sm ring-black/5"></div>
       </div>
     </div>
@@ -253,11 +274,15 @@ Use utilities like `inset-shadow-indigo-500` and `inset-shadow-cyan-500/50` to c
   {
     <div className="flex flex-col items-center justify-around gap-4 gap-y-6 bg-white p-6 font-mono font-bold sm:flex-row">
       <div className="flex flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500">inset-shadow-indigo-500</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500">
+          inset-shadow-indigo-500
+        </p>
         <div className="size-24 rounded-lg bg-indigo-200 inset-shadow-sm inset-shadow-indigo-500"></div>
       </div>
       <div className="flex flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500">inset-shadow-indigo-500/50</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500">
+          inset-shadow-indigo-500/50
+        </p>
         <div className="size-24 rounded-lg bg-indigo-200 inset-shadow-sm inset-shadow-indigo-500/50"></div>
       </div>
     </div>
@@ -284,19 +309,25 @@ Use `ring` or `ring-<number>` utilities like `ring-2` and `ring-4` to apply a so
   {
     <div className="grid grid-cols-1 gap-x-4 gap-y-6 text-center leading-6 font-bold text-white sm:grid-cols-3">
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">ring</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          ring
+        </p>
         <button className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 ring dark:bg-white/15 dark:text-gray-200">
           Subscribe
         </button>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">ring-2</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          ring-2
+        </p>
         <button className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 ring-2 dark:bg-white/15 dark:text-gray-200">
           Subscribe
         </button>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">ring-4</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          ring-4
+        </p>
         <button className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 ring-4 dark:bg-white/15 dark:text-gray-200">
           Subscribe
         </button>
@@ -326,7 +357,9 @@ Use utilities like `ring-indigo-500` and `ring-cyan-500/50` to change the color 
   {
     <div className="grid grid-cols-1 gap-x-4 gap-y-6 text-center leading-6 font-bold text-white sm:grid-cols-2">
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">ring-blue-500</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          ring-blue-500
+        </p>
         <button className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 ring-2 ring-blue-500 dark:bg-white/15 dark:text-gray-200">
           Subscribe
         </button>
@@ -363,19 +396,25 @@ Use `inset-ring` or `inset-ring-<number>` utilities like `inset-ring-2` and `ins
   {
     <div className="grid grid-cols-1 gap-x-4 gap-y-6 text-center leading-6 font-bold text-white sm:grid-cols-3">
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">inset-ring</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          inset-ring
+        </p>
         <button className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 inset-ring dark:bg-white/15 dark:text-gray-200">
           Subscribe
         </button>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">inset-ring-2</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          inset-ring-2
+        </p>
         <button className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 inset-ring-2 dark:bg-white/15 dark:text-gray-200">
           Subscribe
         </button>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">inset-ring-4</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          inset-ring-4
+        </p>
         <button className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 inset-ring-4 dark:bg-white/15 dark:text-gray-200">
           Subscribe
         </button>
@@ -461,7 +500,7 @@ Use the `shadow-none`, `inset-shadow-none`,`ring-0`, and `inset-ring-0` utilitie
 ### Using a custom value
 
 <UsingACustomValue
-  utilities={["shadow", "inset-shadow", "ring", "inset-ring"]}
+  utilities={['shadow', 'inset-shadow', 'ring', 'inset-ring']}
   name="box shadow"
   value="0_35px_35px_rgba(0,0,0,0.25)"
 />
@@ -494,4 +533,4 @@ Use the `shadow-none`, `inset-shadow-none`,`ring-0`, and `inset-ring-0` utilitie
 
 ### Customizing shadow colors
 
-<CustomizingYourThemeColors utilities={["shadow", "inset-shadow", "ring", "inset-ring"]} />
+<CustomizingYourThemeColors utilities={['shadow', 'inset-shadow', 'ring', 'inset-ring']} />

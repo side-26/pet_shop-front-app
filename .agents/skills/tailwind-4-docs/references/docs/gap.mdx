@@ -1,26 +1,26 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "gap";
-export const description = "Utilities for controlling gutters between grid and flexbox items.";
+export const title = 'gap';
+export const description = 'Utilities for controlling gutters between grid and flexbox items.';
 
 <ApiTable
   rows={[
-    ["gap-<number>", "gap: calc(var(--spacing) * <value>);"],
-    ["gap-px", "gap: 1px;"],
-    ["gap-(<custom-property>)", "gap: var(<custom-property>);"],
-    ["gap-[<value>]", "gap: <value>;"],
-    ["gap-x-<number>", "column-gap: calc(var(--spacing) * <value>);"],
-    ["gap-x-px", "column-gap: 1px;"],
-    ["gap-x-(<custom-property>)", "column-gap: var(<custom-property>);"],
-    ["gap-x-[<value>]", "column-gap: <value>;"],
-    ["gap-y-<number>", "row-gap: calc(var(--spacing) * <value>);"],
-    ["gap-y-px", "row-gap: 1px;"],
-    ["gap-y-(<custom-property>)", "row-gap: var(<custom-property>);"],
-    ["gap-y-[<value>]", "row-gap: <value>;"],
+    ['gap-<number>', 'gap: calc(var(--spacing) * <value>);'],
+    ['gap-px', 'gap: 1px;'],
+    ['gap-(<custom-property>)', 'gap: var(<custom-property>);'],
+    ['gap-[<value>]', 'gap: <value>;'],
+    ['gap-x-<number>', 'column-gap: calc(var(--spacing) * <value>);'],
+    ['gap-x-px', 'column-gap: 1px;'],
+    ['gap-x-(<custom-property>)', 'column-gap: var(<custom-property>);'],
+    ['gap-x-[<value>]', 'column-gap: <value>;'],
+    ['gap-y-<number>', 'row-gap: calc(var(--spacing) * <value>);'],
+    ['gap-y-px', 'row-gap: 1px;'],
+    ['gap-y-(<custom-property>)', 'row-gap: var(<custom-property>);'],
+    ['gap-y-[<value>]', 'row-gap: <value>;'],
   ]}
 />
 
@@ -96,8 +96,12 @@ Use `gap-x-<number>` or `gap-y-<number>` utilities like `gap-x-8` and `gap-y-4` 
 
 ### Using a custom value
 
-<UsingACustomValue utilities={["gap", "gap-x", "gap-y"]} value="10vw" />
+<UsingACustomValue utilities={['gap', 'gap-x', 'gap-y']} value="10vw" />
 
 ### Responsive design
 
-<ResponsiveDesign properties={["gap", "column-gap", "row-gap"]} defaultClass="grid gap-4" featuredClass="gap-6" />
+<ResponsiveDesign
+  properties={['gap', 'column-gap', 'row-gap']}
+  defaultClass="grid gap-4"
+  featuredClass="gap-6"
+/>

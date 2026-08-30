@@ -1,17 +1,17 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "backdrop-filter: sepia()";
-export const description = "Utilities for applying backdrop sepia filters to an element.";
+export const title = 'backdrop-filter: sepia()';
+export const description = 'Utilities for applying backdrop sepia filters to an element.';
 
 <ApiTable
   rows={[
-    ["backdrop-sepia", "backdrop-filter: sepia(100%);"],
-    ["backdrop-sepia-<number>", "backdrop-filter: sepia(<number>%);"],
-    ["backdrop-sepia-(<custom-property>)", "backdrop-filter: sepia(var(<custom-property>));"],
-    ["backdrop-sepia-[<value>]", "backdrop-filter: sepia(<value>);"],
+    ['backdrop-sepia', 'backdrop-filter: sepia(100%);'],
+    ['backdrop-sepia-<number>', 'backdrop-filter: sepia(<number>%);'],
+    ['backdrop-sepia-(<custom-property>)', 'backdrop-filter: sepia(var(<custom-property>));'],
+    ['backdrop-sepia-[<value>]', 'backdrop-filter: sepia(<value>);'],
   ]}
 />
 
@@ -92,4 +92,8 @@ Use utilities like `backdrop-sepia` and `backdrop-sepia-50` to control the sepia
 
 ### Responsive design
 
-<ResponsiveDesign property="backdrop-filter: sepia()" defaultClass="backdrop-sepia" featuredClass="backdrop-sepia-0" />
+<ResponsiveDesign
+  property="backdrop-filter: sepia()"
+  defaultClass="backdrop-sepia"
+  featuredClass="backdrop-sepia-0"
+/>

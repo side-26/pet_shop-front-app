@@ -1,60 +1,60 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import dedent from "dedent";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
+import dedent from 'dedent';
 
-export const title = "border-width";
+export const title = 'border-width';
 export const description = "Utilities for controlling the width of an element's borders.";
 
 <ApiTable
   rows={[
-    ["border", "border-width: 1px;"],
-    ["border-<number>", "border-width: <number>px;"],
-    ["border-(length:<custom-property>)", "border-width: var(<custom-property>);"],
-    ["border-[<value>]", "border-width: <value>;"],
-    ["border-x", "border-inline-width: 1px;"],
-    ["border-x-<number>", "border-inline-width: <number>px;"],
-    ["border-x-(length:<custom-property>)", "border-inline-width: var(<custom-property>);"],
-    ["border-x-[<value>]", "border-inline-width: <value>;"],
-    ["border-y", "border-block-width: 1px;"],
-    ["border-y-<number>", "border-block-width: <number>px;"],
-    ["border-y-(length:<custom-property>)", "border-block-width: var(<custom-property>);"],
-    ["border-y-[<value>]", "border-block-width: <value>;"],
-    ["border-s", "border-inline-start-width: 1px;"],
-    ["border-s-<number>", "border-inline-start-width: <number>px;"],
-    ["border-s-(length:<custom-property>)", "border-inline-start-width: var(<custom-property>);"],
-    ["border-s-[<value>]", "border-inline-start-width: <value>;"],
-    ["border-e", "border-inline-end-width: 1px;"],
-    ["border-e-<number>", "border-inline-end-width: <number>px;"],
-    ["border-e-(length:<custom-property>)", "border-inline-end-width: var(<custom-property>);"],
-    ["border-e-[<value>]", "border-inline-end-width: <value>;"],
-    ["border-bs", "border-block-start-width: 1px;"],
-    ["border-bs-<number>", "border-block-start-width: <number>px;"],
-    ["border-bs-(length:<custom-property>)", "border-block-start-width: var(<custom-property>);"],
-    ["border-bs-[<value>]", "border-block-start-width: <value>;"],
-    ["border-be", "border-block-end-width: 1px;"],
-    ["border-be-<number>", "border-block-end-width: <number>px;"],
-    ["border-be-(length:<custom-property>)", "border-block-end-width: var(<custom-property>);"],
-    ["border-be-[<value>]", "border-block-end-width: <value>;"],
-    ["border-t", "border-top-width: 1px;"],
-    ["border-t-<number>", "border-top-width: <number>px;"],
-    ["border-t-(length:<custom-property>)", "border-top-width: var(<custom-property>);"],
-    ["border-t-[<value>]", "border-top-width: <value>;"],
-    ["border-r", "border-right-width: 1px;"],
-    ["border-r-<number>", "border-right-width: <number>px;"],
-    ["border-r-(length:<custom-property>)", "border-right-width: var(<custom-property>);"],
-    ["border-r-[<value>]", "border-right-width: <value>;"],
-    ["border-b", "border-bottom-width: 1px;"],
-    ["border-b-<number>", "border-bottom-width: <number>px;"],
-    ["border-b-(length:<custom-property>)", "border-bottom-width: var(<custom-property>);"],
-    ["border-b-[<value>]", "border-bottom-width: <value>;"],
-    ["border-l", "border-left-width: 1px;"],
-    ["border-l-<number>", "border-left-width: <number>px;"],
-    ["border-l-(length:<custom-property>)", "border-left-width: var(<custom-property>);"],
-    ["border-l-[<value>]", "border-left-width: <value>;"],
+    ['border', 'border-width: 1px;'],
+    ['border-<number>', 'border-width: <number>px;'],
+    ['border-(length:<custom-property>)', 'border-width: var(<custom-property>);'],
+    ['border-[<value>]', 'border-width: <value>;'],
+    ['border-x', 'border-inline-width: 1px;'],
+    ['border-x-<number>', 'border-inline-width: <number>px;'],
+    ['border-x-(length:<custom-property>)', 'border-inline-width: var(<custom-property>);'],
+    ['border-x-[<value>]', 'border-inline-width: <value>;'],
+    ['border-y', 'border-block-width: 1px;'],
+    ['border-y-<number>', 'border-block-width: <number>px;'],
+    ['border-y-(length:<custom-property>)', 'border-block-width: var(<custom-property>);'],
+    ['border-y-[<value>]', 'border-block-width: <value>;'],
+    ['border-s', 'border-inline-start-width: 1px;'],
+    ['border-s-<number>', 'border-inline-start-width: <number>px;'],
+    ['border-s-(length:<custom-property>)', 'border-inline-start-width: var(<custom-property>);'],
+    ['border-s-[<value>]', 'border-inline-start-width: <value>;'],
+    ['border-e', 'border-inline-end-width: 1px;'],
+    ['border-e-<number>', 'border-inline-end-width: <number>px;'],
+    ['border-e-(length:<custom-property>)', 'border-inline-end-width: var(<custom-property>);'],
+    ['border-e-[<value>]', 'border-inline-end-width: <value>;'],
+    ['border-bs', 'border-block-start-width: 1px;'],
+    ['border-bs-<number>', 'border-block-start-width: <number>px;'],
+    ['border-bs-(length:<custom-property>)', 'border-block-start-width: var(<custom-property>);'],
+    ['border-bs-[<value>]', 'border-block-start-width: <value>;'],
+    ['border-be', 'border-block-end-width: 1px;'],
+    ['border-be-<number>', 'border-block-end-width: <number>px;'],
+    ['border-be-(length:<custom-property>)', 'border-block-end-width: var(<custom-property>);'],
+    ['border-be-[<value>]', 'border-block-end-width: <value>;'],
+    ['border-t', 'border-top-width: 1px;'],
+    ['border-t-<number>', 'border-top-width: <number>px;'],
+    ['border-t-(length:<custom-property>)', 'border-top-width: var(<custom-property>);'],
+    ['border-t-[<value>]', 'border-top-width: <value>;'],
+    ['border-r', 'border-right-width: 1px;'],
+    ['border-r-<number>', 'border-right-width: <number>px;'],
+    ['border-r-(length:<custom-property>)', 'border-right-width: var(<custom-property>);'],
+    ['border-r-[<value>]', 'border-right-width: <value>;'],
+    ['border-b', 'border-bottom-width: 1px;'],
+    ['border-b-<number>', 'border-bottom-width: <number>px;'],
+    ['border-b-(length:<custom-property>)', 'border-bottom-width: var(<custom-property>);'],
+    ['border-b-[<value>]', 'border-bottom-width: <value>;'],
+    ['border-l', 'border-left-width: 1px;'],
+    ['border-l-<number>', 'border-left-width: <number>px;'],
+    ['border-l-(length:<custom-property>)', 'border-left-width: var(<custom-property>);'],
+    ['border-l-[<value>]', 'border-left-width: <value>;'],
     [
-      "divide-x",
+      'divide-x',
       dedent`
         & > :not(:last-child) {
           border-inline-start-width: 0px;
@@ -63,7 +63,7 @@ export const description = "Utilities for controlling the width of an element's 
     `,
     ],
     [
-      "divide-x-<number>",
+      'divide-x-<number>',
       dedent`
         & > :not(:last-child) {
           border-inline-start-width: 0px;
@@ -72,7 +72,7 @@ export const description = "Utilities for controlling the width of an element's 
     `,
     ],
     [
-      "divide-x-(length:<custom-property>)",
+      'divide-x-(length:<custom-property>)',
       dedent`
         & > :not(:last-child) {
           border-inline-start-width: 0px;
@@ -81,7 +81,7 @@ export const description = "Utilities for controlling the width of an element's 
     `,
     ],
     [
-      "divide-x-[<value>]",
+      'divide-x-[<value>]',
       dedent`
         & > :not(:last-child) {
           border-inline-start-width: 0px;
@@ -90,7 +90,7 @@ export const description = "Utilities for controlling the width of an element's 
     `,
     ],
     [
-      "divide-y",
+      'divide-y',
       dedent`
         & > :not(:last-child) {
           border-top-width: 0px;
@@ -99,7 +99,7 @@ export const description = "Utilities for controlling the width of an element's 
     `,
     ],
     [
-      "divide-y-<number>",
+      'divide-y-<number>',
       dedent`
         & > :not(:last-child) {
           border-top-width: 0px;
@@ -108,7 +108,7 @@ export const description = "Utilities for controlling the width of an element's 
     `,
     ],
     [
-      "divide-y-(length:<custom-property>)",
+      'divide-y-(length:<custom-property>)',
       dedent`
         & > :not(:last-child) {
           border-top-width: 0px;
@@ -117,7 +117,7 @@ export const description = "Utilities for controlling the width of an element's 
     `,
     ],
     [
-      "divide-y-[<value>]",
+      'divide-y-[<value>]',
       dedent`
         & > :not(:last-child) {
           border-top-width: 0px;
@@ -125,8 +125,8 @@ export const description = "Utilities for controlling the width of an element's 
         }
     `,
     ],
-    ["divide-x-reverse", "--tw-divide-x-reverse: 1;"],
-    ["divide-y-reverse", "--tw-divide-y-reverse: 1;"],
+    ['divide-x-reverse', '--tw-divide-x-reverse: 1;'],
+    ['divide-y-reverse', '--tw-divide-y-reverse: 1;'],
   ]}
 />
 
@@ -142,19 +142,27 @@ Use `border` or `border-<number>` utilities like `border-2` and `border-4` to se
   {
     <div className="flex flex-col items-center justify-around gap-4 text-center text-sm leading-6 font-bold text-white sm:flex-row">
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">border</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          border
+        </p>
         <div className="size-16 border border-indigo-600 p-4"></div>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">border-2</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          border-2
+        </p>
         <div className="size-16 border-2 border-indigo-600 p-4"></div>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">border-4</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          border-4
+        </p>
         <div className="size-16 border-4 border-indigo-600 p-4"></div>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">border-8</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          border-8
+        </p>
         <div className="size-16 border-8 border-indigo-600 p-4"></div>
       </div>
     </div>
@@ -181,19 +189,27 @@ Use utilities like `border-r` and `border-t-4` to set the border width for one s
   {
     <div className="flex flex-col items-center justify-around gap-4 text-center text-sm leading-6 font-bold text-white sm:flex-row">
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">border-t-4</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          border-t-4
+        </p>
         <div className="size-16 border-t-4 border-indigo-500 p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20"></div>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">border-r-4</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          border-r-4
+        </p>
         <div className="size-16 border-r-4 border-indigo-500 p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20"></div>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">border-b-4</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          border-b-4
+        </p>
         <div className="size-16 border-b-4 border-indigo-500 p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20"></div>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">border-l-4</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          border-l-4
+        </p>
         <div className="size-16 border-l-4 border-indigo-500 p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20"></div>
       </div>
     </div>
@@ -220,11 +236,15 @@ Use utilities like `border-x` and `border-y-4` to set the border width on two si
   {
     <div className="flex flex-col items-center justify-around gap-4 text-center text-sm leading-6 font-bold text-white sm:flex-row">
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">border-x-4</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          border-x-4
+        </p>
         <div className="size-16 border-x-4 border-indigo-500 p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20"></div>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">border-y-4</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          border-y-4
+        </p>
         <div className="size-16 border-y-4 border-indigo-500 p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20"></div>
       </div>
     </div>
@@ -290,9 +310,15 @@ Use utilities like `divide-x` and `divide-y-4` to add borders between child elem
 <Example>
   {
     <div className="mx-auto grid max-w-lg grid-cols-3 divide-x-4 divide-indigo-500 rounded-lg text-center font-mono text-sm leading-6 font-bold text-gray-400">
-      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">01</div>
-      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">02</div>
-      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">03</div>
+      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">
+        01
+      </div>
+      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">
+        02
+      </div>
+      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">
+        03
+      </div>
     </div>
   }
 </Example>
@@ -317,9 +343,15 @@ If your elements are in reverse order (using say `flex-row-reverse` or `flex-col
 <Example>
   {
     <div className="mx-auto flex max-w-sm flex-col-reverse divide-y-4 divide-y-reverse divide-indigo-500 rounded-lg text-center font-mono text-sm leading-6 font-bold text-gray-400">
-      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">01</div>
-      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">02</div>
-      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">03</div>
+      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">
+        01
+      </div>
+      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">
+        02
+      </div>
+      <div className="p-4 outline-1 -outline-offset-1 outline-gray-900/20 outline-dashed dark:outline-white/20">
+        03
+      </div>
     </div>
   }
 </Example>
@@ -337,7 +369,13 @@ If your elements are in reverse order (using say `flex-row-reverse` or `flex-col
 
 ### Using a custom value
 
-<UsingACustomValue utility="border" name="border width" value="2vw" dataType="length" variable="border-width" />
+<UsingACustomValue
+  utility="border"
+  name="border width"
+  value="2vw"
+  dataType="length"
+  variable="border-width"
+/>
 
 ### Responsive design
 

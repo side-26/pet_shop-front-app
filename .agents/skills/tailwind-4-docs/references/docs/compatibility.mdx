@@ -1,7 +1,7 @@
-import { TipGood, TipBad, TipCompat, TipInfo } from "@/components/tips";
+import { TipGood, TipBad, TipCompat, TipInfo } from '@/components/tips';
 
-export const title = "Compatibility";
-export const description = "Learn about browser support and compatibility with other tooling.";
+export const title = 'Compatibility';
+export const description = 'Learn about browser support and compatibility with other tooling.';
 
 ## Browser support
 
@@ -29,8 +29,8 @@ Tailwind will automatically bundle other CSS files you include with `@import`, w
 
 ```css
 /* [!code filename:app.css] */
-@import "tailwindcss";
-@import "./typography.css";
+@import 'tailwindcss';
+@import './typography.css';
 ```
 
 In this example, the `typography.css` file will be bundled into your compiled CSS for you by Tailwind, without any other tooling like Sass or `postcss-import`.
@@ -125,7 +125,9 @@ Since CSS modules are each processed separately, they have no `@theme` unless yo
 
 This means features like `@apply` won't work the way you expect unless you explicitly import your global styles as reference:
 
-<TipInfo>{<>Import your global styles as reference to make sure your theme variables are defined</>}</TipInfo>
+<TipInfo>
+  {<>Import your global styles as reference to make sure your theme variables are defined</>}
+</TipInfo>
 
 ```css
 /* [!code filename:Button.module.css] */

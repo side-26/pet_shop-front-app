@@ -1,23 +1,27 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourTheme, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourTheme,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
 
-export const title = "backdrop-filter: blur()";
-export const description = "Utilities for applying backdrop blur filters to an element.";
+export const title = 'backdrop-filter: blur()';
+export const description = 'Utilities for applying backdrop blur filters to an element.';
 
 <ApiTable
   rows={[
-    ["backdrop-blur-xs", "backdrop-filter: blur(var(--blur-xs)); /* 4px */"],
-    ["backdrop-blur-sm", "backdrop-filter: blur(var(--blur-sm)); /* 8px */"],
-    ["backdrop-blur-md", "backdrop-filter: blur(var(--blur-md)); /* 12px */"],
-    ["backdrop-blur-lg", "backdrop-filter: blur(var(--blur-lg)); /* 16px */"],
-    ["backdrop-blur-xl", "backdrop-filter: blur(var(--blur-xl)); /* 24px */"],
-    ["backdrop-blur-2xl", "backdrop-filter: blur(var(--blur-2xl)); /* 40px */"],
-    ["backdrop-blur-3xl", "backdrop-filter: blur(var(--blur-3xl)); /* 64px */"],
-    ["backdrop-blur-none", "backdrop-filter: ;"],
-    ["backdrop-blur-(<custom-property>)", "backdrop-filter: blur(var(<custom-property>));"],
-    ["backdrop-blur-[<value>]", "backdrop-filter: blur(<value>);"],
+    ['backdrop-blur-xs', 'backdrop-filter: blur(var(--blur-xs)); /* 4px */'],
+    ['backdrop-blur-sm', 'backdrop-filter: blur(var(--blur-sm)); /* 8px */'],
+    ['backdrop-blur-md', 'backdrop-filter: blur(var(--blur-md)); /* 12px */'],
+    ['backdrop-blur-lg', 'backdrop-filter: blur(var(--blur-lg)); /* 16px */'],
+    ['backdrop-blur-xl', 'backdrop-filter: blur(var(--blur-xl)); /* 24px */'],
+    ['backdrop-blur-2xl', 'backdrop-filter: blur(var(--blur-2xl)); /* 40px */'],
+    ['backdrop-blur-3xl', 'backdrop-filter: blur(var(--blur-3xl)); /* 64px */'],
+    ['backdrop-blur-none', 'backdrop-filter: ;'],
+    ['backdrop-blur-(<custom-property>)', 'backdrop-filter: blur(var(<custom-property>));'],
+    ['backdrop-blur-[<value>]', 'backdrop-filter: blur(<value>);'],
   ]}
 />
 
@@ -106,4 +110,10 @@ Use utilities like `backdrop-blur-sm` and `backdrop-blur-lg` to control an eleme
 
 ## Customizing your theme
 
-<CustomizingYourTheme utility="backdrop-blur" themeKey="blur" name="backdrop blur" customName="2xs" customValue="2px" />
+<CustomizingYourTheme
+  utility="backdrop-blur"
+  themeKey="blur"
+  name="backdrop blur"
+  customName="2xs"
+  customValue="2px"
+/>

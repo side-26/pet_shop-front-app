@@ -1,15 +1,16 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "border-collapse";
-export const description = "Utilities for controlling whether table borders should collapse or be separated.";
+export const title = 'border-collapse';
+export const description =
+  'Utilities for controlling whether table borders should collapse or be separated.';
 
 <ApiTable
   rows={[
-    ["border-collapse", "border-collapse: collapse;"],
-    ["border-separate", "border-collapse: separate;"],
+    ['border-collapse', 'border-collapse: collapse;'],
+    ['border-separate', 'border-collapse: separate;'],
   ]}
 />
 
@@ -45,7 +46,9 @@ Use the `border-collapse` utility to combine adjacent cell borders into a single
             </td>
           </tr>
           <tr>
-            <td className="border border-gray-300 p-4 text-gray-500 dark:border-gray-700 dark:text-gray-400">Ohio</td>
+            <td className="border border-gray-300 p-4 text-gray-500 dark:border-gray-700 dark:text-gray-400">
+              Ohio
+            </td>
             <td className="border border-gray-300 p-4 text-gray-500 dark:border-gray-700 dark:text-gray-400">
               Columbus
             </td>
@@ -124,7 +127,9 @@ Use the `border-separate` utility to force each cell to display its own separate
             </td>
           </tr>
           <tr>
-            <td className="border border-gray-300 p-4 text-gray-500 dark:border-gray-700 dark:text-gray-400">Ohio</td>
+            <td className="border border-gray-300 p-4 text-gray-500 dark:border-gray-700 dark:text-gray-400">
+              Ohio
+            </td>
             <td className="border border-gray-300 p-4 text-gray-500 dark:border-gray-700 dark:text-gray-400">
               Columbus
             </td>

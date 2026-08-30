@@ -1,19 +1,20 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "background-size";
-export const description = "Utilities for controlling the background size of an element's background image.";
+export const title = 'background-size';
+export const description =
+  "Utilities for controlling the background size of an element's background image.";
 
 <ApiTable
   rows={[
-    ["bg-auto", "background-size: auto;"],
-    ["bg-cover", "background-size: cover;"],
-    ["bg-contain", "background-size: contain;"],
-    ["bg-size-(<custom-property>)", "background-size: var(<custom-property>);"],
-    ["bg-size-[<value>]", "background-size: <value>;"],
+    ['bg-auto', 'background-size: auto;'],
+    ['bg-cover', 'background-size: cover;'],
+    ['bg-contain', 'background-size: contain;'],
+    ['bg-size-(<custom-property>)', 'background-size: var(<custom-property>);'],
+    ['bg-size-[<value>]', 'background-size: <value>;'],
   ]}
 />
 
@@ -93,7 +94,12 @@ Use the `bg-auto` utility to display the background image at its default size:
 
 ### Using a custom value
 
-<UsingACustomValue utility="bg-size" value="auto_100px" name="background size" variable="image-size" />
+<UsingACustomValue
+  utility="bg-size"
+  value="auto_100px"
+  name="background size"
+  variable="image-size"
+/>
 
 ### Responsive design
 

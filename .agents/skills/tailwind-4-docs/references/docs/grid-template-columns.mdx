@@ -1,19 +1,23 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourTheme, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { Stripes } from "@/components/stripes.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourTheme,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { Stripes } from '@/components/stripes.tsx';
 
-export const title = "grid-template-columns";
-export const description = "Utilities for specifying the columns in a grid layout.";
+export const title = 'grid-template-columns';
+export const description = 'Utilities for specifying the columns in a grid layout.';
 
 <ApiTable
   rows={[
-    ["grid-cols-<number>", "grid-template-columns: repeat(<number>, minmax(0, 1fr));"],
-    ["grid-cols-none", "grid-template-columns: none;"],
-    ["grid-cols-subgrid", "grid-template-columns: subgrid;"],
-    ["grid-cols-[<value>]", "grid-template-columns: <value>;"],
-    ["grid-cols-(<custom-property>)", "grid-template-columns: var(<custom-property>);"],
+    ['grid-cols-<number>', 'grid-template-columns: repeat(<number>, minmax(0, 1fr));'],
+    ['grid-cols-none', 'grid-template-columns: none;'],
+    ['grid-cols-subgrid', 'grid-template-columns: subgrid;'],
+    ['grid-cols-[<value>]', 'grid-template-columns: <value>;'],
+    ['grid-cols-(<custom-property>)', 'grid-template-columns: var(<custom-property>);'],
   ]}
 />
 
@@ -98,4 +102,8 @@ Use the `grid-cols-subgrid` utility to adopt the column tracks defined by the it
 
 ### Responsive design
 
-<ResponsiveDesign property="grid-template-columns" defaultClass="grid grid-cols-1" featuredClass="grid-cols-6" />
+<ResponsiveDesign
+  property="grid-template-columns"
+  defaultClass="grid grid-cols-1"
+  featuredClass="grid-cols-6"
+/>

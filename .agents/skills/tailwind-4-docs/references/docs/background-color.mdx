@@ -1,28 +1,28 @@
-import { ApiTable } from "@/components/api-table.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
 import {
   CustomizingYourThemeColors,
   ResponsiveDesign,
   TargetingSpecificStates,
   UsingACustomValue,
-} from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import colors from "./utils/colors";
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import colors from './utils/colors';
 
-export const title = "background-color";
+export const title = 'background-color';
 export const description = "Utilities for controlling an element's background color.";
 
 <ApiTable
   rows={[
-    ["bg-inherit", "background-color: inherit;"],
-    ["bg-current", "background-color: currentColor;"],
-    ["bg-transparent", "background-color: transparent;"],
+    ['bg-inherit', 'background-color: inherit;'],
+    ['bg-current', 'background-color: currentColor;'],
+    ['bg-transparent', 'background-color: transparent;'],
     ...Object.entries(colors).map(([name, value]) => [
       `bg-${name}`,
       `background-color: var(--color-${name}); /* ${value} */`,
     ]),
-    ["bg-(<custom-property>)", "background-color: var(<custom-property>);"],
-    ["bg-[<value>]", "background-color: <value>;"],
+    ['bg-(<custom-property>)', 'background-color: var(<custom-property>);'],
+    ['bg-[<value>]', 'background-color: <value>;'],
   ]}
 />
 
@@ -38,7 +38,9 @@ Use utilities like `bg-white`, `bg-indigo-500` and `bg-transparent` to control t
   {
     <div className="grid grid-cols-1 gap-4 text-sm text-white sm:grid-cols-3">
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">bg-blue-500</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          bg-blue-500
+        </p>
         <button
           type="button"
           tabIndex="-1"
@@ -48,7 +50,9 @@ Use utilities like `bg-white`, `bg-indigo-500` and `bg-transparent` to control t
         </button>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">bg-cyan-500</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          bg-cyan-500
+        </p>
         <button
           type="button"
           tabIndex="-1"
@@ -58,7 +62,9 @@ Use utilities like `bg-white`, `bg-indigo-500` and `bg-transparent` to control t
         </button>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">bg-pink-500</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          bg-pink-500
+        </p>
         <button
           type="button"
           tabIndex="-1"
@@ -102,7 +108,9 @@ Use the color opacity modifier to control the opacity of an element's background
         </button>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">bg-sky-500/75</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          bg-sky-500/75
+        </p>
         <button
           type="button"
           tabIndex="-1"
@@ -112,7 +120,9 @@ Use the color opacity modifier to control the opacity of an element's background
         </button>
       </div>
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">bg-sky-500/50</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          bg-sky-500/50
+        </p>
         <button
           type="button"
           tabIndex="-1"
@@ -169,7 +179,11 @@ Use the color opacity modifier to control the opacity of an element's background
 
 ### Responsive design
 
-<ResponsiveDesign property="background-color" defaultClass="bg-blue-500" featuredClass="bg-green-500" />
+<ResponsiveDesign
+  property="background-color"
+  defaultClass="bg-blue-500"
+  featuredClass="bg-green-500"
+/>
 
 ## Customizing your theme
 

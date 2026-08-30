@@ -1,40 +1,40 @@
-import { ApiTable } from "@/components/api-table.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
 import {
   CustomizingYourTheme,
   CustomizingYourThemeColors,
   ResponsiveDesign,
   UsingACustomValue,
-} from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import colors from "./utils/colors";
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import colors from './utils/colors';
 
-export const title = "text-shadow";
-export const description = "Utilities for controlling the shadow of a text element.";
+export const title = 'text-shadow';
+export const description = 'Utilities for controlling the shadow of a text element.';
 
 <ApiTable
   rows={[
-    ["text-shadow-2xs", "text-shadow: var(--text-shadow-2xs); /* 0px 1px 0px rgb(0 0 0 / 0.15) */"],
-    ["text-shadow-xs", "text-shadow: var(--text-shadow-xs); /* 0px 1px 1px rgb(0 0 0 / 0.2) */"],
+    ['text-shadow-2xs', 'text-shadow: var(--text-shadow-2xs); /* 0px 1px 0px rgb(0 0 0 / 0.15) */'],
+    ['text-shadow-xs', 'text-shadow: var(--text-shadow-xs); /* 0px 1px 1px rgb(0 0 0 / 0.2) */'],
     [
-      "text-shadow-sm",
-      "text-shadow: var(--text-shadow-sm); /* 0px 1px 0px rgb(0 0 0 / 0.075), 0px 1px 1px rgb(0 0 0 / 0.075), 0px 2px 2px rgb(0 0 0 / 0.075) */",
+      'text-shadow-sm',
+      'text-shadow: var(--text-shadow-sm); /* 0px 1px 0px rgb(0 0 0 / 0.075), 0px 1px 1px rgb(0 0 0 / 0.075), 0px 2px 2px rgb(0 0 0 / 0.075) */',
     ],
     [
-      "text-shadow-md",
-      "text-shadow: var(--text-shadow-md); /* 0px 1px 1px rgb(0 0 0 / 0.1), 0px 1px 2px rgb(0 0 0 / 0.1), 0px 2px 4px rgb(0 0 0 / 0.1) */",
+      'text-shadow-md',
+      'text-shadow: var(--text-shadow-md); /* 0px 1px 1px rgb(0 0 0 / 0.1), 0px 1px 2px rgb(0 0 0 / 0.1), 0px 2px 4px rgb(0 0 0 / 0.1) */',
     ],
     [
-      "text-shadow-lg",
-      "text-shadow: var(--text-shadow-lg); /* 0px 1px 2px rgb(0 0 0 / 0.1), 0px 3px 2px rgb(0 0 0 / 0.1), 0px 4px 8px rgb(0 0 0 / 0.1) */",
+      'text-shadow-lg',
+      'text-shadow: var(--text-shadow-lg); /* 0px 1px 2px rgb(0 0 0 / 0.1), 0px 3px 2px rgb(0 0 0 / 0.1), 0px 4px 8px rgb(0 0 0 / 0.1) */',
     ],
-    ["text-shadow-none", "text-shadow: none;"],
-    ["text-shadow-(<custom-property>)", "text-shadow: var(<custom-property>);"],
-    ["text-shadow-(color:<custom-property>)", "--tw-shadow-color var(<custom-property>);"],
-    ["text-shadow-[<value>]", "text-shadow: <value>;"],
-    ["text-shadow-inherit", "--tw-shadow-color inherit;"],
-    ["text-shadow-current", "--tw-shadow-color currentColor;"],
-    ["text-shadow-transparent", "--tw-shadow-color transparent;"],
+    ['text-shadow-none', 'text-shadow: none;'],
+    ['text-shadow-(<custom-property>)', 'text-shadow: var(<custom-property>);'],
+    ['text-shadow-(color:<custom-property>)', '--tw-shadow-color var(<custom-property>);'],
+    ['text-shadow-[<value>]', 'text-shadow: <value>;'],
+    ['text-shadow-inherit', '--tw-shadow-color inherit;'],
+    ['text-shadow-current', '--tw-shadow-color currentColor;'],
+    ['text-shadow-transparent', '--tw-shadow-color transparent;'],
     ...Object.entries(colors).map(([name, value]) => [
       `text-shadow-${name}`,
       `--tw-text-shadow-color var(--color-${name}); /* ${value} */`,
@@ -153,11 +153,21 @@ Use the `text-shadow-none` utility to remove an existing text shadow from an ele
 
 ### Using a custom value
 
-<UsingACustomValue element="p" utility="text-shadow" name="text shadow" value="0_35px_35px_rgb(0_0_0_/_0.25)" />
+<UsingACustomValue
+  element="p"
+  utility="text-shadow"
+  name="text shadow"
+  value="0_35px_35px_rgb(0_0_0_/_0.25)"
+/>
 
 ### Responsive design
 
-<ResponsiveDesign element="p" property="text-shadow" defaultClass="text-shadow-none" featuredClass="text-shadow-lg" />
+<ResponsiveDesign
+  element="p"
+  property="text-shadow"
+  defaultClass="text-shadow-none"
+  featuredClass="text-shadow-lg"
+/>
 
 ## Customizing your theme
 

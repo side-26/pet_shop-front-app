@@ -1,19 +1,19 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "outline-style";
+export const title = 'outline-style';
 export const description = "Utilities for controlling the style of an element's outline.";
 
 <ApiTable
   rows={[
-    ["outline-solid", "outline-style: solid;"],
-    ["outline-dashed", "outline-style: dashed;"],
-    ["outline-dotted", "outline-style: dotted;"],
-    ["outline-double", "outline-style: double;"],
-    ["outline-none", "outline-style: none;"],
-    ["outline-hidden", "outline: 2px solid transparent;\noutline-offset: 2px;"],
+    ['outline-solid', 'outline-style: solid;'],
+    ['outline-dashed', 'outline-style: dashed;'],
+    ['outline-dotted', 'outline-style: dotted;'],
+    ['outline-double', 'outline-style: double;'],
+    ['outline-none', 'outline-style: none;'],
+    ['outline-hidden', 'outline: 2px solid transparent;\noutline-offset: 2px;'],
   ]}
 />
 
@@ -29,7 +29,9 @@ Use utilities like `outline-solid` and `outline-dashed` to set the style of an e
   {
     <div className="grid grid-cols-2 gap-x-4 gap-y-8 text-center text-sm font-semibold text-white">
       <div className="flex shrink-0 flex-col items-center">
-        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">outline-solid</p>
+        <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+          outline-solid
+        </p>
         <button className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 outline-2 outline-offset-2 outline-indigo-500 outline-solid dark:border-transparent dark:bg-gray-700 dark:text-gray-200">
           Button A
         </button>

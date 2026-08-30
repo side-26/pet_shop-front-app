@@ -1,25 +1,25 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { UsingACustomValue, ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { UsingACustomValue, ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "object-position";
+export const title = 'object-position';
 export const description =
   "Utilities for controlling how a replaced element's content should be positioned within its container.";
 
 <ApiTable
   rows={[
-    ["object-top-left", "object-position: top left;"],
-    ["object-top", "object-position: top;"],
-    ["object-top-right", "object-position: top right;"],
-    ["object-left", "object-position: left;"],
-    ["object-center", "object-position: center;"],
-    ["object-right", "object-position: right;"],
-    ["object-bottom-left", "object-position: bottom left;"],
-    ["object-bottom", "object-position: bottom;"],
-    ["object-bottom-right", "object-position: bottom right;"],
-    ["object-(<custom-property>)", "object-position: var(<custom-property>);"],
-    ["object-[<value>]", "object-position: <value>;"],
+    ['object-top-left', 'object-position: top left;'],
+    ['object-top', 'object-position: top;'],
+    ['object-top-right', 'object-position: top right;'],
+    ['object-left', 'object-position: left;'],
+    ['object-center', 'object-position: center;'],
+    ['object-right', 'object-position: right;'],
+    ['object-bottom-left', 'object-position: bottom left;'],
+    ['object-bottom', 'object-position: bottom;'],
+    ['object-bottom-right', 'object-position: bottom right;'],
+    ['object-(<custom-property>)', 'object-position: var(<custom-property>);'],
+    ['object-[<value>]', 'object-position: <value>;'],
   ]}
 />
 
@@ -165,7 +165,7 @@ Use utilities like `object-left` and `object-bottom-right` to specify how a repl
 
 <UsingACustomValue
   element="img"
-  elementAttributes={{ src: "/img/mountains.jpg" }}
+  elementAttributes={{ src: '/img/mountains.jpg' }}
   utility="object"
   name="object position"
   value="25%_75%"
@@ -175,7 +175,7 @@ Use utilities like `object-left` and `object-bottom-right` to specify how a repl
 
 <ResponsiveDesign
   element="img"
-  elementAttributes={{ src: "/img/mountains.jpg" }}
+  elementAttributes={{ src: '/img/mountains.jpg' }}
   property="object-position"
   defaultClass="object-center"
   featuredClass="object-top"

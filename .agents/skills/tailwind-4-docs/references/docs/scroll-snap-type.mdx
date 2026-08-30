@@ -1,19 +1,20 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "scroll-snap-type";
-export const description = "Utilities for controlling how strictly snap points are enforced in a snap container.";
+export const title = 'scroll-snap-type';
+export const description =
+  'Utilities for controlling how strictly snap points are enforced in a snap container.';
 
 <ApiTable
   rows={[
-    ["snap-none", "scroll-snap-type: none;"],
-    ["snap-x", "scroll-snap-type: x var(--tw-scroll-snap-strictness);"],
-    ["snap-y", "scroll-snap-type: y var(--tw-scroll-snap-strictness);"],
-    ["snap-both", "scroll-snap-type: both var(--tw-scroll-snap-strictness);"],
-    ["snap-mandatory", "--tw-scroll-snap-strictness: mandatory;"],
-    ["snap-proximity", "--tw-scroll-snap-strictness: proximity;"],
+    ['snap-none', 'scroll-snap-type: none;'],
+    ['snap-x', 'scroll-snap-type: x var(--tw-scroll-snap-strictness);'],
+    ['snap-y', 'scroll-snap-type: y var(--tw-scroll-snap-strictness);'],
+    ['snap-both', 'scroll-snap-type: both var(--tw-scroll-snap-strictness);'],
+    ['snap-mandatory', '--tw-scroll-snap-strictness: mandatory;'],
+    ['snap-proximity', '--tw-scroll-snap-strictness: proximity;'],
   ]}
 />
 

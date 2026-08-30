@@ -1,16 +1,16 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "filter: brightness()";
-export const description = "Utilities for applying brightness filters to an element.";
+export const title = 'filter: brightness()';
+export const description = 'Utilities for applying brightness filters to an element.';
 
 <ApiTable
   rows={[
-    ["brightness-<number>", "filter: brightness(<number>%);"],
-    ["brightness-(<custom-property>)", "filter: brightness(var(<custom-property>));"],
-    ["brightness-[<value>]", "filter: brightness(<value>);"],
+    ['brightness-<number>', 'filter: brightness(<number>%);'],
+    ['brightness-(<custom-property>)', 'filter: brightness(var(<custom-property>));'],
+    ['brightness-[<value>]', 'filter: brightness(<value>);'],
   ]}
 />
 
@@ -89,13 +89,18 @@ Use utilities like `brightness-50` and `brightness-100` to control an element's 
 
 ### Using a custom value
 
-<UsingACustomValue element="img" elementAttributes={{ src: "/img/mountains.jpg" }} utility="brightness" value="1.75" />
+<UsingACustomValue
+  element="img"
+  elementAttributes={{ src: '/img/mountains.jpg' }}
+  utility="brightness"
+  value="1.75"
+/>
 
 ### Responsive design
 
 <ResponsiveDesign
   element="img"
-  elementAttributes={{ src: "/img/mountains.jpg" }}
+  elementAttributes={{ src: '/img/mountains.jpg' }}
   property="filter: brightness()"
   defaultClass="brightness-110"
   featuredClass="brightness-150"

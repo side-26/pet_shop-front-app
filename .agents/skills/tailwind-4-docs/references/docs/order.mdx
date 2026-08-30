@@ -1,19 +1,19 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "order";
-export const description = "Utilities for controlling the order of flex and grid items.";
+export const title = 'order';
+export const description = 'Utilities for controlling the order of flex and grid items.';
 
 <ApiTable
   rows={[
-    ["order-<number>", "order: <number>;"],
-    ["-order-<number>", "order: calc(<number> * -1);"],
-    ["order-first", "order: -9999;"],
-    ["order-last", "order: 9999;"],
-    ["order-(<custom-property>)", "order: var(<custom-property>);"],
-    ["order-[<value>]", "order: <value>;"],
+    ['order-<number>', 'order: <number>;'],
+    ['-order-<number>', 'order: calc(<number> * -1);'],
+    ['order-first', 'order: -9999;'],
+    ['order-last', 'order: 9999;'],
+    ['order-(<custom-property>)', 'order: var(<custom-property>);'],
+    ['order-[<value>]', 'order: <value>;'],
   ]}
 />
 
@@ -28,9 +28,15 @@ Use `order-<number>` utilities like `order-1` and `order-3` to render flex and g
 <Example>
   {
     <div className="flex justify-between font-mono text-sm leading-6 font-bold text-white">
-      <div className="order-3 flex h-14 w-14 items-center justify-center rounded-lg bg-sky-500">01</div>
-      <div className="order-1 flex h-14 w-14 items-center justify-center rounded-lg bg-sky-500">02</div>
-      <div className="order-2 flex h-14 w-14 items-center justify-center rounded-lg bg-sky-500">03</div>
+      <div className="order-3 flex h-14 w-14 items-center justify-center rounded-lg bg-sky-500">
+        01
+      </div>
+      <div className="order-1 flex h-14 w-14 items-center justify-center rounded-lg bg-sky-500">
+        02
+      </div>
+      <div className="order-2 flex h-14 w-14 items-center justify-center rounded-lg bg-sky-500">
+        03
+      </div>
     </div>
   }
 </Example>
@@ -55,9 +61,13 @@ Use the `order-first` and `order-last` utilities to render flex and grid items f
 <Example>
   {
     <div className="flex justify-between font-mono text-sm leading-6 font-bold text-white">
-      <div className="order-last flex h-14 w-14 items-center justify-center rounded-lg bg-fuchsia-500">01</div>
+      <div className="order-last flex h-14 w-14 items-center justify-center rounded-lg bg-fuchsia-500">
+        01
+      </div>
       <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-fuchsia-500">02</div>
-      <div className="order-first flex h-14 w-14 items-center justify-center rounded-lg bg-fuchsia-500">03</div>
+      <div className="order-first flex h-14 w-14 items-center justify-center rounded-lg bg-fuchsia-500">
+        03
+      </div>
     </div>
   }
 </Example>

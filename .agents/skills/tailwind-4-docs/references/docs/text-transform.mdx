@@ -1,17 +1,17 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "text-transform";
-export const description = "Utilities for controlling the capitalization of text.";
+export const title = 'text-transform';
+export const description = 'Utilities for controlling the capitalization of text.';
 
 <ApiTable
   rows={[
-    ["uppercase", "text-transform: uppercase;"],
-    ["lowercase", "text-transform: lowercase;"],
-    ["capitalize", "text-transform: capitalize;"],
-    ["normal-case", "text-transform: none;"],
+    ['uppercase', 'text-transform: uppercase;'],
+    ['lowercase', 'text-transform: lowercase;'],
+    ['capitalize', 'text-transform: capitalize;'],
+    ['normal-case', 'text-transform: none;'],
   ]}
 />
 
@@ -103,4 +103,9 @@ Use the `normal-case` utility to preserve the original text casing of an element
 
 ### Responsive design
 
-<ResponsiveDesign element="p" property="text-transform" defaultClass="capitalize" featuredClass="uppercase" />
+<ResponsiveDesign
+  element="p"
+  property="text-transform"
+  defaultClass="capitalize"
+  featuredClass="uppercase"
+/>

@@ -1,16 +1,17 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "overflow-wrap";
-export const description = "Utilities for controlling line breaks within words in an overflowing element.";
+export const title = 'overflow-wrap';
+export const description =
+  'Utilities for controlling line breaks within words in an overflowing element.';
 
 <ApiTable
   rows={[
-    ["wrap-break-word", "overflow-wrap: break-word;"],
-    ["wrap-anywhere", "overflow-wrap: anywhere;"],
-    ["wrap-normal", "overflow-wrap: normal;"],
+    ['wrap-break-word', 'overflow-wrap: break-word;'],
+    ['wrap-anywhere', 'overflow-wrap: anywhere;'],
+    ['wrap-normal', 'overflow-wrap: normal;'],
   ]}
 />
 
@@ -25,10 +26,10 @@ Use the `wrap-break-word` utility to allow line breaks between letters in a word
 <Example padding={false}>
   {
     <p className="mx-auto max-w-xs border-x border-x-pink-400/30 py-8 wrap-break-word text-gray-900 dark:text-gray-200">
-      The longest word in any of the major English language dictionaries is{" "}
-      <span className="font-bold">pneumonoultramicroscopicsilicovolcanoconiosis,</span> a word that refers to a lung
-      disease contracted from the inhalation of very fine silica particles, specifically from a volcano; medically, it
-      is the same as silicosis.
+      The longest word in any of the major English language dictionaries is{' '}
+      <span className="font-bold">pneumonoultramicroscopicsilicovolcanoconiosis,</span> a word that
+      refers to a lung disease contracted from the inhalation of very fine silica particles,
+      specifically from a volcano; medically, it is the same as silicosis.
     </p>
   }
 </Example>
@@ -49,7 +50,9 @@ The `wrap-anywhere` utility behaves similarly to `wrap-break-word`, except that 
 <Example>
   {
     <div>
-      <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">wrap-break-word</p>
+      <p className="mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
+        wrap-break-word
+      </p>
       <div className="mx-auto flex max-w-sm items-center gap-4 rounded-xl bg-white p-3 shadow-sm ring ring-black/2.5 dark:bg-black/10 dark:ring-white/10">
         <img
           className="size-16 rounded-full outline -outline-offset-1 outline-black/10 dark:outline-white/10"
@@ -58,7 +61,9 @@ The `wrap-anywhere` utility behaves similarly to `wrap-break-word`, except that 
         />
         <div className="wrap-break-word">
           <p className="text-sm font-medium text-gray-900 dark:text-white">Jay Riemenschneider</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">jason.riemenschneider@vandelayindustries.com</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            jason.riemenschneider@vandelayindustries.com
+          </p>
         </div>
       </div>
       <p className="mt-8 mb-3 text-center font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
@@ -72,7 +77,9 @@ The `wrap-anywhere` utility behaves similarly to `wrap-break-word`, except that 
         />
         <div className="wrap-anywhere">
           <p className="text-sm font-medium text-gray-900 dark:text-white">Jay Riemenschneider</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">jason.riemenschneider@vandelayindustries.com</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            jason.riemenschneider@vandelayindustries.com
+          </p>
         </div>
       </div>
     </div>
@@ -110,10 +117,10 @@ Use the `wrap-normal` utility to only allow line breaks at natural wrapping poin
 <Example padding={false}>
   {
     <p className="mx-auto max-w-xs border-x border-x-pink-400/30 py-8 wrap-normal text-gray-900 dark:text-gray-200">
-      The longest word in any of the major English language dictionaries is{" "}
-      <span className="font-bold">pneumonoultramicroscopicsilicovolcanoconiosis,</span> a word that refers to a lung
-      disease contracted from the inhalation of very fine silica particles, specifically from a volcano; medically, it
-      is the same as silicosis.
+      The longest word in any of the major English language dictionaries is{' '}
+      <span className="font-bold">pneumonoultramicroscopicsilicovolcanoconiosis,</span> a word that
+      refers to a lung disease contracted from the inhalation of very fine silica particles,
+      specifically from a volcano; medically, it is the same as silicosis.
     </p>
   }
 </Example>
@@ -127,4 +134,9 @@ Use the `wrap-normal` utility to only allow line breaks at natural wrapping poin
 
 ### Responsive design
 
-<ResponsiveDesign element="p" property="overflow-wrap" defaultClass="wrap-normal" featuredClass="wrap-break-word" />
+<ResponsiveDesign
+  element="p"
+  property="overflow-wrap"
+  defaultClass="wrap-normal"
+  featuredClass="wrap-break-word"
+/>

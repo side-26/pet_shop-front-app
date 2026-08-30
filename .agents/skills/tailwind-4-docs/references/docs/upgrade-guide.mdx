@@ -1,5 +1,5 @@
-export const title = "Upgrade guide";
-export const description = "Upgrading your Tailwind CSS projects from v3 to v4.";
+export const title = 'Upgrade guide';
+export const description = 'Upgrading your Tailwind CSS projects from v3 to v4.';
 
 Tailwind CSS v4.0 is a new major version of the framework, so while we've worked really hard to minimize breaking changes, some updates are necessary. This guide outlines all the steps required to upgrade your projects from v3 to v4.
 
@@ -35,11 +35,11 @@ Additionally, in v4 imports and vendor prefixing is now handled for you automati
 export default {
   plugins: {
     // [!code --:4]
-    "postcss-import": {},
+    'postcss-import': {},
     tailwindcss: {},
     autoprefixer: {},
     // [!code ++:2]
-    "@tailwindcss/postcss": {},
+    '@tailwindcss/postcss': {},
   },
 };
 ```
@@ -50,9 +50,9 @@ If you're using Vite, we recommend migrating from the PostCSS plugin to our new 
 
 ```ts
 // [!code filename:vite.config.ts]
-import { defineConfig } from "vite";
+import { defineConfig } from 'vite';
 // [!code highlight:2]
-import tailwindcss from "@tailwindcss/vite";
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [
@@ -97,7 +97,7 @@ In v4 you import Tailwind using a regular CSS `@import` statement, not using the
 @tailwind components;
 @tailwind utilities;
 /* [!code ++:2] */
-@import "tailwindcss";
+@import 'tailwindcss';
 ```
 
 ### Removed deprecated utilities
@@ -450,7 +450,9 @@ This means you may need to explicitly use `via-none` if you want to "unset" a th
 ```html
 <!-- [!code filename:HTML] -->
 <!-- [!code classes:dark:via-none] -->
-<div class="bg-linear-to-r from-red-500 via-orange-400 to-yellow-400 dark:via-none dark:from-blue-500 dark:to-teal-400">
+<div
+  class="bg-linear-to-r from-red-500 via-orange-400 to-yellow-400 dark:via-none dark:from-blue-500 dark:to-teal-400"
+>
   <!-- ... -->
 </div>
 ```
@@ -562,7 +564,7 @@ If you'd like to continue using `cursor: pointer` by default, add these base sty
 /* [!code filename:CSS] */
 @layer base {
   button:not(:disabled),
-  [role="button"]:not(:disabled) {
+  [role='button']:not(:disabled) {
     cursor: pointer;
   }
 }
@@ -601,10 +603,10 @@ Prefixes now look like variants and are always at the beginning of the class nam
 When using a prefix, you should still configure your theme variables as if you aren't using a prefix:
 
 ```css {{ filename: "app.css" }}
-@import "tailwindcss" prefix(tw);
+@import 'tailwindcss' prefix(tw);
 
 @theme {
-  --font-display: "Satoshi", "sans-serif";
+  --font-display: 'Satoshi', 'sans-serif';
 
   --breakpoint-3xl: 120rem;
 
@@ -620,7 +622,7 @@ The generated CSS variables _will_ include a prefix to avoid conflicts with any 
 
 ```css {{ filename: "dist.css" }}
 :root {
-  --tw-font-display: "Satoshi", "sans-serif";
+  --tw-font-display: 'Satoshi', 'sans-serif';
 
   --tw-breakpoint-3xl: 120rem;
 
@@ -852,7 +854,7 @@ For example, the popular [Motion](https://motion.dev/docs/react-quick-start) lib
 ```jsx
 // [!code filename:JSX]
 // [!code word:var(--color-blue-500)]
-<motion.div animate={{ backgroundColor: "var(--color-blue-500)" }} />
+<motion.div animate={{ backgroundColor: 'var(--color-blue-500)' }} />
 ```
 
 If you need access to a resolved CSS variable value in JS, you can use `getComputedStyle` to get the value of a theme variable on the document root:
@@ -860,7 +862,7 @@ If you need access to a resolved CSS variable value in JS, you can use `getCompu
 ```js
 // [!code filename:spaghetti.js]
 let styles = getComputedStyle(document.documentElement);
-let shadow = styles.getPropertyValue("--shadow-xl");
+let shadow = styles.getPropertyValue('--shadow-xl');
 ```
 
 ### Using @apply with Vue, Svelte, or CSS modules

@@ -1,23 +1,27 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourThemeColors, ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import colors from "./utils/colors";
+import { ApiTable } from '@/components/api-table.tsx';
+import {
+  CustomizingYourThemeColors,
+  ResponsiveDesign,
+  UsingACustomValue,
+} from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import colors from './utils/colors';
 
-export const title = "outline-color";
+export const title = 'outline-color';
 export const description = "Utilities for controlling the color of an element's outline.";
 
 <ApiTable
   rows={[
-    ["outline-inherit", "outline-color: inherit;"],
-    ["outline-current", "outline-color: currentColor;"],
-    ["outline-transparent", "outline-color: transparent;"],
+    ['outline-inherit', 'outline-color: inherit;'],
+    ['outline-current', 'outline-color: currentColor;'],
+    ['outline-transparent', 'outline-color: transparent;'],
     ...Object.entries(colors).map(([name, value]) => [
       `outline-${name}`,
       `outline-color: var(--color-${name}); /* ${value} */`,
     ]),
-    ["outline-(<custom-property>)", "outline-color: var(<custom-property>);"],
-    ["outline-[<value>]", "outline-color: <value>;"],
+    ['outline-(<custom-property>)', 'outline-color: var(<custom-property>);'],
+    ['outline-[<value>]', 'outline-color: <value>;'],
   ]}
 />
 
@@ -123,7 +127,11 @@ Use the color opacity modifier to control the opacity of an element's outline co
 
 ### Responsive design
 
-<ResponsiveDesign property="outline-color" defaultClass="outline" featuredClass="outline-blue-400" />
+<ResponsiveDesign
+  property="outline-color"
+  defaultClass="outline"
+  featuredClass="outline-blue-400"
+/>
 
 ## Customizing your theme
 

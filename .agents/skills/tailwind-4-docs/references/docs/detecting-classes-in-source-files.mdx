@@ -1,11 +1,11 @@
-import { TipGood, TipBad, TipInfo } from "@/components/tips";
-import { Iframe } from "@/components/iframe";
-import { Example } from "@/components/example";
-import { Figure } from "@/components/figure";
-import { CodeExampleStack } from "@/components/code-example";
+import { TipGood, TipBad, TipInfo } from '@/components/tips';
+import { Iframe } from '@/components/iframe';
+import { Example } from '@/components/example';
+import { Figure } from '@/components/figure';
+import { CodeExampleStack } from '@/components/code-example';
 
-export const title = "Detecting classes in source files";
-export const description = "Understanding and customizing how Tailwind scans your source files.";
+export const title = 'Detecting classes in source files';
+export const description = 'Understanding and customizing how Tailwind scans your source files.';
 
 ## Overview
 
@@ -47,13 +47,15 @@ Instead it just looks for any tokens in your file that could be classes based on
 // [!code word:px-2]
 export function Button({ color, children }) {
   const colors = {
-    black: "bg-black text-white",
-    blue: "bg-blue-500 text-white",
-    white: "bg-white text-black",
+    black: 'bg-black text-white',
+    blue: 'bg-blue-500 text-white',
+    white: 'bg-white text-black',
   };
 
   return (
-    <button className={`${colors[color]} rounded-full px-2 py-1.5 font-sans text-sm/6 font-medium shadow`}>
+    <button
+      className={`${colors[color]} rounded-full px-2 py-1.5 font-sans text-sm/6 font-medium shadow`}
+    >
       {children}
     </button>
   );
@@ -105,8 +107,8 @@ Instead, map props to complete class names that are statically detectable at bui
 // [!code filename:JSX]
 function Button({ color, children }) {
   const colorVariants = {
-    blue: "bg-blue-600 hover:bg-blue-500",
-    red: "bg-red-600 hover:bg-red-500",
+    blue: 'bg-blue-600 hover:bg-blue-500',
+    red: 'bg-red-600 hover:bg-red-500',
   };
 
   return <button className={`${colorVariants[color]} ...`}>{children}</button>;
@@ -119,9 +121,9 @@ This has the added benefit of letting you map different prop values to different
 // [!code filename:JSX]
 function Button({ color, children }) {
   const colorVariants = {
-    blue: "bg-blue-600 hover:bg-blue-500 text-white",
-    red: "bg-red-500 hover:bg-red-400 text-white",
-    yellow: "bg-yellow-300 hover:bg-yellow-400 text-black",
+    blue: 'bg-blue-600 hover:bg-blue-500 text-white',
+    red: 'bg-red-500 hover:bg-red-400 text-white',
+    yellow: 'bg-yellow-300 hover:bg-yellow-400 text-black',
   };
 
   return <button className={`${colorVariants[color]} ...`}>{children}</button>;
@@ -148,7 +150,7 @@ Use `@source` to explicitly register source paths relative to the stylesheet:
 
 ```css
 /* [!code filename:CSS] */
-@import "tailwindcss";
+@import 'tailwindcss';
 /* [!code highlight:2] */
 @source "../node_modules/@acmecorp/ui-lib";
 ```
@@ -164,7 +166,7 @@ To set the base path for source detection explicitly, use the `source()` functio
 ```css
 /* [!code filename:CSS] */
 /* [!code word:source("../src")] */
-@import "tailwindcss" source("../src");
+@import 'tailwindcss' source('../src');
 ```
 
 This can be useful when working with monorepos where your build commands run from the root of the monorepo instead of the root of each project.
@@ -175,7 +177,7 @@ Use `@source not` to ignore specific paths, relative to the stylesheet, when sca
 
 ```css
 /* [!code filename:CSS] */
-@import "tailwindcss";
+@import 'tailwindcss';
 /* [!code highlight:2] */
 @source not "../src/components/legacy";
 ```
@@ -189,7 +191,7 @@ Use `source(none)` to completely disable automatic source detection if you want 
 ```css
 /* [!code filename:CSS] */
 /* [!code word:source("../src")] */
-@import "tailwindcss" source(none);
+@import 'tailwindcss' source(none);
 
 @source "../admin";
 @source "../shared";
@@ -307,7 +309,7 @@ Use `@source not inline()` to prevent specific classes from being generated, eve
 
 ```css
 /* [!code filename:CSS] */
-@import "tailwindcss";
+@import 'tailwindcss';
 /* [!code highlight:2] */
 @source not inline("{hover:,focus:,}bg-red-{50,{100..900..100},950}");
 ```

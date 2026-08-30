@@ -1,27 +1,27 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { CustomizingYourSpacingScale } from "@/components/content.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
-import { Stripes } from "@/components/stripes.tsx";
-import { UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { CustomizingYourSpacingScale } from '@/components/content.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
+import { Stripes } from '@/components/stripes.tsx';
+import { UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "padding";
+export const title = 'padding';
 export const description = "Utilities for controlling an element's padding.";
 
 <ApiTable
   rows={[
-    ["p", "padding"],
-    ["px", "padding-inline"],
-    ["py", "padding-block"],
-    ["ps", "padding-inline-start"],
-    ["pe", "padding-inline-end"],
-    ["pbs", "padding-block-start"],
-    ["pbe", "padding-block-end"],
-    ["pt", "padding-top"],
-    ["pr", "padding-right"],
-    ["pb", "padding-bottom"],
-    ["pl", "padding-left"],
+    ['p', 'padding'],
+    ['px', 'padding-inline'],
+    ['py', 'padding-block'],
+    ['ps', 'padding-inline-start'],
+    ['pe', 'padding-inline-end'],
+    ['pbs', 'padding-block-start'],
+    ['pbe', 'padding-block-end'],
+    ['pt', 'padding-top'],
+    ['pr', 'padding-right'],
+    ['pb', 'padding-bottom'],
+    ['pl', 'padding-left'],
   ].flatMap(([prefix, property]) => [
     [`${prefix}-<number>`, `${property}: calc(var(--spacing) * <number>);`],
     [`${prefix}-px`, `${property}: 1px;`],
@@ -221,7 +221,7 @@ Use the `pbs-<number>` and `pbe-<number>` utilities to set the `padding-block-st
 
 ### Using a custom value
 
-<UsingACustomValue utilities={["p", "px", "pb"]} name="padding" variable="padding" value="5px" />
+<UsingACustomValue utilities={['p', 'px', 'pb']} name="padding" variable="padding" value="5px" />
 
 ### Responsive design
 
@@ -229,4 +229,6 @@ Use the `pbs-<number>` and `pbe-<number>` utilities to set the `padding-block-st
 
 ## Customizing your theme
 
-<CustomizingYourSpacingScale utilities={["p", "px", "py", "ps", "pe", "pbs", "pbe", "pt", "pr", "pb", "pl"]} />
+<CustomizingYourSpacingScale
+  utilities={['p', 'px', 'py', 'ps', 'pe', 'pbs', 'pbe', 'pt', 'pr', 'pb', 'pl']}
+/>

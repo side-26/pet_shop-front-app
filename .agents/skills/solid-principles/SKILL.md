@@ -163,12 +163,14 @@ end
 ```typescript
 // BAD - Violates LSP
 class Bird {
-  fly(): void { /* flies */ }
+  fly(): void {
+    /* flies */
+  }
 }
 
 class Penguin extends Bird {
   fly(): void {
-    throw new Error('Penguins cannot fly');  // Breaks contract
+    throw new Error('Penguins cannot fly'); // Breaks contract
   }
 }
 
@@ -178,13 +180,21 @@ interface Bird {
 }
 
 class FlyingBird implements Bird {
-  move(): void { this.fly(); }
-  private fly(): void { /* flies */ }
+  move(): void {
+    this.fly();
+  }
+  private fly(): void {
+    /* flies */
+  }
 }
 
 class SwimmingBird implements Bird {
-  move(): void { this.swim(); }
-  private swim(): void { /* swims */ }
+  move(): void {
+    this.swim();
+  }
+  private swim(): void {
+    /* swims */
+  }
 }
 ```
 
@@ -305,7 +315,7 @@ config :yourapp, :user_service, PostgresUserService
 ```typescript
 // BAD - Direct dependency
 class UserManager {
-  private api = new StripeAPI();  // Tightly coupled
+  private api = new StripeAPI(); // Tightly coupled
 
   async processPayment(amount: number) {
     return this.api.charge(amount);
@@ -318,7 +328,7 @@ interface PaymentAPI {
 }
 
 class UserManager {
-  constructor(private paymentAPI: PaymentAPI) {}  // Injected
+  constructor(private paymentAPI: PaymentAPI) {} // Injected
 
   async processPayment(amount: number) {
     return this.paymentAPI.charge(amount);

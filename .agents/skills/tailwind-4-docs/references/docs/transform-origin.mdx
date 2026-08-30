@@ -1,24 +1,24 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign, UsingACustomValue } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign, UsingACustomValue } from '@/components/content.tsx';
 
-export const title = "transform-origin";
+export const title = 'transform-origin';
 export const description = "Utilities for specifying the origin for an element's transformations.";
 
 <ApiTable
   rows={[
-    ["origin-center", "transform-origin: center;"],
-    ["origin-top", "transform-origin: top;"],
-    ["origin-top-right", "transform-origin: top right;"],
-    ["origin-right", "transform-origin: right;"],
-    ["origin-bottom-right", "transform-origin: bottom right;"],
-    ["origin-bottom", "transform-origin: bottom;"],
-    ["origin-bottom-left", "transform-origin: bottom left;"],
-    ["origin-left", "transform-origin: left;"],
-    ["origin-top-left", "transform-origin: top left;"],
-    ["origin-(<custom-property>)", "transform-origin: var(<custom-property>);"],
-    ["origin-[<value>]", "transform-origin: <value>;"],
+    ['origin-center', 'transform-origin: center;'],
+    ['origin-top', 'transform-origin: top;'],
+    ['origin-top-right', 'transform-origin: top right;'],
+    ['origin-right', 'transform-origin: right;'],
+    ['origin-bottom-right', 'transform-origin: bottom right;'],
+    ['origin-bottom', 'transform-origin: bottom;'],
+    ['origin-bottom-left', 'transform-origin: bottom left;'],
+    ['origin-left', 'transform-origin: left;'],
+    ['origin-top-left', 'transform-origin: top left;'],
+    ['origin-(<custom-property>)', 'transform-origin: var(<custom-property>);'],
+    ['origin-[<value>]', 'transform-origin: <value>;'],
   ]}
 />
 
@@ -112,7 +112,7 @@ Use utilities like `origin-top` and `origin-bottom-left` to set an element's tra
 
 <UsingACustomValue
   element="img"
-  elementAttributes={{ src: "/img/mountains.jpg" }}
+  elementAttributes={{ src: '/img/mountains.jpg' }}
   utility="origin"
   name="transform origin"
   value="33%_75%"
@@ -123,7 +123,7 @@ Use utilities like `origin-top` and `origin-bottom-left` to set an element's tra
 
 <ResponsiveDesign
   element="img"
-  elementAttributes={{ src: "/img/mountains.jpg" }}
+  elementAttributes={{ src: '/img/mountains.jpg' }}
   property="transform-origin"
   defaultClass="origin-center"
   featuredClass="origin-top"

@@ -1,20 +1,21 @@
-import cloudsImg from "@/docs/img/clouds.svg";
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import cloudsImg from '@/docs/img/clouds.svg';
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "background-repeat";
-export const description = "Utilities for controlling the repetition of an element's background image.";
+export const title = 'background-repeat';
+export const description =
+  "Utilities for controlling the repetition of an element's background image.";
 
 <ApiTable
   rows={[
-    ["bg-repeat", "background-repeat: repeat;"],
-    ["bg-repeat-x", "background-repeat: repeat-x;"],
-    ["bg-repeat-y", "background-repeat: repeat-y;"],
-    ["bg-repeat-space", "background-repeat: space;"],
-    ["bg-repeat-round", "background-repeat: round;"],
-    ["bg-no-repeat", "background-repeat: no-repeat;"],
+    ['bg-repeat', 'background-repeat: repeat;'],
+    ['bg-repeat-x', 'background-repeat: repeat-x;'],
+    ['bg-repeat-y', 'background-repeat: repeat-y;'],
+    ['bg-repeat-space', 'background-repeat: space;'],
+    ['bg-repeat-round', 'background-repeat: round;'],
+    ['bg-no-repeat', 'background-repeat: no-repeat;'],
   ]}
 />
 
@@ -27,7 +28,12 @@ Use the `bg-repeat` utility to repeat the background image both vertically and h
 <Figure>
 
 <Example padding={false}>
-  {<div className="h-64 bg-center bg-repeat" style={{ backgroundImage: `url(${cloudsImg.src})` }}></div>}
+  {
+    <div
+      className="h-64 bg-center bg-repeat"
+      style={{ backgroundImage: `url(${cloudsImg.src})` }}
+    ></div>
+  }
 </Example>
 
 ```html
@@ -44,7 +50,12 @@ Use the `bg-repeat-x` utility to only repeat the background image horizontally:
 <Figure>
 
 <Example padding={false}>
-  {<div className="h-64 bg-center bg-repeat-x" style={{ backgroundImage: `url(${cloudsImg.src})` }}></div>}
+  {
+    <div
+      className="h-64 bg-center bg-repeat-x"
+      style={{ backgroundImage: `url(${cloudsImg.src})` }}
+    ></div>
+  }
 </Example>
 
 ```html
@@ -61,7 +72,12 @@ Use the `bg-repeat-y` utility to only repeat the background image vertically:
 <Figure>
 
 <Example padding={false}>
-  {<div className="h-64 bg-center bg-repeat-y" style={{ backgroundImage: `url(${cloudsImg.src})` }}></div>}
+  {
+    <div
+      className="h-64 bg-center bg-repeat-y"
+      style={{ backgroundImage: `url(${cloudsImg.src})` }}
+    ></div>
+  }
 </Example>
 
 ```html
@@ -78,7 +94,12 @@ Use the `bg-repeat-space` utility to repeat the background image without clippin
 <Figure>
 
 <Example padding={false} resizable>
-  {<div className="h-64 bg-center bg-repeat-space" style={{ backgroundImage: `url(${cloudsImg.src})` }}></div>}
+  {
+    <div
+      className="h-64 bg-center bg-repeat-space"
+      style={{ backgroundImage: `url(${cloudsImg.src})` }}
+    ></div>
+  }
 </Example>
 
 ```html
@@ -95,7 +116,12 @@ Use the `bg-repeat-round` utility to repeat the background image without clippin
 <Figure>
 
 <Example padding={false} resizable>
-  {<div className="h-64 bg-center bg-repeat-round" style={{ backgroundImage: `url(${cloudsImg.src})` }}></div>}
+  {
+    <div
+      className="h-64 bg-center bg-repeat-round"
+      style={{ backgroundImage: `url(${cloudsImg.src})` }}
+    ></div>
+  }
 </Example>
 
 ```html
@@ -112,7 +138,12 @@ Use the `bg-no-repeat` utility to prevent a background image from repeating:
 <Figure>
 
 <Example padding={false}>
-  {<div className="h-64 bg-center bg-no-repeat" style={{ backgroundImage: `url(${cloudsImg.src})` }}></div>}
+  {
+    <div
+      className="h-64 bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${cloudsImg.src})` }}
+    ></div>
+  }
 </Example>
 
 ```html
@@ -124,4 +155,8 @@ Use the `bg-no-repeat` utility to prevent a background image from repeating:
 
 ### Responsive design
 
-<ResponsiveDesign property="background-repeat" defaultClass="bg-repeat" featuredClass="bg-repeat-x" />
+<ResponsiveDesign
+  property="background-repeat"
+  defaultClass="bg-repeat"
+  featuredClass="bg-repeat-x"
+/>

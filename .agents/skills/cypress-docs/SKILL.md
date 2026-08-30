@@ -10,6 +10,7 @@ metadata:
 # Cypress Documentation
 
 ## Purpose
+
 Enable the agent to retrieve accurate, up-to-date, and verifiable information about the Cypress testing framework by prioritizing official documentation and structured sources.
 
 ## When to use
@@ -27,6 +28,7 @@ If the user only needs **writing or fixing tests** without a documentation looku
 ## Source Prioritization
 
 ### Primary Sources (ALWAYS search first)
+
 - https://docs.cypress.io
 - https://www.cypress.io
 
@@ -53,6 +55,7 @@ When accessing `docs.cypress.io`:
 ## Critical Rules
 
 ### Never Assume Missing Features
+
 - NEVER assume Cypress does not support a feature
 - ALWAYS search before concluding
 - Retry with alternate terminology if needed
@@ -69,15 +72,15 @@ If documentation cannot verify a claim:
 
 ### 1. Classify the Query
 
-| Query Type        | Search Location              |
-|------------------|------------------------------|
-| How do I...      | /guides/, /core-concepts/    |
-| What is...       | /core-concepts/              |
-| API / Commands   | /api/commands/               |
-| Assertions       | /api/assertions/             |
-| Config issues    | /configuration/              |
-| CI/CD            | /guides/ci-cd/               |
-| Errors           | /references/error-messages/  |
+| Query Type     | Search Location             |
+| -------------- | --------------------------- |
+| How do I...    | /guides/, /core-concepts/   |
+| What is...     | /core-concepts/             |
+| API / Commands | /api/commands/              |
+| Assertions     | /api/assertions/            |
+| Config issues  | /configuration/             |
+| CI/CD          | /guides/ci-cd/              |
+| Errors         | /references/error-messages/ |
 
 ### 2. Search Flow
 
@@ -89,16 +92,19 @@ If documentation cannot verify a claim:
 ### 3. Error-Aware Routing
 
 If the query includes:
+
 - Error messages
 - Stack traces
 
 Then:
+
 1. Search `/references/error-messages`
 2. Expand to guides and API docs
 
 ## Structured Extraction Rules
 
 ### Commands
+
 - Syntax
 - Required arguments
 - Optional options
@@ -106,12 +112,14 @@ Then:
 - Example usage
 
 ### Concepts
+
 - Definition
 - Key rules
 - Common pitfalls
 - Example
 
 ### Configuration
+
 - Option name
 - Type
 - Default value
@@ -134,6 +142,7 @@ Then:
 ## Caching Strategy (Optional)
 
 Cache frequently used topics:
+
 - cy.visit
 - cy.get
 - cy.intercept
@@ -149,6 +158,7 @@ Internally assess confidence:
 - Low → Unclear or edge case
 
 If LOW:
+
 - Clearly communicate uncertainty
 
 ## LLM Path Auto-Discovery
@@ -170,6 +180,7 @@ If LOW:
 User: "How do I mock API requests in Cypress?"
 
 Agent should:
+
 1. Classify → API / network
 2. Search `/llm/markdown/api/` and `/llm/markdown/guides/`
 3. Identify `cy.intercept`
@@ -183,6 +194,7 @@ Agent should:
 ## Summary
 
 This skill ensures:
+
 - Accurate answers from official sources
 - Reduced hallucination
 - Structured, high-quality outputs

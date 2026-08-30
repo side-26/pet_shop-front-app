@@ -1,15 +1,16 @@
-import { ApiTable } from "@/components/api-table.tsx";
-import { Example } from "@/components/example.tsx";
-import { Figure } from "@/components/figure.tsx";
-import { ResponsiveDesign } from "@/components/content.tsx";
+import { ApiTable } from '@/components/api-table.tsx';
+import { Example } from '@/components/example.tsx';
+import { Figure } from '@/components/figure.tsx';
+import { ResponsiveDesign } from '@/components/content.tsx';
 
-export const title = "scroll-snap-stop";
-export const description = "Utilities for controlling whether you can skip past possible snap positions.";
+export const title = 'scroll-snap-stop';
+export const description =
+  'Utilities for controlling whether you can skip past possible snap positions.';
 
 <ApiTable
   rows={[
-    ["snap-normal", "scroll-snap-stop: normal;"],
-    ["snap-always", "scroll-snap-stop: always;"],
+    ['snap-normal', 'scroll-snap-stop: normal;'],
+    ['snap-always', 'scroll-snap-stop: always;'],
   ]}
 />
 
@@ -195,4 +196,8 @@ Use the `snap-normal` utility to allow a snap container to skip past possible sc
 
 ### Responsive design
 
-<ResponsiveDesign property="scroll-snap-stop" defaultClass="snap-always" featuredClass="snap-normal" />
+<ResponsiveDesign
+  property="scroll-snap-stop"
+  defaultClass="snap-always"
+  featuredClass="snap-normal"
+/>
