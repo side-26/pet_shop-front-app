@@ -24,6 +24,10 @@ const items = [
 const options = items.filter(
   (item): item is { label: string; value: string } => item.value !== null,
 );
+const longOptions = Array.from({ length: 30 }, (_, index) => ({
+  label: `Pet ${index + 1}`,
+  value: `pet-${index + 1}`,
+}));
 
 describe('Form controls', () => {
   it('uses the compact field typography scale and tighter message spacing', () => {
@@ -125,5 +129,37 @@ describe('Form controls', () => {
     cy.get('[role="radio"][aria-label="Email"]')
       .click()
       .should('have.attr', 'aria-checked', 'true');
+  });
+
+  it('keeps a long option list in the viewport and scrollable', () => {
+    cy.mount(
+      <div dir="rtl">
+        <Select items={longOptions}>
+          <SelectTrigger aria-label="Long pet type list">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {longOptions.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>,
+    );
+
+    cy.get('[role="combobox"][aria-label="Long pet type list"]').click();
+    cy.get('[data-slot="select-content"]:visible').should(($content) => {
+      const content = $content[0];
+      const list = content.querySelector('[role="listbox"]') as HTMLElement;
+      const bounds = content.getBoundingClientRect();
+
+      expect(bounds.top).to.be.greaterThanOrEqual(0);
+      expect(bounds.bottom).to.be.lessThanOrEqual(Cypress.config('viewportHeight'));
+      expect(list.scrollHeight).to.be.greaterThan(list.clientHeight);
+    });
   });
 });

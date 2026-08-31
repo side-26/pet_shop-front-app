@@ -25,12 +25,12 @@ export const breedSchema = yup.object({
   petType: objectId,
   country: yup.string().trim().nullable().max(100),
   ageAverage: yup.string().trim().required('میانگین سن الزامی است.').max(50),
-  size: yup.number().integer().required('اندازه الزامی است.').oneOf([1, 2, 3, 4, 5]),
-  activityLevel: yup.number().integer().nullable().oneOf([1, 2, 3, 4, 5, null]),
+  size: yup.number().integer().required('اندازه الزامی است.').oneOf([0, 1, 2, 3, 4]),
+  activityLevel: yup.number().integer().nullable().oneOf([0, 1, 2, 3, 4, null]),
   enable: yup.boolean().required(),
   mainImage: image,
 });
-export const updateBreedSchema = breedSchema;
+export const updateBreedSchema = breedSchema.shape({ mainImage: image.notRequired() });
 const propertyDefinitionValueSchema = yup
   .mixed<string | number>()
   .transform((value, originalValue) =>
@@ -60,21 +60,26 @@ export const breedPropertyDefinitionsFormSchema = yup.object({
   propertyDefinitions: yup.array(breedPropertyDefinitionSchema).max(50).required(),
 });
 export const breedQuerySchema = yup.object({
+  title: yup.string().trim().min(1).max(100).optional(),
   petType: yup
     .string()
     .trim()
     .matches(/^[a-f\d]{24}$/i)
     .optional(),
+  country: yup.string().trim().min(1).max(100).optional(),
+  size: yup.number().integer().min(0).max(4).optional(),
+  activityLevel: yup.number().integer().min(0).max(4).optional(),
   includeDisabled: yup.boolean().default(true),
   search: yup.string().trim().max(100).optional(),
   page: yup.number().integer().min(1).default(1).required(),
-  limit: yup.number().integer().min(1).default(20).required(),
+  limit: yup.number().integer().min(1).default(10).required(),
   sort: yup
     .mixed<'title' | 'createdAt' | 'updatedAt'>()
     .oneOf(['title', 'createdAt', 'updatedAt'])
     .default('title'),
 });
 export type BreedInput = yup.InferType<typeof breedSchema>;
+export type UpdateBreedInput = yup.InferType<typeof updateBreedSchema>;
 export type BreedQueryInput = yup.InferType<typeof breedQuerySchema>;
 export type BreedPropertyDefinitionsInput = yup.InferType<
   typeof replaceBreedPropertyDefinitionsSchema

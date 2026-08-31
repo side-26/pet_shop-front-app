@@ -30,7 +30,7 @@ export const adminNavigationItems = [
   { label: 'حیوانات', href: routePaths.adminPage('pets'), icon: PawPrint },
   { label: 'دسته‌بندی', href: routePaths.adminPage('category'), icon: Tags },
   { label: 'زیردسته‌بندی', href: routePaths.adminPage('sub-category'), icon: FolderTree },
-  { label: 'نژاد', href: routePaths.adminPage('breed'), icon: Dog },
+  { label: 'نژاد', href: routePaths.adminBreeds, icon: Dog },
   { label: 'نوع حیوان', href: routePaths.adminPetTypes, icon: PawPrint },
   { label: 'کاربران', href: routePaths.adminPage('users'), icon: UsersRound },
   {

@@ -21,6 +21,7 @@ export const PATHS = {
   ADMIN: '/admin',
   ADMIN_USERS: '/admin/users',
   ADMIN_PET_TYPES: '/admin/pet-types',
+  ADMIN_BREEDS: '/admin/breeds',
 } as const;
 
 export const routePaths = {
@@ -46,6 +47,8 @@ export const routePaths = {
   admin: PATHS.ADMIN,
   adminUsers: PATHS.ADMIN_USERS,
   adminPetTypes: PATHS.ADMIN_PET_TYPES,
+  adminBreeds: PATHS.ADMIN_BREEDS,
+  adminBreedsQuery: (query: URLSearchParams) => `${PATHS.ADMIN_BREEDS}?${query.toString()}`,
   adminUsersQuery: (query: URLSearchParams) => `${PATHS.ADMIN_USERS}?${query.toString()}`,
   adminUsersPage: (page: number, query = new URLSearchParams()) => {
     const searchParams = new URLSearchParams(query);

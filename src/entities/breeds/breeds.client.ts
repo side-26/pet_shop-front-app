@@ -1,6 +1,5 @@
 'use client';
 import { useCallback, useRef, useTransition } from 'react';
-import type { UseFormSetError } from 'react-hook-form';
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
 import { globalErrorHandler } from '@/utils/helpers';
@@ -11,12 +10,13 @@ import {
   replaceBreedPropertyDefinitionsAction,
   updateBreedAction,
 } from './breeds.actions';
-import type { BreedInput, BreedPropertyDefinitionsFormInput } from './breeds.schema';
-export function useBreedForm(onSuccess: () => void, id?: string) {
-  const formRef = useRef<FormHandle<BreedInput>>(null);
+import type { BreedPropertyDefinitionsFormInput, UpdateBreedInput } from './breeds.schema';
+
+function useBreedForm(onSuccess: () => void, id?: string) {
+  const formRef = useRef<FormHandle<UpdateBreedInput>>(null);
   const [isPending, startTransition] = useTransition();
   const handleSubmit = useCallback(
-    (input: BreedInput) => {
+    (input: UpdateBreedInput) => {
       const form = formRef.current;
       if (!form || isPending) return;
       startTransition(async () => {
@@ -30,6 +30,12 @@ export function useBreedForm(onSuccess: () => void, id?: string) {
     [id, isPending, onSuccess],
   );
   return { formRef, handleSubmit, isPending } as const;
+}
+export function useCreateBreed(onSuccess: () => void) {
+  return useBreedForm(onSuccess);
+}
+export function useUpdateBreed(id: string, onSuccess: () => void) {
+  return useBreedForm(onSuccess, id);
 }
 export function useBreedStatus(onSuccess: () => void) {
   const [isPending, startTransition] = useTransition();

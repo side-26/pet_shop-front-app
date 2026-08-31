@@ -40,6 +40,10 @@ const petTypeOptions = [
   { label: 'گربه', value: 'cat' },
   { label: 'پرنده', value: 'bird' },
 ];
+const longPetTypeOptions = Array.from({ length: 20 }, (_, index) => ({
+  label: `نوع حیوان ${index + 1}`,
+  value: `pet-type-${index + 1}`,
+}));
 
 export function FormShowcase() {
   const formRef = useRef<FormHandle<ProfileFormValues>>(null);
@@ -234,8 +238,7 @@ export function FormShowcase() {
             label="نوع حیوان در فرم"
             hint="انتخاب شما در React Hook Form ذخیره می‌شود."
             rules={{ required: 'انتخاب نوع حیوان الزامی است.' }}
-            options={petTypeOptions}
-            contentClassName="tw:max-h-36 tw:overflow-y-auto"
+            options={[...petTypeOptions, ...longPetTypeOptions]}
           />
           <SelectField
             name="empty-pet-type"

@@ -176,6 +176,9 @@ describe('AdminLayoutShell', () => {
     expect(adminNavigationItems.find(({ label }) => label === 'نوع حیوان')?.href).toBe(
       routePaths.adminPetTypes,
     );
+    expect(adminNavigationItems.find(({ label }) => label === 'نژاد')?.href).toBe(
+      routePaths.adminBreeds,
+    );
     expect(adminNavigationItems.at(-1)).toMatchObject({ disabled: true });
   });
 

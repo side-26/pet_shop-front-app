@@ -9,6 +9,7 @@ import {
   breedQuerySchema,
   breedSchema,
   replaceBreedPropertyDefinitionsSchema,
+  updateBreedSchema,
 } from './breeds.schema';
 import * as service from './breeds.service';
 const denied = (message: string): FetcherError => ({
@@ -61,7 +62,7 @@ export async function updateBreedAction(input: unknown) {
   if (error) return error;
   const id = await validate(breedIdSchema, input);
   if ('isSuccess' in id) return id;
-  const value = await validate(breedSchema, input);
+  const value = await validate(updateBreedSchema, input);
   return 'isSuccess' in value ? value : service.updateBreed(id.id, value);
 }
 export async function replaceBreedPropertyDefinitionsAction(input: unknown) {

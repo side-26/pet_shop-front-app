@@ -57,7 +57,7 @@ function SelectContent({
         <SelectPrimitive.Popup
           data-slot="select-content"
           className={cn(
-            'tw:min-w-(--anchor-width) tw:origin-(--transform-origin) tw:overflow-hidden tw:rounded-2xl tw:border tw:border-border/60 tw:bg-popover/95 tw:p-1 tw:text-popover-foreground tw:shadow-lg tw:outline-none tw:supports-backdrop-filter:backdrop-blur-xl tw:data-open:animate-in tw:data-open:fade-in-0 tw:data-open:zoom-in-95 tw:data-closed:animate-out tw:data-closed:fade-out-0 tw:data-closed:zoom-out-95 tw:motion-reduce:transition-none',
+            'tw:flex tw:max-h-(--available-height) tw:min-w-(--anchor-width) tw:min-h-0 tw:flex-col tw:origin-(--transform-origin) tw:overflow-hidden tw:rounded-2xl tw:border tw:border-border/60 tw:bg-popover/95 tw:p-1 tw:text-popover-foreground tw:shadow-lg tw:outline-none tw:supports-backdrop-filter:backdrop-blur-xl tw:data-open:animate-in tw:data-open:fade-in-0 tw:data-open:zoom-in-95 tw:data-closed:animate-out tw:data-closed:fade-out-0 tw:data-closed:zoom-out-95 tw:motion-reduce:transition-none',
             className,
           )}
           {...props}
@@ -65,7 +65,9 @@ function SelectContent({
           <SelectPrimitive.ScrollUpArrow className="tw:flex tw:h-6 tw:items-center tw:justify-center">
             <ChevronUpIcon aria-hidden="true" className="tw:size-4" />
           </SelectPrimitive.ScrollUpArrow>
-          <SelectPrimitive.List>{children}</SelectPrimitive.List>
+          <SelectPrimitive.List className="tw:min-h-0 tw:overflow-y-auto">
+            {children}
+          </SelectPrimitive.List>
           <SelectPrimitive.ScrollDownArrow className="tw:flex tw:h-6 tw:items-center tw:justify-center">
             <ChevronDownIcon aria-hidden="true" className="tw:size-4" />
           </SelectPrimitive.ScrollDownArrow>
