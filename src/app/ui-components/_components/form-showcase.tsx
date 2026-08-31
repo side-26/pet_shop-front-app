@@ -2,7 +2,9 @@
 
 import { useRef, useState } from 'react';
 import { AtSignIcon, LockKeyholeIcon, PawPrintIcon, PhoneIcon, SearchIcon } from 'lucide-react';
-import * as yup from 'yup';
+import { object, string, type InferType } from 'yup';
+
+import '@/configs/yup.config';
 
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field/default';
@@ -21,17 +23,14 @@ import { Form, type FormHandle } from '@/components/ui/form';
 
 import { ShowcaseSection } from './showcase-section';
 
-const profileSchema = yup.object({
-  email: yup.string().email('نشانی ایمیل معتبر نیست.').required('ایمیل الزامی است.'),
-  petName: yup.string().min(2, 'نام باید حداقل دو نویسه باشد.').required('نام حیوان الزامی است.'),
-  password: yup
-    .string()
-    .min(8, 'کلمه عبور باید حداقل هشت نویسه باشد.')
-    .required('کلمه عبور الزامی است.'),
-  phoneNumber: yup.string().required('شماره موبایل الزامی است.'),
+const profileSchema = object({
+  email: string().email().required(),
+  petName: string().min(2).required(),
+  password: string().min(8).required(),
+  phoneNumber: string().required(),
 });
 
-type ProfileFormValues = yup.InferType<typeof profileSchema>;
+type ProfileFormValues = InferType<typeof profileSchema>;
 
 const inputColors = ['primary', 'secondary', 'info', 'success', 'warning', 'error'] as const;
 const inputSizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const;

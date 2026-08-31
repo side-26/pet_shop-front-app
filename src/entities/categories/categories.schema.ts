@@ -1,38 +1,33 @@
-import * as yup from 'yup';
+import { boolean, object, string, type InferType } from 'yup';
 
-const objectIdSchema = yup
-  .string()
+import '@/configs/yup.config';
+
+const objectIdSchema = string()
   .trim()
-  .matches(/^[a-f\d]{24}$/i, 'شناسه معتبر نیست.')
-  .required('شناسه الزامی است.');
+  .matches(/^[a-f\d]{24}$/i)
+  .required();
 
-export const categoryIdSchema = yup.object({ id: objectIdSchema });
+export const categoryIdSchema = object({ id: objectIdSchema });
 
-export const categoryQuerySchema = yup.object({
-  includeDisabled: yup.boolean().default(false).required(),
-  petType: yup
-    .string()
+export const categoryQuerySchema = object({
+  includeDisabled: boolean().default(false).required(),
+  petType: string()
     .trim()
-    .matches(/^[a-f\d]{24}$/i, 'شناسه نوع حیوان معتبر نیست.')
+    .matches(/^[a-f\d]{24}$/i)
     .optional(),
 });
 
-export const categorySchema = yup.object({
-  title: yup
-    .string()
-    .trim()
-    .min(2, 'عنوان دسته‌بندی باید حداقل ۲ نویسه باشد.')
-    .max(50, 'عنوان دسته‌بندی نمی‌تواند بیشتر از ۵۰ نویسه باشد.')
-    .required('عنوان دسته‌بندی الزامی است.'),
-  petType: objectIdSchema.label('نوع حیوان'),
-  enable: yup.boolean().default(true).required(),
+export const categorySchema = object({
+  title: string().trim().min(2).max(50).required(),
+  petType: objectIdSchema,
+  enable: boolean().default(true).required(),
 });
 
 export const updateCategorySchema = categorySchema.shape({
-  enable: yup.boolean().optional(),
+  enable: boolean().optional(),
 });
 
-export type CategoryIdInput = yup.InferType<typeof categoryIdSchema>;
-export type CategoryQueryInput = yup.InferType<typeof categoryQuerySchema>;
-export type CategoryInput = yup.InferType<typeof categorySchema>;
-export type UpdateCategoryInput = yup.InferType<typeof updateCategorySchema>;
+export type CategoryIdInput = InferType<typeof categoryIdSchema>;
+export type CategoryQueryInput = InferType<typeof categoryQuerySchema>;
+export type CategoryInput = InferType<typeof categorySchema>;
+export type UpdateCategoryInput = InferType<typeof updateCategorySchema>;

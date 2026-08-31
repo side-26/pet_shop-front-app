@@ -348,8 +348,8 @@ describe('users actions', () => {
     expect(result.isSuccess).toBe(false);
     if (!result.isSuccess) {
       expect(result.data.messages).toEqual([
-        { value: 'page', label: 'page must be greater than or equal to 1' },
-        { value: 'limit', label: 'limit must be greater than or equal to 1' },
+        { value: 'page', label: 'شماره صفحه باید حداقل ۱ باشد.' },
+        { value: 'limit', label: 'تعداد در صفحه باید حداقل ۱ باشد.' },
       ]);
     }
     expect(getAllPaginatedUsersMock).not.toHaveBeenCalled();

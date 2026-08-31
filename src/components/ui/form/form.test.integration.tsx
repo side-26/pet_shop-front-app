@@ -1,14 +1,15 @@
 import { createRef } from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import * as yup from 'yup';
+import { object, string, type ObjectSchema } from 'yup';
 
 import { Form, type FormHandle } from '@/components/ui/form';
+import '@/configs/yup.config';
 
 type Values = { name: string };
 
-const schema: yup.ObjectSchema<Values> = yup.object({
-  name: yup.string().required('Name is required'),
+const schema: ObjectSchema<Values> = object({
+  name: string().required(),
 });
 
 describe('Form', () => {
@@ -34,7 +35,7 @@ describe('Form', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Save' }));
-    expect((await screen.findByRole('alert')).textContent).toBe('Name is required');
+    expect((await screen.findByRole('alert')).textContent).toBe('نام الزامی است.');
     expect(onSubmit).not.toHaveBeenCalled();
 
     act(() => ref.current?.setValue('name', 'Misha', { shouldValidate: true }));

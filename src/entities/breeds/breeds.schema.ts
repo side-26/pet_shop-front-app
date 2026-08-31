@@ -1,89 +1,80 @@
-import * as yup from 'yup';
+import { array, boolean, mixed, number, object, string, type InferType } from 'yup';
 
-const objectId = yup
-  .string()
+import { yupMessage } from '@/configs/yup.config';
+
+const objectId = string()
   .trim()
-  .required('شناسه الزامی است.')
-  .matches(/^[a-f\d]{24}$/i, 'شناسه معتبر نیست.');
-const image = yup
-  .mixed<File>()
-  .required('تصویر اصلی الزامی است.')
-  .test(
-    'size',
-    'حجم تصویر باید حداکثر ۱ مگابایت باشد.',
-    (file) => !file || file.size <= 1024 * 1024,
-  )
+  .required()
+  .matches(/^[a-f\d]{24}$/i);
+const image = mixed<File>()
+  .required(yupMessage('imageRequired'))
+  .test('size', yupMessage('breedImageSize'), (file) => !file || file.size <= 1024 * 1024)
   .test(
     'type',
-    'فرمت تصویر باید JPEG، PNG یا WebP باشد.',
+    yupMessage('imageType'),
     (file) => !file || ['image/jpeg', 'image/png', 'image/webp'].includes(file.type),
   );
 
-export const breedIdSchema = yup.object({ id: objectId });
-export const breedSchema = yup.object({
-  title: yup.string().trim().required('عنوان الزامی است.').min(2).max(100),
+export const breedIdSchema = object({ id: objectId });
+export const breedSchema = object({
+  title: string().trim().required().min(2).max(100),
   petType: objectId,
-  country: yup.string().trim().nullable().max(100),
-  ageAverage: yup.string().trim().required('میانگین سن الزامی است.').max(50),
-  size: yup.number().integer().required('اندازه الزامی است.').oneOf([0, 1, 2, 3, 4]),
-  activityLevel: yup.number().integer().nullable().oneOf([0, 1, 2, 3, 4, null]),
-  enable: yup.boolean().required(),
+  country: string().trim().nullable().max(100),
+  ageAverage: string().trim().required().max(50),
+  size: number().integer().required().oneOf([0, 1, 2, 3, 4]),
+  activityLevel: number().integer().nullable().oneOf([0, 1, 2, 3, 4, null]),
+  enable: boolean().required(),
   mainImage: image,
 });
 export const updateBreedSchema = breedSchema.shape({ mainImage: image.notRequired() });
-const propertyDefinitionValueSchema = yup
-  .mixed<string | number>()
+const propertyDefinitionValueSchema = mixed<string | number>()
   .transform((value, originalValue) =>
     typeof originalValue === 'string' ? originalValue.trim() : value,
   )
   .test(
     'valid-property-definition-value',
-    'مقدار ویژگی باید متنِ غیرخالی یا عدد معتبر باشد.',
+    yupMessage('propertyValue'),
     (value) =>
       (typeof value === 'string' && value.length > 0) ||
       (typeof value === 'number' && Number.isFinite(value)),
   )
-  .required('مقدار ویژگی الزامی است.');
+  .required();
 
-export const breedPropertyDefinitionSchema = yup.object({
-  label: yup.string().trim().min(1, 'عنوان ویژگی نمی‌تواند خالی باشد.').required(),
+export const breedPropertyDefinitionSchema = object({
+  label: string().trim().min(1).required(),
   value: propertyDefinitionValueSchema,
 });
 
 export const replaceBreedPropertyDefinitionsSchema = breedIdSchema.concat(
-  yup.object({
-    propertyDefinitions: yup.array(breedPropertyDefinitionSchema).max(50).required(),
+  object({
+    propertyDefinitions: array(breedPropertyDefinitionSchema).max(50).required(),
   }),
 );
 
-export const breedPropertyDefinitionsFormSchema = yup.object({
-  propertyDefinitions: yup.array(breedPropertyDefinitionSchema).max(50).required(),
+export const breedPropertyDefinitionsFormSchema = object({
+  propertyDefinitions: array(breedPropertyDefinitionSchema).max(50).required(),
 });
-export const breedQuerySchema = yup.object({
-  title: yup.string().trim().min(1).max(100).optional(),
-  petType: yup
-    .string()
+export const breedQuerySchema = object({
+  title: string().trim().min(1).max(100).optional(),
+  petType: string()
     .trim()
     .matches(/^[a-f\d]{24}$/i)
     .optional(),
-  country: yup.string().trim().min(1).max(100).optional(),
-  size: yup.number().integer().min(0).max(4).optional(),
-  activityLevel: yup.number().integer().min(0).max(4).optional(),
-  includeDisabled: yup.boolean().default(true),
-  search: yup.string().trim().max(100).optional(),
-  page: yup.number().integer().min(1).default(1).required(),
-  limit: yup.number().integer().min(1).default(10).required(),
-  sort: yup
-    .mixed<'title' | 'createdAt' | 'updatedAt'>()
+  country: string().trim().min(1).max(100).optional(),
+  size: number().integer().min(0).max(4).optional(),
+  activityLevel: number().integer().min(0).max(4).optional(),
+  includeDisabled: boolean().default(true),
+  search: string().trim().max(100).optional(),
+  page: number().integer().min(1).default(1).required(),
+  limit: number().integer().min(1).default(10).required(),
+  sort: mixed<'title' | 'createdAt' | 'updatedAt'>()
     .oneOf(['title', 'createdAt', 'updatedAt'])
     .default('title'),
 });
-export type BreedInput = yup.InferType<typeof breedSchema>;
-export type UpdateBreedInput = yup.InferType<typeof updateBreedSchema>;
-export type BreedQueryInput = yup.InferType<typeof breedQuerySchema>;
-export type BreedPropertyDefinitionsInput = yup.InferType<
-  typeof replaceBreedPropertyDefinitionsSchema
->;
-export type BreedPropertyDefinitionsFormInput = yup.InferType<
+export type BreedInput = InferType<typeof breedSchema>;
+export type UpdateBreedInput = InferType<typeof updateBreedSchema>;
+export type BreedQueryInput = InferType<typeof breedQuerySchema>;
+export type BreedPropertyDefinitionsInput = InferType<typeof replaceBreedPropertyDefinitionsSchema>;
+export type BreedPropertyDefinitionsFormInput = InferType<
   typeof breedPropertyDefinitionsFormSchema
 >;

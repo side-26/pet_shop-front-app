@@ -1,75 +1,62 @@
-import * as yup from 'yup';
+import { boolean, object, ref, string, type InferType } from 'yup';
 
-export const iranianPhoneNumberSchema = yup
-  .string()
+import { yupMessage } from '@/configs/yup.config';
+
+export const iranianPhoneNumberSchema = string()
   .matches(/^09\d{9}$/, {
-    message: 'شماره موبایل باید با ۰۹ شروع شود و ۱۱ رقم باشد.',
+    message: yupMessage('invalidIranianPhoneNumber'),
     excludeEmptyString: true,
   })
-  .required('شماره موبایل الزامی است.');
+  .required();
 
-export const registerUserSchema = yup.object({
+export const registerUserSchema = object({
   phoneNumber: iranianPhoneNumberSchema,
-  password: yup
-    .string()
-    .required('کلمه عبور الزامی است.')
-    .min(8, 'کلمه عبور باید حداقل ۸ نویسه باشد.'),
+  password: string().required().min(8),
 });
 
-export type RegisterUserInput = yup.InferType<typeof registerUserSchema>;
+export type RegisterUserInput = InferType<typeof registerUserSchema>;
 
-export const loginUserSchema = yup.object({
+export const loginUserSchema = object({
   phoneNumber: iranianPhoneNumberSchema,
-  password: yup
-    .string()
-    .required('کلمه عبور الزامی است.')
-    .min(6, 'کلمه عبور باید حداقل ۶ نویسه باشد.'),
-  rememberMe: yup.boolean().required(),
+  password: string().required().min(6),
+  rememberMe: boolean().required(),
 });
 
-export type LoginUserInput = yup.InferType<typeof loginUserSchema>;
+export type LoginUserInput = InferType<typeof loginUserSchema>;
 
-export const sendOtpSchema = yup.object({
+export const sendOtpSchema = object({
   phoneNumber: iranianPhoneNumberSchema,
 });
 
-export type SendOtpInput = yup.InferType<typeof sendOtpSchema>;
+export type SendOtpInput = InferType<typeof sendOtpSchema>;
 
-export const otpCodeSchema = yup
-  .string()
+export const otpCodeSchema = string()
   .matches(/^\d{6}$/, {
-    message: 'کد تأیید باید ۶ رقم باشد.',
+    message: yupMessage('invalidOtpCode'),
     excludeEmptyString: true,
   })
-  .required('کد تأیید الزامی است.');
+  .required();
 
-export const verifyOtpCodeSchema = yup.object({
+export const verifyOtpCodeSchema = object({
   verificationCode: otpCodeSchema,
 });
 
-export type VerifyOtpCodeInput = yup.InferType<typeof verifyOtpCodeSchema>;
+export type VerifyOtpCodeInput = InferType<typeof verifyOtpCodeSchema>;
 
-export const verifyResetPasswordOtpSchema = yup.object({
+export const verifyResetPasswordOtpSchema = object({
   phoneNumber: iranianPhoneNumberSchema,
   'otp-code': otpCodeSchema,
-  'reset-password': yup
-    .boolean()
-    .oneOf([true], 'درخواست تأیید باید برای بازیابی کلمه عبور باشد.')
-    .required(),
+  'reset-password': boolean().oneOf([true], yupMessage('resetPasswordRequestRequired')).required(),
 });
 
-export type VerifyResetPasswordOtpInput = yup.InferType<typeof verifyResetPasswordOtpSchema>;
+export type VerifyResetPasswordOtpInput = InferType<typeof verifyResetPasswordOtpSchema>;
 
-export const resetPasswordSchema = yup.object({
-  newPassword: yup
-    .string()
-    .required('کلمه عبور جدید الزامی است.')
-    .min(8, 'کلمه عبور باید حداقل ۸ نویسه باشد.'),
-  confirmPassword: yup
-    .string()
-    .required('تکرار کلمه عبور الزامی است.')
-    .min(8, 'تکرار کلمه عبور باید حداقل ۸ نویسه باشد.')
-    .oneOf([yup.ref('newPassword')], 'تکرار کلمه عبور با کلمه عبور جدید یکسان نیست.'),
+export const resetPasswordSchema = object({
+  newPassword: string().required().min(8),
+  confirmPassword: string()
+    .required()
+    .min(8)
+    .oneOf([ref('newPassword')], yupMessage('passwordConfirmationMismatch')),
 });
 
-export type ResetPasswordInput = yup.InferType<typeof resetPasswordSchema>;
+export type ResetPasswordInput = InferType<typeof resetPasswordSchema>;

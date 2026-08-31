@@ -1,4 +1,6 @@
-import * as yup from 'yup';
+import { array, boolean, mixed, object, string, type InferType } from 'yup';
+
+import { yupMessage } from '@/configs/yup.config';
 
 export const PET_TYPE_IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
 export const PET_TYPE_IMAGE_ACCEPT_TYPES = [
@@ -10,80 +12,77 @@ export const PET_TYPE_IMAGE_ACCEPT_TYPES = [
 ] as const;
 export const PET_TYPE_IMAGE_MAX_SIZE_BYTES = 1024 * 1024;
 
-const imageFileSchema = yup
-  .mixed<File>()
-  .test('required', 'تصویر اصلی نوع حیوان الزامی است.', (value) => value instanceof File)
+const imageFileSchema = mixed<File>()
+  .test('required', yupMessage('petTypeImageRequired'), (value) => value instanceof File)
   .test(
     'type',
-    'فرمت تصویر باید JPEG، PNG یا WebP باشد.',
+    yupMessage('imageType'),
     (value) =>
       !value ||
       PET_TYPE_IMAGE_MIME_TYPES.includes(value.type as (typeof PET_TYPE_IMAGE_MIME_TYPES)[number]),
   )
   .test(
     'size',
-    'حجم تصویر نمی‌تواند بیشتر از ۱ مگابایت باشد.',
+    yupMessage('imageSize'),
     (value) => !value || value.size <= PET_TYPE_IMAGE_MAX_SIZE_BYTES,
   );
 
-export const petTypeIdSchema = yup.object({
-  id: yup
-    .string()
+export const petTypeIdSchema = object({
+  id: string()
     .trim()
-    .matches(/^[a-f\d]{24}$/i, 'شناسه نوع حیوان معتبر نیست.')
+    .matches(/^[a-f\d]{24}$/i)
     .required(),
 });
 
-export const petTypeQuerySchema = yup.object({
-  includeDisabled: yup.boolean().default(true).required(),
+export const petTypeQuerySchema = object({
+  includeDisabled: boolean().default(true).required(),
 });
 
-export const petTypeSchema = yup.object({
-  title: yup.string().trim().min(2).max(20).required('عنوان نوع حیوان الزامی است.'),
-  description: yup.string().trim().max(150).default(''),
+export const petTypeSchema = object({
+  title: string().trim().min(2).max(20).required(),
+  description: string().trim().max(150).default(''),
   mainImage: imageFileSchema.required(),
 });
 
 // The API replaces the main image on every update, so it is required in both dialogs.
 export const updatePetTypeSchema = petTypeSchema;
 
-const propertyDefinitionValueSchema = yup
-  .mixed<string | number>()
+const propertyDefinitionValueSchema = mixed<string | number>()
   .transform((value, originalValue) =>
     typeof originalValue === 'string' ? originalValue.trim() : value,
   )
   .test(
     'valid-property-definition-value',
-    'مقدار مشخصات باید متنِ غیرخالی یا عدد معتبر باشد.',
+    yupMessage('petTypePropertyValue'),
     (value) =>
       (typeof value === 'string' && value.length > 0) ||
       (typeof value === 'number' && Number.isFinite(value)),
   )
-  .required('مقدار مشخصات الزامی است.');
+  .required();
 
-export const petTypePropertyDefinitionSchema = yup.object({
-  label: yup.string().trim().min(1, 'عنوان مشخصات نمی‌تواند خالی باشد.').required(),
+export const petTypePropertyDefinitionSchema = object({
+  label: string().trim().min(1).required(),
   value: propertyDefinitionValueSchema,
 });
 
 export const rangePetTypePropertyDefinitionsSchema = petTypeIdSchema.concat(
-  yup.object({
-    propertyDefinitions: yup.array(petTypePropertyDefinitionSchema).required(),
+  object({
+    propertyDefinitions: array(petTypePropertyDefinitionSchema).required(),
   }),
 );
 
-export const petTypePropertyDefinitionsFormSchema = yup.object({
-  propertyDefinitions: yup.array(petTypePropertyDefinitionSchema).required(),
+export const petTypePropertyDefinitionsFormSchema = object({
+  propertyDefinitions: array(petTypePropertyDefinitionSchema).required(),
 });
 
-export type PetTypeIdInput = yup.InferType<typeof petTypeIdSchema>;
-export type PetTypeQueryInput = yup.InferType<typeof petTypeQuerySchema>;
-export type PetTypeInput = yup.InferType<typeof petTypeSchema>;
-export type UpdatePetTypeInput = yup.InferType<typeof updatePetTypeSchema>;
-export type PetTypePropertyDefinitionInput = yup.InferType<typeof petTypePropertyDefinitionSchema>;
-export type RangePetTypePropertyDefinitionsInput = yup.InferType<
+export type PetTypeIdInput = InferType<typeof petTypeIdSchema>;
+export type PetTypeQueryInput = InferType<typeof petTypeQuerySchema>;
+export type PetTypeInput = InferType<typeof petTypeSchema>;
+export type UpdatePetTypeInput = InferType<typeof updatePetTypeSchema>;
+export type PetTypePropertyDefinitionInput = InferType<typeof petTypePropertyDefinitionSchema>;
+export type RangePetTypePropertyDefinitionsInput = InferType<
   typeof rangePetTypePropertyDefinitionsSchema
 >;
-export type PetTypePropertyDefinitionsFormInput = yup.InferType<
+export type PetTypePropertyDefinitionsFormInput = InferType<
   typeof petTypePropertyDefinitionsFormSchema
 >;
