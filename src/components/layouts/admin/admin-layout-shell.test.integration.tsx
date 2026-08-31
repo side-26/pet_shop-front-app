@@ -173,6 +173,9 @@ describe('AdminLayoutShell', () => {
       'کاربران',
       'تنظیمات',
     ]);
+    expect(adminNavigationItems.find(({ label }) => label === 'نوع حیوان')?.href).toBe(
+      routePaths.adminPetTypes,
+    );
     expect(adminNavigationItems.at(-1)).toMatchObject({ disabled: true });
   });
 

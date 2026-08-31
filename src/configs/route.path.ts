@@ -20,7 +20,7 @@ export const PATHS = {
   UI_COMPONENTS: '/ui-components',
   ADMIN: '/admin',
   ADMIN_USERS: '/admin/users',
-  ADMIN_PET_TYPES: '/admin/pet-type',
+  ADMIN_PET_TYPES: '/admin/pet-types',
 } as const;
 
 export const routePaths = {

@@ -5,6 +5,9 @@ Add every new admin route to `src/configs/route.path.ts` and reference that cano
 from navigation, redirects, and tests. Keep `page.tsx` focused on page composition; the
 shared responsive navigation and header remain owned by the parent admin layout.
 
+Use plural entity names for admin route directories and URL segments (for example,
+`pet-types` rather than `pet-type`).
+
 Route-local client controllers configure temporary admin header controls through
 `useAdminLayoutContext().setHeaderActions(...)` and restore the layout default with
 `resetHeaderActions` on unmount. `lastVisibleOrder` is inclusive; later actions appear in overflow.

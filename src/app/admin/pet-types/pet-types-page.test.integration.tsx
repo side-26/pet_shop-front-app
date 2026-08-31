@@ -2,6 +2,7 @@ import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { routePaths } from '@/configs/route.path';
 import { getAllPetTypesAction } from '@/entities/pet-types/pet-types.actions';
 import type { PetTypeDTO } from '@/entities/pet-types/pet-types.dto';
 
@@ -45,7 +46,7 @@ afterEach(cleanup);
 
 const getAllPetTypesActionMock = vi.mocked(getAllPetTypesAction);
 
-describe('/admin/pet-type', () => {
+describe(routePaths.adminPetTypes, () => {
   it('reuses row view models for a busy, non-interactive skeleton table', () => {
     const { container } = renderTable({ petTypes: petTypesTableSkeletonData, isLoading: true });
 
