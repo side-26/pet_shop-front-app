@@ -16,6 +16,19 @@ import { petTypeQuerySchema } from './pet-types.schema';
 
 const petTypesCache = new EntityTag('pet-types');
 
+export async function getAllPetTypesForBreed() {
+  'use cache';
+
+  petTypesCache.registerList('all');
+  return customFetcher<PetTypeDTO[]>({
+    url: '/pet-types',
+    method: 'GET',
+    auth: false,
+    cache: 'force-cache',
+    next: { tags: [petTypesCache.list] },
+  });
+}
+
 export async function getAllPetTypes(input: Partial<PetTypeQueryDTO> = {}) {
   const query = await petTypeQuerySchema.validate(input, { stripUnknown: true });
   return fetchAllPetTypes(query);

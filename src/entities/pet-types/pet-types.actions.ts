@@ -42,6 +42,9 @@ export async function getAllPetTypesAction(input: unknown = {}) {
   const query = await validate(petTypeQuerySchema, input);
   return 'isSuccess' in query ? query : service.getAllPetTypes(query);
 }
+export async function getAllPetTypesForBreedAction() {
+  return service.getAllPetTypesForBreed();
+}
 export async function getPetTypeByIdAction(input: unknown) {
   const denied = await authorize();
   if (denied) return denied;

@@ -225,7 +225,7 @@ export function FormShowcase() {
             <InputGroupInput id="form-search" placeholder="نام یا کد پرونده" />
           </InputGroup>
         </Field>
-        <Form<{ petType: string }>
+        <Form<Record<string, string>>
           handleSubmit={() => undefined}
           options={{ defaultValues: { petType: '' } }}
         >
@@ -235,6 +235,13 @@ export function FormShowcase() {
             hint="انتخاب شما در React Hook Form ذخیره می‌شود."
             rules={{ required: 'انتخاب نوع حیوان الزامی است.' }}
             options={petTypeOptions}
+            contentClassName="tw:max-h-36 tw:overflow-y-auto"
+          />
+          <SelectField
+            name="empty-pet-type"
+            label="نوع حیوان بدون گزینه"
+            options={[]}
+            emptyText="نوع حیوانی برای انتخاب وجود ندارد."
           />
           <Button type="submit">بررسی انتخاب</Button>
         </Form>

@@ -34,6 +34,7 @@ type SelectFieldProps<
   label: ReactNode;
   options: readonly SelectFieldOption[];
   hint?: ReactNode;
+  emptyText?: ReactNode;
   placeholder?: ReactNode;
   control?: Control<TFieldValues>;
   rules?: Omit<
@@ -46,6 +47,7 @@ type SelectFieldProps<
   required?: boolean;
   id?: string;
   className?: string;
+  contentClassName?: string;
   triggerClassName?: string;
 };
 
@@ -57,6 +59,7 @@ function SelectField<
   label,
   options,
   hint,
+  emptyText = 'گزینه‌ای برای انتخاب وجود ندارد.',
   placeholder = 'انتخاب کنید',
   control,
   rules,
@@ -66,6 +69,7 @@ function SelectField<
   required,
   id: providedId,
   className,
+  contentClassName,
   triggerClassName,
 }: SelectFieldProps<TFieldValues, TName>) {
   const generatedId = useId();
@@ -100,18 +104,27 @@ function SelectField<
         >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            {options.map((option, index) => (
-              <SelectItem
-                key={`${option.value}-${index}`}
-                value={option.value}
-                disabled={option.disabled}
-              >
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectGroup>
+        <SelectContent className={contentClassName}>
+          {options.length > 0 ? (
+            <SelectGroup>
+              {options.map((option, index) => (
+                <SelectItem
+                  key={`${option.value}-${index}`}
+                  value={option.value}
+                  disabled={option.disabled}
+                >
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          ) : (
+            <p
+              role="status"
+              className="tw:flex tw:min-h-24 tw:items-center tw:justify-center tw:px-4 tw:text-center tw:text-body-s tw:text-muted-foreground"
+            >
+              {emptyText}
+            </p>
+          )}
         </SelectContent>
       </Select>
       <span

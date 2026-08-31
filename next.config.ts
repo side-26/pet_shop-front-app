@@ -7,6 +7,9 @@ const projectDirectory = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  images: {
+    remotePatterns: [{ protocol: 'https', hostname: 'flagpedia.net', pathname: '/data/flags/**' }],
+  },
   ...(process.env.PETSHOP_CYPRESS_COMPONENT_TEST === 'true'
     ? {
         webpack(config, { webpack }) {

@@ -61,4 +61,17 @@ describe('SelectField', () => {
       'true',
     );
   });
+
+  it('shows an empty-state message when there are no options', async () => {
+    render(
+      <Form<Values> handleSubmit={() => undefined} options={{ defaultValues: { petType: '' } }}>
+        <SelectField<Values> name="petType" label="نوع حیوان" options={[]} />
+      </Form>,
+    );
+
+    fireEvent.click(screen.getByRole('combobox', { name: 'نوع حیوان' }));
+    expect((await screen.findByRole('status')).textContent).toBe(
+      'گزینه‌ای برای انتخاب وجود ندارد.',
+    );
+  });
 });
