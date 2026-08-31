@@ -1,0 +1,5 @@
+interface:
+  display_name: "Promote Shared Constants"
+  short_description: "Give cross-entity constants one neutral owner"
+  default_prompt: "Use $promote-shared-constants to move shared static contracts into an appropriate public module and migrate every consumer."
+

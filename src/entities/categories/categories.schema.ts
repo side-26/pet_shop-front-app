@@ -1,10 +1,10 @@
 import { boolean, mixed, object, string, type InferType } from 'yup';
 
-import { yupMessage } from '@/configs/yup.config';
 import {
-  PET_TYPE_IMAGE_MAX_SIZE_BYTES,
-  PET_TYPE_IMAGE_MIME_TYPES,
-} from '@/entities/pet-types/pet-types.schema';
+  MAIN_IMAGE_UPLOAD_MAX_SIZE_BYTES,
+  MAIN_IMAGE_UPLOAD_MIME_TYPES,
+} from '@/configs/main-image-upload';
+import { yupMessage } from '@/configs/yup.config';
 
 const objectIdSchema = string()
   .trim()
@@ -28,12 +28,14 @@ const categoryMainImageSchema = mixed<File>()
     yupMessage('imageType'),
     (value) =>
       !value ||
-      PET_TYPE_IMAGE_MIME_TYPES.includes(value.type as (typeof PET_TYPE_IMAGE_MIME_TYPES)[number]),
+      MAIN_IMAGE_UPLOAD_MIME_TYPES.includes(
+        value.type as (typeof MAIN_IMAGE_UPLOAD_MIME_TYPES)[number],
+      ),
   )
   .test(
     'size',
     yupMessage('imageSize'),
-    (value) => !value || value.size <= PET_TYPE_IMAGE_MAX_SIZE_BYTES,
+    (value) => !value || value.size <= MAIN_IMAGE_UPLOAD_MAX_SIZE_BYTES,
   );
 
 export const categorySchema = object({

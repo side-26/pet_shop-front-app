@@ -5,11 +5,8 @@ import { ImageIcon, Trash2Icon } from 'lucide-react';
 import { ImageFileField, useImageFileField } from '@/components/common/image-file-field';
 import { ImageFilePreview } from '@/components/common/image-file-preview';
 import { Button } from '@/components/ui/button';
+import { MAIN_IMAGE_UPLOAD_ACCEPT_TYPES } from '@/configs/main-image-upload';
 import type { PetTypeInput } from '@/entities/pet-types/pet-types.schema';
-import {
-  PET_TYPE_IMAGE_ACCEPT_TYPES,
-  PET_TYPE_IMAGE_MAX_SIZE_BYTES,
-} from '@/entities/pet-types/pet-types.schema';
 
 function SelectedImageActions() {
   const { deleteImageFile, imageFile } = useImageFileField();
@@ -38,7 +35,7 @@ export function PetTypeMainImageField({ initialImageUrl }: { initialImageUrl?: s
   return (
     <ImageFileField<PetTypeInput>
       name="mainImage"
-      acceptTypes={PET_TYPE_IMAGE_ACCEPT_TYPES}
+      acceptTypes={MAIN_IMAGE_UPLOAD_ACCEPT_TYPES}
       hint="JPEG، JPG، PNG یا WebP تا حداکثر ۱ مگابایت"
       aria-label="انتخاب تصویر اصلی نوع حیوان"
       required

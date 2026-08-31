@@ -1,16 +1,10 @@
 import { array, boolean, mixed, object, string, type InferType } from 'yup';
 
+import {
+  MAIN_IMAGE_UPLOAD_MAX_SIZE_BYTES,
+  MAIN_IMAGE_UPLOAD_MIME_TYPES,
+} from '@/configs/main-image-upload';
 import { yupMessage } from '@/configs/yup.config';
-
-export const PET_TYPE_IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
-export const PET_TYPE_IMAGE_ACCEPT_TYPES = [
-  ...PET_TYPE_IMAGE_MIME_TYPES,
-  '.jpeg',
-  '.jpg',
-  '.png',
-  '.webp',
-] as const;
-export const PET_TYPE_IMAGE_MAX_SIZE_BYTES = 1024 * 1024;
 
 const imageFileSchema = mixed<File>()
   .test('required', yupMessage('petTypeImageRequired'), (value) => value instanceof File)
@@ -19,12 +13,14 @@ const imageFileSchema = mixed<File>()
     yupMessage('imageType'),
     (value) =>
       !value ||
-      PET_TYPE_IMAGE_MIME_TYPES.includes(value.type as (typeof PET_TYPE_IMAGE_MIME_TYPES)[number]),
+      MAIN_IMAGE_UPLOAD_MIME_TYPES.includes(
+        value.type as (typeof MAIN_IMAGE_UPLOAD_MIME_TYPES)[number],
+      ),
   )
   .test(
     'size',
     yupMessage('imageSize'),
-    (value) => !value || value.size <= PET_TYPE_IMAGE_MAX_SIZE_BYTES,
+    (value) => !value || value.size <= MAIN_IMAGE_UPLOAD_MAX_SIZE_BYTES,
   );
 
 export const petTypeIdSchema = object({
