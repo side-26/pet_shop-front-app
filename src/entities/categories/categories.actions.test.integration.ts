@@ -29,6 +29,7 @@ vi.mock('./categories.service', () => ({
 const getSessionMock = vi.mocked(getSession);
 const id = '507f1f77bcf86cd799439012';
 const petType = '507f1f77bcf86cd799439011';
+const mainImage = new File(['image'], 'category.webp', { type: 'image/webp' });
 const success = { isSuccess: true as const, message: 'ok', data: {} as never };
 
 function session(role: AuthSessionModel['role']): AuthSessionModel {
@@ -83,12 +84,13 @@ describe('category actions', () => {
     vi.mocked(service.createCategory).mockResolvedValue(success);
 
     await expect(
-      createCategoryAction({ title: '  غذای خشک  ', petType, unknown: 'removed' }),
+      createCategoryAction({ title: '  غذای خشک  ', petType, mainImage, unknown: 'removed' }),
     ).resolves.toBe(success);
     expect(service.createCategory).toHaveBeenCalledWith({
       title: 'غذای خشک',
       petType,
-      enable: true,
+      mainImage,
+      isEnable: true,
     });
   });
 
@@ -96,17 +98,20 @@ describe('category actions', () => {
     vi.mocked(service.updateCategory).mockResolvedValue(success);
 
     await expect(
-      updateCategoryAction({ id, title: 'اسباب‌بازی', petType, enable: false }),
+      updateCategoryAction({ id, title: 'اسباب‌بازی', petType, mainImage, isEnable: false }),
     ).resolves.toBe(success);
     expect(service.updateCategory).toHaveBeenCalledWith(id, {
       title: 'اسباب‌بازی',
       petType,
-      enable: false,
+      mainImage,
+      isEnable: false,
     });
 
-    await expect(updateCategoryAction({ id, title: 'اسباب‌بازی' })).resolves.toMatchObject({
-      isSuccess: false,
-    });
+    await expect(updateCategoryAction({ id, title: 'اسباب‌بازی', petType })).resolves.toMatchObject(
+      {
+        isSuccess: false,
+      },
+    );
     expect(service.updateCategory).toHaveBeenCalledOnce();
   });
 
@@ -134,7 +139,7 @@ describe('category actions', () => {
   ])('rejects non-admin management calls', async (action) => {
     getSessionMock.mockResolvedValue(session(USER_ROLES.CUSTOMER));
 
-    await expect(action({ id, title: 'غذای خشک', petType })).resolves.toMatchObject({
+    await expect(action({ id, title: 'غذای خشک', petType, mainImage })).resolves.toMatchObject({
       isSuccess: false,
       message: 'شما اجازه مدیریت دسته‌بندی‌ها را ندارید.',
     });

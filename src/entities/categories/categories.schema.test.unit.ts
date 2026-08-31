@@ -8,29 +8,49 @@ import {
 } from './categories.schema';
 
 const petType = '507f1f77bcf86cd799439011';
+const mainImage = new File(['image'], 'category.webp', { type: 'image/webp' });
 
 describe('category schemas', () => {
-  it('trims create input and applies enable=true', async () => {
-    await expect(categorySchema.validate({ title: '  غذای خشک  ', petType })).resolves.toEqual({
+  it('trims create input and applies isEnable=true', async () => {
+    await expect(
+      categorySchema.validate({ title: '  غذای خشک  ', petType, mainImage }),
+    ).resolves.toEqual({
       title: 'غذای خشک',
       petType,
-      enable: true,
+      mainImage,
+      isEnable: true,
     });
   });
 
   it('enforces title and pet-type boundaries', async () => {
-    await expect(categorySchema.validate({ title: 'غ', petType })).rejects.toBeDefined();
+    await expect(categorySchema.validate({ title: 'غ', petType, mainImage })).rejects.toBeDefined();
     await expect(
-      categorySchema.validate({ title: 'غذای خشک', petType: 'invalid' }),
+      categorySchema.validate({ title: 'غذای خشک', petType: 'invalid', mainImage }),
     ).rejects.toBeDefined();
-    await expect(categorySchema.validate({ title: 'غذای خشک' })).rejects.toBeDefined();
+    await expect(categorySchema.validate({ title: 'غذای خشک', mainImage })).rejects.toBeDefined();
   });
 
-  it('requires title and petType on update while preserving an optional enable value', async () => {
+  it('requires title, petType, and mainImage on update while preserving isEnable', async () => {
     await expect(
-      updateCategorySchema.validate({ title: 'اسباب‌بازی', petType, enable: false }),
-    ).resolves.toEqual({ title: 'اسباب‌بازی', petType, enable: false });
-    await expect(updateCategorySchema.validate({ title: 'اسباب‌بازی' })).rejects.toBeDefined();
+      updateCategorySchema.validate({ title: 'اسباب‌بازی', petType, mainImage, isEnable: false }),
+    ).resolves.toEqual({ title: 'اسباب‌بازی', petType, mainImage, isEnable: false });
+    await expect(
+      updateCategorySchema.validate({ title: 'اسباب‌بازی', petType }),
+    ).rejects.toBeDefined();
+  });
+
+  it('rejects unsupported or oversized category images', async () => {
+    const invalidType = new File(['image'], 'category.gif', { type: 'image/gif' });
+    const oversized = new File([new Uint8Array(1024 * 1024 + 1)], 'category.webp', {
+      type: 'image/webp',
+    });
+
+    await expect(
+      categorySchema.validate({ title: 'غذای خشک', petType, mainImage: invalidType }),
+    ).rejects.toBeDefined();
+    await expect(
+      categorySchema.validate({ title: 'غذای خشک', petType, mainImage: oversized }),
+    ).rejects.toBeDefined();
   });
 
   it('applies list defaults and accepts the backend filters', async () => {

@@ -63,10 +63,10 @@ function invalidate(id?: string) {
 }
 
 export async function createCategory(input: CreateCategoryDTO) {
-  const result = await customFetcher<CategoryDTO, unknown, CreateCategoryDTO>({
+  const result = await customFetcher<CategoryDTO, unknown, FormData>({
     url: '/categories',
     method: 'POST',
-    body: input,
+    body: toCategoryFormData(input),
     auth: true,
     cache: 'no-store',
   });
@@ -76,16 +76,25 @@ export async function createCategory(input: CreateCategoryDTO) {
 }
 
 export async function updateCategory(id: string, input: UpdateCategoryDTO) {
-  const result = await customFetcher<CategoryDTO, unknown, UpdateCategoryDTO>({
+  const result = await customFetcher<CategoryDTO, unknown, FormData>({
     url: `/categories/${id}`,
     method: 'PUT',
-    body: input,
+    body: toCategoryFormData(input),
     auth: true,
     cache: 'no-store',
   });
 
   if (result.isSuccess) invalidate(id);
   return result;
+}
+
+function toCategoryFormData(input: CreateCategoryDTO | UpdateCategoryDTO) {
+  const formData = new FormData();
+  formData.set('title', input.title);
+  formData.set('petType', input.petType);
+  formData.set('mainImage', input.mainImage);
+  formData.set('isEnable', String(input.isEnable));
+  return formData;
 }
 
 async function updateCategoryStatus(id: string, status: 'enable' | 'disable') {

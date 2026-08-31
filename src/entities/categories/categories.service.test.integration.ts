@@ -40,11 +40,15 @@ vi.mock('@/utils/entityCache', () => ({
 const customFetcherMock = vi.mocked(customFetcher);
 const id = '507f1f77bcf86cd799439012';
 const petType = '507f1f77bcf86cd799439011';
+const mainImage = new File(['image'], 'category.webp', { type: 'image/webp' });
 const category = {
   id,
   title: 'غذای خشک',
   petType,
-  enable: true,
+  mainImage: 'https://cdn.example.com/categories/main/category.webp',
+  mainThumbnailImage: 'data:image/webp;base64,AAAA',
+  slug: 'غذای-خشک',
+  isEnable: true,
   createdAt: '2026-08-31T00:00:00.000Z',
   updatedAt: '2026-08-31T00:00:00.000Z',
 };
@@ -93,34 +97,50 @@ describe('category service', () => {
   });
 
   it('creates the exact category body and invalidates only the list', async () => {
-    const input = { title: 'غذای خشک', petType, enable: true };
+    const input = { title: 'غذای خشک', petType, mainImage, isEnable: true };
     const response = { isSuccess: true as const, message: 'created', data: category };
     customFetcherMock.mockResolvedValue(response);
 
     await expect(createCategory(input)).resolves.toBe(response);
-    expect(customFetcherMock).toHaveBeenCalledWith({
-      url: '/categories',
-      method: 'POST',
-      body: input,
-      auth: true,
-      cache: 'no-store',
+    expect(customFetcherMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: '/categories',
+        method: 'POST',
+        auth: true,
+        cache: 'no-store',
+      }),
+    );
+    const body = customFetcherMock.mock.calls[0]?.[0].body as FormData;
+    expect(Object.fromEntries(body.entries())).toEqual({
+      title: 'غذای خشک',
+      petType,
+      mainImage,
+      isEnable: 'true',
     });
     expect(invalidateListMock).toHaveBeenCalledOnce();
     expect(invalidateDetailMock).not.toHaveBeenCalled();
   });
 
   it('updates the exact category body and invalidates list and detail', async () => {
-    const input = { title: 'غذای ویژه', petType, enable: false };
+    const input = { title: 'غذای ویژه', petType, mainImage, isEnable: false };
     const response = { isSuccess: true as const, message: 'updated', data: category };
     customFetcherMock.mockResolvedValue(response);
 
     await expect(updateCategory(id, input)).resolves.toBe(response);
-    expect(customFetcherMock).toHaveBeenCalledWith({
-      url: `/categories/${id}`,
-      method: 'PUT',
-      body: input,
-      auth: true,
-      cache: 'no-store',
+    expect(customFetcherMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: `/categories/${id}`,
+        method: 'PUT',
+        auth: true,
+        cache: 'no-store',
+      }),
+    );
+    const body = customFetcherMock.mock.calls[0]?.[0].body as FormData;
+    expect(Object.fromEntries(body.entries())).toEqual({
+      title: 'غذای ویژه',
+      petType,
+      mainImage,
+      isEnable: 'false',
     });
     expect(invalidateListMock).toHaveBeenCalledOnce();
     expect(invalidateDetailMock).toHaveBeenCalledWith(id);
@@ -166,8 +186,8 @@ describe('category service', () => {
       data: { messages: {}, details: {} },
     });
 
-    await createCategory({ title: 'غذای خشک', petType, enable: true });
-    await updateCategory(id, { title: 'غذای خشک', petType });
+    await createCategory({ title: 'غذای خشک', petType, mainImage, isEnable: true });
+    await updateCategory(id, { title: 'غذای خشک', petType, mainImage, isEnable: true });
     await disableCategory(id);
     await deleteCategory(id);
 

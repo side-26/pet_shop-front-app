@@ -9,7 +9,10 @@ export type CategoryDTO = {
   id: string;
   title: string;
   petType: string;
-  enable: boolean;
+  mainImage: string;
+  mainThumbnailImage: string;
+  slug: string;
+  isEnable: boolean;
   createdBy?: string | null;
   updatedBy?: string | null;
   createdAt: string;

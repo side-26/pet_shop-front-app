@@ -31,7 +31,8 @@ const id = '507f1f77bcf86cd799439012';
 const input = {
   title: 'غذای خشک',
   petType: '507f1f77bcf86cd799439011',
-  enable: true,
+  mainImage: new File(['image'], 'category.webp', { type: 'image/webp' }),
+  isEnable: true,
 };
 const error = {
   isSuccess: false as const,

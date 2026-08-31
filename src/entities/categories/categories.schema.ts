@@ -1,6 +1,10 @@
-import { boolean, object, string, type InferType } from 'yup';
+import { boolean, mixed, object, string, type InferType } from 'yup';
 
-import '@/configs/yup.config';
+import { yupMessage } from '@/configs/yup.config';
+import {
+  PET_TYPE_IMAGE_MAX_SIZE_BYTES,
+  PET_TYPE_IMAGE_MIME_TYPES,
+} from '@/entities/pet-types/pet-types.schema';
 
 const objectIdSchema = string()
   .trim()
@@ -17,15 +21,29 @@ export const categoryQuerySchema = object({
     .optional(),
 });
 
+const categoryMainImageSchema = mixed<File>()
+  .test('required', yupMessage('imageRequired'), (value) => value instanceof File)
+  .test(
+    'type',
+    yupMessage('imageType'),
+    (value) =>
+      !value ||
+      PET_TYPE_IMAGE_MIME_TYPES.includes(value.type as (typeof PET_TYPE_IMAGE_MIME_TYPES)[number]),
+  )
+  .test(
+    'size',
+    yupMessage('imageSize'),
+    (value) => !value || value.size <= PET_TYPE_IMAGE_MAX_SIZE_BYTES,
+  );
+
 export const categorySchema = object({
   title: string().trim().min(2).max(50).required(),
   petType: objectIdSchema,
-  enable: boolean().default(true).required(),
+  mainImage: categoryMainImageSchema.required(),
+  isEnable: boolean().default(true).required(),
 });
 
-export const updateCategorySchema = categorySchema.shape({
-  enable: boolean().optional(),
-});
+export const updateCategorySchema = categorySchema;
 
 export type CategoryIdInput = InferType<typeof categoryIdSchema>;
 export type CategoryQueryInput = InferType<typeof categoryQuerySchema>;
