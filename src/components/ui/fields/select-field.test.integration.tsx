@@ -3,13 +3,23 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { Form } from '@/components/ui/form';
 
-import { SelectField } from './select-field';
+import { SelectField, selectFieldVariants } from './select-field';
 
 type Values = { petType: string };
 
 afterEach(cleanup);
 
 describe('SelectField', () => {
+  it('uses the same label and description typography scale as TextField', () => {
+    const small = selectFieldVariants({ size: 'xs' });
+    const large = selectFieldVariants({ size: 'xl' });
+
+    expect(small.label()).toContain('tw:text-label-s');
+    expect(small.description()).toContain('tw:text-xs');
+    expect(large.label()).toContain('tw:text-label-l');
+    expect(large.description()).toContain('tw:text-[13px]/[1.6]');
+  });
+
   it('connects the selected value to Form context and submits it', async () => {
     const onSubmit = vi.fn();
     render(

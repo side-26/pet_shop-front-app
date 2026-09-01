@@ -5,12 +5,20 @@ import { Form } from '@/components/ui/form';
 import { CheckboxField } from './checkbox-field';
 import { RadioGroupField } from './radio-group-field';
 import { SwitchField } from './switch-field';
+import { selectionFieldVariants } from './selection-field.styles';
 
 type Values = { accepted: boolean; alerts: boolean; contact: string };
 
 afterEach(cleanup);
 
 describe('selection fields', () => {
+  it('matches text-field label and feedback typography at each size', () => {
+    expect(selectionFieldVariants({ size: 'xs' }).label()).toContain('tw:text-label-s');
+    expect(selectionFieldVariants({ size: 'xs' }).description()).toContain('tw:text-xs');
+    expect(selectionFieldVariants({ size: 'xl' }).label()).toContain('tw:text-label-l');
+    expect(selectionFieldVariants({ size: 'xl' }).description()).toContain('tw:text-[13px]/[1.6]');
+  });
+
   it('syncs checkbox, switch, and radio values with the parent Form', async () => {
     const onSubmit = vi.fn();
     render(

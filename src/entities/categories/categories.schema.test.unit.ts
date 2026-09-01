@@ -30,13 +30,19 @@ describe('category schemas', () => {
     await expect(categorySchema.validate({ title: 'غذای خشک', mainImage })).rejects.toBeDefined();
   });
 
-  it('requires title, petType, and mainImage on update while preserving isEnable', async () => {
+  it('does not validate an optional image on update', async () => {
+    const unsupportedImage = new File(['image'], 'category.gif', { type: 'image/gif' });
+
     await expect(
-      updateCategorySchema.validate({ title: 'اسباب‌بازی', petType, mainImage, isEnable: false }),
-    ).resolves.toEqual({ title: 'اسباب‌بازی', petType, mainImage, isEnable: false });
-    await expect(
-      updateCategorySchema.validate({ title: 'اسباب‌بازی', petType }),
-    ).rejects.toBeDefined();
+      updateCategorySchema.validate(
+        { title: 'اسباب‌بازی', petType, mainImage: unsupportedImage, isEnable: false },
+        { stripUnknown: true },
+      ),
+    ).resolves.toEqual({ title: 'اسباب‌بازی', petType, mainImage: unsupportedImage });
+    await expect(updateCategorySchema.validate({ title: 'اسباب‌بازی', petType })).resolves.toEqual({
+      title: 'اسباب‌بازی',
+      petType,
+    });
   });
 
   it('rejects unsupported or oversized category images', async () => {

@@ -236,6 +236,7 @@ export function FormShowcase() {
             name="petType"
             label="نوع حیوان در فرم"
             hint="انتخاب شما در React Hook Form ذخیره می‌شود."
+            size="lg"
             rules={{ required: 'انتخاب نوع حیوان الزامی است.' }}
             options={[...petTypeOptions, ...longPetTypeOptions]}
           />

@@ -52,7 +52,9 @@ describe('breedQuerySchema', () => {
     ).rejects.toBeDefined();
   });
 
-  it('allows an existing breed to be updated without replacing its image', async () => {
+  it('does not validate an optional image on update', async () => {
+    const unsupportedImage = new File(['image'], 'breed.gif', { type: 'image/gif' });
+
     await expect(
       updateBreedSchema.validate({
         title: 'گلدن رتریور',
@@ -62,7 +64,8 @@ describe('breedQuerySchema', () => {
         size: 4,
         activityLevel: 4,
         enable: true,
+        mainImage: unsupportedImage,
       }),
-    ).resolves.toMatchObject({ title: 'گلدن رتریور' });
+    ).resolves.toMatchObject({ title: 'گلدن رتریور', mainImage: unsupportedImage });
   });
 });

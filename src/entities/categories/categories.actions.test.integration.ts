@@ -94,7 +94,7 @@ describe('category actions', () => {
     });
   });
 
-  it('validates id and required body fields before updating', async () => {
+  it('validates id and update body fields while allowing an unchanged image', async () => {
     vi.mocked(service.updateCategory).mockResolvedValue(success);
 
     await expect(
@@ -104,15 +104,13 @@ describe('category actions', () => {
       title: 'اسباب‌بازی',
       petType,
       mainImage,
-      isEnable: false,
     });
 
-    await expect(updateCategoryAction({ id, title: 'اسباب‌بازی', petType })).resolves.toMatchObject(
-      {
-        isSuccess: false,
-      },
-    );
-    expect(service.updateCategory).toHaveBeenCalledOnce();
+    await expect(updateCategoryAction({ id, title: 'اسباب‌بازی', petType })).resolves.toBe(success);
+    expect(service.updateCategory).toHaveBeenLastCalledWith(id, {
+      title: 'اسباب‌بازی',
+      petType,
+    });
   });
 
   it.each([

@@ -22,7 +22,6 @@ export const categoryQuerySchema = object({
 });
 
 const categoryMainImageSchema = mixed<File>()
-  .test('required', yupMessage('imageRequired'), (value) => value instanceof File)
   .test(
     'type',
     yupMessage('imageType'),
@@ -41,11 +40,19 @@ const categoryMainImageSchema = mixed<File>()
 export const categorySchema = object({
   title: string().trim().min(2).max(50).required(),
   petType: objectIdSchema,
-  mainImage: categoryMainImageSchema.required(),
+  mainImage: categoryMainImageSchema
+    .test('required', yupMessage('imageRequired'), (value) => value instanceof File)
+    .required(),
   isEnable: boolean().default(true).required(),
 });
 
-export const updateCategorySchema = categorySchema;
+export const updateCategorySchema = object({
+  title: string().trim().min(2).max(50).required(),
+  petType: objectIdSchema,
+  // An update only uploads a newly selected file. Existing image URLs and an
+  // intentionally cleared field are omitted by the service.
+  mainImage: mixed<File>().nullable().optional(),
+});
 
 export type CategoryIdInput = InferType<typeof categoryIdSchema>;
 export type CategoryQueryInput = InferType<typeof categoryQuerySchema>;

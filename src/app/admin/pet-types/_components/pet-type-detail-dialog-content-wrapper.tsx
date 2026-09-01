@@ -9,7 +9,10 @@ import { TextareaField } from '@/components/ui/fields/textarea-field';
 import { Form } from '@/components/ui/form';
 import { getPetTypeByIdAction } from '@/entities/pet-types/pet-types.actions';
 import { useUpdatePetType } from '@/entities/pet-types/pet-types.client';
-import { petTypeSchema, type PetTypeInput } from '@/entities/pet-types/pet-types.schema';
+import {
+  updatePetTypeSchema,
+  type UpdatePetTypeInput,
+} from '@/entities/pet-types/pet-types.schema';
 import { cn } from '@/lib/utils';
 
 import { PetTypeMainImageField } from './pet-type-main-image-field';
@@ -21,8 +24,12 @@ type PetTypeFormValue = {
   id: string;
   title: string;
   description: string;
-  mainImage: string;
+  mainImage?: unknown;
 };
+
+export function hasStoredMainImage(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0;
+}
 
 type FormBodyProps = {
   formRef: ReturnType<typeof useUpdatePetType>['formRef'];
@@ -37,12 +44,15 @@ export function PetTypeDetailFormBody({
   isLoading = false,
   petType,
 }: FormBodyProps) {
+  const mainImage = petType?.mainImage;
+  const mainImageUrl = hasStoredMainImage(mainImage) ? mainImage : null;
+
   return (
-    <Form<PetTypeInput>
+    <Form<UpdatePetTypeInput>
       key={petType?.id ?? 'pet-type-loading'}
       ref={formRef}
       id={FORM_ID}
-      validationSchema={petTypeSchema}
+      validationSchema={updatePetTypeSchema}
       options={{
         defaultValues: {
           title: petType?.title ?? 'عنوان نوع حیوان',
@@ -56,9 +66,14 @@ export function PetTypeDetailFormBody({
       className={cn(isLoading && 'skeleton tw:pointer-events-none tw:select-none')}
     >
       <fieldset disabled={isLoading} className="tw:flex tw:flex-col tw:gap-5">
-        <TextField<PetTypeInput> name="title" label="عنوان" required />
-        <TextareaField<PetTypeInput> name="description" label="توضیحات" counter maxLength={150} />
-        <PetTypeMainImageField initialImageUrl={petType?.mainImage} />
+        <TextField<UpdatePetTypeInput> name="title" label="عنوان" required />
+        <TextareaField<UpdatePetTypeInput>
+          name="description"
+          label="توضیحات"
+          counter
+          maxLength={150}
+        />
+        <PetTypeMainImageField initialImageUrl={mainImageUrl} required={!mainImageUrl} />
       </fieldset>
     </Form>
   );

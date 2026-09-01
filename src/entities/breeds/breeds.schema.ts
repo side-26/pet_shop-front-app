@@ -26,7 +26,11 @@ export const breedSchema = object({
   enable: boolean().required(),
   mainImage: image,
 });
-export const updateBreedSchema = breedSchema.shape({ mainImage: image.notRequired() });
+export const updateBreedSchema = breedSchema.shape({
+  // Updating a breed may keep its stored image. Validate images on creation
+  // only; the service appends this field exclusively for a newly selected File.
+  mainImage: mixed<File>().nullable().optional(),
+});
 const propertyDefinitionValueSchema = mixed<string | number>()
   .transform((value, originalValue) =>
     typeof originalValue === 'string' ? originalValue.trim() : value,

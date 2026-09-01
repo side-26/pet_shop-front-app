@@ -92,8 +92,8 @@ function toCategoryFormData(input: CreateCategoryDTO | UpdateCategoryDTO) {
   const formData = new FormData();
   formData.set('title', input.title);
   formData.set('petType', input.petType);
-  formData.set('mainImage', input.mainImage);
-  formData.set('isEnable', String(input.isEnable));
+  if (input.mainImage instanceof File) formData.set('mainImage', input.mainImage);
+  if ('isEnable' in input) formData.set('isEnable', String(input.isEnable));
   return formData;
 }
 

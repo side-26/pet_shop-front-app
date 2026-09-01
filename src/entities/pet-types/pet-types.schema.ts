@@ -7,7 +7,6 @@ import {
 import { yupMessage } from '@/configs/yup.config';
 
 const imageFileSchema = mixed<File>()
-  .test('required', yupMessage('petTypeImageRequired'), (value) => value instanceof File)
   .test(
     'type',
     yupMessage('imageType'),
@@ -23,6 +22,11 @@ const imageFileSchema = mixed<File>()
     (value) => !value || value.size <= MAIN_IMAGE_UPLOAD_MAX_SIZE_BYTES,
   );
 
+const optionalUpdateImageSchema = mixed<File>()
+  .transform((value, originalValue) => (typeof originalValue === 'string' ? undefined : value))
+  .nullable()
+  .optional();
+
 export const petTypeIdSchema = object({
   id: string()
     .trim()
@@ -37,11 +41,16 @@ export const petTypeQuerySchema = object({
 export const petTypeSchema = object({
   title: string().trim().min(2).max(20).required(),
   description: string().trim().max(150).default(''),
-  mainImage: imageFileSchema.required(),
+  mainImage: imageFileSchema
+    .test('required', yupMessage('petTypeImageRequired'), (value) => value instanceof File)
+    .required(),
 });
 
-// The API replaces the main image on every update, so it is required in both dialogs.
-export const updatePetTypeSchema = petTypeSchema;
+export const updatePetTypeSchema = object({
+  title: string().trim().min(2).max(20).required(),
+  description: string().trim().max(150).default(''),
+  mainImage: optionalUpdateImageSchema,
+});
 
 const propertyDefinitionValueSchema = mixed<string | number>()
   .transform((value, originalValue) =>

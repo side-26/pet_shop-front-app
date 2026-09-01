@@ -71,7 +71,7 @@ function formData(input: CreateBreedDTO | UpdateBreedDTO) {
   body.set('size', String(input.size));
   body.set('activityLevel', input.activityLevel == null ? 'null' : String(input.activityLevel));
   body.set('enable', String(input.enable));
-  if (input.mainImage) body.set('mainImage', input.mainImage);
+  if (input.mainImage instanceof File) body.set('mainImage', input.mainImage);
   return body;
 }
 function invalidate(id?: string) {

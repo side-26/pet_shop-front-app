@@ -281,7 +281,9 @@ disabled? }` options. Option values may be strings, booleans, or `null`; `null`
 is preserved in React Hook Form for an explicit unfiltered state. It owns the `Field`, label, Select parts, and a persistent
 hint/error description. It binds the Select hidden input and selected value to
 React Hook Form, and exposes placeholder, required, disabled, and read-only
-states without duplicating select markup at call sites.
+states without duplicating select markup at call sites. Its
+`size="xs|sm|md|lg|xl"` API defaults to `md` and uses the same label and
+hint/error typography scale as `TextField`, `TextareaField`, and `InputOtpField`.
 `Input` supports `color="primary|secondary|info|success|warning|error"` and
 `size="xs|sm|md|lg|xl"`, defaulting to primary/md. Color controls border, caret,
 and focus ring; `aria-invalid` always resolves to the error treatment. Input and
@@ -333,6 +335,8 @@ bind through typed `name`, and render a persistent hint/error description.
 They expose the underlying variant, checked/unchecked colors, size, disabled,
 and read-only APIs. `RadioGroupField` receives accessible `{ value, label }`
 options and associates the group label and error description with the group.
+Their label and hint/error typography use the same scale as textual fields for
+the corresponding size.
 
 `Form` lives under `ui/form`, wraps React Hook Form with `FormProvider`, accepts
 `handleSubmit`, optional `handleInvalid`, `validationSchema`, and `options`, and

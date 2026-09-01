@@ -6,11 +6,10 @@ import { ImageFileField, useImageFileField } from '@/components/common/image-fil
 import { ImageFilePreview } from '@/components/common/image-file-preview';
 import { Button } from '@/components/ui/button';
 import { MAIN_IMAGE_UPLOAD_ACCEPT_TYPES } from '@/configs/main-image-upload';
-import type { UpdatePetTypeInput } from '@/entities/pet-types/pet-types.schema';
+import type { CategoryInput } from '@/entities/categories/categories.schema';
 
 function SelectedImageActions() {
   const { deleteImageFile, imageFile } = useImageFileField();
-
   if (!imageFile) return null;
 
   return (
@@ -31,7 +30,7 @@ function SelectedImageActions() {
   );
 }
 
-export function PetTypeMainImageField({
+export function CategoryMainImageField({
   initialImageUrl,
   required = true,
 }: {
@@ -39,16 +38,16 @@ export function PetTypeMainImageField({
   required?: boolean;
 }) {
   return (
-    <ImageFileField<UpdatePetTypeInput>
+    <ImageFileField<CategoryInput>
       name="mainImage"
       acceptTypes={MAIN_IMAGE_UPLOAD_ACCEPT_TYPES}
       hint="JPEG، JPG، PNG یا WebP تا حداکثر ۱ مگابایت"
-      aria-label="انتخاب تصویر اصلی نوع حیوان"
+      aria-label="انتخاب تصویر اصلی دسته‌بندی"
       required={required}
     >
       <div className="tw:flex tw:min-h-32 tw:items-center tw:gap-4 tw:rounded-2xl tw:border tw:border-dashed tw:border-border-strong tw:bg-muted/35 tw:p-4 tw:hover:bg-muted/55">
         <ImageFilePreview
-          alt="پیش‌نمایش تصویر اصلی نوع حیوان"
+          alt="پیش‌نمایش تصویر اصلی دسته‌بندی"
           initialImageUrl={initialImageUrl}
           className="tw:size-24 tw:rounded-xl"
           fallback={

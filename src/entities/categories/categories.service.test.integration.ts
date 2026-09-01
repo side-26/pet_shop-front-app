@@ -122,7 +122,7 @@ describe('category service', () => {
   });
 
   it('updates the exact category body and invalidates list and detail', async () => {
-    const input = { title: 'غذای ویژه', petType, mainImage, isEnable: false };
+    const input = { title: 'غذای ویژه', petType, mainImage };
     const response = { isSuccess: true as const, message: 'updated', data: category };
     customFetcherMock.mockResolvedValue(response);
 
@@ -140,10 +140,22 @@ describe('category service', () => {
       title: 'غذای ویژه',
       petType,
       mainImage,
-      isEnable: 'false',
     });
     expect(invalidateListMock).toHaveBeenCalledOnce();
     expect(invalidateDetailMock).toHaveBeenCalledWith(id);
+  });
+
+  it('omits mainImage when the existing category image is unchanged', async () => {
+    const response = { isSuccess: true as const, message: 'updated', data: category };
+    customFetcherMock.mockResolvedValue(response);
+
+    await expect(updateCategory(id, { title: 'غذای ویژه', petType })).resolves.toBe(response);
+
+    const body = customFetcherMock.mock.calls[0]?.[0].body as FormData;
+    expect(Object.fromEntries(body.entries())).toEqual({
+      title: 'غذای ویژه',
+      petType,
+    });
   });
 
   it.each([
@@ -187,7 +199,7 @@ describe('category service', () => {
     });
 
     await createCategory({ title: 'غذای خشک', petType, mainImage, isEnable: true });
-    await updateCategory(id, { title: 'غذای خشک', petType, mainImage, isEnable: true });
+    await updateCategory(id, { title: 'غذای خشک', petType, mainImage });
     await disableCategory(id);
     await deleteCategory(id);
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { petTypeSchema } from './pet-types.schema';
+import { petTypeSchema, updatePetTypeSchema } from './pet-types.schema';
 
 const validImage = new File(['image'], 'dog.jpg', { type: 'image/jpeg' });
 
@@ -27,5 +27,27 @@ describe('petTypeSchema', () => {
         }),
       }),
     ).rejects.toThrow('۱ مگابایت');
+  });
+
+  it('does not validate an optional image on update', async () => {
+    const unsupportedImage = new File(['image'], 'dog.gif', { type: 'image/gif' });
+
+    await expect(
+      updatePetTypeSchema.validate({
+        title: 'سگ',
+        description: 'حیوان خانگی',
+        mainImage: unsupportedImage,
+      }),
+    ).resolves.toEqual({ title: 'سگ', description: 'حیوان خانگی', mainImage: unsupportedImage });
+  });
+
+  it('treats an existing API image URL as an unchanged image on update', async () => {
+    await expect(
+      updatePetTypeSchema.validate({
+        title: 'سگ',
+        description: 'حیوان خانگی',
+        mainImage: 'https://cdn.example.test/pet-types/dog.webp',
+      }),
+    ).resolves.toEqual({ title: 'سگ', description: 'حیوان خانگی' });
   });
 });

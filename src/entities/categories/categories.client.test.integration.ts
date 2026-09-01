@@ -34,6 +34,11 @@ const input = {
   mainImage: new File(['image'], 'category.webp', { type: 'image/webp' }),
   isEnable: true,
 };
+const updateInput = {
+  title: input.title,
+  petType: input.petType,
+  mainImage: input.mainImage,
+};
 const error = {
   isSuccess: false as const,
   message: 'ناموفق',
@@ -71,8 +76,8 @@ describe('category client orchestration', () => {
       data: {} as never,
     });
 
-    await expect(submitUpdateCategory(id, input, vi.fn())).resolves.toBe(true);
-    expect(updateCategoryAction).toHaveBeenCalledWith({ id, ...input });
+    await expect(submitUpdateCategory(id, updateInput, vi.fn())).resolves.toBe(true);
+    expect(updateCategoryAction).toHaveBeenCalledWith({ id, ...updateInput });
     expect(toast.add).toHaveBeenCalledWith({ type: 'success', title: 'دسته‌بندی ویرایش شد.' });
   });
 

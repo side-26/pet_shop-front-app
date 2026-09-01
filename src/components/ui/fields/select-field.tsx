@@ -8,9 +8,11 @@ import {
   type FieldValues,
   type RegisterOptions,
 } from 'react-hook-form';
+import { tv, type VariantProps } from 'tailwind-variants';
 
 import { Field } from '@/components/ui/field/default';
 import { FieldLabel } from '@/components/ui/field/label';
+import { cn } from '@/lib/utils';
 import {
   Select,
   SelectContent,
@@ -19,6 +21,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from './select';
+
+const selectFieldVariants = tv({
+  slots: {
+    field: '',
+    label: '',
+    description: 'tw:block tw:min-h-[1lh] tw:text-muted-foreground',
+  },
+  variants: {
+    size: {
+      xs: { field: 'tw:gap-1', label: 'tw:text-label-s', description: 'tw:-mt-0.5 tw:text-xs' },
+      sm: {
+        field: 'tw:gap-1.5',
+        label: 'tw:text-label-s',
+        description: 'tw:-mt-0.5 tw:text-xs',
+      },
+      md: { field: 'tw:gap-2', label: 'tw:text-label-m', description: 'tw:-mt-1 tw:text-xs' },
+      lg: {
+        field: 'tw:gap-2',
+        label: 'tw:text-label-l',
+        description: 'tw:-mt-1 tw:text-[13px]/[1.6]',
+      },
+      xl: {
+        field: 'tw:gap-2.5',
+        label: 'tw:text-label-l',
+        description: 'tw:-mt-1.5 tw:text-[13px]/[1.6]',
+      },
+    },
+  },
+  defaultVariants: { size: 'md' },
+});
 
 type SelectFieldOption = {
   value: string | boolean | null;
@@ -29,7 +61,7 @@ type SelectFieldOption = {
 type SelectFieldProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = {
+> = VariantProps<typeof selectFieldVariants> & {
   name: TName;
   label: ReactNode;
   options: readonly SelectFieldOption[];
@@ -63,6 +95,7 @@ function SelectField<
   placeholder = 'انتخاب کنید',
   control,
   rules,
+  size = 'md',
   shouldUnregister,
   disabled,
   readOnly,
@@ -77,14 +110,18 @@ function SelectField<
   const descriptionId = `${id}-description`;
   const { field, fieldState } = useController({ name, control, rules, shouldUnregister, disabled });
   const message = fieldState.error?.message ?? hint;
+  const styles = selectFieldVariants({ size });
 
   return (
     <Field
       data-invalid={fieldState.invalid || undefined}
       data-disabled={disabled || undefined}
-      className={className}
+      data-size={size}
+      className={cn(styles.field(), className)}
     >
-      <FieldLabel htmlFor={id}>{label}</FieldLabel>
+      <FieldLabel htmlFor={id} className={styles.label()}>
+        {label}
+      </FieldLabel>
       <Select
         items={options}
         name={field.name}
@@ -130,7 +167,7 @@ function SelectField<
       <span
         id={descriptionId}
         role={fieldState.invalid ? 'alert' : undefined}
-        className="tw:-mt-1 tw:block tw:min-h-[1lh] tw:text-xs tw:text-muted-foreground"
+        className={styles.description()}
       >
         <span className={fieldState.invalid ? 'tw:text-error' : undefined}>{message}</span>
       </span>
@@ -138,4 +175,4 @@ function SelectField<
   );
 }
 
-export { SelectField, type SelectFieldOption, type SelectFieldProps };
+export { SelectField, selectFieldVariants, type SelectFieldOption, type SelectFieldProps };

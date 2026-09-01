@@ -13,7 +13,11 @@ import {
 import { createPetTypeAction } from './pet-types.actions';
 import { updatePetTypeAction } from './pet-types.actions';
 import { rangePetTypePropertyDefinitionsAction } from './pet-types.actions';
-import type { PetTypeInput, PetTypePropertyDefinitionsFormInput } from './pet-types.schema';
+import type {
+  PetTypeInput,
+  PetTypePropertyDefinitionsFormInput,
+  UpdatePetTypeInput,
+} from './pet-types.schema';
 
 type PetTypeRowAction =
   typeof enablePetTypeAction | typeof disablePetTypeAction | typeof deletePetTypeAction;
@@ -70,10 +74,10 @@ export function useCreatePetType(onSuccess: () => void) {
 }
 
 export function useUpdatePetType(id: string, onSuccess: () => void) {
-  const formRef = useRef<FormHandle<PetTypeInput>>(null);
+  const formRef = useRef<FormHandle<UpdatePetTypeInput>>(null);
   const [isPending, startTransition] = useTransition();
   const handleSubmit = useCallback(
-    (input: PetTypeInput) => {
+    (input: UpdatePetTypeInput) => {
       const form = formRef.current;
       if (!form || isPending) return;
       startTransition(async () => {

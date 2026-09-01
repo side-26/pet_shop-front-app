@@ -80,7 +80,7 @@ function toPetTypeFormData(input: CreatePetTypeDTO | UpdatePetTypeDTO) {
   const formData = new FormData();
   formData.set('title', input.title);
   formData.set('description', input.description ?? '');
-  formData.set('mainImage', input.mainImage);
+  if (input.mainImage instanceof File) formData.set('mainImage', input.mainImage);
 
   return formData;
 }
