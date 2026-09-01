@@ -182,6 +182,9 @@ describe('AdminLayoutShell', () => {
     expect(adminNavigationItems.find(({ label }) => label === 'دسته‌بندی')?.href).toBe(
       routePaths.adminCategories,
     );
+    expect(adminNavigationItems.find(({ label }) => label === 'زیردسته‌بندی')?.href).toBe(
+      routePaths.adminSubCategories,
+    );
     expect(adminNavigationItems.at(-1)).toMatchObject({ disabled: true });
   });
 

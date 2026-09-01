@@ -22,6 +22,7 @@ export const PATHS = {
   ADMIN_USERS: '/admin/users',
   ADMIN_PET_TYPES: '/admin/pet-types',
   ADMIN_CATEGORIES: '/admin/categories',
+  ADMIN_SUB_CATEGORIES: '/admin/sub-category',
   ADMIN_BREEDS: '/admin/breeds',
 } as const;
 
@@ -49,6 +50,7 @@ export const routePaths = {
   adminUsers: PATHS.ADMIN_USERS,
   adminPetTypes: PATHS.ADMIN_PET_TYPES,
   adminCategories: PATHS.ADMIN_CATEGORIES,
+  adminSubCategories: PATHS.ADMIN_SUB_CATEGORIES,
   adminBreeds: PATHS.ADMIN_BREEDS,
   adminBreedsQuery: (query: URLSearchParams) => `${PATHS.ADMIN_BREEDS}?${query.toString()}`,
   adminUsersQuery: (query: URLSearchParams) => `${PATHS.ADMIN_USERS}?${query.toString()}`,

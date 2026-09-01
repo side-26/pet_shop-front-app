@@ -3,6 +3,7 @@ import { setLocale, type MessageParams } from 'yup';
 const labels = {
   activityLevel: 'سطح فعالیت',
   ageAverage: 'میانگین سن',
+  category: 'دسته‌بندی',
   confirmPassword: 'تکرار کلمه عبور',
   country: 'کشور مبدأ',
   description: 'توضیحات',
