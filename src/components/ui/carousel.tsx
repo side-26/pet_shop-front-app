@@ -123,7 +123,7 @@ function Carousel({
     >
       <div
         onKeyDownCapture={handleKeyDown}
-        className={cn('tw:relative', className)}
+        className={cn('tw:relative tw:w-full tw:min-w-0', className)}
         role="region"
         aria-roledescription="carousel"
         data-slot="carousel"
@@ -141,7 +141,11 @@ function CarouselContent({ className, ...props }: React.ComponentProps<'div'>) {
   const { carouselRef, orientation } = useCarousel();
 
   return (
-    <div ref={carouselRef} className="tw:overflow-hidden" data-slot="carousel-content">
+    <div
+      ref={carouselRef}
+      className="tw:w-full tw:min-w-0 tw:overflow-hidden"
+      data-slot="carousel-content"
+    >
       <div
         className={cn(
           'tw:flex',

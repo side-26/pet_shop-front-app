@@ -63,6 +63,7 @@ describe(routePaths.uiComponents, () => {
         'Card',
         'Expandable Card',
         'Price',
+        'Price Mask / Price Mask Field',
         'Breadcrumb',
         'Alert Dialog',
         'Popover',

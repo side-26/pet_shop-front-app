@@ -219,6 +219,7 @@ describe(routePaths.adminUsers, () => {
     render(<DirectionProvider direction="rtl">{loaded}</DirectionProvider>);
 
     expect(screen.getByText('مریم احمدی')).toBeTruthy();
+    expect(screen.getByText('مریم احمدی').className).toContain('tw:line-clamp-2');
     expect(screen.getByText('نمایش 1 کاربر از 61')).toBeTruthy();
     expect(screen.getByRole('link', { name: 'رفتن به صفحه قبلی' }).getAttribute('href')).toBe(
       routePaths.adminUsersPage(1),

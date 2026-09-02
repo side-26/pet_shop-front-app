@@ -29,7 +29,7 @@ export function BreedFormFields({
   petTypes,
 }: Props) {
   return (
-    <fieldset disabled={disabled} className="tw:flex tw:flex-col tw:gap-5">
+    <fieldset disabled={disabled} className="tw:flex tw:w-full tw:min-w-0 tw:flex-col tw:gap-5">
       <div className="tw:grid tw:gap-4 tw:sm:grid-cols-2">
         <TextField<UpdateBreedInput> name="title" label="عنوان" required />
         <SelectField<UpdateBreedInput>

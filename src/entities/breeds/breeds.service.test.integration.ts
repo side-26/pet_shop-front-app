@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { customFetcher } from '@/lib/api/customFetcher';
 
-import { getBreedsPage, updateBreed } from './breeds.service';
+import { getBreeds, getBreedsPage, updateBreed } from './breeds.service';
 
 const { cacheLifeMock, invalidateDetailMock, invalidateListMock, registerListMock } = vi.hoisted(
   () => ({
@@ -77,6 +77,28 @@ describe('breed API service', () => {
       cache: 'no-store',
     });
     expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 600 });
+    expect(registerListMock).toHaveBeenCalledOnce();
+  });
+
+  it('uses the backend list endpoint with an optional pet-type query filter', async () => {
+    const response = { isSuccess: true as const, message: null, data: [] };
+    customFetcherMock.mockResolvedValue(response);
+
+    await expect(getBreeds({ petType: '507f1f77bcf86cd799439011' })).resolves.toBe(response);
+
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/breeds',
+      method: 'GET',
+      query: {
+        petType: '507f1f77bcf86cd799439011',
+        includeDisabled: true,
+        page: 1,
+        limit: 10,
+        sort: 'title',
+      },
+      auth: true,
+      cache: 'no-store',
+    });
     expect(registerListMock).toHaveBeenCalledOnce();
   });
 

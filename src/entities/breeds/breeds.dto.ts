@@ -27,6 +27,7 @@ export type BreedDTO = {
   createdAt: string;
   updatedAt: string;
 };
+export type BreedsDTO = BreedDTO[];
 export type BreedsPageDTO = PaginateDataDTO<BreedDTO>;
 export type CreateBreedDTO = BreedInput;
 export type UpdateBreedDTO = UpdateBreedInput;

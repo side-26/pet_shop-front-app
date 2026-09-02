@@ -64,14 +64,28 @@ export function UsersPaginateTable({
         <Table className="tw:h-full">
           <TableHeader>
             <TableRow>
-              <TableHead className="tw:w-16">تصویر</TableHead>
-              <TableHead>نام و نام خانوادگی</TableHead>
-              <TableHead>شماره موبایل</TableHead>
-              <TableHead>کد ملی</TableHead>
-              <TableHead>نقش</TableHead>
-              <TableHead>وضعیت</TableHead>
               <TableHead className="tw:w-16">
-                <span className="tw:sr-only">عملیات</span>
+                <div>تصویر</div>
+              </TableHead>
+              <TableHead>
+                <div>نام و نام خانوادگی</div>
+              </TableHead>
+              <TableHead>
+                <div>شماره موبایل</div>
+              </TableHead>
+              <TableHead>
+                <div>کد ملی</div>
+              </TableHead>
+              <TableHead>
+                <div>نقش</div>
+              </TableHead>
+              <TableHead>
+                <div>وضعیت</div>
+              </TableHead>
+              <TableHead className="tw:w-16">
+                <div>
+                  <span className="tw:sr-only">عملیات</span>
+                </div>
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -88,7 +102,9 @@ export function UsersPaginateTable({
                         <AvatarFallback>{getInitials(user.fullName) || '_'}</AvatarFallback>
                       </Avatar>
                     </TableCell>
-                    <TableCell className="tw:font-medium">{fullName}</TableCell>
+                    <TableCell className="tw:font-medium tw:whitespace-normal">
+                      <div className="tw:line-clamp-2">{fullName}</div>
+                    </TableCell>
                     <TableCell>
                       <bdi dir="ltr">{displayValue(user.phoneNumber)}</bdi>
                     </TableCell>

@@ -65,7 +65,7 @@ export function PetTypeDetailFormBody({
       aria-busy={isLoading || undefined}
       className={cn(isLoading && 'skeleton tw:pointer-events-none tw:select-none')}
     >
-      <fieldset disabled={isLoading} className="tw:flex tw:flex-col tw:gap-5">
+      <fieldset disabled={isLoading} className="tw:flex tw:w-full tw:min-w-0 tw:flex-col tw:gap-5">
         <TextField<UpdatePetTypeInput> name="title" label="عنوان" required />
         <TextareaField<UpdatePetTypeInput>
           name="description"

@@ -3,6 +3,7 @@ import { customFetcher, type FetcherResult } from '@/lib/api/customFetcher';
 import { EntityTag } from '@/utils/entityCache';
 import type {
   BreedDTO,
+  BreedsDTO,
   BreedPropertyDefinitionsResultDTO,
   BreedQueryDTO,
   BreedsPageDTO,
@@ -34,11 +35,26 @@ async function fetchPage(query: BreedQueryDTO) {
     auth: true,
     cache: 'no-store',
   });
-  console.log(await result, 'result');
   return result;
 }
 export async function getBreedsPage(input: Partial<BreedQueryDTO> = {}) {
   return fetchPage(await breedQuerySchema.validate(input, { stripUnknown: true }));
+}
+export async function getBreeds(input: Partial<BreedQueryDTO> = {}) {
+  return fetchList(await breedQuerySchema.validate(input, { stripUnknown: true }));
+}
+async function fetchList(query: BreedQueryDTO) {
+  'use cache: private';
+
+  breedsCache.cacheLife({ stale: 600 });
+  breedsCache.registerList(`list:${key(query)}`);
+  return customFetcher<BreedsDTO>({
+    url: '/breeds',
+    method: 'GET',
+    query,
+    auth: true,
+    cache: 'no-store',
+  });
 }
 export async function getBreed(id: string) {
   'use cache: private';

@@ -55,17 +55,35 @@ export function BreedsPaginateTable({
           <TableHeader>
             <TableRow>
               <TableHead className="tw:w-16">
-                <span className="tw:sr-only">تصویر</span>
+                <div>
+                  <span className="tw:sr-only">تصویر</span>
+                </div>
               </TableHead>
-              <TableHead>عنوان</TableHead>
-              <TableHead>نوع حیوان</TableHead>
-              <TableHead>کشور</TableHead>
-              <TableHead>میانگین سن</TableHead>
-              <TableHead>اندازه</TableHead>
-              <TableHead>سطح فعالیت</TableHead>
-              <TableHead>وضعیت</TableHead>
+              <TableHead>
+                <div>عنوان</div>
+              </TableHead>
+              <TableHead>
+                <div>نوع حیوان</div>
+              </TableHead>
+              <TableHead>
+                <div>کشور</div>
+              </TableHead>
+              <TableHead>
+                <div>میانگین سن</div>
+              </TableHead>
+              <TableHead>
+                <div>اندازه</div>
+              </TableHead>
+              <TableHead>
+                <div>سطح فعالیت</div>
+              </TableHead>
+              <TableHead>
+                <div>وضعیت</div>
+              </TableHead>
               <TableHead className="tw:w-16">
-                <span className="tw:sr-only">عملیات</span>
+                <div>
+                  <span className="tw:sr-only">عملیات</span>
+                </div>
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -91,14 +109,24 @@ export function BreedsPaginateTable({
                         <AvatarFallback className="tw:bg-transparent" />
                       </Avatar>
                     </TableCell>
-                    <TableCell className="tw:font-medium">{title}</TableCell>
-                    <TableCell>{displayValue(breed.petTypeTitle)}</TableCell>
-                    <TableCell>{displayValue(breed.country)}</TableCell>
+                    <TableCell className="tw:font-medium tw:whitespace-normal">
+                      <div className="tw:line-clamp-2">{title}</div>
+                    </TableCell>
+                    <TableCell className="tw:whitespace-normal">
+                      <div className="tw:line-clamp-2">{displayValue(breed.petTypeTitle)}</div>
+                    </TableCell>
+                    <TableCell className="tw:whitespace-normal">
+                      <div className="tw:line-clamp-2">{displayValue(breed.country)}</div>
+                    </TableCell>
                     <TableCell>
                       <bdi dir="ltr">{displayValue(breed.ageAverage)}</bdi>
                     </TableCell>
-                    <TableCell>{displayValue(breed.size)}</TableCell>
-                    <TableCell>{displayValue(breed.activityLevel)}</TableCell>
+                    <TableCell className="tw:whitespace-normal">
+                      <div className="tw:line-clamp-2">{displayValue(breed.size)}</div>
+                    </TableCell>
+                    <TableCell className="tw:whitespace-normal">
+                      <div className="tw:line-clamp-2">{displayValue(breed.activityLevel)}</div>
+                    </TableCell>
                     <TableCell>
                       <BreedEnabledSwitch
                         breedId={breed.id}

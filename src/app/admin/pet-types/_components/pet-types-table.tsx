@@ -33,13 +33,23 @@ export function PetTypesTable({ petTypes, isLoading = false }: PetTypesTableProp
           <TableHeader>
             <TableRow>
               <TableHead className="tw:w-16">
-                <span className="tw:sr-only">تصویر</span>
+                <div>
+                  <span className="tw:sr-only">تصویر</span>
+                </div>
               </TableHead>
-              <TableHead>عنوان</TableHead>
-              <TableHead>توضیحات</TableHead>
-              <TableHead>وضعیت</TableHead>
+              <TableHead>
+                <div>عنوان</div>
+              </TableHead>
+              <TableHead>
+                <div>توضیحات</div>
+              </TableHead>
+              <TableHead>
+                <div>وضعیت</div>
+              </TableHead>
               <TableHead className="tw:w-16">
-                <span className="tw:sr-only">عملیات</span>
+                <div>
+                  <span className="tw:sr-only">عملیات</span>
+                </div>
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -64,9 +74,11 @@ export function PetTypesTable({ petTypes, isLoading = false }: PetTypesTableProp
                       <AvatarFallback className="tw:bg-transparent" />
                     </Avatar>
                   </TableCell>
-                  <TableCell className="tw:font-medium">{displayValue(petType.title)}</TableCell>
-                  <TableCell className="tw:max-w-80 tw:truncate">
-                    {displayValue(petType.description)}
+                  <TableCell className="tw:font-medium tw:whitespace-normal">
+                    <div className="tw:line-clamp-2">{displayValue(petType.title)}</div>
+                  </TableCell>
+                  <TableCell className="tw:max-w-80 tw:whitespace-normal">
+                    <div className="tw:line-clamp-2">{displayValue(petType.description)}</div>
                   </TableCell>
                   <TableCell>
                     <PetTypeEnabledSwitch

@@ -95,6 +95,7 @@ describe(routePaths.adminSubCategories, () => {
 
     render(<DirectionProvider direction="rtl">{content}</DirectionProvider>);
     expect(screen.getByText('غذای خشک')).toBeTruthy();
+    expect(screen.getByText('غذای خشک').className).toContain('tw:line-clamp-2');
     expect(screen.getByText('غذا')).toBeTruthy();
     expect(screen.getByText('سگ')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'عملیات غذای خشک' })).toBeTruthy();

@@ -81,6 +81,7 @@ type SelectFieldProps<
   className?: string;
   contentClassName?: string;
   triggerClassName?: string;
+  onValueChange?: (value: string | boolean | null) => void;
 };
 
 function SelectField<
@@ -104,6 +105,7 @@ function SelectField<
   className,
   contentClassName,
   triggerClassName,
+  onValueChange,
 }: SelectFieldProps<TFieldValues, TName>) {
   const generatedId = useId();
   const id = providedId ?? generatedId;
@@ -127,7 +129,10 @@ function SelectField<
         name={field.name}
         inputRef={field.ref}
         value={field.value ?? null}
-        onValueChange={(value) => field.onChange(value)}
+        onValueChange={(value) => {
+          field.onChange(value);
+          onValueChange?.(value);
+        }}
         disabled={disabled}
         readOnly={readOnly}
         required={required}

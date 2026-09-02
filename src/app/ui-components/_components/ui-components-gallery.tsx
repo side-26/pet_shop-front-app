@@ -25,6 +25,7 @@ import { CountdownShowcase } from './countdown-showcase';
 import { CounterShowcase } from './counter-showcase';
 import { HoverCardShowcase } from './hover-card-showcase';
 import { PriceShowcase } from './price-showcase';
+import { PriceMaskShowcase } from './price-mask-showcase';
 import { BreadcrumbShowcase } from './breadcrumb-showcase';
 import { ExpandableCardShowcase } from './expandable-card-showcase';
 import { ToggleGroupShowcase } from './toggle-group-showcase';
@@ -33,6 +34,7 @@ import { EmptyShowcase } from './empty-showcase';
 import { FormDialogContentShowcase } from './form-dialog-content-showcase';
 import { FilterFormDialogContentShowcase } from './filter-form-dialog-content-showcase';
 import { FileFieldShowcase } from './file-field-showcase';
+import { MultipleImageUploaderFieldShowcase } from './multiple-image-uploader-field-showcase';
 
 const navigation = [
   ['#avatars', 'Avatar'],
@@ -41,6 +43,7 @@ const navigation = [
   ['#cards', 'Card'],
   ['#expandable-cards', 'Expandable Card'],
   ['#prices', 'Price'],
+  ['#price-mask-fields', 'Price Mask Field'],
   ['#breadcrumbs', 'Breadcrumb'],
   ['#alert-dialogs', 'Alert Dialog'],
   ['#confirm-dialogs', 'Confirm Dialog'],
@@ -64,6 +67,7 @@ const navigation = [
   ['#menubars', 'Menubar'],
   ['#forms', 'Form'],
   ['#file-fields', 'FileField'],
+  ['#multiple-image-uploader-fields', 'Multiple Image Uploader Field'],
   ['#input-otp-fields', 'Input OTP Field'],
   ['#countdowns', 'Countdown'],
   ['#counters', 'Counter'],
@@ -112,6 +116,7 @@ export function UiComponentsGallery() {
         <CardShowcase />
         <ExpandableCardShowcase />
         <PriceShowcase />
+        <PriceMaskShowcase />
         <BreadcrumbShowcase />
         <AlertDialogShowcase />
         <ConfirmDialogShowcase />
@@ -137,6 +142,7 @@ export function UiComponentsGallery() {
         <MenubarShowcase />
         <FormShowcase />
         <FileFieldShowcase />
+        <MultipleImageUploaderFieldShowcase />
         <InputOtpShowcase />
         <CountdownShowcase />
         <CounterShowcase />

@@ -84,6 +84,7 @@ describe(routePaths.adminCategories, () => {
     const { container } = render(<DirectionProvider direction="rtl">{content}</DirectionProvider>);
     expect(row.petTypeTitle).toBe('سگ');
     expect(screen.getByText('سگ')).toBeTruthy();
+    expect(screen.getByText('سگ').className).toContain('tw:line-clamp-2');
     expect(screen.getByRole('switch', { name: 'غذای خشک: فعال' })).toBeTruthy();
     expect(container.querySelector('[data-slot="avatar"]')?.getAttribute('style')).toContain(
       category.mainThumbnailImage,

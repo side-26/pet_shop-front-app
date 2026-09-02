@@ -35,7 +35,7 @@ export function SubCategoryFormFields({ categories, disabled = false }: Props) {
   }));
 
   return (
-    <fieldset disabled={disabled} className="tw:flex tw:flex-col tw:gap-5">
+    <fieldset disabled={disabled} className="tw:flex tw:w-full tw:min-w-0 tw:flex-col tw:gap-5">
       <TextField<SubCategoryInput> name="title" label="عنوان" required />
       <SelectField<SubCategoryInput>
         name="category"

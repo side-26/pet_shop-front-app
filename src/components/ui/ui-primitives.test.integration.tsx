@@ -227,6 +227,7 @@ describe('Pet Shop UI primitives', () => {
     const columns: ColumnDef<{ name: string }>[] = [{ accessorKey: 'name', header: 'نام' }];
     const { rerender } = render(<DataTable columns={columns} data={[{ name: 'میشا' }]} />);
     expect(screen.getByText('میشا')).toBeTruthy();
+    expect(screen.getByText('میشا').className).toContain('tw:line-clamp-2');
     expect(screen.getByRole('button', { name: 'قبلی' }).hasAttribute('disabled')).toBe(true);
     rerender(<DataTable columns={columns} data={[]} emptyLabel="بدون داده" />);
     expect(screen.getByText('بدون داده')).toBeTruthy();
@@ -390,6 +391,7 @@ describe('Pet Shop UI primitives', () => {
     expect(button.getAttribute('data-loading')).toBe('true');
     expect(button.getAttribute('data-block')).toBe('true');
     expect(button.className).toContain('tw:w-full');
+    expect(button).toHaveProperty('disabled', true);
     expect(screen.queryByText('ثبت سفارش')).toBeNull();
   });
 

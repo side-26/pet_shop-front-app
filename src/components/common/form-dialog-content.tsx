@@ -28,6 +28,8 @@ function FormDialogContent({
   title,
   ...dialogContentProps
 }: FormDialogContentProps) {
+  const loadingText = 'در حال ذخیره...';
+
   return (
     <DialogContent
       className={cn('tw:overflow-hidden tw:p-0', className)}
@@ -50,7 +52,7 @@ function FormDialogContent({
               color="primary"
               variant="fill"
               isLoading={isLoading}
-              loadingText={submitText}
+              loadingText={loadingText}
             >
               {submitText}
             </Button>

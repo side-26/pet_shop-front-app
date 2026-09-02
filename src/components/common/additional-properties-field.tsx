@@ -40,7 +40,7 @@ function AdditionalPropertiesField<
   const canAdd = !disabled && fields.length < maxItems;
 
   return (
-    <fieldset disabled={disabled} className="tw:flex tw:flex-col tw:gap-3">
+    <fieldset disabled={disabled} className="tw:flex tw:w-full tw:min-w-0 tw:flex-col tw:gap-3">
       <legend className="tw:text-title-s tw:text-foreground">{label}</legend>
       {fields.map((field, index) => {
         const fieldName = `${name}.${index}` as FieldPath<TFieldValues>;

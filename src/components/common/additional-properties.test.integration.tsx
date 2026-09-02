@@ -32,6 +32,9 @@ describe('AdditionalProperties', () => {
       </Form>,
     );
 
+    const fieldset = screen.getByRole('group', { name: 'مشخصات بیشتر' });
+    expect(Array.from(fieldset.children).some((child) => child.tagName === 'DIV')).toBe(true);
+
     fireEvent.click(screen.getByRole('button', { name: 'افزودن مشخصات' }));
     fireEvent.change(screen.getByLabelText('عنوان'), { target: { value: 'رنگ' } });
     fireEvent.change(screen.getByLabelText('مقدار'), { target: { value: 'قهوه‌ای' } });

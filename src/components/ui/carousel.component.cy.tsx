@@ -19,7 +19,11 @@ describe('Carousel RTL', () => {
         <CarouselNext />
       </Carousel>,
     );
-    cy.get('[data-slot="carousel"]').should('have.attr', 'dir', 'rtl').focus();
+    cy.get('[data-slot="carousel"]')
+      .should('have.attr', 'dir', 'rtl')
+      .and('have.class', 'tw:w-full')
+      .focus();
+    cy.get('[data-slot="carousel-content"]').should('have.class', 'tw:w-full');
     cy.get('[data-slot="carousel-previous"] svg').should('have.class', 'lucide-chevron-right');
     cy.get('[data-slot="carousel-next"] svg').should('have.class', 'lucide-chevron-left');
     cy.get('[data-slot="carousel-next"]').should('not.be.disabled');

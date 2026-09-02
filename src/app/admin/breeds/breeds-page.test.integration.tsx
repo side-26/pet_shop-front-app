@@ -127,6 +127,7 @@ describe(routePaths.adminBreeds, () => {
       <DirectionProvider direction="rtl">{loaded}</DirectionProvider>,
     );
     expect(screen.getByText(breed.title)).toBeTruthy();
+    expect(screen.getByText(breed.title).className).toContain('tw:line-clamp-2');
     expect(screen.getByText('سگ')).toBeTruthy();
     expect(screen.getAllByRole('columnheader')).toHaveLength(9);
     expect(container.querySelector('[data-slot="avatar"]')?.getAttribute('style')).toContain(

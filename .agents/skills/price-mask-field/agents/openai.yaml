@@ -1,0 +1,7 @@
+interface:
+  display_name: "Price Mask Field"
+  short_description: "Use formatted fields for money inputs"
+  default_prompt: "Use $price-mask-field for every editable price input in this change."
+
+policy:
+  allow_implicit_invocation: true

@@ -38,13 +38,23 @@ export function CategoriesTable({ categories, petTypes = [], isSkeleton = false 
           <TableHeader>
             <TableRow>
               <TableHead className="tw:w-16">
-                <span className="tw:sr-only">تصویر</span>
+                <div>
+                  <span className="tw:sr-only">تصویر</span>
+                </div>
               </TableHead>
-              <TableHead>عنوان</TableHead>
-              <TableHead>نوع حیوان</TableHead>
-              <TableHead>وضعیت</TableHead>
+              <TableHead>
+                <div>عنوان</div>
+              </TableHead>
+              <TableHead>
+                <div>نوع حیوان</div>
+              </TableHead>
+              <TableHead>
+                <div>وضعیت</div>
+              </TableHead>
               <TableHead className="tw:w-16">
-                <span className="tw:sr-only">عملیات</span>
+                <div>
+                  <span className="tw:sr-only">عملیات</span>
+                </div>
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -69,8 +79,12 @@ export function CategoriesTable({ categories, petTypes = [], isSkeleton = false 
                       <AvatarFallback className="tw:bg-transparent" />
                     </Avatar>
                   </TableCell>
-                  <TableCell className="tw:font-medium">{displayValue(category.title)}</TableCell>
-                  <TableCell>{displayValue(category.petTypeTitle)}</TableCell>
+                  <TableCell className="tw:font-medium tw:whitespace-normal">
+                    <div className="tw:line-clamp-2">{displayValue(category.title)}</div>
+                  </TableCell>
+                  <TableCell className="tw:whitespace-normal">
+                    <div className="tw:line-clamp-2">{displayValue(category.petTypeTitle)}</div>
+                  </TableCell>
                   <TableCell>
                     <CategoryEnabledSwitch
                       categoryId={category.id}

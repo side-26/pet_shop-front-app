@@ -51,11 +51,12 @@ describe('FormDialogContent', () => {
     expect(onClose).toHaveBeenCalledOnce();
   });
 
-  it('defaults the submit text and locks cancellation while loading', () => {
+  it('shows a distinct loading label and locks dialog actions while loading', () => {
     renderContent({ isLoading: true });
 
-    const submit = screen.getByRole('button', { name: 'agree' });
+    const submit = screen.getByRole('button', { name: 'در حال ذخیره...' });
     expect(submit.getAttribute('aria-busy')).toBe('true');
+    expect(submit).toHaveProperty('disabled', true);
     expect(submit.hasAttribute('form')).toBe(false);
     expect(screen.getByRole('button', { name: 'انصراف' })).toHaveProperty('disabled', true);
   });

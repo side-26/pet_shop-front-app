@@ -142,6 +142,13 @@ If a component strongly depends on one entity's model/business rules, move it to
 
 Common components may manage generic UI behavior.
 
+`MultipleImageUploaderField` owns its complete React Hook Form value (`images` and
+`mainImageIndex`) so consumers do not duplicate selection, limit, deletion, or main-image logic.
+It accepts `defaultImages` and `mainImageUrl` for persisted URL images, which are displayed
+read-only and never included in the editable React Hook Form value. Persisted images use 100px RTL
+carousel slides while newly selected image cards retain their 160px action-ready layout; controls
+appear only when a collection overflows its available width.
+
 They must not own:
 
 ```text
@@ -337,9 +344,10 @@ Codex/Claude Code must:
 `FormDialogContent` composes `DialogContent` with a filled `Card`, a `CardHeader` containing the
 required `DialogTitle`, a customizable `CardContent`, and a `CardFooter` action row. The submit
 button is `fill + primary`, supports an optional external `formId`, owns Button loading through
-`isLoading`, and defaults its label to `agree`. The cancel button is `outlined + error`, invokes the
-required `onClose`, and is disabled while submission is loading. Both actions occupy equal width
-with an 8px gap.
+`isLoading`, and defaults its label to `agree`. While loading, the submit button is disabled and
+shows the `در حال ذخیره...` label. The cancel button is `outlined + error`, invokes the required
+`onClose`, and is disabled while submission is loading. Both actions occupy equal width with an 8px
+gap.
 
 `FilterFormDialogContent` builds on that contract for filter forms, defaulting to the Persian
 `فیلترها` title and `اعمال فیلتر` submit label while leaving both customizable.

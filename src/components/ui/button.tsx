@@ -229,6 +229,7 @@ function Button({
   size = 'md',
   iconOnly = false,
   block = false,
+  disabled,
   isLoading = false,
   loadingText,
   children,
@@ -239,6 +240,7 @@ function Button({
   return (
     <ButtonPrimitive
       {...props}
+      disabled={disabled || isLoading}
       data-slot={dataSlot}
       data-variant={variant}
       data-color={color}

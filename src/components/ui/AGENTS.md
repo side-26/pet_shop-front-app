@@ -192,6 +192,14 @@ Always provide `AvatarFallback`; use `AvatarBadge` for a separately named status
 `className`. It formats values with Persian thousands separators, isolates the
 numeric run as LTR, places `$` before the number, and places rial/toman after it.
 
+`PriceMask` is an editable LTR numeric input that displays Latin digits grouped
+in threes while exposing an unformatted `number | null` through `onValueChange`.
+It accepts Persian, Arabic, or Latin input digits, defaults to a `ریال` prefix
+with typography smaller than the numeric value at every size, and a dollar-sign
+postfix icon. It supports custom adornments. `PriceMaskField`
+adds the shared label, persistent hint/error region, React Hook Form controller,
+disabled state, semantic color, and `xs|sm|md|lg|xl` sizing contract.
+
 `AlertDialogContent` uses `size="sm|md|lg"`. Every alert dialog must include
 an `AlertDialogTitle` and should include an `AlertDialogDescription`. Use
 `AlertDialogCancel` for the focus-restoring close action; choose the semantic
@@ -232,7 +240,8 @@ previous/next arrows. Links accept the shared `variant` and `color` axes; when
 radio items must be placed inside `DropdownMenuRadioGroup`, as required by Base UI.
 
 `DataTable` composes TanStack Table v8 with the shared `Table` renderer and owns
-sorting, pagination, empty state, and stable row IDs. `Carousel` uses Embla with
+sorting, pagination, empty state, and stable row IDs. `Carousel` fills its containing width by
+default and uses Embla with
 `direction="rtl"` by default; in RTL, previous uses a right chevron, next uses a
 left chevron, ArrowRight moves previous, and ArrowLeft moves next. `ButtonGroup`
 supports horizontal and vertical orientations and joins child borders using

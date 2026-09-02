@@ -60,9 +60,11 @@ function DataTable<TData, TValue>({
               <TableRow key={group.id}>
                 {group.headers.map((header) => (
                   <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                    <div>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    </div>
                   </TableHead>
                 ))}
               </TableRow>
@@ -72,11 +74,24 @@ function DataTable<TData, TValue>({
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map((cell) => {
+                    const content = flexRender(cell.column.columnDef.cell, cell.getContext());
+                    const value = cell.getValue();
+                    const isPlainText =
+                      typeof value === 'string' &&
+                      columns.some(
+                        (column) =>
+                          column.cell === undefined &&
+                          (column.id === cell.column.id ||
+                            ('accessorKey' in column && column.accessorKey === cell.column.id)),
+                      );
+
+                    return (
+                      <TableCell key={cell.id} className="tw:whitespace-normal">
+                        {isPlainText ? <div className="tw:line-clamp-2">{value}</div> : content}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             ) : (

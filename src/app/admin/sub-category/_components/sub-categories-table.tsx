@@ -35,11 +35,19 @@ export function SubCategoriesTable({ rows, categories = [], isSkeleton = false }
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>عنوان</TableHead>
-              <TableHead>دسته‌بندی</TableHead>
-              <TableHead>نوع حیوان</TableHead>
+              <TableHead>
+                <div>عنوان</div>
+              </TableHead>
+              <TableHead>
+                <div>دسته‌بندی</div>
+              </TableHead>
+              <TableHead>
+                <div>نوع حیوان</div>
+              </TableHead>
               <TableHead className="tw:w-16">
-                <span className="tw:sr-only">عملیات</span>
+                <div>
+                  <span className="tw:sr-only">عملیات</span>
+                </div>
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -47,9 +55,15 @@ export function SubCategoriesTable({ rows, categories = [], isSkeleton = false }
             {rows.length ? (
               rows.map((row) => (
                 <TableRow key={row.id}>
-                  <TableCell className="tw:font-medium">{displayValue(row.title)}</TableCell>
-                  <TableCell>{displayValue(row.categoryTitle)}</TableCell>
-                  <TableCell>{displayValue(row.petTypeTitle)}</TableCell>
+                  <TableCell className="tw:font-medium tw:whitespace-normal">
+                    <div className="tw:line-clamp-2">{displayValue(row.title)}</div>
+                  </TableCell>
+                  <TableCell className="tw:whitespace-normal">
+                    <div className="tw:line-clamp-2">{displayValue(row.categoryTitle)}</div>
+                  </TableCell>
+                  <TableCell className="tw:whitespace-normal">
+                    <div className="tw:line-clamp-2">{displayValue(row.petTypeTitle)}</div>
+                  </TableCell>
                   <TableCell>
                     <SubCategoryRowActions
                       subCategoryId={row.id}

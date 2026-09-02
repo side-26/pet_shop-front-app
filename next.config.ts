@@ -10,19 +10,24 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [{ protocol: 'https', hostname: 'flagpedia.net', pathname: '/data/flags/**' }],
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '50mb'
+    }
+  },
   ...(process.env.PETSHOP_CYPRESS_COMPONENT_TEST === 'true'
     ? {
-        webpack(config, { webpack }) {
-          config.plugins.push(
-            new webpack.NormalModuleReplacementPlugin(
-              /^@\/entities\/auth\/auth\.actions$/,
-              path.resolve(projectDirectory, 'cypress/support/auth.actions.mock.ts'),
-            ),
-          );
+      webpack(config, { webpack }) {
+        config.plugins.push(
+          new webpack.NormalModuleReplacementPlugin(
+            /^@\/entities\/auth\/auth\.actions$/,
+            path.resolve(projectDirectory, 'cypress/support/auth.actions.mock.ts'),
+          ),
+        );
 
-          return config;
-        },
-      }
+        return config;
+      },
+    }
     : {}),
 };
 

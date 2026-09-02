@@ -22,6 +22,12 @@ async function admin() {
     ? null
     : denied('اجازه مدیریت نژادها را ندارید.');
 }
+async function management() {
+  const role = (await getSession())?.role;
+  return role === USER_ROLES.ADMIN || role === USER_ROLES.SELLER
+    ? null
+    : denied('اجازه مشاهده نژادها را ندارید.');
+}
 async function validate<T>(
   schema: { validate(input: unknown, options: object): Promise<T> },
   input: unknown,
@@ -34,10 +40,16 @@ async function validate<T>(
   }
 }
 export async function getBreedsPageAction(input: unknown = {}) {
-  const error = await admin();
+  const error = await management();
   if (error) return error;
   const value = await validate(breedQuerySchema, input);
   return 'isSuccess' in value ? value : service.getBreedsPage(value);
+}
+export async function getBreedsAction(input: unknown = {}) {
+  const error = await management();
+  if (error) return error;
+  const value = await validate(breedQuerySchema, input);
+  return 'isSuccess' in value ? value : service.getBreeds(value);
 }
 export async function getBreedAction(input: unknown) {
   const error = await admin();
