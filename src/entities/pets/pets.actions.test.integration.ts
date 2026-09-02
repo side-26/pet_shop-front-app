@@ -14,11 +14,9 @@ import {
 } from './pets.actions';
 import * as service from './pets.service';
 import { getAllPetTypes } from '@/entities/pet-types/pet-types.service';
-import { getBreedsPage } from '@/entities/breeds/breeds.service';
 
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
 vi.mock('@/entities/pet-types/pet-types.service', () => ({ getAllPetTypes: vi.fn() }));
-vi.mock('@/entities/breeds/breeds.service', () => ({ getBreedsPage: vi.fn() }));
 vi.mock('./pets.service', () => ({
   createPet: vi.fn(),
   deletePet: vi.fn(),
@@ -85,25 +83,16 @@ describe('pet actions', () => {
     expect(service.updatePetPrice).toHaveBeenCalledWith(id, { price: 200 });
   });
 
-  it('loads image-bearing pet-type and breed select options', async () => {
+  it('loads image-bearing pet-type select options before a pet type is selected', async () => {
     vi.mocked(getAllPetTypes).mockResolvedValue({
       isSuccess: true,
       message: null,
       data: [{ id: petType, title: 'گربه', mainImage: 'type.webp' }] as never,
     });
-    vi.mocked(getBreedsPage).mockResolvedValue({
-      isSuccess: true,
-      message: null,
-      data: {
-        result: [{ id: breed, title: 'پرشین', mainImage: 'breed.webp' }],
-        pagination: {},
-      } as never,
-    });
     await expect(getPetFormOptionsAction()).resolves.toMatchObject({
       isSuccess: true,
       data: {
         petTypes: [{ id: petType, title: 'گربه', image: 'type.webp' }],
-        breeds: [{ id: breed, title: 'پرشین', image: 'breed.webp' }],
       },
     });
   });

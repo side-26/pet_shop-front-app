@@ -12,6 +12,7 @@ vi.mock('@/components/ui/carousel', () => ({
   CarouselItem: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   CarouselPrevious: () => <button type="button">اسلاید قبلی</button>,
   CarouselNext: () => <button type="button">اسلاید بعدی</button>,
+  useCarousel: () => ({ canScrollNext: false, canScrollPrev: false }),
 }));
 
 afterEach(cleanup);

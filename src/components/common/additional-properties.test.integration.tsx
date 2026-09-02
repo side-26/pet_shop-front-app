@@ -33,7 +33,8 @@ describe('AdditionalProperties', () => {
     );
 
     const fieldset = screen.getByRole('group', { name: 'مشخصات بیشتر' });
-    expect(Array.from(fieldset.children).some((child) => child.tagName === 'DIV')).toBe(true);
+    expect(fieldset.className).toContain('tw:w-full');
+    expect(fieldset.className).toContain('tw:min-w-0');
 
     fireEvent.click(screen.getByRole('button', { name: 'افزودن مشخصات' }));
     fireEvent.change(screen.getByLabelText('عنوان'), { target: { value: 'رنگ' } });

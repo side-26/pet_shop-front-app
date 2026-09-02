@@ -20,7 +20,7 @@ describe('RegisterForm', () => {
     clientMocks.handleSubmit.mockReset();
   });
 
-  it('renders an active loading state instead of disabling the submit button', async () => {
+  it('renders a disabled loading state while the registration request is pending', async () => {
     clientMocks.handleSubmit.mockImplementation(() => new Promise<void>(() => undefined));
     render(<RegisterForm />);
 
@@ -35,7 +35,7 @@ describe('RegisterForm', () => {
     const loadingButton = await screen.findByRole('button', { name: /در حال ثبت‌نام/ });
     await waitFor(() => expect(clientMocks.handleSubmit).toHaveBeenCalledOnce());
     expect(loadingButton.getAttribute('aria-busy')).toBe('true');
-    expect(loadingButton.hasAttribute('disabled')).toBe(false);
+    expect(loadingButton.hasAttribute('disabled')).toBe(true);
     expect(loadingButton.getAttribute('data-loading')).toBe('true');
     expect(loadingButton.className).toContain('tw:w-full');
   });
