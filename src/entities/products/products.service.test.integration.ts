@@ -8,6 +8,7 @@ import {
   getCustomerProducts,
   getManagementProduct,
   getManagementProducts,
+  getProductMainInfo,
   updateProductBaseInfo,
   updateProductImages,
   updateProductPrice,
@@ -49,6 +50,7 @@ describe('product service', () => {
       isEnable: false,
     });
     await getManagementProduct(id);
+    await getProductMainInfo(id);
     expect(fetcher.mock.calls.map(([o]) => o)).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ url: '/products', auth: false, cache: 'force-cache' }),
@@ -74,6 +76,11 @@ describe('product service', () => {
           },
         }),
         expect.objectContaining({ url: `/products/manage/${id}`, auth: true, cache: 'no-store' }),
+        expect.objectContaining({
+          url: `/products/${id}/main-info`,
+          auth: true,
+          cache: 'no-store',
+        }),
       ]),
     );
     expect(mocks.registerList).toHaveBeenCalled();
@@ -94,7 +101,7 @@ describe('product service', () => {
     expect(body.get('mainImage')).toBe(image);
     expect(body.get('quantity')).toBe('2');
     expect(fetcher.mock.calls[1]?.[0]).toMatchObject({
-      url: `/products/${id}`,
+      url: `/products/${id}/main-info`,
       method: 'PUT',
       body: { title: 'جدید' },
     });

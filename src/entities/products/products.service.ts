@@ -86,7 +86,7 @@ export async function getManagementProduct(id: string) {
     cache: 'no-store',
   });
 }
-async function getSection<T>(id: string, section: 'images' | 'price') {
+async function getSection<T>(id: string, section: 'images' | 'main-info' | 'price') {
   'use cache: private';
   productsCache.cacheLife({ stale: 600 });
   productsCache.registerDetail(id);
@@ -99,6 +99,7 @@ async function getSection<T>(id: string, section: 'images' | 'price') {
 }
 export const getProductImages = (id: string) => getSection<ProductImagesDTO>(id, 'images');
 export const getProductPrice = (id: string) => getSection<ProductPriceDTO>(id, 'price');
+export const getProductMainInfo = (id: string) => getSection<ProductBaseInfoDTO>(id, 'main-info');
 function toFormData(input: CreateProductDTO | UpdateProductImagesDTO) {
   const body = new FormData();
   for (const [key, value] of Object.entries(input)) {
@@ -129,7 +130,7 @@ export async function createProduct(input: CreateProductDTO) {
 }
 export async function updateProductBaseInfo(id: string, input: UpdateProductBaseInfoDTO) {
   const result = await customFetcher<ProductBaseInfoDTO, unknown, UpdateProductBaseInfoDTO>({
-    url: `/products/${id}`,
+    url: `/products/${id}/main-info`,
     method: 'PUT',
     body: input,
     auth: true,

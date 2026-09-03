@@ -6,6 +6,7 @@ import {
   deleteProductAction,
   getCustomerProductsAction,
   getManagementProductsAction,
+  getProductMainInfoAction,
   updateProductPriceAction,
 } from './products.actions';
 import * as service from './products.service';
@@ -19,6 +20,7 @@ vi.mock('./products.service', () => ({
   getCustomerProduct: vi.fn(),
   getManagementProduct: vi.fn(),
   getProductImages: vi.fn(),
+  getProductMainInfo: vi.fn(),
   getProductPrice: vi.fn(),
   updateProductBaseInfo: vi.fn(),
   updateProductImages: vi.fn(),
@@ -60,6 +62,15 @@ describe('product actions', () => {
       expect.objectContaining({ title: 'غذا', quantity: 0 }),
     );
     expect(service.updateProductPrice).toHaveBeenCalledWith(id, { price: 10 });
+  });
+  it('authorizes and validates main-information section reads', async () => {
+    vi.mocked(service.getProductMainInfo).mockResolvedValue(ok);
+    await expect(getProductMainInfoAction({ id })).resolves.toBe(ok);
+    expect(service.getProductMainInfo).toHaveBeenCalledWith(id);
+
+    session.mockResolvedValue({ role: USER_ROLES.CUSTOMER } as never);
+    await expect(getProductMainInfoAction({ id })).resolves.toMatchObject({ isSuccess: false });
+    expect(service.getProductMainInfo).toHaveBeenCalledTimes(1);
   });
   it('rejects customer management and non-admin deletion', async () => {
     session.mockResolvedValue({ role: USER_ROLES.CUSTOMER } as never);

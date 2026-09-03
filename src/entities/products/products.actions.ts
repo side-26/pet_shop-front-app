@@ -76,6 +76,8 @@ export const getProductImagesAction = (input: unknown) =>
   managementSection(input, service.getProductImages);
 export const getProductPriceAction = (input: unknown) =>
   managementSection(input, service.getProductPrice);
+export const getProductMainInfoAction = (input: unknown) =>
+  managementSection(input, service.getProductMainInfo);
 export async function createProductAction(input: unknown) {
   const error = await authorizeManagement();
   if (error) return error;
