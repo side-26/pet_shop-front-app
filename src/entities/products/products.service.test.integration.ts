@@ -41,7 +41,13 @@ describe('product service', () => {
   it('uses distinct public cached and authenticated private read contracts', async () => {
     await getCustomerProducts({ category });
     await getCustomerProduct(id);
-    await getManagementProducts();
+    await getManagementProducts({
+      title: 'غذای ویژه',
+      category,
+      quantity: 12,
+      price: 275000,
+      isEnable: false,
+    });
     await getManagementProduct(id);
     expect(fetcher.mock.calls.map(([o]) => o)).toEqual(
       expect.arrayContaining([
@@ -55,7 +61,17 @@ describe('product service', () => {
           url: '/products/paginate',
           auth: true,
           cache: 'no-store',
-          query: { includeDisabled: false, page: 1, limit: 10, sort: 'createdAt' },
+          query: {
+            title: 'غذای ویژه',
+            category,
+            quantity: 12,
+            price: 275000,
+            isEnable: false,
+            includeDisabled: false,
+            page: 1,
+            limit: 10,
+            sort: 'createdAt',
+          },
         }),
         expect.objectContaining({ url: `/products/manage/${id}`, auth: true, cache: 'no-store' }),
       ]),

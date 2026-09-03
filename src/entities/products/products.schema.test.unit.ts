@@ -43,7 +43,22 @@ describe('product schemas', () => {
       sort: 'createdAt',
     });
     await expect(
-      managementProductQuerySchema.validate({ includeDisabled: 'true' }),
-    ).resolves.toMatchObject({ includeDisabled: true, page: 1, limit: 10, sort: 'createdAt' });
+      managementProductQuerySchema.validate({
+        title: '  غذای ویژه  ',
+        quantity: 12,
+        price: 275000,
+        isEnable: false,
+        includeDisabled: 'true',
+      }),
+    ).resolves.toMatchObject({
+      title: 'غذای ویژه',
+      quantity: 12,
+      price: 275000,
+      isEnable: false,
+      includeDisabled: true,
+      page: 1,
+      limit: 10,
+      sort: 'createdAt',
+    });
   });
 });

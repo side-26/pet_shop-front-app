@@ -63,9 +63,13 @@ export const updateProductPriceSchema = object({
 );
 
 const queryFields = {
+  title: string().trim().max(150).optional(),
   search: string().trim().max(150).optional(),
   category: objectId.optional(),
   subCategory: objectId.optional(),
+  quantity: number().integer().min(0).optional(),
+  price: number().min(0).optional(),
+  isEnable: boolean().optional(),
   page: number().integer().min(1).default(1).required(),
   limit: number().integer().min(1).max(100).default(10).required(),
   sort: mixed<'title' | 'createdAt' | 'updatedAt' | 'price' | 'quantity'>()

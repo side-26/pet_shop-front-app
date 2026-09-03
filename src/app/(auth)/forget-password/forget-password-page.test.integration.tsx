@@ -71,7 +71,14 @@ beforeEach(() => {
   );
 });
 
-afterEach(() => {
+afterEach(async () => {
+  if (vi.isFakeTimers()) {
+    await act(async () => {
+      vi.runOnlyPendingTimers();
+    });
+  } else {
+    await new Promise<void>((resolve) => setTimeout(resolve, 60));
+  }
   cleanup();
   vi.clearAllTimers();
   vi.useRealTimers();
