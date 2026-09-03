@@ -73,6 +73,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
+  vi.clearAllTimers();
   vi.useRealTimers();
   vi.unstubAllGlobals();
 });

@@ -81,6 +81,9 @@ importers:
       '@testing-library/react':
         specifier: ^16.3.2
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@types/k6':
+        specifier: ^2.2.0
+        version: 2.2.0
       '@types/node':
         specifier: ^20
         version: 20.19.43
@@ -1069,6 +1072,9 @@ packages:
 
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+
+  '@types/k6@2.2.0':
+    resolution: {integrity: sha512-wuHM+JLcpV0VL2G8ltu0N3ZDbbq1GHkP5ypeMzTZcFFqpN8ioV0DojxQFKvlbnVzuhgnY7Yy+Hhl8LzstdplhQ==}
 
   '@types/node@20.19.43':
     resolution: {integrity: sha512-6oYBAi5ikg4Pl+kGsoYtawUMBT2zZMCvPNF7pVLnHZfd1zf38DRiWn/gT01RYCdUqkv7Fhr+C9ot4/tb+2sVvA==}
@@ -4974,6 +4980,8 @@ snapshots:
   '@types/json-schema@7.0.15': {}
 
   '@types/json5@0.0.29': {}
+
+  '@types/k6@2.2.0': {}
 
   '@types/node@20.19.43':
     dependencies:
