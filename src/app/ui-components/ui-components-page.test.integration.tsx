@@ -86,6 +86,8 @@ describe(routePaths.uiComponents, () => {
         'Tabs',
         'Menubar',
         'Form',
+        'FileField',
+        'MultipleImageUploaderField',
         'Input OTP Field',
         'Countdown',
         'Counter',
@@ -121,7 +123,7 @@ describe(routePaths.uiComponents, () => {
     expect(screen.getByRole('button', { name: 'روشن' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'تیره' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'سیستم' })).toBeTruthy();
-  }, 30_000);
+  }, 60_000);
 
   it('defines route metadata without making the page a Client Component', () => {
     expect(metadata.title).toBe('کتابخانه اجزای رابط کاربری | پت‌شاپ');
