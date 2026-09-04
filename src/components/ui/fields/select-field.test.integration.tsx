@@ -3,6 +3,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { Form } from '@/components/ui/form';
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './select';
 import { SelectField, selectFieldVariants } from './select-field';
 
 type Values = { petType: string };
@@ -10,6 +18,34 @@ type Values = { petType: string };
 afterEach(cleanup);
 
 describe('SelectField', () => {
+  it('truncates long selected values while retaining the full accessible label and toggle control', () => {
+    const label = 'A very long pet type name that must remain available to assistive technology';
+
+    render(
+      <Select items={[{ label, value: 'long-pet-type' }]} defaultValue="long-pet-type">
+        <SelectTrigger aria-label={label}>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectItem value="long-pet-type">{label}</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>,
+    );
+
+    const trigger = screen.getByRole('combobox', { name: label });
+    const value = trigger.querySelector('[data-slot="select-value"]');
+    const icon = trigger.querySelector('[data-slot="select-trigger-icon"]');
+    expect(value?.className).toContain('tw:min-w-0');
+    expect(value?.className).toContain('tw:flex-1');
+    expect(value?.className).toContain('tw:truncate');
+    expect(icon?.className).toContain('tw:shrink-0');
+    expect(icon?.getAttribute('aria-hidden')).toBe('true');
+    fireEvent.click(trigger);
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+  });
+
   it('uses the same label and description typography scale as TextField', () => {
     const small = selectFieldVariants({ size: 'xs' });
     const large = selectFieldVariants({ size: 'xl' });

@@ -162,4 +162,32 @@ describe('Form controls', () => {
       expect(list.scrollHeight).to.be.greaterThan(list.clientHeight);
     });
   });
+
+  it('truncates a long selected value without reducing the select toggle', () => {
+    const longLabel =
+      'A very long pet type name that must remain available to assistive technology';
+    const longValue = 'long-pet-type';
+
+    cy.mount(
+      <div dir="rtl" className="tw:w-48">
+        <Select items={[{ label: longLabel, value: longValue }]} defaultValue={longValue}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value={longValue}>{longLabel}</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>,
+    );
+
+    cy.get('[data-slot="select-value"]')
+      .should('contain.text', longLabel)
+      .and('have.css', 'overflow', 'hidden')
+      .then(($value) => expect($value[0].scrollWidth).to.be.greaterThan($value[0].clientWidth));
+    cy.get('[data-slot="select-trigger-icon"]').should('have.css', 'flex-shrink', '0');
+    cy.get('[role="combobox"]').click().should('have.attr', 'aria-expanded', 'true');
+  });
 });

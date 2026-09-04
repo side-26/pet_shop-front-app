@@ -11,8 +11,14 @@ function Select<Value, Multiple extends boolean | undefined = false>(
   return <SelectPrimitive.Root {...props} />;
 }
 
-function SelectValue(props: SelectPrimitive.Value.Props) {
-  return <SelectPrimitive.Value data-slot="select-value" {...props} />;
+function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
+  return (
+    <SelectPrimitive.Value
+      data-slot="select-value"
+      className={cn('tw:min-w-0 tw:flex-1 tw:truncate', className)}
+      {...props}
+    />
+  );
 }
 
 function SelectTrigger({ className, children, ...props }: SelectPrimitive.Trigger.Props) {
@@ -20,13 +26,13 @@ function SelectTrigger({ className, children, ...props }: SelectPrimitive.Trigge
     <SelectPrimitive.Trigger
       data-slot="field-control"
       className={cn(
-        'tw:flex tw:h-10 tw:w-full tw:items-center tw:justify-between tw:gap-2 tw:rounded-xl tw:border tw:border-input tw:bg-background tw:px-3 tw:text-body-m tw:text-foreground tw:shadow-xs tw:outline-none tw:transition-[border-color,box-shadow] tw:data-placeholder:text-muted-foreground tw:focus-visible:border-primary tw:focus-visible:ring-3 tw:focus-visible:ring-primary/20 tw:aria-invalid:border-error tw:aria-invalid:ring-error/20 tw:disabled:cursor-not-allowed tw:disabled:border-disabled-border tw:disabled:bg-disabled tw:disabled:text-disabled-foreground tw:[&_svg]:size-4 tw:motion-reduce:transition-none',
+        'tw:flex tw:h-10 tw:w-full tw:min-w-0 tw:items-center tw:justify-between tw:gap-2 tw:rounded-xl tw:border tw:border-input tw:bg-background tw:px-3 tw:text-body-m tw:text-foreground tw:shadow-xs tw:outline-none tw:transition-[border-color,box-shadow] tw:data-placeholder:text-muted-foreground tw:focus-visible:border-primary tw:focus-visible:ring-3 tw:focus-visible:ring-primary/20 tw:aria-invalid:border-error tw:aria-invalid:ring-error/20 tw:disabled:cursor-not-allowed tw:disabled:border-disabled-border tw:disabled:bg-disabled tw:disabled:text-disabled-foreground tw:[&_svg]:size-4 tw:motion-reduce:transition-none',
         className,
       )}
       {...props}
     >
       {children}
-      <SelectPrimitive.Icon>
+      <SelectPrimitive.Icon data-slot="select-trigger-icon" className="tw:shrink-0">
         <ChevronDownIcon aria-hidden="true" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>

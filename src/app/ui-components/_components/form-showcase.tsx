@@ -40,7 +40,7 @@ const petTypeOptions = [
   { label: 'پرنده', value: 'bird' },
 ];
 const longPetTypeOptions = Array.from({ length: 20 }, (_, index) => ({
-  label: `نوع حیوان ${index + 1}`,
+  label: `نوع حیوان مناسب برای شرایط مراقبت ویژه و تغذیه اختصاصی ${index + 1}`,
   value: `pet-type-${index + 1}`,
 }));
 
@@ -230,7 +230,7 @@ export function FormShowcase() {
         </Field>
         <Form<Record<string, string>>
           handleSubmit={() => undefined}
-          options={{ defaultValues: { petType: '' } }}
+          options={{ defaultValues: { petType: 'pet-type-1' } }}
         >
           <SelectField
             name="petType"
@@ -239,6 +239,7 @@ export function FormShowcase() {
             size="lg"
             rules={{ required: 'انتخاب نوع حیوان الزامی است.' }}
             options={[...petTypeOptions, ...longPetTypeOptions]}
+            triggerClassName="tw:max-w-64"
           />
           <SelectField
             name="empty-pet-type"
