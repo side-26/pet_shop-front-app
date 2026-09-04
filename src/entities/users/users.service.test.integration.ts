@@ -6,6 +6,7 @@ import {
   deleteUserById,
   disableUserById,
   enableUserById,
+  getCurrentUser,
   getAllPaginatedUsers,
   userGetDetailById,
 } from './users.service';
@@ -42,6 +43,26 @@ vi.mock('@/utils/entityCache', () => ({
 }));
 
 const customFetcherMock = vi.mocked(customFetcher);
+
+describe('getCurrentUser service', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('gets the authenticated user through the current-user endpoint without caching', async () => {
+    const response = { isSuccess: true as const, message: null, data: { userId: 'user-42' } };
+    customFetcherMock.mockResolvedValue(response);
+
+    await expect(getCurrentUser()).resolves.toBe(response);
+
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/users/current',
+      method: 'GET',
+      auth: true,
+      cache: 'no-store',
+    });
+  });
+});
 
 describe('userGetDetailById service', () => {
   beforeEach(() => {

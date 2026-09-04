@@ -92,5 +92,14 @@ export interface UserDetailDTO {
   updatedAt: string;
 }
 
+export interface CurrentUserDTO {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  role: UserRole;
+  avatar: string;
+}
+
 export type AllPaginatedUsersResponseDTO = PaginateResponseDTO<UserDTO>;
 export type AllPaginatedUsersDTO = PaginateDataDTO<UserDTO>;

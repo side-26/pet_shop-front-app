@@ -5,6 +5,7 @@ import { EntityTag } from '@/utils/entityCache';
 
 import type {
   AllPaginatedUsersDTO,
+  CurrentUserDTO,
   CreateUserDTO,
   DeleteUserByIdDTO,
   GetAllPaginatedUsersParams,
@@ -18,6 +19,15 @@ import { createUsersListCacheKey, omitNullQueryValues } from './users.helpers';
 import { getAllPaginatedUsersSchema } from './users.schema';
 
 const usersCache = new EntityTag('users');
+
+export function getCurrentUser() {
+  return customFetcher<CurrentUserDTO>({
+    url: '/users/current',
+    method: 'GET',
+    auth: true,
+    cache: 'no-store',
+  });
+}
 
 export async function userGetDetailById(id: UserGetDetailByIdDTO['id']) {
   'use cache: private';

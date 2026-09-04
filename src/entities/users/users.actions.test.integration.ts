@@ -9,15 +9,17 @@ import {
   deleteUserByIdAction,
   disableUserByIdAction,
   enableUserByIdAction,
+  getCurrentUserAction,
   getAllPaginatedUsersAction,
   userGetDetailByIdAction,
 } from './users.actions';
-import type { UserDetailDTO, UserDTO } from './users.dto';
+import type { CurrentUserDTO, UserDetailDTO, UserDTO } from './users.dto';
 import {
   createUser,
   deleteUserById,
   disableUserById,
   enableUserById,
+  getCurrentUser,
   getAllPaginatedUsers,
   userGetDetailById,
 } from './users.service';
@@ -28,6 +30,7 @@ vi.mock('./users.service', () => ({
   deleteUserById: vi.fn(),
   disableUserById: vi.fn(),
   enableUserById: vi.fn(),
+  getCurrentUser: vi.fn(),
   getAllPaginatedUsers: vi.fn(),
   userGetDetailById: vi.fn(),
 }));
@@ -38,6 +41,7 @@ const createUserMock = vi.mocked(createUser);
 const deleteUserByIdMock = vi.mocked(deleteUserById);
 const disableUserByIdMock = vi.mocked(disableUserById);
 const enableUserByIdMock = vi.mocked(enableUserById);
+const getCurrentUserMock = vi.mocked(getCurrentUser);
 const userGetDetailByIdMock = vi.mocked(userGetDetailById);
 
 const successResponse = {
@@ -101,6 +105,33 @@ function session(role: AuthSessionModel['role']): AuthSessionModel {
 describe('users actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it('gets the current user for an authenticated session', async () => {
+    const currentUser: CurrentUserDTO = {
+      userId: 'user-1',
+      firstName: 'Ali',
+      lastName: 'Rezaei',
+      phoneNumber: '09123456789',
+      role: USER_ROLES.CUSTOMER,
+      avatar: '',
+    };
+    const response = { isSuccess: true as const, message: null, data: currentUser };
+    getSessionMock.mockResolvedValue(session(USER_ROLES.CUSTOMER));
+    getCurrentUserMock.mockResolvedValue(response);
+
+    await expect(getCurrentUserAction()).resolves.toBe(response);
+    expect(getCurrentUserMock).toHaveBeenCalledOnce();
+  });
+
+  it('rejects a current-user request without a frontend session', async () => {
+    getSessionMock.mockResolvedValue(null);
+
+    await expect(getCurrentUserAction()).resolves.toMatchObject({
+      isSuccess: false,
+      message: 'برای مشاهده حساب کاربری وارد شوید.',
+    });
+    expect(getCurrentUserMock).not.toHaveBeenCalled();
   });
 
   it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(

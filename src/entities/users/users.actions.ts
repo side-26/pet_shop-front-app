@@ -19,6 +19,7 @@ import {
   deleteUserById,
   disableUserById,
   enableUserById,
+  getCurrentUser,
   getAllPaginatedUsers,
   userGetDetailById,
 } from './users.service';
@@ -31,6 +32,16 @@ function accessError(message: string): FetcherError {
     message,
     data: { messages: {}, details: {} },
   };
+}
+
+export async function getCurrentUserAction() {
+  const session = await getSession();
+
+  if (!session) {
+    return accessError('برای مشاهده حساب کاربری وارد شوید.');
+  }
+
+  return getCurrentUser();
 }
 
 export async function userGetDetailByIdAction(input: unknown) {
