@@ -68,7 +68,7 @@ describe('AdminLayoutShell', () => {
 
   it('derives the current page header from the canonical navigation item', () => {
     render(
-      <AdminLayoutShellView pathname={routePaths.adminPage('products')}>
+      <AdminLayoutShellView pathname={routePaths.adminProducts}>
         محتوای محصولات
       </AdminLayoutShellView>,
     );
@@ -85,7 +85,7 @@ describe('AdminLayoutShell', () => {
 
     render(
       <AdminLayoutShellView
-        pathname={routePaths.adminPage('products')}
+        pathname={routePaths.adminProducts}
         entityName="محصول"
         headerActions={{
           lastVisibleOrder: 2,

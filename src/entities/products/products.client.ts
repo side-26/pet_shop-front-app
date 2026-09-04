@@ -1,7 +1,9 @@
 'use client';
 
+import { useCallback, useRef, useTransition } from 'react';
 import type { FieldValues, UseFormSetError } from 'react-hook-form';
 
+import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
 import type { FetcherResult } from '@/lib/api/customFetcher';
 import { globalErrorHandler } from '@/utils/helpers';
@@ -68,4 +70,84 @@ export async function submitDeleteProduct(id: string) {
   }
   toast.add({ type: 'success', title: result.message });
   return true;
+}
+
+export function useCreateProduct(onSuccess: () => void) {
+  const formRef = useRef<FormHandle<ProductInput>>(null);
+  const [isPending, startTransition] = useTransition();
+  const handleSubmit = useCallback(
+    (input: ProductInput) => {
+      const form = formRef.current;
+      if (!form || isPending) return;
+      startTransition(async () => {
+        if (await submitCreateProduct(input, form.setError)) onSuccess();
+      });
+    },
+    [isPending, onSuccess],
+  );
+  return { formRef, handleSubmit, isPending } as const;
+}
+
+export function useUpdateProductBaseInfo(id: string, onSuccess: () => void) {
+  const formRef = useRef<FormHandle<UpdateProductBaseInfoInput>>(null);
+  const [isPending, startTransition] = useTransition();
+  const handleSubmit = useCallback(
+    (input: UpdateProductBaseInfoInput) => {
+      const form = formRef.current;
+      if (!form || isPending) return;
+      startTransition(async () => {
+        if (await submitUpdateProductBaseInfo(id, input, form.setError)) onSuccess();
+      });
+    },
+    [id, isPending, onSuccess],
+  );
+  return { formRef, handleSubmit, isPending } as const;
+}
+export function useUpdateProductImages(id: string, onSuccess: () => void) {
+  const formRef = useRef<FormHandle<UpdateProductImagesInput>>(null);
+  const [isPending, startTransition] = useTransition();
+  const handleSubmit = useCallback(
+    (input: UpdateProductImagesInput) => {
+      const form = formRef.current;
+      if (!form || isPending) return;
+      startTransition(async () => {
+        if (await submitUpdateProductImages(id, input, form.setError)) onSuccess();
+      });
+    },
+    [id, isPending, onSuccess],
+  );
+  return { formRef, handleSubmit, isPending } as const;
+}
+export function useUpdateProductPrice(id: string, onSuccess: () => void) {
+  const formRef = useRef<FormHandle<UpdateProductPriceInput>>(null);
+  const [isPending, startTransition] = useTransition();
+  const handleSubmit = useCallback(
+    (input: UpdateProductPriceInput) => {
+      const form = formRef.current;
+      if (!form || isPending) return;
+      startTransition(async () => {
+        if (await submitUpdateProductPrice(id, input, form.setError)) onSuccess();
+      });
+    },
+    [id, isPending, onSuccess],
+  );
+  return { formRef, handleSubmit, isPending } as const;
+}
+
+export function useProductRowActions(onSuccess: () => void) {
+  const [isPending, startTransition] = useTransition();
+  const run = useCallback(
+    (action: () => Promise<boolean>) => {
+      if (isPending) return;
+      startTransition(async () => {
+        if (await action()) onSuccess();
+      });
+    },
+    [isPending, onSuccess],
+  );
+  return {
+    isPending,
+    enable: (id: string) => run(() => submitProductEnabledUpdate(id, true)),
+    disable: (id: string) => run(() => submitProductEnabledUpdate(id, false)),
+  } as const;
 }

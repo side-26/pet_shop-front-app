@@ -4,6 +4,8 @@ import { ValidationError } from 'yup';
 
 import { USER_ROLES } from '@/configs/user-role';
 import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
+import { getAllCategories } from '@/entities/categories/categories.service';
+import { getAllSubCategories } from '@/entities/sub-categories/sub-categories.service';
 import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
 import { getSession } from '@/utils/session';
 
@@ -66,18 +68,41 @@ export async function getManagementProductAction(input: unknown) {
   const value = await validate(productIdSchema, input);
   return 'isSuccess' in value ? value : service.getManagementProduct(value.id);
 }
+export async function getProductFormOptionsAction() {
+  const error = await authorizeManagement();
+  if (error) return error;
+
+  const [categories, subCategories] = await Promise.all([
+    getAllCategories({ includeDisabled: false }),
+    getAllSubCategories(),
+  ]);
+  if (!categories.isSuccess) return categories;
+  if (!subCategories.isSuccess) return subCategories;
+
+  return {
+    isSuccess: true as const,
+    message: null,
+    data: {
+      categories: categories.data.map(({ id, title }) => ({ id, title })),
+      subCategories: subCategories.data.map(({ id, title, category }) => ({ id, title, category })),
+    },
+  };
+}
 async function managementSection<T>(input: unknown, action: (id: string) => Promise<T>) {
   const error = await authorizeManagement();
   if (error) return error;
   const value = await validate(productIdSchema, input);
   return 'isSuccess' in value ? value : action(value.id);
 }
-export const getProductImagesAction = (input: unknown) =>
-  managementSection(input, service.getProductImages);
-export const getProductPriceAction = (input: unknown) =>
-  managementSection(input, service.getProductPrice);
-export const getProductMainInfoAction = (input: unknown) =>
-  managementSection(input, service.getProductMainInfo);
+export async function getProductImagesAction(input: unknown) {
+  return managementSection(input, service.getProductImages);
+}
+export async function getProductPriceAction(input: unknown) {
+  return managementSection(input, service.getProductPrice);
+}
+export async function getProductMainInfoAction(input: unknown) {
+  return managementSection(input, service.getProductMainInfo);
+}
 export async function createProductAction(input: unknown) {
   const error = await authorizeManagement();
   if (error) return error;
@@ -96,16 +121,21 @@ async function update<T extends object>(
   const value = await validate(schema, input);
   return 'isSuccess' in value ? value : action(id.id, value);
 }
-export const updateProductBaseInfoAction = (input: unknown) =>
-  update(input, updateProductBaseInfoSchema, service.updateProductBaseInfo);
-export const updateProductImagesAction = (input: unknown) =>
-  update(input, updateProductImagesSchema, service.updateProductImages);
-export const updateProductPriceAction = (input: unknown) =>
-  update(input, updateProductPriceSchema, service.updateProductPrice);
-export const enableProductAction = (input: unknown) =>
-  managementSection(input, service.enableProduct);
-export const disableProductAction = (input: unknown) =>
-  managementSection(input, service.disableProduct);
+export async function updateProductBaseInfoAction(input: unknown) {
+  return update(input, updateProductBaseInfoSchema, service.updateProductBaseInfo);
+}
+export async function updateProductImagesAction(input: unknown) {
+  return update(input, updateProductImagesSchema, service.updateProductImages);
+}
+export async function updateProductPriceAction(input: unknown) {
+  return update(input, updateProductPriceSchema, service.updateProductPrice);
+}
+export async function enableProductAction(input: unknown) {
+  return managementSection(input, service.enableProduct);
+}
+export async function disableProductAction(input: unknown) {
+  return managementSection(input, service.disableProduct);
+}
 export async function deleteProductAction(input: unknown) {
   const error = await authorizeAdmin();
   if (error) return error;

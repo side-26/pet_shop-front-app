@@ -25,6 +25,7 @@ export const PATHS = {
   ADMIN_SUB_CATEGORIES: '/admin/sub-category',
   ADMIN_BREEDS: '/admin/breeds',
   ADMIN_PETS: '/admin/pets',
+  ADMIN_PRODUCTS: '/admin/products',
 } as const;
 
 export const routePaths = {
@@ -54,6 +55,8 @@ export const routePaths = {
   adminSubCategories: PATHS.ADMIN_SUB_CATEGORIES,
   adminBreeds: PATHS.ADMIN_BREEDS,
   adminPets: PATHS.ADMIN_PETS,
+  adminProducts: PATHS.ADMIN_PRODUCTS,
+  adminProductsQuery: (query: URLSearchParams) => `${PATHS.ADMIN_PRODUCTS}?${query.toString()}`,
   adminPetsQuery: (query: URLSearchParams) => `${PATHS.ADMIN_PETS}?${query.toString()}`,
   adminBreedsQuery: (query: URLSearchParams) => `${PATHS.ADMIN_BREEDS}?${query.toString()}`,
   adminUsersQuery: (query: URLSearchParams) => `${PATHS.ADMIN_USERS}?${query.toString()}`,
