@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { AdminLayoutShell } from '@/components/layouts/admin/admin-layout-shell';
+import { AdminCurrentUserWrapper } from '@/components/layouts/admin/admin-current-user-wrapper';
 
 export const metadata: Metadata = {
   title: 'پنل مدیریت | پت‌شاپ',
@@ -8,5 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <AdminLayoutShell>{children}</AdminLayoutShell>;
+  return (
+    <AdminLayoutShell navigationIdentity={<AdminCurrentUserWrapper />}>{children}</AdminLayoutShell>
+  );
 }

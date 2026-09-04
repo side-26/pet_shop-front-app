@@ -77,6 +77,16 @@ describe('AdminLayoutShell', () => {
     expect(screen.getByRole('link', { name: 'محصولات' }).getAttribute('aria-current')).toBe('page');
   });
 
+  it('renders a server-provided current-user identity in the navigation area', () => {
+    render(
+      <AdminLayoutShellView pathname={routePaths.admin} navigationIdentity={<span>علی رضایی</span>}>
+        Dashboard
+      </AdminLayoutShellView>,
+    );
+
+    expect(screen.getByText('علی رضایی')).toBeTruthy();
+  });
+
   it('renders configured header actions by order and moves later actions into overflow', async () => {
     const addNewItem = vi.fn();
     const filter = vi.fn();

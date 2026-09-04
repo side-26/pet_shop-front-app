@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { customFetcher } from '@/lib/api/customFetcher';
+import { getSession } from '@/utils/session';
 import {
   createUser,
   deleteUserById,
@@ -26,6 +27,7 @@ const {
 }));
 
 vi.mock('@/lib/api/customFetcher', () => ({ customFetcher: vi.fn() }));
+vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
 vi.mock('@/utils/entityCache', () => ({
   EntityTag: vi.fn(function EntityTagMock(this: {
     cacheLife: ReturnType<typeof vi.fn>;
@@ -43,6 +45,7 @@ vi.mock('@/utils/entityCache', () => ({
 }));
 
 const customFetcherMock = vi.mocked(customFetcher);
+const getSessionMock = vi.mocked(getSession);
 
 describe('getCurrentUser service', () => {
   beforeEach(() => {
@@ -51,6 +54,7 @@ describe('getCurrentUser service', () => {
 
   it('gets the authenticated user through the current-user endpoint without caching', async () => {
     const response = { isSuccess: true as const, message: null, data: { userId: 'user-42' } };
+    getSessionMock.mockResolvedValue({ userId: 'user-42' } as never);
     customFetcherMock.mockResolvedValue(response);
 
     await expect(getCurrentUser()).resolves.toBe(response);
@@ -61,6 +65,8 @@ describe('getCurrentUser service', () => {
       auth: true,
       cache: 'no-store',
     });
+    expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 360 });
+    expect(registerDetailMock).toHaveBeenCalledWith('user-42');
   });
 });
 

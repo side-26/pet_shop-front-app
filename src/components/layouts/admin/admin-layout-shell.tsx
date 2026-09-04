@@ -3,7 +3,7 @@
 import { Menu, PanelRightClose, PanelRightOpen } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ConfirmDialog } from '@/components/common/confirm-dialog/main';
@@ -31,11 +31,29 @@ type AdminLayoutShellProps = Readonly<{ children: React.ReactNode }>;
 
 type AdminNavigationProps = Readonly<{
   collapsed?: boolean;
+  identity?: ReactNode;
   pathname: string;
   onNavigate?: () => void;
 }>;
 
-function AdminIdentity({ collapsed = false }: Readonly<{ collapsed?: boolean }>) {
+function AdminIdentity({
+  collapsed = false,
+  identity,
+}: Readonly<{ collapsed?: boolean; identity?: ReactNode }>) {
+  if (identity) {
+    return (
+      <div
+        data-collapsed={collapsed}
+        className={cn(
+          'tw:group/admin-identity tw:flex tw:min-h-16 tw:items-center tw:gap-3 tw:overflow-hidden tw:px-3',
+          collapsed && 'tw:justify-center tw:px-2',
+        )}
+      >
+        {identity}
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn(
@@ -136,13 +154,18 @@ function AdminNavigationLink({
   );
 }
 
-function AdminNavigation({ collapsed = false, pathname, onNavigate }: AdminNavigationProps) {
+function AdminNavigation({
+  collapsed = false,
+  identity,
+  pathname,
+  onNavigate,
+}: AdminNavigationProps) {
   const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
 
   return (
     <TooltipProvider>
       <div className="tw:flex tw:h-full tw:min-h-0 tw:flex-col">
-        <AdminIdentity collapsed={collapsed} />
+        <AdminIdentity collapsed={collapsed} identity={identity} />
         <Separator />
 
         <nav aria-label="ناوبری مدیریت" className="tw:flex-1 tw:overflow-y-auto tw:px-2 tw:py-4">
@@ -211,11 +234,13 @@ export function AdminLayoutShellView({
   children,
   entityName = 'item',
   headerActions = { lastVisibleOrder: 0 },
+  navigationIdentity,
   pathname,
 }: AdminLayoutShellProps & {
   pathname: string;
   entityName?: string;
   headerActions?: AdminHeaderActionsValue;
+  navigationIdentity?: ReactNode;
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
@@ -232,7 +257,11 @@ export function AdminLayoutShellView({
             collapsed ? 'tw:w-20' : 'tw:w-64 tw:xl:w-72',
           )}
         >
-          <AdminNavigation collapsed={collapsed} pathname={pathname} />
+          <AdminNavigation
+            collapsed={collapsed}
+            identity={navigationIdentity}
+            pathname={pathname}
+          />
         </aside>
 
         <div className="tw:flex tw:min-w-0 tw:flex-1 tw:flex-col">
@@ -303,6 +332,7 @@ export function AdminLayoutShellView({
               دسترسی به بخش‌های پنل مدیریت
             </DrawerDescription>
             <AdminNavigation
+              identity={navigationIdentity}
               pathname={pathname}
               onNavigate={() => setMobileNavigationOpen(false)}
             />
@@ -314,7 +344,10 @@ export function AdminLayoutShellView({
   );
 }
 
-export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
+export function AdminLayoutShell({
+  children,
+  navigationIdentity,
+}: AdminLayoutShellProps & { navigationIdentity?: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const reloadData = useCallback(() => {
@@ -324,6 +357,7 @@ export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
   return (
     <AdminLayoutShellView
       pathname={pathname}
+      navigationIdentity={navigationIdentity}
       headerActions={{ lastVisibleOrder: 1, reload: { order: 1, action: reloadData } }}
     >
       {children}

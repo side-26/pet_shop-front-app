@@ -2,6 +2,7 @@ import 'server-only';
 
 import { customFetcher } from '@/lib/api/customFetcher';
 import { EntityTag } from '@/utils/entityCache';
+import { getSession } from '@/utils/session';
 
 import type {
   AllPaginatedUsersDTO,
@@ -20,7 +21,13 @@ import { getAllPaginatedUsersSchema } from './users.schema';
 
 const usersCache = new EntityTag('users');
 
-export function getCurrentUser() {
+export async function getCurrentUser() {
+  'use cache: private';
+
+  const session = await getSession();
+  usersCache.cacheLife({ stale: 360 });
+  if (session) usersCache.registerDetail(session.userId);
+
   return customFetcher<CurrentUserDTO>({
     url: '/users/current',
     method: 'GET',
