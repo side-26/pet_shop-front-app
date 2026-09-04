@@ -26,6 +26,7 @@ export const PATHS = {
   ADMIN_BREEDS: '/admin/breeds',
   ADMIN_PETS: '/admin/pets',
   ADMIN_PRODUCTS: '/admin/products',
+  ADMIN_PROFILE: '/admin/profile',
 } as const;
 
 export const routePaths = {
@@ -56,6 +57,7 @@ export const routePaths = {
   adminBreeds: PATHS.ADMIN_BREEDS,
   adminPets: PATHS.ADMIN_PETS,
   adminProducts: PATHS.ADMIN_PRODUCTS,
+  adminProfile: PATHS.ADMIN_PROFILE,
   adminProductsQuery: (query: URLSearchParams) => `${PATHS.ADMIN_PRODUCTS}?${query.toString()}`,
   adminPetsQuery: (query: URLSearchParams) => `${PATHS.ADMIN_PETS}?${query.toString()}`,
   adminBreedsQuery: (query: URLSearchParams) => `${PATHS.ADMIN_BREEDS}?${query.toString()}`,

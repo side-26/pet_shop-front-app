@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { createUsersListCacheKey } from './users.helpers';
 import {
   createUserSchema,
+  changeCurrentUserPasswordSchema,
   getAllPaginatedUsersSchema,
+  updateCurrentUserProfileSchema,
   userGetDetailByIdSchema,
 } from './users.schema';
 
@@ -20,6 +22,32 @@ describe('userGetDetailByIdSchema', () => {
       await expect(userGetDetailByIdSchema.validate(input)).rejects.toThrow();
     },
   );
+});
+
+describe('current-user profile schemas', () => {
+  it('validates documented editable personal-info fields', async () => {
+    await expect(
+      updateCurrentUserProfileSchema.validate({ firstName: '  علی  ', lastName: '  رضایی  ' }),
+    ).resolves.toEqual({ firstName: 'علی', lastName: 'رضایی' });
+  });
+
+  it('requires a matching, eight-character password confirmation', async () => {
+    await expect(
+      changeCurrentUserPasswordSchema.validate({
+        oldPassword: 'password123',
+        password: 'new-password',
+        repeatPassword: 'new-password',
+      }),
+    ).resolves.toMatchObject({ password: 'new-password' });
+
+    await expect(
+      changeCurrentUserPasswordSchema.validate({
+        oldPassword: 'short',
+        password: 'new-password',
+        repeatPassword: 'different-password',
+      }),
+    ).rejects.toThrow();
+  });
 });
 
 describe('getAllPaginatedUsersSchema', () => {

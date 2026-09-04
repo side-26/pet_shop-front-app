@@ -7,8 +7,46 @@ import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
 import { globalErrorHandler } from '@/utils/helpers';
 
-import { createUserAction, disableUserByIdAction, enableUserByIdAction } from './users.actions';
-import type { CreateUserInput } from './users.schema';
+import {
+  changeCurrentUserPasswordAction,
+  createUserAction,
+  disableUserByIdAction,
+  enableUserByIdAction,
+  updateCurrentUserProfileAction,
+} from './users.actions';
+import type {
+  ChangeCurrentUserPasswordInput,
+  CreateUserInput,
+  UpdateCurrentUserProfileInput,
+} from './users.schema';
+
+export async function submitCurrentUserProfile(
+  input: UpdateCurrentUserProfileInput,
+  showErrorFields: UseFormSetError<UpdateCurrentUserProfileInput>,
+) {
+  const result = await updateCurrentUserProfileAction(input);
+  if (!result.isSuccess) {
+    globalErrorHandler(result, { showErrorFields });
+    return false;
+  }
+
+  toast.add({ type: 'success', title: result.message });
+  return true;
+}
+
+export async function submitCurrentUserPassword(
+  input: ChangeCurrentUserPasswordInput,
+  showErrorFields: UseFormSetError<ChangeCurrentUserPasswordInput>,
+) {
+  const result = await changeCurrentUserPasswordAction(input);
+  if (!result.isSuccess) {
+    globalErrorHandler(result, { showErrorFields });
+    return false;
+  }
+
+  toast.add({ type: 'success', title: result.message });
+  return true;
+}
 
 export async function submitCreateUser(
   input: CreateUserInput,

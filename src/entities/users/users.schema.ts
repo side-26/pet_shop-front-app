@@ -1,6 +1,10 @@
 import { boolean, mixed, number, object, ref, string, type InferType } from 'yup';
 
 import { yupMessage } from '@/configs/yup.config';
+import {
+  MAIN_IMAGE_UPLOAD_MAX_SIZE_BYTES,
+  MAIN_IMAGE_UPLOAD_MIME_TYPES,
+} from '@/configs/main-image-upload';
 import { USER_ROLES } from '@/configs/user-role';
 import { iranianPhoneNumberSchema } from '@/entities/auth/auth.schema';
 
@@ -51,3 +55,40 @@ export const createUserSchema = object({
 });
 
 export type CreateUserInput = InferType<typeof createUserSchema>;
+
+const optionalAvatarSchema = mixed<File>()
+  .test(
+    'type',
+    yupMessage('imageType'),
+    (value) =>
+      !value ||
+      MAIN_IMAGE_UPLOAD_MIME_TYPES.includes(
+        value.type as (typeof MAIN_IMAGE_UPLOAD_MIME_TYPES)[number],
+      ),
+  )
+  .test(
+    'size',
+    yupMessage('imageSize'),
+    (value) => !value || value.size <= MAIN_IMAGE_UPLOAD_MAX_SIZE_BYTES,
+  )
+  .nullable()
+  .optional();
+
+export const updateCurrentUserProfileSchema = object({
+  firstName: string().trim().min(2).required(),
+  lastName: string().trim().min(2).required(),
+  avatar: optionalAvatarSchema,
+});
+
+export type UpdateCurrentUserProfileInput = InferType<typeof updateCurrentUserProfileSchema>;
+
+export const changeCurrentUserPasswordSchema = object({
+  oldPassword: string().required().min(8),
+  password: string().required().min(8),
+  repeatPassword: string()
+    .required()
+    .min(8)
+    .oneOf([ref('password')], yupMessage('userPasswordConfirmationMismatch')),
+});
+
+export type ChangeCurrentUserPasswordInput = InferType<typeof changeCurrentUserPasswordSchema>;

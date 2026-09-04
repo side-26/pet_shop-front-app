@@ -16,16 +16,19 @@ import {
 import type { CurrentUserDTO, UserDetailDTO, UserDTO } from './users.dto';
 import {
   createUser,
+  changeCurrentUserPassword,
   deleteUserById,
   disableUserById,
   enableUserById,
   getCurrentUser,
   getAllPaginatedUsers,
   userGetDetailById,
+  updateCurrentUserProfile,
 } from './users.service';
 
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
 vi.mock('./users.service', () => ({
+  changeCurrentUserPassword: vi.fn(),
   createUser: vi.fn(),
   deleteUserById: vi.fn(),
   disableUserById: vi.fn(),
@@ -33,6 +36,7 @@ vi.mock('./users.service', () => ({
   getCurrentUser: vi.fn(),
   getAllPaginatedUsers: vi.fn(),
   userGetDetailById: vi.fn(),
+  updateCurrentUserProfile: vi.fn(),
 }));
 
 const getSessionMock = vi.mocked(getSession);
@@ -42,6 +46,8 @@ const deleteUserByIdMock = vi.mocked(deleteUserById);
 const disableUserByIdMock = vi.mocked(disableUserById);
 const enableUserByIdMock = vi.mocked(enableUserById);
 const getCurrentUserMock = vi.mocked(getCurrentUser);
+const updateCurrentUserProfileMock = vi.mocked(updateCurrentUserProfile);
+const changeCurrentUserPasswordMock = vi.mocked(changeCurrentUserPassword);
 const userGetDetailByIdMock = vi.mocked(userGetDetailById);
 
 const successResponse = {
@@ -132,6 +138,56 @@ describe('users actions', () => {
       message: 'برای مشاهده حساب کاربری وارد شوید.',
     });
     expect(getCurrentUserMock).not.toHaveBeenCalled();
+  });
+
+  it('validates personal-info input and binds the update to the frontend session user', async () => {
+    const response = {
+      isSuccess: true as const,
+      message: 'updated',
+      data: {
+        userId: 'user-1',
+        firstName: 'Ali',
+        lastName: 'Rezaei',
+        phoneNumber: '09123456789',
+        role: USER_ROLES.ADMIN,
+        avatar: '',
+      },
+    };
+    getSessionMock.mockResolvedValue(session(USER_ROLES.ADMIN));
+    updateCurrentUserProfileMock.mockResolvedValue(response);
+
+    const { updateCurrentUserProfileAction } = await import('./users.actions');
+    await expect(
+      updateCurrentUserProfileAction({
+        firstName: '  Ali  ',
+        lastName: '  Rezaei  ',
+        ignored: true,
+      }),
+    ).resolves.toBe(response);
+    expect(updateCurrentUserProfileMock).toHaveBeenCalledWith('user-1', {
+      firstName: 'Ali',
+      lastName: 'Rezaei',
+    });
+  });
+
+  it('validates password input and binds password changes to the frontend session user', async () => {
+    const response = { isSuccess: true as const, message: 'updated', data: undefined };
+    getSessionMock.mockResolvedValue(session(USER_ROLES.ADMIN));
+    changeCurrentUserPasswordMock.mockResolvedValue(response);
+
+    const { changeCurrentUserPasswordAction } = await import('./users.actions');
+    await expect(
+      changeCurrentUserPasswordAction({
+        oldPassword: 'password123',
+        password: 'new-password',
+        repeatPassword: 'new-password',
+      }),
+    ).resolves.toBe(response);
+    expect(changeCurrentUserPasswordMock).toHaveBeenCalledWith('user-1', {
+      oldPassword: 'password123',
+      password: 'new-password',
+      repeatPassword: 'new-password',
+    });
   });
 
   it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(

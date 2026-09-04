@@ -3,13 +3,26 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { toast } from '@/components/ui/toast';
 import { globalErrorHandler } from '@/utils/helpers';
 
-import { createUserAction, disableUserByIdAction, enableUserByIdAction } from './users.actions';
-import { submitCreateUser, submitUserEnabledUpdate } from './users.client';
+import {
+  changeCurrentUserPasswordAction,
+  createUserAction,
+  disableUserByIdAction,
+  enableUserByIdAction,
+  updateCurrentUserProfileAction,
+} from './users.actions';
+import {
+  submitCreateUser,
+  submitCurrentUserPassword,
+  submitCurrentUserProfile,
+  submitUserEnabledUpdate,
+} from './users.client';
 
 vi.mock('./users.actions', () => ({
+  changeCurrentUserPasswordAction: vi.fn(),
   createUserAction: vi.fn(),
   disableUserByIdAction: vi.fn(),
   enableUserByIdAction: vi.fn(),
+  updateCurrentUserProfileAction: vi.fn(),
 }));
 vi.mock('@/utils/helpers', () => ({ globalErrorHandler: vi.fn() }));
 vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
@@ -17,6 +30,8 @@ vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
 const createUserActionMock = vi.mocked(createUserAction);
 const disableUserByIdActionMock = vi.mocked(disableUserByIdAction);
 const enableUserByIdActionMock = vi.mocked(enableUserByIdAction);
+const updateCurrentUserProfileActionMock = vi.mocked(updateCurrentUserProfileAction);
+const changeCurrentUserPasswordActionMock = vi.mocked(changeCurrentUserPasswordAction);
 const globalErrorHandlerMock = vi.mocked(globalErrorHandler);
 const toastAddMock = vi.mocked(toast.add);
 
@@ -59,6 +74,43 @@ describe('create user client orchestration', () => {
     await expect(submitCreateUser(input, setError)).resolves.toBe(false);
     expect(globalErrorHandlerMock).toHaveBeenCalledWith(error, { showErrorFields: setError });
     expect(toastAddMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('current-user profile client orchestration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('submits personal info and shows the backend success message', async () => {
+    updateCurrentUserProfileActionMock.mockResolvedValue({
+      isSuccess: true,
+      message: 'updated',
+      data: {} as never,
+    });
+
+    await expect(
+      submitCurrentUserProfile({ firstName: 'Ali', lastName: 'Rezaei', avatar: null }, vi.fn()),
+    ).resolves.toBe(true);
+    expect(toastAddMock).toHaveBeenCalledWith({ type: 'success', title: 'updated' });
+  });
+
+  it('forwards password-change validation failures to the shared field-error handler', async () => {
+    const error = {
+      isSuccess: false as const,
+      message: 'failed',
+      data: { messages: {}, details: {} },
+    };
+    const setError = vi.fn();
+    changeCurrentUserPasswordActionMock.mockResolvedValue(error);
+
+    await expect(
+      submitCurrentUserPassword(
+        { oldPassword: 'password123', password: 'new-password', repeatPassword: 'new-password' },
+        setError,
+      ),
+    ).resolves.toBe(false);
+    expect(globalErrorHandlerMock).toHaveBeenCalledWith(error, { showErrorFields: setError });
   });
 });
 

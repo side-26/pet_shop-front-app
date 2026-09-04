@@ -7,11 +7,13 @@ import { getSession } from '@/utils/session';
 import type {
   AllPaginatedUsersDTO,
   CurrentUserDTO,
+  ChangeCurrentUserPasswordDTO,
   CreateUserDTO,
   DeleteUserByIdDTO,
   GetAllPaginatedUsersParams,
   GetAllPaginatedUsersQueryDTO,
   UpdateUserStatusByIdDTO,
+  UpdateCurrentUserProfileDTO,
   UserDetailDTO,
   UserGetDetailByIdDTO,
   UserDTO,
@@ -86,6 +88,37 @@ export async function createUser(input: CreateUserDTO) {
   }
 
   return result;
+}
+
+export async function updateCurrentUserProfile(userId: string, input: UpdateCurrentUserProfileDTO) {
+  const body = new FormData();
+  body.set('firstName', input.firstName);
+  body.set('lastName', input.lastName);
+  if (input.avatar instanceof File) body.set('avatar', input.avatar);
+
+  const result = await customFetcher<CurrentUserDTO, unknown, FormData>({
+    url: '/users/edit-info',
+    method: 'PUT',
+    body,
+    auth: true,
+    cache: 'no-store',
+  });
+
+  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  return result;
+}
+
+export async function changeCurrentUserPassword(
+  userId: string,
+  input: ChangeCurrentUserPasswordDTO,
+) {
+  return customFetcher<void, unknown, ChangeCurrentUserPasswordDTO & { userId: string }>({
+    url: '/users/change-password',
+    method: 'PUT',
+    body: { ...input, userId },
+    auth: true,
+    cache: 'no-store',
+  });
 }
 
 export async function deleteUserById(id: DeleteUserByIdDTO['id']) {

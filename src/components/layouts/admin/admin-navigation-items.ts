@@ -42,7 +42,7 @@ export const adminNavigationItems = [
 ] as const satisfies ReadonlyArray<AdminNavigationItem>;
 
 export const adminUtilityItems = [
-  { label: 'پروفایل', href: routePaths.adminPage('profile'), icon: CircleUserRound },
+  { label: 'پروفایل', href: routePaths.adminProfile, icon: CircleUserRound },
   { label: 'پشتیبانی', href: routePaths.adminPage('support'), icon: CircleHelp },
 ] as const;
 

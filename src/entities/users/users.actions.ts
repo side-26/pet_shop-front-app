@@ -9,19 +9,23 @@ import { getSession } from '@/utils/session';
 
 import {
   createUserSchema,
+  changeCurrentUserPasswordSchema,
   deleteUserByIdSchema,
   getAllPaginatedUsersSchema,
   updateUserStatusByIdSchema,
+  updateCurrentUserProfileSchema,
   userGetDetailByIdSchema,
 } from './users.schema';
 import {
   createUser,
+  changeCurrentUserPassword,
   deleteUserById,
   disableUserById,
   enableUserById,
   getCurrentUser,
   getAllPaginatedUsers,
   userGetDetailById,
+  updateCurrentUserProfile,
 } from './users.service';
 
 const ALLOWED_ADMIN_ROLES = new Set<UserRole>([USER_ROLES.ADMIN, USER_ROLES.SELLER]);
@@ -42,6 +46,38 @@ export async function getCurrentUserAction() {
   }
 
   return getCurrentUser();
+}
+
+export async function updateCurrentUserProfileAction(input: unknown) {
+  const session = await getSession();
+  if (!session) return accessError('برای ویرایش پروفایل وارد حساب کاربری شوید.');
+
+  try {
+    const value = await updateCurrentUserProfileSchema.validate(input, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+    return updateCurrentUserProfile(session.userId, value);
+  } catch (error: unknown) {
+    if (error instanceof ValidationError) return validationErrorToFetcherError(error);
+    throw error;
+  }
+}
+
+export async function changeCurrentUserPasswordAction(input: unknown) {
+  const session = await getSession();
+  if (!session) return accessError('برای تغییر کلمه عبور وارد حساب کاربری شوید.');
+
+  try {
+    const value = await changeCurrentUserPasswordSchema.validate(input, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+    return changeCurrentUserPassword(session.userId, value);
+  } catch (error: unknown) {
+    if (error instanceof ValidationError) return validationErrorToFetcherError(error);
+    throw error;
+  }
 }
 
 export async function userGetDetailByIdAction(input: unknown) {

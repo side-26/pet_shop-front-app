@@ -4,12 +4,14 @@ import { customFetcher } from '@/lib/api/customFetcher';
 import { getSession } from '@/utils/session';
 import {
   createUser,
+  changeCurrentUserPassword,
   deleteUserById,
   disableUserById,
   enableUserById,
   getCurrentUser,
   getAllPaginatedUsers,
   userGetDetailById,
+  updateCurrentUserProfile,
 } from './users.service';
 
 const {
@@ -195,6 +197,78 @@ describe('createUser service', () => {
 
     await expect(createUser(input)).resolves.toBe(response);
     expect(invalidateListMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('current-user mutations', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('sends editable profile fields as authenticated multipart data and invalidates the current-user cache', async () => {
+    customFetcherMock.mockResolvedValue({
+      isSuccess: true,
+      message: 'updated',
+      data: { userId: 'user-1' },
+    });
+
+    await updateCurrentUserProfile('user-1', {
+      firstName: 'Ali',
+      lastName: 'Rezaei',
+      avatar: null,
+    });
+
+    const request = customFetcherMock.mock.calls[0]?.[0];
+    expect(request).toMatchObject({
+      url: '/users/edit-info',
+      method: 'PUT',
+      auth: true,
+      cache: 'no-store',
+    });
+    const body = request?.body as FormData;
+    expect(body.get('firstName')).toBe('Ali');
+    expect(body.get('lastName')).toBe('Rezaei');
+    expect(body.has('avatar')).toBe(false);
+    expect(invalidateDetailMock).toHaveBeenCalledWith('user-1');
+  });
+
+  it('does not invalidate the current-user cache when editing personal information fails', async () => {
+    customFetcherMock.mockResolvedValue({
+      isSuccess: false,
+      message: 'failed',
+      data: { messages: {}, details: {} },
+    });
+
+    await updateCurrentUserProfile('user-1', {
+      firstName: 'Ali',
+      lastName: 'Rezaei',
+      avatar: null,
+    });
+
+    expect(invalidateDetailMock).not.toHaveBeenCalled();
+  });
+
+  it('sends the authenticated user id with the documented password-change body', async () => {
+    customFetcherMock.mockResolvedValue({ isSuccess: true, message: 'updated', data: undefined });
+
+    await changeCurrentUserPassword('user-1', {
+      oldPassword: 'password123',
+      password: 'new-password',
+      repeatPassword: 'new-password',
+    });
+
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/users/change-password',
+      method: 'PUT',
+      body: {
+        userId: 'user-1',
+        oldPassword: 'password123',
+        password: 'new-password',
+        repeatPassword: 'new-password',
+      },
+      auth: true,
+      cache: 'no-store',
+    });
   });
 });
 

@@ -4,9 +4,11 @@ import type { UserRole } from '@/configs/user-role';
 
 import type {
   CreateUserInput,
+  ChangeCurrentUserPasswordInput,
   DeleteUserByIdInput,
   GetAllPaginatedUsersInput,
   UpdateUserStatusByIdInput,
+  UpdateCurrentUserProfileInput,
   UserGetDetailByIdInput,
 } from './users.schema';
 
@@ -16,6 +18,8 @@ export type CreateUserDTO = CreateUserInput;
 export type DeleteUserByIdDTO = DeleteUserByIdInput;
 export type UpdateUserStatusByIdDTO = UpdateUserStatusByIdInput;
 export type UserGetDetailByIdDTO = UserGetDetailByIdInput;
+export type UpdateCurrentUserProfileDTO = UpdateCurrentUserProfileInput;
+export type ChangeCurrentUserPasswordDTO = ChangeCurrentUserPasswordInput;
 
 export interface AddressDTO {
   province: string;
