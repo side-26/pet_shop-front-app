@@ -1,4 +1,6 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { TablePagination } from '@/components/common/table-pagination';
+import { Price } from '@/components/ui/price';
 import {
   Table,
   TableBody,
@@ -36,6 +38,11 @@ export function ProductsPaginateTable({
         <Table className="tw:h-full">
           <TableHeader>
             <TableRow>
+              <TableHead className="tw:w-16">
+                <div>
+                  <span className="tw:sr-only">تصویر</span>
+                </div>
+              </TableHead>
               <TableHead>
                 <div>عنوان</div>
               </TableHead>
@@ -47,6 +54,9 @@ export function ProductsPaginateTable({
               </TableHead>
               <TableHead>
                 <div>موجودی</div>
+              </TableHead>
+              <TableHead>
+                <div>قیمت</div>
               </TableHead>
               <TableHead>
                 <div>وضعیت</div>
@@ -61,6 +71,30 @@ export function ProductsPaginateTable({
           <TableBody>
             {products.map((product) => (
               <TableRow key={product.id}>
+                <TableCell>
+                  <Avatar
+                    size="lg"
+                    style={
+                      product.mainImageThumbnail
+                        ? {
+                            backgroundImage: `url(${product.mainImageThumbnail})`,
+                            backgroundSize: 'cover',
+                          }
+                        : undefined
+                    }
+                  >
+                    {product.mainImage ? (
+                      <AvatarImage src={product.mainImage} alt={product.title} />
+                    ) : null}
+                    <AvatarFallback
+                      className={cn(
+                        product.mainImageThumbnail && 'tw:bg-transparent tw:text-transparent',
+                      )}
+                    >
+                      {product.title.slice(0, 1) || '_'}
+                    </AvatarFallback>
+                  </Avatar>
+                </TableCell>
                 <TableCell className="tw:max-w-64 tw:font-medium tw:whitespace-normal">
                   <div className="tw:line-clamp-2">{product.title}</div>
                 </TableCell>
@@ -72,6 +106,9 @@ export function ProductsPaginateTable({
                 </TableCell>
                 <TableCell>
                   <bdi dir="ltr">{product.quantity}</bdi>
+                </TableCell>
+                <TableCell>
+                  <Price number={product.price} prefix="تومان" />
                 </TableCell>
                 <TableCell>
                   <ProductEnabledSwitch

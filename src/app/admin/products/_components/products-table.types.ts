@@ -1,9 +1,12 @@
 export type ProductTableRow = {
   id: string;
+  mainImage: string;
+  mainImageThumbnail: string;
   title: string;
   category: string;
   subCategory: string;
   quantity: number;
+  price: number;
   isEnable: boolean;
 };
 

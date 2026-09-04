@@ -13,10 +13,13 @@ function relationTitle(relation: ProductRelationDTO | string | null) {
 export function mapProductsPageViewModel(data: ManagementProductsPageDTO): ProductsPageViewModel {
   const products = data.result.map((product: ManagementProductDTO) => ({
     id: product.id,
+    mainImage: product.mainImage,
+    mainImageThumbnail: product.mainImageThumbnail,
     title: product.title,
     category: relationTitle(product.category),
     subCategory: relationTitle(product.subCategory),
     quantity: product.quantity,
+    price: product.price,
     isEnable: product.isEnable,
   }));
   const total = Number(data.pagination.totalItems);

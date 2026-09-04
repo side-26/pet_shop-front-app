@@ -8,10 +8,10 @@ describe('mapProductsPageViewModel', () => {
       result: [
         {
           id: 'product-1',
-          title: 'غذای خشک',
           mainImage: '',
-          images: [],
           mainImageThumbnail: '',
+          title: 'غذای خشک',
+          images: [],
           description: '',
           category: { id: 'category-1', title: 'غذا' },
           subCategory: null,
@@ -40,10 +40,13 @@ describe('mapProductsPageViewModel', () => {
       products: [
         {
           id: 'product-1',
+          mainImage: '',
+          mainImageThumbnail: '',
           title: 'غذای خشک',
           category: 'غذا',
           subCategory: '_',
           quantity: 3,
+          price: 0,
           isEnable: true,
         },
       ],
