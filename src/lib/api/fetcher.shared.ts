@@ -37,7 +37,10 @@ export function buildUrl(path: string, query?: QueryParams): string {
     ? configuredBaseUrl.slice(0, -1)
     : configuredBaseUrl;
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  const url = new URL(/^https?:\/\//i.test(path) ? path : `${baseUrl}${normalizedPath}`);
+  const browserOrigin = typeof window === 'undefined' ? '' : window.location.origin;
+  const url = new URL(
+    /^https?:\/\//i.test(path) ? path : `${baseUrl || browserOrigin}${normalizedPath}`,
+  );
 
   for (const [key, value] of Object.entries(query ?? {})) {
     if (value == null) continue;

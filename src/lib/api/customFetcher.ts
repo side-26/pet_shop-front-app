@@ -40,7 +40,7 @@ type PublicUncachedOptions = { auth?: false; cache?: 'no-store'; next?: never };
 type PublicCachedOptions = { auth?: false; cache: 'force-cache'; next: NextFetchOptions };
 type PrivateOptions = { auth: true; cache?: 'no-store'; next?: never };
 type BodylessOptions = { method?: 'GET' | 'DELETE'; body?: never };
-type BodyOptions<TBody> = { method: 'POST' | 'PUT' | 'PATCH'; body: TBody };
+type BodyOptions<TBody> = { method: 'POST' | 'PUT' | 'PATCH' | 'DELETE'; body: TBody };
 
 export type CustomFetcherOptions<TSuccess, TBackendError, TBody = never> = CommonOptions<
   TSuccess,
