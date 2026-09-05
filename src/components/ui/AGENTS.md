@@ -218,6 +218,12 @@ border, and (for Tooltip) arrow color as one compound visual decision.
 RTL positioning, configurable trigger delays, and reduced-motion-safe transitions.
 `Spinner` uses the same semantic colors with `size="xs|sm|md|lg|xl"`.
 
+`Progress` is a non-interactive `role="progressbar"` primitive with a required numeric `value`,
+`size="xs|sm|md|lg|xl"`, and `color="primary|secondary|neutral|info|success|error"`.
+It clamps values to 0–100, scales its track and percentage label together, and defaults to `primary`.
+At 100%, its fill changes to `fullColor` (default `success`); completion `children` render only then.
+Use `showLabel={false}` when the visible percentage would be redundant, while preserving the ARIA value.
+
 `DialogContent` uses `size="sm|md|lg|xl"` and always requires `DialogTitle`;
 include `DialogDescription` for explanatory content. Toast uses the Base UI toast
 manager and resolves `fill|outlined|tonal` foregrounds from semantic color.

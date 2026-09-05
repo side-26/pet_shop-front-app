@@ -8,6 +8,7 @@ import { AlertDialogShowcase } from './alert-dialog-showcase';
 import { ConfirmDialogShowcase } from './confirm-dialog-showcase';
 import { PopoverShowcase } from './popover-showcase';
 import { SpinnerShowcase } from './spinner-showcase';
+import { ProgressShowcase } from './progress-showcase';
 import { TooltipShowcase } from './tooltip-showcase';
 import { CollapsibleShowcase } from './collapsible-showcase';
 import { DialogShowcase } from './dialog-showcase';
@@ -52,6 +53,7 @@ const navigation = [
   ['#hover-cards', 'Hover Card'],
   ['#tooltips', 'Tooltip'],
   ['#spinners', 'Spinner'],
+  ['#progress', 'Progress'],
   ['#dialogs', 'Dialog'],
   ['#form-dialog-content', 'Form Dialog Content'],
   ['#filter-form-dialog-content', 'Filter Form Dialog Content'],
@@ -126,6 +128,7 @@ export function UiComponentsGallery() {
         <HoverCardShowcase />
         <TooltipShowcase />
         <SpinnerShowcase />
+        <ProgressShowcase />
         <DialogShowcase />
         <FormDialogContentShowcase />
         <FilterFormDialogContentShowcase />

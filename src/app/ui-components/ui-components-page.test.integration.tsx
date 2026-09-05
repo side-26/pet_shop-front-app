@@ -71,6 +71,7 @@ describe(routePaths.uiComponents, () => {
         'Hover Card',
         'Tooltip',
         'Spinner',
+        'Progress',
         'Dialog',
         'Form Dialog Content',
         'Filter Form Dialog Content',
