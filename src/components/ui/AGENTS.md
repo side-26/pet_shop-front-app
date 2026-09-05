@@ -283,7 +283,8 @@ Form controls live under `ui/fields`: `Input`, `InputGroup`, `Select`, `Switch`,
 `Checkbox`, and `RadioGroup`. Compose `InputGroup` only with `InputGroupInput`
 and `InputGroupAddon`; place every `SelectItem` in `SelectGroup`. Base UI Select
 roots require the complete `items` collection. Controls use native/ARIA invalid
-and disabled state and are designed RTL-first.
+and disabled state and are designed RTL-first. `SelectTrigger` accepts an optional
+decorative `prefixIcon` for compact, labelled select controls.
 `SelectField` is the React Hook Form composition for single-value selects. It
 consumes the nearest `FormProvider`, accepts a typed `name` and `{ value, label,
 disabled? }` options. Option values may be strings, booleans, or `null`; `null`
@@ -317,6 +318,30 @@ padding so text never collides with it in RTL or LTR.
 without password behavior. When `counter` is true, render a live character
 count at the physical bottom-left of the textarea, include `maxLength` when
 provided, and reserve bottom padding so user text cannot overlap the counter.
+`TipTap` is the SSR-safe base rich-text editor. It uses `immediatelyRender: false`,
+streams its editor initialization behind an internal Suspense boundary, and does not
+trigger React rerenders for each transaction. Its container supports
+only `variant="fill|tonal|outlined"` and
+`color="primary|secondary|success|error"`, defaulting to `fill + primary`.
+Filled and tonal containers resolve their semantic surface and foreground as a
+pair; outlined containers retain the standard foreground while their border,
+caret, and focus ring resolve from `color`.
+Its companion `ui/tip-tap/plugins.tsx` configures paragraph and heading alignment
+for `left|center|right`, plus Tiptap Typography input rules. `textDirection`
+defaults to `auto` and accepts `auto|rtl|ltr`; callers can use Tiptap's
+`setTextDirection()` and `unsetTextDirection()` commands for node-level overrides.
+`tipTapTypographyClassName` applies the project semantic heading/body scale and
+RTL-safe list and blockquote spacing to the editor content.
+Pass a `TipTapHeaderActions` composition through `headerActions`. Its children can
+be `TipTapHeadingAction` (paragraph/body-small/H1–H5), `TipTapTextAlignAction`
+(right/center/left), and `TipTapTextDirectionAction` (auto/RTL/LTR). Only the
+children composed by the caller render; their state is isolated with Tiptap
+`useEditorState` so editor transactions do not rerender the parent editor component.
+Each action uses the shared `Select` primitive with an appropriate decorative
+prefix icon, rather than a button group. `TipTapListAction` selects no list,
+bullet list, or ordered list. `TipTapImageUploadAction` accepts an optional
+`onUpload(file)` callback which must resolve to a durable image URL; without it,
+the action inserts a local data URL intended only for simple, transient drafts.
 `InputOTP`, `InputOTPGroup`, `InputOTPSlot`, and `InputOTPSeparator` are the
 project-owned shadcn Input OTP primitives backed by `input-otp`. `InputOtpField`
 is their React Hook Form composition with `color="primary|secondary|info|success|warning|error"`

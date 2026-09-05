@@ -35,6 +35,7 @@ import { FormDialogContentShowcase } from './form-dialog-content-showcase';
 import { FilterFormDialogContentShowcase } from './filter-form-dialog-content-showcase';
 import { FileFieldShowcase } from './file-field-showcase';
 import { MultipleImageUploaderFieldShowcase } from './multiple-image-uploader-field-showcase';
+import { TipTapShowcase } from './tip-tap-showcase';
 
 const navigation = [
   ['#avatars', 'Avatar'],
@@ -68,6 +69,7 @@ const navigation = [
   ['#forms', 'Form'],
   ['#file-fields', 'FileField'],
   ['#multiple-image-uploader-fields', 'Multiple Image Uploader Field'],
+  ['#tip-tap', 'TipTap'],
   ['#input-otp-fields', 'Input OTP Field'],
   ['#countdowns', 'Countdown'],
   ['#counters', 'Counter'],
@@ -143,6 +145,7 @@ export function UiComponentsGallery() {
         <FormShowcase />
         <FileFieldShowcase />
         <MultipleImageUploaderFieldShowcase />
+        <TipTapShowcase />
         <InputOtpShowcase />
         <CountdownShowcase />
         <CounterShowcase />

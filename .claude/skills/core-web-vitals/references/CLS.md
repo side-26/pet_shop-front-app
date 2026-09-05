@@ -9,14 +9,14 @@ CLS scores unexpected shift clusters across a page visit. A layout-shift score i
 **Bad:**
 
 ```html
-<img src="photo.jpg" alt="Photo">
+<img src="photo.jpg" alt="Photo" />
 <iframe src="https://video.example/embed/123" title="Demo"></iframe>
 ```
 
 **Good:**
 
 ```html
-<img src="photo.jpg" alt="Photo" width="800" height="600">
+<img src="photo.jpg" alt="Photo" width="800" height="600" />
 
 <div class="video-frame">
   <iframe src="https://video.example/embed/123" title="Demo"></iframe>
@@ -61,8 +61,8 @@ Use a fallback with similar metrics and tune it with `size-adjust`, `ascent-over
 
 ```css
 @font-face {
-  font-family: "Brand Fallback";
-  src: local("Arial");
+  font-family: 'Brand Fallback';
+  src: local('Arial');
   size-adjust: 102%;
   ascent-override: 92%;
   descent-override: 24%;
@@ -99,7 +99,7 @@ new PerformanceObserver((list) => {
   for (const entry of list.getEntries()) {
     if (!entry.hadRecentInput) {
       console.log('Layout shift', entry.value);
-      entry.sources?.forEach(source => {
+      entry.sources?.forEach((source) => {
         console.log('Shifted node', source.node);
         console.log('Previous rect', source.previousRect);
         console.log('Current rect', source.currentRect);
@@ -121,6 +121,6 @@ new PerformanceObserver((list) => {
 
 ## Sources
 
-* [Optimize CLS](https://web.dev/articles/optimize-cls)
-* [Debug layout shifts](https://developer.chrome.com/docs/devtools/performance/insights#cls-culprits)
-* [CSS font metric overrides](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/size-adjust)
+- [Optimize CLS](https://web.dev/articles/optimize-cls)
+- [Debug layout shifts](https://developer.chrome.com/docs/devtools/performance/insights#cls-culprits)
+- [CSS font metric overrides](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/size-adjust)

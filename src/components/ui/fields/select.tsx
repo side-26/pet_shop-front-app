@@ -2,6 +2,7 @@
 
 import { Select as SelectPrimitive } from '@base-ui/react/select';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -21,7 +22,11 @@ function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
   );
 }
 
-function SelectTrigger({ className, children, ...props }: SelectPrimitive.Trigger.Props) {
+type SelectTriggerProps = SelectPrimitive.Trigger.Props & {
+  prefixIcon?: ReactNode;
+};
+
+function SelectTrigger({ className, children, prefixIcon, ...props }: SelectTriggerProps) {
   return (
     <SelectPrimitive.Trigger
       data-slot="field-control"
@@ -31,6 +36,11 @@ function SelectTrigger({ className, children, ...props }: SelectPrimitive.Trigge
       )}
       {...props}
     >
+      {prefixIcon ? (
+        <span aria-hidden data-slot="select-trigger-prefix-icon" className="tw:shrink-0">
+          {prefixIcon}
+        </span>
+      ) : null}
       {children}
       <SelectPrimitive.Icon data-slot="select-trigger-icon" className="tw:shrink-0">
         <ChevronDownIcon aria-hidden="true" />
@@ -129,5 +139,6 @@ export {
   SelectLabel,
   SelectSeparator,
   SelectTrigger,
+  type SelectTriggerProps,
   SelectValue,
 };

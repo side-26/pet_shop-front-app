@@ -6,11 +6,11 @@ Read this reference when field INP is poor, a trace identifies a slow interactio
 
 INP spans three phases. Do not optimize the event handler until the trace shows which phase dominates.
 
-| Phase | Evidence to inspect | Typical fixes |
-|-------|---------------------|---------------|
-| Input delay | Long tasks already occupying the main thread before the event callback starts | Reduce startup work, split long tasks, delay third parties |
-| Processing time | Event callbacks and synchronous work attached to the interaction | Remove unnecessary work, simplify handlers, use workers for CPU-heavy computation |
-| Presentation delay | Style, layout, paint, or later main-thread work before the next frame | Reduce DOM scope, rendering cost, and layout invalidation |
+| Phase              | Evidence to inspect                                                           | Typical fixes                                                                     |
+| ------------------ | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Input delay        | Long tasks already occupying the main thread before the event callback starts | Reduce startup work, split long tasks, delay third parties                        |
+| Processing time    | Event callbacks and synchronous work attached to the interaction              | Remove unnecessary work, simplify handlers, use workers for CPU-heavy computation |
+| Presentation delay | Style, layout, paint, or later main-thread work before the next frame         | Reduce DOM scope, rendering cost, and layout invalidation                         |
 
 ## Yield long work
 
@@ -18,7 +18,7 @@ INP spans three phases. Do not optimize the event handler until the trace shows 
 
 ```javascript
 function processLargeArray(items) {
-  items.forEach(item => expensiveOperation(item));
+  items.forEach((item) => expensiveOperation(item));
 }
 ```
 
@@ -34,7 +34,7 @@ async function processLargeArray(items) {
     if ('scheduler' in window && 'yield' in scheduler) {
       await scheduler.yield();
     } else {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     }
   }
 }
@@ -79,10 +79,10 @@ Yielding helps only when the UI update can paint before the remaining work. Conf
 
 ## Check common causes
 
-* **Third-party code.** Attribute long tasks to their script URLs. Delay nonessential widgets until interaction or visibility, but avoid making the first user interaction pay the full initialization cost without feedback.
-* **Framework rendering.** Profile the affected state transition. Memoization is useful only when it removes measured repeated work; do not apply it indiscriminately.
-* **Large DOM updates.** Reduce the number of invalidated nodes and avoid forced synchronous layout caused by interleaved reads and writes.
-* **CPU-heavy computation.** Move suitable work to a Web Worker and measure serialization overhead.
+- **Third-party code.** Attribute long tasks to their script URLs. Delay nonessential widgets until interaction or visibility, but avoid making the first user interaction pay the full initialization cost without feedback.
+- **Framework rendering.** Profile the affected state transition. Memoization is useful only when it removes measured repeated work; do not apply it indiscriminately.
+- **Large DOM updates.** Reduce the number of invalidated nodes and avoid forced synchronous layout caused by interleaved reads and writes.
+- **CPU-heavy computation.** Move suitable work to a Web Worker and measure serialization overhead.
 
 ## Inspect one browser session
 
@@ -97,7 +97,7 @@ new PerformanceObserver((list) => {
         duration: entry.duration,
         processingStart: entry.processingStart,
         processingEnd: entry.processingEnd,
-        target: entry.target
+        target: entry.target,
       });
     }
   }
@@ -117,6 +117,6 @@ For production attribution, prefer the `web-vitals/attribution` build. Its `onIN
 
 ## Sources
 
-* [Optimize INP](https://web.dev/articles/optimize-inp)
-* [`scheduler.yield()`](https://web.dev/articles/optimize-long-tasks#scheduler-yield)
-* [web-vitals attribution](https://github.com/GoogleChrome/web-vitals#attribution-build)
+- [Optimize INP](https://web.dev/articles/optimize-inp)
+- [`scheduler.yield()`](https://web.dev/articles/optimize-long-tasks#scheduler-yield)
+- [web-vitals attribution](https://github.com/GoogleChrome/web-vitals#attribution-build)

@@ -1,0 +1,35 @@
+.root :global(.tiptap) {
+  min-block-size: 10rem;
+  outline: none;
+  overflow-wrap: anywhere;
+  padding: 0.875rem 1rem;
+  white-space: pre-wrap;
+}
+
+.root :global(.tiptap > :first-child) {
+  margin-block-start: 0;
+}
+
+.root :global(.tiptap > :last-child) {
+  margin-block-end: 0;
+}
+
+.root[data-readonly='true'] :global(.tiptap) {
+  cursor: default;
+}
+
+.root :global(.tiptap img) {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+  margin-block: 1rem;
+  border-radius: 0.75rem;
+}
+
+.fallback {
+  display: block;
+  min-block-size: 10rem;
+  padding: 0.875rem 1rem;
+  color: transparent;
+  user-select: none;
+}

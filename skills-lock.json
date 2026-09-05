@@ -85,6 +85,12 @@
       "skillPath": "skills/tailwind-4-docs/SKILL.md",
       "computedHash": "4900f575f24641b1af459cda37cbb8438ecf3f8f1a63148384197cb730895093"
     },
+    "tiptap": {
+      "source": "ueberdosis/tiptap",
+      "sourceType": "github",
+      "skillPath": "skills/tiptap/SKILL.md",
+      "computedHash": "772943440276fedbc27339a57ad35ccd3c2bc19c1df3c7ba5237cc5d88f3604a"
+    },
     "ui-ux-pro-max": {
       "source": "nextlevelbuilder/ui-ux-pro-max-skill",
       "sourceType": "github",
