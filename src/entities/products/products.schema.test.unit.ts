@@ -8,6 +8,7 @@ import {
 } from './products.schema';
 
 const category = '507f1f77bcf86cd799439011';
+const description = { type: 'doc' as const, content: [] };
 const images = {
   images: [new File(['image'], 'product.webp', { type: 'image/webp' })],
   mainImageIndex: 0,
@@ -16,10 +17,10 @@ const images = {
 describe('product schemas', () => {
   it('normalizes creation input and applies backend quantity defaults', async () => {
     await expect(
-      productSchema.validate({ title: '  غذای خشک  ', description: 'توضیحات', category, images }),
+      productSchema.validate({ title: '  غذای خشک  ', description, category, images }),
     ).resolves.toMatchObject({
       title: 'غذای خشک',
-      description: 'توضیحات',
+      description,
       category,
       images,
       quantity: 0,
@@ -27,9 +28,12 @@ describe('product schemas', () => {
   });
   it('rejects invalid image selection and empty updates', async () => {
     await expect(
+      productSchema.validate({ title: 'غذا', description: '<p>HTML</p>', category, images }),
+    ).rejects.toThrow('JSON ساخت‌یافته');
+    await expect(
       productSchema.validate({
         title: 'غذا',
-        description: 'توضیحات',
+        description,
         category,
         images: { ...images, mainImageIndex: 1 },
       }),

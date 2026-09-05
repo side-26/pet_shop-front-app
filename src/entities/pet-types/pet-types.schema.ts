@@ -5,6 +5,11 @@ import {
   MAIN_IMAGE_UPLOAD_MIME_TYPES,
 } from '@/configs/main-image-upload';
 import { yupMessage } from '@/configs/yup.config';
+import {
+  isOptionalRichTextDocument,
+  isRichTextDocument,
+  type RichTextFormValue,
+} from '@/lib/rich-text';
 
 const imageFileSchema = mixed<File>()
   .test(
@@ -27,6 +32,17 @@ const optionalUpdateImageSchema = mixed<File>()
   .nullable()
   .optional();
 
+const richTextSchema = mixed<RichTextFormValue>().test(
+  'structured-json',
+  'توضیحات باید به صورت JSON ساخت‌یافته ارسال شود.',
+  isRichTextDocument,
+);
+const optionalRichTextSchema = mixed<RichTextFormValue>().test(
+  'structured-json',
+  'توضیحات باید به صورت JSON ساخت‌یافته ارسال شود.',
+  isOptionalRichTextDocument,
+);
+
 export const petTypeIdSchema = object({
   id: string()
     .trim()
@@ -40,7 +56,7 @@ export const petTypeQuerySchema = object({
 
 export const petTypeSchema = object({
   title: string().trim().min(2).max(20).required(),
-  description: string().trim().max(150).default(''),
+  description: richTextSchema.required(),
   mainImage: imageFileSchema
     .test('required', yupMessage('petTypeImageRequired'), (value) => value instanceof File)
     .required(),
@@ -48,7 +64,7 @@ export const petTypeSchema = object({
 
 export const updatePetTypeSchema = object({
   title: string().trim().min(2).max(20).required(),
-  description: string().trim().max(150).default(''),
+  description: optionalRichTextSchema.optional(),
   mainImage: optionalUpdateImageSchema,
 });
 

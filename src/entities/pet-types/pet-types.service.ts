@@ -79,7 +79,7 @@ function invalidate(id?: string) {
 function toPetTypeFormData(input: CreatePetTypeDTO | UpdatePetTypeDTO) {
   const formData = new FormData();
   formData.set('title', input.title);
-  formData.set('description', input.description ?? '');
+  if (input.description) formData.set('description', JSON.stringify(input.description));
   if (input.mainImage instanceof File) formData.set('mainImage', input.mainImage);
 
   return formData;

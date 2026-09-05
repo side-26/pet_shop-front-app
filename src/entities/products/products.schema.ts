@@ -6,6 +6,11 @@ import {
   MAIN_IMAGE_UPLOAD_MIME_TYPES,
 } from '@/configs/main-image-upload';
 import { yupMessage } from '@/configs/yup.config';
+import {
+  isOptionalRichTextDocument,
+  isRichTextDocument,
+  type RichTextFormValue,
+} from '@/lib/rich-text';
 
 const objectId = string()
   .trim()
@@ -36,7 +41,9 @@ const productImagesUpload = object({
 const productFields = {
   title: string().trim().min(2).max(150).required(),
   summary: string().trim().max(500).optional(),
-  description: string().trim().min(1).max(5000).required(),
+  description: mixed<RichTextFormValue>()
+    .test('structured-json', 'توضیحات باید به صورت JSON ساخت‌یافته ارسال شود.', isRichTextDocument)
+    .required(),
   category: objectId,
   subCategory: objectId.nullable().optional(),
   quantity: number().integer().min(0).default(0).required(),
@@ -47,7 +54,13 @@ export const productSchema = object({ ...productFields, images: productImagesUpl
 export const updateProductBaseInfoSchema = object({
   title: string().trim().min(2).max(150).optional(),
   summary: string().trim().max(500).optional(),
-  description: string().trim().min(1).max(5000).optional(),
+  description: mixed<RichTextFormValue>()
+    .test(
+      'structured-json',
+      'توضیحات باید به صورت JSON ساخت‌یافته ارسال شود.',
+      isOptionalRichTextDocument,
+    )
+    .optional(),
   category: objectId.optional(),
   subCategory: objectId.nullable().optional(),
   quantity: number().integer().min(0).optional(),

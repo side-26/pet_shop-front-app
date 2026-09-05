@@ -1,4 +1,5 @@
 import type { PaginateDataDTO } from '@/lib/api/pagination.dto';
+import type { RichTextFormValue } from '@/lib/rich-text';
 import type {
   CustomerProductQueryInput,
   ManagementProductQueryInput,
@@ -16,7 +17,7 @@ export type ManagementProductDTO = {
   images: string[];
   mainImageThumbnail: string;
   summary?: string;
-  description: string;
+  description: RichTextFormValue;
   category: ProductRelationDTO | string;
   subCategory: ProductRelationDTO | string | null;
   quantity: number;

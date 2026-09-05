@@ -1,4 +1,5 @@
 import type { PaginateDataDTO } from '@/lib/api/pagination.dto';
+import type { RichTextFormValue } from '@/lib/rich-text';
 
 import type {
   CustomerPetQueryInput,
@@ -19,7 +20,7 @@ export type ManagementPetDTO = {
   images: string[];
   mainImageThumbnail: string;
   summary?: string;
-  description: string;
+  description: RichTextFormValue;
   petType: PetRelationDTO | string;
   breed: PetRelationDTO | string;
   quantity: number;

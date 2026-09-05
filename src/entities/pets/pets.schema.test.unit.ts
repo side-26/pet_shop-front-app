@@ -13,6 +13,7 @@ import {
 
 const petType = '507f1f77bcf86cd799439011';
 const breed = '507f1f77bcf86cd799439012';
+const description = { type: 'doc' as const, content: [] };
 const mainImage = new File(['pet'], 'pet.webp', { type: 'image/webp' });
 const images = { images: [mainImage], mainImageIndex: 0 };
 
@@ -21,14 +22,14 @@ describe('pet schemas', () => {
     await expect(
       petSchema.validate({
         title: '  Persian kitten  ',
-        description: ' Friendly kitten ',
+        description,
         petType,
         breed,
         images,
       }),
     ).resolves.toMatchObject({
       title: 'Persian kitten',
-      description: 'Friendly kitten',
+      description,
       images,
       quantity: 0,
       price: 1000,
@@ -39,7 +40,10 @@ describe('pet schemas', () => {
   });
 
   it('rejects invalid relations, slug, discount, and image', async () => {
-    const base = { title: 'Kitten', description: 'Friendly', petType, breed, images };
+    const base = { title: 'Kitten', description, petType, breed, images };
+    await expect(petSchema.validate({ ...base, description: '<p>HTML</p>' })).rejects.toThrow(
+      'JSON ساخت‌یافته',
+    );
     await expect(petSchema.validate({ ...base, slug: 'Bad Slug' })).rejects.toBeDefined();
     await expect(
       petSchema.validate({ ...base, slug: 'kitten', petType: 'invalid' }),

@@ -32,6 +32,7 @@ vi.mock('@/utils/entityCache', () => ({
 const fetcher = vi.mocked(customFetcher);
 const id = '507f1f77bcf86cd799439010';
 const category = '507f1f77bcf86cd799439011';
+const description = { type: 'doc' as const, content: [] };
 const image = new File(['x'], 'product.webp', { type: 'image/webp' });
 const success = { isSuccess: true as const, message: 'ok', data: {} as never };
 describe('product service', () => {
@@ -88,7 +89,7 @@ describe('product service', () => {
   it('serializes multipart images and invalidates only successful mutations', async () => {
     const input = {
       title: 'غذا',
-      description: 'توضیحات',
+      description,
       category,
       quantity: 2,
       images: { images: [image], mainImageIndex: 0 },
@@ -98,6 +99,7 @@ describe('product service', () => {
     await updateProductImages(id, { images: input.images });
     await updateProductPrice(id, { price: 20 });
     const body = fetcher.mock.calls[0]?.[0].body as FormData;
+    expect(body.get('description')).toBe(JSON.stringify(description));
     expect(body.get('mainImage')).toBe(image);
     expect(body.get('quantity')).toBe('2');
     expect(fetcher.mock.calls[1]?.[0]).toMatchObject({

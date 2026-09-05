@@ -11,6 +11,7 @@ vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
 vi.mock('./pet-types.service', () => ({ updatePetType: vi.fn() }));
 
 const id = '507f1f77bcf86cd799439011';
+const description = { type: 'doc' as const, content: [] };
 
 function adminSession(): AuthSessionModel {
   return {
@@ -37,14 +38,14 @@ describe('updatePetTypeAction', () => {
       updatePetTypeAction({
         id,
         title: 'سگ',
-        description: 'حیوان خانگی',
+        description,
         mainImage: 'https://cdn.example.test/pet-types/dog.webp',
       }),
     ).resolves.toBe(success);
 
     expect(service.updatePetType).toHaveBeenCalledWith(id, {
       title: 'سگ',
-      description: 'حیوان خانگی',
+      description,
     });
   });
 });

@@ -50,6 +50,7 @@ const fetcher = vi.mocked(customFetcher);
 const id = '507f1f77bcf86cd799439010';
 const petType = '507f1f77bcf86cd799439011';
 const breed = '507f1f77bcf86cd799439012';
+const description = { type: 'doc' as const, content: [] };
 const mainImage = new File(['pet'], 'pet.webp', { type: 'image/webp' });
 const success = { isSuccess: true as const, message: 'ok', data: {} as never };
 
@@ -128,7 +129,7 @@ describe('pet service', () => {
   it('serializes create and both update methods as multipart data', async () => {
     const input = {
       title: 'Kitten',
-      description: 'Friendly',
+      description,
       petType,
       breed,
       slug: 'kitten',
@@ -146,6 +147,7 @@ describe('pet service', () => {
     expect(createBody.getAll('images')).toEqual([input.images.images[1]]);
     expect(createBody.get('mainImage')).toBe(mainImage);
     expect(createBody.get('quantity')).toBe('2');
+    expect(createBody.get('description')).toBe(JSON.stringify(description));
     expect(invalidateListMock).toHaveBeenCalledOnce();
 
     await updatePetBaseInfo(id, { title: 'Updated' });

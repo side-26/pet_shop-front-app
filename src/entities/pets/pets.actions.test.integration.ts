@@ -38,6 +38,7 @@ vi.mock('./pets.service', () => ({
 const id = '507f1f77bcf86cd799439010';
 const petType = '507f1f77bcf86cd799439011';
 const breed = '507f1f77bcf86cd799439012';
+const description = { type: 'doc' as const, content: [] };
 const mainImage = new File(['pet'], 'pet.webp', { type: 'image/webp' });
 const success = { isSuccess: true as const, message: 'ok', data: {} as never };
 const getSessionMock = vi.mocked(getSession);
@@ -102,7 +103,7 @@ describe('pet actions', () => {
     await expect(
       createPetAction({
         title: ' Kitten ',
-        description: ' Friendly ',
+        description,
         petType,
         breed,
         images: { images: [mainImage], mainImageIndex: 0 },
@@ -111,7 +112,7 @@ describe('pet actions', () => {
     expect(service.createPet).toHaveBeenCalledWith(
       expect.objectContaining({
         title: 'Kitten',
-        description: 'Friendly',
+        description,
         images: { images: [mainImage], mainImageIndex: 0 },
         quantity: 0,
         price: 1000,

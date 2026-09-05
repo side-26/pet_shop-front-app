@@ -5,6 +5,11 @@ import {
   MAIN_IMAGE_UPLOAD_MIME_TYPES,
 } from '@/configs/main-image-upload';
 import { yupMessage } from '@/configs/yup.config';
+import {
+  isOptionalRichTextDocument,
+  isRichTextDocument,
+  type RichTextFormValue,
+} from '@/lib/rich-text';
 
 const objectId = string()
   .trim()
@@ -43,7 +48,9 @@ const petFields = {
   title: string().trim().min(2).max(150).required(),
   images: petImagesUpload.required(),
   summary: string().trim().max(500).optional(),
-  description: string().trim().min(1).max(5000).required(),
+  description: mixed<RichTextFormValue>()
+    .test('structured-json', 'توضیحات باید به صورت JSON ساخت‌یافته ارسال شود.', isRichTextDocument)
+    .required(),
   petType: objectId,
   breed: objectId,
   quantity: number().integer().min(0).default(0).required(),
@@ -86,7 +93,13 @@ export const petSchema = object({
 export const updatePetBaseInfoSchema = object({
   title: string().trim().min(2).max(150).optional(),
   summary: string().trim().max(500).optional(),
-  description: string().trim().min(1).max(5000).optional(),
+  description: mixed<RichTextFormValue>()
+    .test(
+      'structured-json',
+      'توضیحات باید به صورت JSON ساخت‌یافته ارسال شود.',
+      isOptionalRichTextDocument,
+    )
+    .optional(),
   petType: objectId.optional(),
   breed: objectId.optional(),
   quantity: number().integer().min(0).optional(),

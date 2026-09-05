@@ -18,10 +18,11 @@ vi.mock('@/utils/entityCache', () => ({
 }));
 
 const id = '507f1f77bcf86cd799439011';
+const description = { type: 'doc' as const, content: [] };
 const petType = {
   id,
   title: 'سگ',
-  description: 'حیوان خانگی',
+  description,
   mainImage: 'https://cdn.example.test/pet-types/dog.webp',
   thumbnail: 'https://cdn.example.test/pet-types/dog-thumb.webp',
   isEnabled: true,
@@ -52,7 +53,7 @@ describe('pet-type service image updates', () => {
     });
     expect(Object.fromEntries((options?.body as FormData).entries())).toEqual({
       title: petType.title,
-      description: petType.description,
+      description: JSON.stringify(petType.description),
     });
     expect(invalidateListMock).toHaveBeenCalledOnce();
     expect(invalidateDetailMock).toHaveBeenCalledWith(id);

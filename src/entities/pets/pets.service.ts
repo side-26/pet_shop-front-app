@@ -136,7 +136,7 @@ function toFormData(input: CreatePetDTO | UpdatePetImagesDTO) {
         else body.append('images', image);
       });
     } else {
-      body.set(field, String(value));
+      body.set(field, field === 'description' ? JSON.stringify(value) : String(value));
     }
   }
   return body;
@@ -148,7 +148,6 @@ function invalidate(id?: string) {
 }
 
 export async function createPet(input: CreatePetDTO) {
-  console.log(input);
   const result = await customFetcher<ManagementPetDTO, unknown, FormData>({
     url: '/pets',
     method: 'POST',

@@ -5,6 +5,7 @@ import type {
   RangePetTypePropertyDefinitionsInput,
   UpdatePetTypeInput,
 } from './pet-types.schema';
+import type { RichTextFormValue } from '@/lib/rich-text';
 
 export type PetTypePropertyDefinitionDTO = {
   key: string;
@@ -19,7 +20,7 @@ export type PetTypePropertyDefinitionDTO = {
 export type PetTypeDTO = {
   id: string;
   title: string;
-  description: string;
+  description: RichTextFormValue;
   mainImage: string;
   thumbnail: string;
   isEnabled: boolean;

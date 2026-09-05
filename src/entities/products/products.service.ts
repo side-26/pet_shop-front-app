@@ -109,7 +109,7 @@ function toFormData(input: CreateProductDTO | UpdateProductImagesDTO) {
       upload.images.forEach((file, index) =>
         index === upload.mainImageIndex ? body.set('mainImage', file) : body.append('images', file),
       );
-    } else body.set(key, String(value));
+    } else body.set(key, key === 'description' ? JSON.stringify(value) : String(value));
   }
   return body;
 }

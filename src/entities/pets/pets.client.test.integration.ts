@@ -29,9 +29,10 @@ vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
 vi.mock('@/utils/helpers', () => ({ globalErrorHandler: vi.fn() }));
 
 const id = '507f1f77bcf86cd799439010';
+const description = { type: 'doc' as const, content: [] };
 const input = {
   title: 'Kitten',
-  description: 'Friendly',
+  description,
   petType: '507f1f77bcf86cd799439011',
   breed: '507f1f77bcf86cd799439012',
   slug: 'kitten',

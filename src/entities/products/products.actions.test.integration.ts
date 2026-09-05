@@ -30,6 +30,7 @@ vi.mock('./products.service', () => ({
 const session = vi.mocked(getSession);
 const id = '507f1f77bcf86cd799439010';
 const category = '507f1f77bcf86cd799439011';
+const description = { type: 'doc' as const, content: [] };
 const image = new File(['x'], 'product.webp', { type: 'image/webp' });
 const ok = { isSuccess: true as const, message: 'ok', data: {} as never };
 describe('product actions', () => {
@@ -53,7 +54,7 @@ describe('product actions', () => {
     vi.mocked(service.updateProductPrice).mockResolvedValue(ok);
     await createProductAction({
       title: ' غذا ',
-      description: 'توضیحات',
+      description,
       category,
       images: { images: [image], mainImageIndex: 0 },
     });
