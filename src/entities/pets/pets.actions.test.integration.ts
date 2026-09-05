@@ -14,9 +14,11 @@ import {
 } from './pets.actions';
 import * as service from './pets.service';
 import { getAllPetTypes } from '@/entities/pet-types/pet-types.service';
+import { deleteImage } from '@/entities/images/images.service';
 
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
 vi.mock('@/entities/pet-types/pet-types.service', () => ({ getAllPetTypes: vi.fn() }));
+vi.mock('@/entities/images/images.service', () => ({ deleteImage: vi.fn() }));
 vi.mock('./pets.service', () => ({
   createPet: vi.fn(),
   deletePet: vi.fn(),
@@ -134,5 +136,23 @@ describe('pet actions', () => {
       message: 'شما اجازه حذف حیوانات را ندارید.',
     });
     expect(service.deletePet).not.toHaveBeenCalled();
+  });
+
+  it('removes persisted rich-text images after the pet is deleted', async () => {
+    const imageUrl = 'https://cdn.example.test/pets/description.webp';
+    vi.mocked(service.getManagementPet).mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: {
+        description: { type: 'doc', content: [{ type: 'image', attrs: { src: imageUrl } }] },
+      },
+    } as never);
+    vi.mocked(service.deletePet).mockResolvedValue(success);
+    vi.mocked(deleteImage).mockResolvedValue(success);
+
+    await expect(deletePetAction({ id })).resolves.toBe(success);
+
+    expect(service.deletePet).toHaveBeenCalledWith(id);
+    expect(deleteImage).toHaveBeenCalledWith({ imageUrl });
   });
 });

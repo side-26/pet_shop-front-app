@@ -5,6 +5,7 @@ import type { UseFormSetError } from 'react-hook-form';
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
 import { globalErrorHandler } from '@/utils/helpers';
+import { uploadRichTextImages } from '@/entities/images/images.client';
 import {
   deletePetTypeAction,
   disablePetTypeAction,
@@ -48,6 +49,12 @@ export async function submitCreatePetType(
   input: PetTypeInput,
   showErrorFields: UseFormSetError<PetTypeInput>,
 ) {
+  try {
+    input = { ...input, description: await uploadRichTextImages(input.description as never) };
+  } catch (error) {
+    globalErrorHandler(error as never, { showErrorFields });
+    return false;
+  }
   const result = await createPetTypeAction(input);
   if (!result.isSuccess) {
     globalErrorHandler(result, { showErrorFields });
@@ -81,6 +88,11 @@ export function useUpdatePetType(id: string, onSuccess: () => void) {
       const form = formRef.current;
       if (!form || isPending) return;
       startTransition(async () => {
+        try {
+          input = { ...input, description: await uploadRichTextImages(input.description as never) };
+        } catch (error) {
+          return globalErrorHandler(error as never, { showErrorFields: form.setError });
+        }
         const result = await updatePetTypeAction({ id, ...input });
         if (!result.isSuccess)
           return globalErrorHandler(result, { showErrorFields: form.setError });

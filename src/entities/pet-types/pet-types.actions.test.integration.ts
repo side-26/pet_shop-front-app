@@ -4,11 +4,17 @@ import type { AuthSessionModel } from '@/_types';
 import { USER_ROLES } from '@/configs/user-role';
 import { getSession } from '@/utils/session';
 
-import { updatePetTypeAction } from './pet-types.actions';
+import { deletePetTypeAction, updatePetTypeAction } from './pet-types.actions';
 import * as service from './pet-types.service';
+import { deleteImage } from '@/entities/images/images.service';
 
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
-vi.mock('./pet-types.service', () => ({ updatePetType: vi.fn() }));
+vi.mock('@/entities/images/images.service', () => ({ deleteImage: vi.fn() }));
+vi.mock('./pet-types.service', () => ({
+  deletePetType: vi.fn(),
+  getPetTypeById: vi.fn(),
+  updatePetType: vi.fn(),
+}));
 
 const id = '507f1f77bcf86cd799439011';
 const description = { type: 'doc' as const, content: [] };
@@ -47,5 +53,24 @@ describe('updatePetTypeAction', () => {
       title: 'سگ',
       description,
     });
+  });
+
+  it('removes persisted rich-text images after the pet type is deleted', async () => {
+    const success = { isSuccess: true as const, message: 'deleted', data: {} as never };
+    const imageUrl = 'https://cdn.example.test/pet-types/description.webp';
+    vi.mocked(service.getPetTypeById).mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: {
+        description: { type: 'doc', content: [{ type: 'image', attrs: { src: imageUrl } }] },
+      },
+    } as never);
+    vi.mocked(service.deletePetType).mockResolvedValue(success);
+    vi.mocked(deleteImage).mockResolvedValue(success);
+
+    await expect(deletePetTypeAction({ id })).resolves.toBe(success);
+
+    expect(service.deletePetType).toHaveBeenCalledWith(id);
+    expect(deleteImage).toHaveBeenCalledWith({ imageUrl });
   });
 });

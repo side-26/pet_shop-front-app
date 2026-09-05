@@ -4,6 +4,7 @@ import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { MultipleImageUploaderField } from '@/components/common/multiple-image-uploader-field';
 import { Dialog } from '@/components/ui/dialog';
 import { TextareaField } from '@/components/ui/fields/textarea-field';
+import { RichTextField } from '@/components/common/rich-text-field';
 import { TextField } from '@/components/ui/fields/text-field';
 import { Form } from '@/components/ui/form';
 import { useCreateProduct } from '@/entities/products/products.client';
@@ -41,7 +42,7 @@ export function CreateProductDialog({ open, options, onOpenChange, onCreated }: 
             defaultValues: {
               title: '',
               summary: '',
-              description: '',
+              description: { type: 'doc', content: [] },
               category: '',
               subCategory: null,
               quantity: 0,
@@ -70,13 +71,7 @@ export function CreateProductDialog({ open, options, onOpenChange, onCreated }: 
               ) : null}
             </div>
             <TextareaField<ProductInput> name="summary" label="خلاصه" maxLength={500} counter />
-            <TextareaField<ProductInput>
-              name="description"
-              label="توضیحات"
-              maxLength={5000}
-              counter
-              required
-            />
+            <RichTextField<ProductInput> name="description" label="توضیحات" required />
             <MultipleImageUploaderField<ProductInput>
               name="images"
               label="تصاویر محصول"

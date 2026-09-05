@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import { richTextToPlainText } from '@/lib/rich-text';
 
 import { PetTypeEnabledSwitch } from './pet-type-enabled-switch';
 import { PetTypeRowActions } from './pet-type-row-actions';
@@ -78,7 +79,9 @@ export function PetTypesTable({ petTypes, isLoading = false }: PetTypesTableProp
                     <div className="tw:line-clamp-2">{displayValue(petType.title)}</div>
                   </TableCell>
                   <TableCell className="tw:max-w-80 tw:whitespace-normal">
-                    <div className="tw:line-clamp-2">{displayValue(petType.description)}</div>
+                    <div className="tw:line-clamp-2">
+                      {displayValue(richTextToPlainText(petType.description))}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <PetTypeEnabledSwitch

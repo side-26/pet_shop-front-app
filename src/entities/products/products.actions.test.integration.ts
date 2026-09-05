@@ -10,7 +10,10 @@ import {
   updateProductPriceAction,
 } from './products.actions';
 import * as service from './products.service';
+import { deleteImage } from '@/entities/images/images.service';
+
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
+vi.mock('@/entities/images/images.service', () => ({ deleteImage: vi.fn() }));
 vi.mock('./products.service', () => ({
   createProduct: vi.fn(),
   deleteProduct: vi.fn(),
@@ -78,5 +81,45 @@ describe('product actions', () => {
     await expect(getManagementProductsAction()).resolves.toMatchObject({ isSuccess: false });
     await expect(deleteProductAction({ id })).resolves.toMatchObject({ isSuccess: false });
     expect(service.getManagementProducts).not.toHaveBeenCalled();
+  });
+  it('removes persisted rich-text images after the product is deleted', async () => {
+    const imageUrl = 'https://cdn.example.test/products/description.webp';
+    vi.mocked(service.getManagementProduct).mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: {
+        description: { type: 'doc', content: [{ type: 'image', attrs: { src: imageUrl } }] },
+      },
+    } as never);
+    vi.mocked(service.deleteProduct).mockResolvedValue(ok);
+    vi.mocked(deleteImage).mockResolvedValue(ok);
+
+    await expect(deleteProductAction({ id })).resolves.toBe(ok);
+
+    expect(service.deleteProduct).toHaveBeenCalledWith(id);
+    expect(deleteImage).toHaveBeenCalledWith({ imageUrl });
+  });
+  it('keeps rich-text images when product deletion fails', async () => {
+    vi.mocked(service.getManagementProduct).mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: {
+        description: {
+          type: 'doc',
+          content: [
+            { type: 'image', attrs: { src: 'https://cdn.example.test/products/description.webp' } },
+          ],
+        },
+      },
+    } as never);
+    vi.mocked(service.deleteProduct).mockResolvedValue({
+      isSuccess: false,
+      message: 'delete failed',
+      data: { messages: {}, details: {} },
+    });
+
+    await deleteProductAction({ id });
+
+    expect(deleteImage).not.toHaveBeenCalled();
   });
 });

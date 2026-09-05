@@ -6,6 +6,7 @@ import { Suspense } from 'react';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { MultipleImageUploaderField } from '@/components/common/multiple-image-uploader-field';
 import { TextareaField } from '@/components/ui/fields/textarea-field';
+import { RichTextField } from '@/components/common/rich-text-field';
 import { TextField } from '@/components/ui/fields/text-field';
 import { PriceMaskField } from '@/components/ui/fields/price-mask-field';
 import { Form } from '@/components/ui/form';
@@ -167,12 +168,7 @@ function SectionForm({
           maxLength={500}
           counter
         />
-        <TextareaField<UpdateProductBaseInfoInput>
-          name="description"
-          label="توضیحات"
-          maxLength={5000}
-          counter
-        />
+        <RichTextField<UpdateProductBaseInfoInput> name="description" label="توضیحات" />
       </fieldset>
     </Form>
   );

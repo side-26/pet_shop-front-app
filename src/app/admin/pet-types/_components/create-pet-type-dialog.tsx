@@ -3,6 +3,7 @@ import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { Dialog } from '@/components/ui/dialog';
 import { TextField } from '@/components/ui/fields/text-field';
 import { TextareaField } from '@/components/ui/fields/textarea-field';
+import { RichTextField } from '@/components/common/rich-text-field';
 import { Form } from '@/components/ui/form';
 import { useCreatePetType } from '@/entities/pet-types/pet-types.client';
 import { petTypeSchema, type PetTypeInput } from '@/entities/pet-types/pet-types.schema';
@@ -31,18 +32,18 @@ export function CreatePetTypeDialog({
           ref={formRef}
           id={CREATE_PET_TYPE_FORM_ID}
           validationSchema={petTypeSchema}
-          options={{ defaultValues: { title: '', description: '', mainImage: undefined } }}
+          options={{
+            defaultValues: {
+              title: '',
+              description: { type: 'doc', content: [] },
+              mainImage: undefined,
+            },
+          }}
           handleSubmit={handleSubmit}
           aria-label="فرم ایجاد نوع حیوان"
         >
           <TextField<PetTypeInput> name="title" label="عنوان" placeholder="مانند سگ" required />
-          <TextareaField<PetTypeInput>
-            name="description"
-            label="توضیحات"
-            placeholder="توضیح کوتاه نوع حیوان"
-            counter
-            maxLength={150}
-          />
+          <RichTextField<PetTypeInput> name="description" label="توضیحات" required />
           <PetTypeMainImageField />
         </Form>
       </FormDialogContent>

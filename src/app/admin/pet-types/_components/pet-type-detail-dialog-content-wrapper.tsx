@@ -6,6 +6,7 @@ import { Suspense } from 'react';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { TextField } from '@/components/ui/fields/text-field';
 import { TextareaField } from '@/components/ui/fields/textarea-field';
+import { RichTextField } from '@/components/common/rich-text-field';
 import { Form } from '@/components/ui/form';
 import { getPetTypeByIdAction } from '@/entities/pet-types/pet-types.actions';
 import { useUpdatePetType } from '@/entities/pet-types/pet-types.client';
@@ -14,6 +15,7 @@ import {
   type UpdatePetTypeInput,
 } from '@/entities/pet-types/pet-types.schema';
 import { cn } from '@/lib/utils';
+import type { RichTextFormValue } from '@/lib/rich-text';
 
 import { PetTypeMainImageField } from './pet-type-main-image-field';
 
@@ -23,7 +25,7 @@ const FORM_ID = 'pet-type-detail-form';
 type PetTypeFormValue = {
   id: string;
   title: string;
-  description: string;
+  description: RichTextFormValue;
   mainImage?: unknown;
 };
 
@@ -56,7 +58,7 @@ export function PetTypeDetailFormBody({
       options={{
         defaultValues: {
           title: petType?.title ?? 'عنوان نوع حیوان',
-          description: petType?.description ?? 'توضیحات کوتاه نوع حیوان',
+          description: petType?.description ?? { type: 'doc', content: [] },
           mainImage: undefined,
         },
       }}
@@ -67,12 +69,7 @@ export function PetTypeDetailFormBody({
     >
       <fieldset disabled={isLoading} className="tw:flex tw:w-full tw:min-w-0 tw:flex-col tw:gap-5">
         <TextField<UpdatePetTypeInput> name="title" label="عنوان" required />
-        <TextareaField<UpdatePetTypeInput>
-          name="description"
-          label="توضیحات"
-          counter
-          maxLength={150}
-        />
+        <RichTextField<UpdatePetTypeInput> name="description" label="توضیحات" />
         <PetTypeMainImageField initialImageUrl={mainImageUrl} required={!mainImageUrl} />
       </fieldset>
     </Form>

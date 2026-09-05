@@ -4,9 +4,11 @@ import { ValidationError } from 'yup';
 
 import { USER_ROLES } from '@/configs/user-role';
 import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
+import { deleteImage } from '@/entities/images/images.service';
 import { getAllCategories } from '@/entities/categories/categories.service';
 import { getAllSubCategories } from '@/entities/sub-categories/sub-categories.service';
 import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
+import { getRichTextImageUrls } from '@/lib/rich-text';
 import { getSession } from '@/utils/session';
 
 import {
@@ -140,5 +142,14 @@ export async function deleteProductAction(input: unknown) {
   const error = await authorizeAdmin();
   if (error) return error;
   const value = await validate(productIdSchema, input);
-  return 'isSuccess' in value ? value : service.deleteProduct(value.id);
+  if ('isSuccess' in value) return value;
+
+  const product = await service.getManagementProduct(value.id);
+  const result = await service.deleteProduct(value.id);
+  if (result.isSuccess && product.isSuccess) {
+    await Promise.allSettled(
+      getRichTextImageUrls(product.data.description).map((imageUrl) => deleteImage({ imageUrl })),
+    );
+  }
+  return result;
 }

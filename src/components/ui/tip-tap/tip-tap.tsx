@@ -1,6 +1,6 @@
 'use client';
 
-import type { Content } from '@tiptap/core';
+import type { Content, JSONContent } from '@tiptap/core';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { Suspense, type ReactNode, useMemo } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
@@ -101,7 +101,7 @@ type TipTapProps = Omit<VariantProps<typeof tipTapVariants>, 'color' | 'variant'
   content?: Content;
   editable?: boolean;
   headerActions?: ReactNode;
-  onChange?: (html: string) => void;
+  onChange?: (content: JSONContent) => void;
   textDirection?: TipTapTextDirection;
   variant?: TipTapActionVariant;
 };
@@ -203,7 +203,7 @@ function TipTapEditor({
           role: 'textbox',
         },
       },
-      onUpdate: ({ editor: updatedEditor }) => onChange?.(updatedEditor.getHTML()),
+      onUpdate: ({ editor: updatedEditor }) => onChange?.(updatedEditor.getJSON()),
     },
     [textDirection],
   );

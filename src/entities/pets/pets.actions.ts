@@ -4,7 +4,9 @@ import { ValidationError } from 'yup';
 
 import { USER_ROLES } from '@/configs/user-role';
 import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
+import { deleteImage } from '@/entities/images/images.service';
 import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
+import { getRichTextImageUrls } from '@/lib/rich-text';
 import { getSession } from '@/utils/session';
 import { getAllPetTypes } from '@/entities/pet-types/pet-types.service';
 
@@ -164,5 +166,14 @@ export async function deletePetAction(input: unknown) {
   const error = await authorizeAdmin();
   if (error) return error;
   const value = await validate(petIdSchema, input);
-  return 'isSuccess' in value ? value : service.deletePet(value.id);
+  if ('isSuccess' in value) return value;
+
+  const pet = await service.getManagementPet(value.id);
+  const result = await service.deletePet(value.id);
+  if (result.isSuccess && pet.isSuccess) {
+    await Promise.allSettled(
+      getRichTextImageUrls(pet.data.description).map((imageUrl) => deleteImage({ imageUrl })),
+    );
+  }
+  return result;
 }

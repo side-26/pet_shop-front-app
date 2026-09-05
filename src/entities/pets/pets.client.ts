@@ -6,7 +6,9 @@ import type { FieldValues, UseFormSetError } from 'react-hook-form';
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
 import { globalErrorHandler } from '@/utils/helpers';
-import type { FetcherResult } from '@/lib/api/customFetcher';
+import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
+import { uploadRichTextImages } from '@/entities/images/images.client';
+import { isRichTextDocument } from '@/lib/rich-text';
 
 import {
   createPetAction,
@@ -25,6 +27,12 @@ import type {
 } from './pets.schema';
 
 export async function submitCreatePet(input: PetInput, setError: UseFormSetError<PetInput>) {
+  try {
+    input = { ...input, description: await uploadRichTextImages(input.description as never) };
+  } catch (error) {
+    globalErrorHandler(error as FetcherError, { showErrorFields: setError });
+    return false;
+  }
   const result = await createPetAction(input);
   if (!result.isSuccess) {
     globalErrorHandler(result, { showErrorFields: setError });
@@ -40,6 +48,19 @@ async function submitPetSection<T extends FieldValues>(
   setError: UseFormSetError<T>,
   action: (input: T & { id: string }) => Promise<FetcherResult<unknown>>,
 ) {
+  try {
+    if (isRichTextDocument((input as { description?: unknown }).description)) {
+      input = {
+        ...input,
+        description: await uploadRichTextImages(
+          (input as unknown as { description: never }).description,
+        ),
+      };
+    }
+  } catch (error) {
+    globalErrorHandler(error as FetcherError, { showErrorFields: setError });
+    return false;
+  }
   const result = await action({ id, ...input });
   if (!result.isSuccess) {
     globalErrorHandler(result, { showErrorFields: setError });

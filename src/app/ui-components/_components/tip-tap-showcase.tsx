@@ -1,12 +1,4 @@
-import {
-  TipTap,
-  TipTapHeaderActions,
-  TipTapHeadingAction,
-  TipTapImageUploadAction,
-  TipTapListAction,
-  TipTapTextAlignAction,
-  TipTapTextDirectionAction,
-} from '@/components/ui/tip-tap';
+import { TipTap, TipTapFullHeaderActions } from '@/components/ui/tip-tap';
 
 import { ShowcaseSection } from './showcase-section';
 
@@ -25,7 +17,7 @@ export function TipTapShowcase() {
     <ShowcaseSection
       id="tip-tap"
       title="TipTap"
-      description="ویرایشگر متن پایه با خروجی HTML، تراز پاراگراف و جهت خودکار یا انتخابی؛ ابزارها و اتصال به فرم در مراحل بعدی افزوده می‌شوند."
+      description="ویرایشگر متن با خروجی JSON ساخت‌یافته، جهت و تراز، فهرست، عنوان و ابزار کامل بارگذاری تصویر."
     >
       <div className="tw:flex tw:flex-col tw:gap-6">
         {variants.map((variant) => (
@@ -65,15 +57,7 @@ export function TipTapShowcase() {
           <TipTap
             ariaLabel="ویرایشگر با ابزارهای متن"
             content={initialContent}
-            headerActions={
-              <TipTapHeaderActions>
-                <TipTapHeadingAction />
-                <TipTapTextAlignAction />
-                <TipTapTextDirectionAction />
-                <TipTapListAction />
-                <TipTapImageUploadAction />
-              </TipTapHeaderActions>
-            }
+            headerActions={<TipTapFullHeaderActions />}
             variant="outlined"
           />
         </section>

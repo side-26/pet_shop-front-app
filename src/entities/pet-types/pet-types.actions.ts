@@ -3,7 +3,9 @@
 import { ValidationError } from 'yup';
 import { USER_ROLES } from '@/configs/user-role';
 import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
+import { deleteImage } from '@/entities/images/images.service';
 import type { FetcherError } from '@/lib/api/customFetcher';
+import { getRichTextImageUrls } from '@/lib/rich-text';
 import { getSession } from '@/utils/session';
 import {
   petTypeIdSchema,
@@ -84,7 +86,19 @@ export async function disablePetTypeAction(input: unknown) {
   return status(input, service.disablePetType);
 }
 export async function deletePetTypeAction(input: unknown) {
-  return status(input, service.deletePetType);
+  const denied = await authorize();
+  if (denied) return denied;
+  const value = await validate(petTypeIdSchema, input);
+  if ('isSuccess' in value) return value;
+
+  const petType = await service.getPetTypeById(value.id);
+  const result = await service.deletePetType(value.id);
+  if (result.isSuccess && petType.isSuccess) {
+    await Promise.allSettled(
+      getRichTextImageUrls(petType.data.description).map((imageUrl) => deleteImage({ imageUrl })),
+    );
+  }
+  return result;
 }
 async function status<T>(input: unknown, action: (id: string) => Promise<T>) {
   const denied = await authorize();

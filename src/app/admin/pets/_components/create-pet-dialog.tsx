@@ -4,6 +4,7 @@ import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { MultipleImageUploaderField } from '@/components/common/multiple-image-uploader-field';
 import { Dialog } from '@/components/ui/dialog';
 import { TextareaField } from '@/components/ui/fields/textarea-field';
+import { RichTextField } from '@/components/common/rich-text-field';
 import { TextField } from '@/components/ui/fields/text-field';
 import { Form } from '@/components/ui/form';
 import { useCreatePet } from '@/entities/pets/pets.client';
@@ -40,7 +41,7 @@ export function CreatePetDialog({ open, formOptions, onOpenChange, onCreated }: 
           options={{
             defaultValues: {
               title: '',
-              description: '',
+              description: { type: 'doc', content: [] },
               summary: '',
               petType: '',
               breed: '',
@@ -65,13 +66,7 @@ export function CreatePetDialog({ open, formOptions, onOpenChange, onCreated }: 
               <TextField<PetInput> name="quantity" label="موجودی" type="number" min={0} required />
             </div>
             <TextareaField<PetInput> name="summary" label="خلاصه" maxLength={500} counter />
-            <TextareaField<PetInput>
-              name="description"
-              label="توضیحات"
-              maxLength={5000}
-              counter
-              required
-            />
+            <RichTextField<PetInput> name="description" label="توضیحات" required />
             <MultipleImageUploaderField<PetInput>
               name="images"
               label="تصاویر حیوان"

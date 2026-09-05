@@ -23,7 +23,10 @@ const petTypes: PetTypeDTO[] = [
   {
     id: '507f1f77bcf86cd799439011',
     title: 'سگ',
-    description: 'حیوان خانگی وفادار',
+    description: {
+      type: 'doc',
+      content: [{ type: 'paragraph', content: [{ type: 'text', text: 'حیوان خانگی وفادار' }] }],
+    },
     mainImage: 'https://cdn.example.test/pet-types/dog.webp',
     thumbnail: 'https://cdn.example.test/pet-types/dog-thumb.webp',
     isEnabled: true,

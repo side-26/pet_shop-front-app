@@ -12,6 +12,7 @@ export {
   TipTapTextDirectionAction,
   type TipTapImageUploadActionProps,
 } from './plugins/actions/plugins';
+export { TipTapFullHeaderActions } from './plugins/actions/full';
 export {
   createTipTapExtensions,
   TipTapTypographyScale,

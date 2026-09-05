@@ -33,7 +33,7 @@ describe('PetTypeDetailFormBody', () => {
             petType={{
               id: '507f1f77bcf86cd799439011',
               title: 'سگ',
-              description: 'حیوان خانگی',
+              description: { type: 'doc', content: [] },
               mainImage: 'https://cdn.example.test/pet-types/dog.webp',
             }}
           />
@@ -56,7 +56,7 @@ describe('PetTypeDetailFormBody', () => {
             petType={{
               id: '507f1f77bcf86cd799439011',
               title: 'سگ',
-              description: 'حیوان خانگی',
+              description: { type: 'doc', content: [] },
               mainImage: '   ',
             }}
           />

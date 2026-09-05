@@ -5,8 +5,10 @@ import type { FieldValues, UseFormSetError } from 'react-hook-form';
 
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
-import type { FetcherResult } from '@/lib/api/customFetcher';
+import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
 import { globalErrorHandler } from '@/utils/helpers';
+import { uploadRichTextImages } from '@/entities/images/images.client';
+import { isRichTextDocument } from '@/lib/rich-text';
 import {
   createProductAction,
   deleteProductAction,
@@ -28,6 +30,19 @@ async function submit<T extends FieldValues>(
   setError: UseFormSetError<T>,
   action: (value: T) => Promise<FetcherResult<unknown>>,
 ) {
+  try {
+    if (isRichTextDocument((input as { description?: unknown }).description)) {
+      input = {
+        ...input,
+        description: await uploadRichTextImages(
+          (input as unknown as { description: never }).description,
+        ),
+      };
+    }
+  } catch (error) {
+    globalErrorHandler(error as FetcherError, { showErrorFields: setError });
+    return false;
+  }
   const result = await action(input);
   if (!result.isSuccess) {
     globalErrorHandler(result, { showErrorFields: setError });

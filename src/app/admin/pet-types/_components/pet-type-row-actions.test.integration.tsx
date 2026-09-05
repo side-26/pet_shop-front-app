@@ -36,7 +36,10 @@ const getPetTypePropertyDefinitionsActionMock = vi.mocked(getPetTypePropertyDefi
 const petType: PetTypeDTO = {
   id: '507f1f77bcf86cd799439011',
   title: 'سگ',
-  description: 'حیوان خانگی وفادار',
+  description: {
+    type: 'doc',
+    content: [{ type: 'paragraph', content: [{ type: 'text', text: 'حیوان خانگی وفادار' }] }],
+  },
   mainImage: 'https://cdn.example.test/pet-types/dog.webp',
   thumbnail: 'https://cdn.example.test/pet-types/dog-thumb.webp',
   isEnabled: true,
@@ -101,7 +104,11 @@ describe('PetTypeRowActions', () => {
     expect(getPetTypeByIdActionMock).toHaveBeenCalledWith({ id: petType.id });
     expect(await screen.findByRole('dialog', { name: 'مشاهده و ویرایش نوع حیوان' })).toBeTruthy();
     expect(await screen.findByDisplayValue(petType.title)).toBeTruthy();
-    expect(screen.getByLabelText('توضیحات').textContent).toBe(petType.description);
+    await waitFor(() =>
+      expect(screen.getByRole('textbox', { name: 'توضیحات' }).textContent).toBe(
+        'حیوان خانگی وفادار',
+      ),
+    );
     expect(
       screen.getByRole('img', { name: 'پیش‌نمایش تصویر اصلی نوع حیوان' }).getAttribute('src'),
     ).toBe(petType.mainImage);
