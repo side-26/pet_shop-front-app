@@ -37,12 +37,14 @@ import { FilterFormDialogContentShowcase } from './filter-form-dialog-content-sh
 import { FileFieldShowcase } from './file-field-showcase';
 import { MultipleImageUploaderFieldShowcase } from './multiple-image-uploader-field-showcase';
 import { TipTapShowcase } from './tip-tap-showcase';
+import { ChartShowcase } from './chart-showcase';
 
 const navigation = [
   ['#avatars', 'Avatar'],
   ['#buttons', 'Button'],
   ['#badges', 'Badge'],
   ['#cards', 'Card'],
+  ['#charts', 'Chart'],
   ['#expandable-cards', 'Expandable Card'],
   ['#prices', 'Price'],
   ['#price-mask-fields', 'Price Mask Field'],
@@ -118,6 +120,7 @@ export function UiComponentsGallery() {
         <ButtonShowcase />
         <BadgeShowcase />
         <CardShowcase />
+        <ChartShowcase />
         <ExpandableCardShowcase />
         <PriceShowcase />
         <PriceMaskShowcase />
