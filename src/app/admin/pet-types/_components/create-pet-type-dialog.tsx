@@ -3,7 +3,7 @@ import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { Dialog } from '@/components/ui/dialog';
 import { TextField } from '@/components/ui/fields/text-field';
 import { TextareaField } from '@/components/ui/fields/textarea-field';
-import { RichTextField } from '@/components/fields/rich-text-field';
+import { RichTextField } from '@/components/ui/fields/rich-text-field';
 import { Form } from '@/components/ui/form';
 import { useCreatePetType } from '@/entities/pet-types/pet-types.client';
 import { petTypeSchema, type PetTypeInput } from '@/entities/pet-types/pet-types.schema';
