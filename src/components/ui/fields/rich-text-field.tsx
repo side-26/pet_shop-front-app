@@ -1,30 +1,13 @@
 'use client';
 
-import { useEffect, useId, useMemo, useRef } from 'react';
+import { useId, useMemo } from 'react';
 import { useController, type FieldPath, type FieldValues } from 'react-hook-form';
 
 import { Field } from '@/components/ui/field/default';
 import { FieldLabel } from '@/components/ui/field/label';
 import { RichText, RichTextFullHeaderActions } from '@/components/ui/rich-text';
-import { deleteImageAction } from '@/entities/images/images.actions';
+import { uploadImage } from '@/entities/images/images.client';
 import { type RichTextDocument } from '@/lib/rich-text';
-
-function imageUrls(content: unknown): Set<string> {
-  const urls = new Set<string>();
-  const visit = (node: unknown) => {
-    if (!node || typeof node !== 'object') return;
-    const record = node as Record<string, unknown>;
-    if (
-      record.type === 'image' &&
-      typeof (record.attrs as Record<string, unknown> | undefined)?.src === 'string'
-    ) {
-      urls.add((record.attrs as Record<string, string>).src);
-    }
-    if (Array.isArray(record.content)) record.content.forEach(visit);
-  };
-  visit(content);
-  return urls;
-}
 
 type RichTextFieldProps<T extends FieldValues> = {
   name: FieldPath<T>;
@@ -41,21 +24,12 @@ function RichTextField<T extends FieldValues>({
 }: RichTextFieldProps<T>) {
   const id = useId();
   const { field, fieldState } = useController<T>({ name });
-  const initialUrls = useRef(imageUrls(field.value));
-  const previousUrls = useRef(imageUrls(field.value));
   const content = useMemo<RichTextDocument>(
     () =>
       field.value && typeof field.value === 'object'
         ? (field.value as RichTextDocument)
         : { type: 'doc', content: [] },
     [field.value],
-  );
-
-  useEffect(
-    () => () => {
-      // The editor owns no pending requests after unmount; uploaded files remain valid drafts.
-    },
-    [],
   );
 
   return (
@@ -65,20 +39,25 @@ function RichTextField<T extends FieldValues>({
         {required ? ' *' : ''}
       </FieldLabel>
       <RichText
+        id={id}
+        aria-describedby={`${id}-description`}
+        aria-invalid={fieldState.invalid}
         ariaLabel={label}
         content={content}
         color={fieldState.invalid ? 'error' : 'primary'}
         variant="outlined"
-        headerActions={<RichTextFullHeaderActions onUpload={() => null} />}
-        onChange={(next) => {
-          const nextUrls = imageUrls(next);
-          for (const url of previousUrls.current) {
-            if (initialUrls.current.has(url) && !nextUrls.has(url))
-              void deleteImageAction({ imageUrl: url });
-          }
-          previousUrls.current = nextUrls;
-          field.onChange(next);
-        }}
+        headerActions={
+          <RichTextFullHeaderActions
+            onUpload={async (file) => {
+              const result = await uploadImage({ mainImage: file });
+              if (!result.isSuccess) throw result;
+              return result.data.imageUrl;
+            }}
+          />
+        }
+        onBlur={field.onBlur}
+        onEditorElement={field.ref}
+        onChange={field.onChange}
       />
       <span
         id={`${id}-description`}

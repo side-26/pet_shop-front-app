@@ -57,7 +57,7 @@ function createTipTapExtensions(): Extensions {
       alignments: [...tipTapTextAlignments],
     }),
     Typography,
-    Image.configure({ allowBase64: true }),
+    Image.configure({ allowBase64: false }),
   ];
 }
 

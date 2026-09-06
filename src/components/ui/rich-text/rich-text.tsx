@@ -2,7 +2,7 @@
 
 import type { Content, JSONContent } from '@tiptap/core';
 import { EditorContent, useEditor } from '@tiptap/react';
-import { Suspense, type ReactNode, useMemo } from 'react';
+import { Suspense, type ReactNode, useEffect, useMemo } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';
@@ -95,18 +95,25 @@ const richTextVariants = tv({
 });
 
 type RichTextProps = Omit<VariantProps<typeof richTextVariants>, 'color' | 'variant'> & {
+  'aria-describedby'?: string;
+  'aria-invalid'?: boolean;
   ariaLabel?: string;
   className?: string;
   color?: TipTapActionColor;
   content?: Content;
   editable?: boolean;
   headerActions?: ReactNode;
+  id?: string;
+  onEditorElement?: (element: HTMLElement | null) => void;
   onChange?: (content: JSONContent) => void;
+  onBlur?: () => void;
   textDirection?: TipTapTextDirection;
   variant?: TipTapActionVariant;
 };
 
 function RichText({
+  'aria-describedby': ariaDescribedBy,
+  'aria-invalid': ariaInvalid,
   ariaLabel = 'ویرایشگر متن',
   className,
   color = 'primary',
@@ -117,6 +124,8 @@ function RichText({
     <Suspense
       fallback={
         <RichTextContainer
+          aria-describedby={ariaDescribedBy}
+          aria-invalid={ariaInvalid}
           ariaLabel={ariaLabel}
           className={className}
           color={color}
@@ -140,7 +149,7 @@ function RichText({
 
 type RichTextContainerProps = Pick<
   RichTextProps,
-  'ariaLabel' | 'className' | 'color' | 'editable' | 'variant'
+  'aria-describedby' | 'aria-invalid' | 'ariaLabel' | 'className' | 'color' | 'editable' | 'variant'
 > & {
   children: ReactNode;
   isLoading?: boolean;
@@ -148,6 +157,8 @@ type RichTextContainerProps = Pick<
 
 function RichTextContainer({
   ariaLabel,
+  'aria-describedby': ariaDescribedBy,
+  'aria-invalid': ariaInvalid,
   children,
   className,
   color = 'primary',
@@ -158,6 +169,8 @@ function RichTextContainer({
   return (
     <div
       aria-busy={isLoading || undefined}
+      aria-describedby={ariaDescribedBy}
+      aria-invalid={ariaInvalid || undefined}
       aria-label={ariaLabel}
       data-color={color}
       data-readonly={!editable || undefined}
@@ -177,11 +190,16 @@ function RichTextContainer({
 
 function RichTextEditor({
   ariaLabel = 'ویرایشگر متن',
+  'aria-describedby': ariaDescribedBy,
+  'aria-invalid': ariaInvalid,
   className,
   content,
   editable = true,
   headerActions,
+  id,
+  onEditorElement,
   onChange,
+  onBlur,
   color = 'primary',
   textDirection = 'auto',
   variant = 'fill',
@@ -198,19 +216,53 @@ function RichTextEditor({
       textDirection,
       editorProps: {
         attributes: {
+          'aria-describedby': ariaDescribedBy ?? '',
+          'aria-invalid': ariaInvalid ? 'true' : 'false',
           'aria-label': ariaLabel,
           'aria-multiline': 'true',
+          id: id ?? '',
           role: 'textbox',
         },
       },
+      onBlur: () => onBlur?.(),
       onUpdate: ({ editor: updatedEditor }) => onChange?.(updatedEditor.getJSON()),
     },
     [textDirection],
   );
 
+  useEffect(() => {
+    if (!editor) return;
+    editor.setEditable(editable);
+  }, [editable, editor]);
+
+  useEffect(() => {
+    if (!editor) return;
+    editor.view.dom.setAttribute('aria-label', ariaLabel);
+    if (id) editor.view.dom.setAttribute('id', id);
+    else editor.view.dom.removeAttribute('id');
+    if (ariaDescribedBy) editor.view.dom.setAttribute('aria-describedby', ariaDescribedBy);
+    else editor.view.dom.removeAttribute('aria-describedby');
+    editor.view.dom.setAttribute('aria-invalid', String(Boolean(ariaInvalid)));
+  }, [ariaDescribedBy, ariaInvalid, ariaLabel, editor, id]);
+
+  useEffect(() => {
+    const element = editor?.view.dom ?? null;
+    onEditorElement?.(element);
+    return () => onEditorElement?.(null);
+  }, [editor, onEditorElement]);
+
+  useEffect(() => {
+    if (!editor || !content) return;
+    const nextContent = typeof content === 'string' ? content : JSON.stringify(content);
+    const currentContent = JSON.stringify(editor.getJSON());
+    if (currentContent !== nextContent) editor.commands.setContent(content, { emitUpdate: false });
+  }, [content, editor]);
+
   return (
     <RichTextContainer
       ariaLabel={ariaLabel}
+      aria-describedby={ariaDescribedBy}
+      aria-invalid={ariaInvalid}
       className={className}
       color={color}
       editable={editable}

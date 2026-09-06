@@ -9,22 +9,14 @@ import { useTipTapActionsContext } from '../context';
 
 type TipTapImageUploadActionProps = {
   accept?: string;
-  onUpload?: (file: File) => Promise<string | null> | string | null;
+  onUpload?: (file: File) => Promise<string> | string;
 };
-
-function readFileAsDataUrl(file: File) {
-  return new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(reader.error);
-    reader.onload = () => resolve(String(reader.result));
-    reader.readAsDataURL(file);
-  });
-}
 
 function TipTapImageUploadAction({ accept = 'image/*', onUpload }: TipTapImageUploadActionProps) {
   const { color, editable, editor } = useTipTapActionsContext();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   return (
     <>
@@ -38,10 +30,18 @@ function TipTapImageUploadAction({ accept = 'image/*', onUpload }: TipTapImageUp
           event.target.value = '';
           if (!file) return;
 
+          if (!onUpload) {
+            setError('بارگذاری تصویر برای این ویرایشگر پیکربندی نشده است.');
+            return;
+          }
+
+          setError(null);
           setIsUploading(true);
           try {
-            const src = (await onUpload?.(file)) ?? (await readFileAsDataUrl(file));
+            const src = await onUpload(file);
             editor?.chain().focus().setImage({ alt: file.name, src }).run();
+          } catch {
+            setError('بارگذاری تصویر ناموفق بود. دوباره تلاش کنید.');
           } finally {
             setIsUploading(false);
           }
@@ -60,6 +60,11 @@ function TipTapImageUploadAction({ accept = 'image/*', onUpload }: TipTapImageUp
         <ImageUpIcon data-icon="inline-start" />
         افزودن تصویر
       </Button>
+      {error ? (
+        <p role="alert" className="tw:text-xs tw:text-error">
+          {error}
+        </p>
+      ) : null}
     </>
   );
 }
