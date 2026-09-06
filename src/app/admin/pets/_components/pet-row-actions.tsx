@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy, Suspense, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CircleDollarSign, Images, Info, MoreHorizontal, Trash2 } from 'lucide-react';
 
@@ -26,10 +26,7 @@ import type {
   PetSection,
   PetSectionRequest,
 } from './pet-section-dialog.types';
-
-const LazyPetSectionDialog = lazy(async () => ({
-  default: (await import('./pet-section-dialog')).PetSectionDialog,
-}));
+import { PetSectionDialog } from './pet-section-dialog';
 type DialogState = {
   section: PetSection;
   request: PetSectionRequest;
@@ -110,20 +107,18 @@ export function PetRowActions({ petId, petTitle, disabled = false }: Props) {
         </DropdownMenuContent>
       </DropdownMenu>
       {dialog ? (
-        <Suspense fallback={null}>
-          <LazyPetSectionDialog
-            petId={petId}
-            petTitle={petTitle}
-            section={dialog.section}
-            request={dialog.request}
-            optionsRequest={dialog.optionsRequest}
-            onClose={() => setDialog(null)}
-            onUpdated={() => {
-              setDialog(null);
-              router.refresh();
-            }}
-          />
-        </Suspense>
+        <PetSectionDialog
+          petId={petId}
+          petTitle={petTitle}
+          section={dialog.section}
+          request={dialog.request}
+          optionsRequest={dialog.optionsRequest}
+          onClose={() => setDialog(null)}
+          onUpdated={() => {
+            setDialog(null);
+            router.refresh();
+          }}
+        />
       ) : null}
     </>
   );

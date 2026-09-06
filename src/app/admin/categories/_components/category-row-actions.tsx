@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy, Suspense, useState } from 'react';
+import { useState } from 'react';
 import { EyeIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -21,11 +21,7 @@ import { useCommonStore } from '@/stores/common.store';
 import { globalErrorHandler } from '@/utils/helpers';
 
 import type { CategoryPetTypeOption } from './categories-form.types';
-
-const LazyCategoryDetailDialog = lazy(async () => {
-  const dialog = await import('./category-detail-dialog');
-  return { default: dialog.CategoryDetailDialog };
-});
+import { CategoryDetailDialog } from './category-detail-dialog';
 
 type Props = {
   categoryId: string;
@@ -99,18 +95,16 @@ export function CategoryRowActions({
       </DropdownMenu>
 
       {detailRequest ? (
-        <Suspense fallback={null}>
-          <LazyCategoryDetailDialog
-            categoryId={categoryId}
-            request={detailRequest}
-            petTypes={petTypes}
-            onClose={() => setDetailRequest(null)}
-            onUpdated={() => {
-              setDetailRequest(null);
-              router.refresh();
-            }}
-          />
-        </Suspense>
+        <CategoryDetailDialog
+          categoryId={categoryId}
+          request={detailRequest}
+          petTypes={petTypes}
+          onClose={() => setDetailRequest(null)}
+          onUpdated={() => {
+            setDetailRequest(null);
+            router.refresh();
+          }}
+        />
       ) : null}
     </>
   );

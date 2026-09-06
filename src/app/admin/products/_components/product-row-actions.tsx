@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy, Suspense, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CircleDollarSign, Images, Info, MoreHorizontal, Trash2 } from 'lucide-react';
 
@@ -26,10 +26,7 @@ import type {
   ProductSection,
   ProductSectionRequest,
 } from './product-section-dialog.types';
-
-const LazyProductSectionDialog = lazy(async () => ({
-  default: (await import('./product-section-dialog')).ProductSectionDialog,
-}));
+import { ProductSectionDialog } from './product-section-dialog';
 type DialogState = {
   section: ProductSection;
   request: ProductSectionRequest;
@@ -107,20 +104,18 @@ export function ProductRowActions({ productId, productTitle, disabled = false }:
         </DropdownMenuContent>
       </DropdownMenu>
       {dialog ? (
-        <Suspense fallback={null}>
-          <LazyProductSectionDialog
-            productId={productId}
-            productTitle={productTitle}
-            section={dialog.section}
-            request={dialog.request}
-            optionsRequest={dialog.optionsRequest}
-            onClose={() => setDialog(null)}
-            onUpdated={() => {
-              setDialog(null);
-              router.refresh();
-            }}
-          />
-        </Suspense>
+        <ProductSectionDialog
+          productId={productId}
+          productTitle={productTitle}
+          section={dialog.section}
+          request={dialog.request}
+          optionsRequest={dialog.optionsRequest}
+          onClose={() => setDialog(null)}
+          onUpdated={() => {
+            setDialog(null);
+            router.refresh();
+          }}
+        />
       ) : null}
     </>
   );

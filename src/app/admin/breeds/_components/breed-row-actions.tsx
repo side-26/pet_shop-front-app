@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy, Suspense, useState } from 'react';
+import { useState } from 'react';
 import { EyeIcon, ListPlusIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -22,15 +22,8 @@ import { useCommonStore } from '@/stores/common.store';
 import { globalErrorHandler } from '@/utils/helpers';
 
 import type { BreedCountryOption, BreedPetTypeOption } from './breeds-form.types';
-
-const LazyBreedDetailDialog = lazy(async () => {
-  const dialog = await import('./breed-detail-dialog');
-  return { default: dialog.BreedDetailDialog };
-});
-const LazyBreedPropertyDefinitionsDialog = lazy(async () => {
-  const dialog = await import('./breed-property-definitions-dialog');
-  return { default: dialog.BreedPropertyDefinitionsDialog };
-});
+import { BreedDetailDialog } from './breed-detail-dialog';
+import { BreedPropertyDefinitionsDialog } from './breed-property-definitions-dialog';
 
 type DetailRequest = ReturnType<typeof getBreedAction>;
 type PropertyDefinitionsRequest = ReturnType<typeof getBreedPropertyDefinitionsAction>;
@@ -113,32 +106,28 @@ export function BreedRowActions({
       </DropdownMenu>
 
       {detailRequest ? (
-        <Suspense fallback={null}>
-          <LazyBreedDetailDialog
-            breedId={breedId}
-            request={detailRequest}
-            countries={countries}
-            petTypes={petTypes}
-            onClose={() => setDetailRequest(null)}
-            onUpdated={() => {
-              setDetailRequest(null);
-              router.refresh();
-            }}
-          />
-        </Suspense>
+        <BreedDetailDialog
+          breedId={breedId}
+          request={detailRequest}
+          countries={countries}
+          petTypes={petTypes}
+          onClose={() => setDetailRequest(null)}
+          onUpdated={() => {
+            setDetailRequest(null);
+            router.refresh();
+          }}
+        />
       ) : null}
       {propertyDefinitionsRequest ? (
-        <Suspense fallback={null}>
-          <LazyBreedPropertyDefinitionsDialog
-            breedId={breedId}
-            request={propertyDefinitionsRequest}
-            onClose={() => setPropertyDefinitionsRequest(null)}
-            onUpdated={() => {
-              setPropertyDefinitionsRequest(null);
-              router.refresh();
-            }}
-          />
-        </Suspense>
+        <BreedPropertyDefinitionsDialog
+          breedId={breedId}
+          request={propertyDefinitionsRequest}
+          onClose={() => setPropertyDefinitionsRequest(null)}
+          onUpdated={() => {
+            setPropertyDefinitionsRequest(null);
+            router.refresh();
+          }}
+        />
       ) : null}
     </>
   );

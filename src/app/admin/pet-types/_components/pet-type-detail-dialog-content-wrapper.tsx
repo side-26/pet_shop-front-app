@@ -101,6 +101,8 @@ export function PetTypeDetailDialogContentWrapper({
       onClose={onClose}
       submitText="ذخیره تغییرات"
       title="مشاهده و ویرایش نوع حیوان"
+      size="lg"
+      contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
     >
       <Suspense fallback={fallback}>
         <AsyncPetTypeDetailDialogContent request={request}>

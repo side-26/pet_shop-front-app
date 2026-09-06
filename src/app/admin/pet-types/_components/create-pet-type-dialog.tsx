@@ -27,6 +27,8 @@ export function CreatePetTypeDialog({
         onClose={() => onOpenChange(false)}
         submitText="ایجاد نوع حیوان"
         title="ایجاد نوع حیوان جدید"
+        size="lg"
+        contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
       >
         <Form<PetTypeInput>
           ref={formRef}

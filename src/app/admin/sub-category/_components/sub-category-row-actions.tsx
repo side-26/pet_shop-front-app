@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy, Suspense, useState } from 'react';
+import { useState } from 'react';
 import { EyeIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -21,11 +21,7 @@ import { useCommonStore } from '@/stores/common.store';
 import { globalErrorHandler } from '@/utils/helpers';
 
 import type { SubCategoryOption } from './sub-categories-form.types';
-
-const LazySubCategoryDetailDialog = lazy(async () => {
-  const dialog = await import('./sub-category-detail-dialog');
-  return { default: dialog.SubCategoryDetailDialog };
-});
+import { SubCategoryDetailDialog } from './sub-category-detail-dialog';
 
 type Props = {
   subCategoryId: string;
@@ -99,18 +95,16 @@ export function SubCategoryRowActions({
       </DropdownMenu>
 
       {detailRequest ? (
-        <Suspense fallback={null}>
-          <LazySubCategoryDetailDialog
-            subCategoryId={subCategoryId}
-            request={detailRequest}
-            categories={categories}
-            onClose={() => setDetailRequest(null)}
-            onUpdated={() => {
-              setDetailRequest(null);
-              router.refresh();
-            }}
-          />
-        </Suspense>
+        <SubCategoryDetailDialog
+          subCategoryId={subCategoryId}
+          request={detailRequest}
+          categories={categories}
+          onClose={() => setDetailRequest(null)}
+          onUpdated={() => {
+            setDetailRequest(null);
+            router.refresh();
+          }}
+        />
       ) : null}
     </>
   );

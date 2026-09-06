@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy, Suspense, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { EyeIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
 
@@ -16,12 +16,7 @@ import {
 import { deleteUserByIdAction, userGetDetailByIdAction } from '@/entities/users/users.actions';
 import { globalErrorHandler } from '@/utils/helpers';
 import { useCommonStore } from '@/stores/common.store';
-
-const LazyUserInfoDialog = lazy(async () => {
-  const dialog = await import('./user-info-dialog');
-
-  return { default: dialog.UserInfoDialog };
-});
+import { UserInfoDialog } from './user-info-dialog';
 
 type UserDetailRequest = ReturnType<typeof userGetDetailByIdAction>;
 
@@ -96,13 +91,11 @@ export function UsersRowActions({ userId, userName, disabled = false }: UsersRow
       </DropdownMenu>
 
       {detailRequest ? (
-        <Suspense fallback={null}>
-          <LazyUserInfoDialog
-            userName={userName}
-            userRequest={detailRequest}
-            onClose={() => setDetailRequest(null)}
-          />
-        </Suspense>
+        <UserInfoDialog
+          userName={userName}
+          userRequest={detailRequest}
+          onClose={() => setDetailRequest(null)}
+        />
       ) : null}
     </>
   );
