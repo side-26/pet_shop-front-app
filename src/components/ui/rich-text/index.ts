@@ -10,6 +10,7 @@ export {
   TipTapListAction,
   TipTapTextAlignAction,
   TipTapTextDirectionAction,
+  type ImageUploadContext,
   type TipTapImageUploadActionProps,
 } from './plugins/actions/plugins';
 export { TipTapFullHeaderActions as RichTextFullHeaderActions } from './plugins/actions/full';

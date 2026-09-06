@@ -17,7 +17,7 @@ function TipTapFullHeaderActions({ onUpload }: TipTapImageUploadActionProps) {
       <TipTapListAction />
       <TipTapTextAlignAction />
       <TipTapTextDirectionAction />
-      <TipTapImageUploadAction onUpload={onUpload} />
+      {onUpload ? <TipTapImageUploadAction onUpload={onUpload} /> : null}
     </TipTapHeaderActions>
   );
 }

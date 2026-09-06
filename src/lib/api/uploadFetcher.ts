@@ -28,6 +28,7 @@ export type UploadFetcherOptions<TSuccess, TBackendError = unknown, TBody = Form
   token?: string;
   timeoutMs?: number;
   withCredentials?: boolean;
+  signal?: AbortSignal;
   onProgress?: (progress: UploadProgress) => void;
   parseSuccess?: ResponseParser<TSuccess>;
   parseErrorDetails?: ResponseParser<TBackendError>;
@@ -48,11 +49,13 @@ export function uploadFetcher<TSuccess, TBackendError = unknown, TBody = FormDat
 ): UploadFetcherPromise<TSuccess, TBackendError> {
   const request = new XMLHttpRequest();
   let settled = false;
+  let removeAbortListener: (() => void) | undefined;
 
   const promise = new Promise<FetcherResult<TSuccess, TBackendError>>((resolve) => {
     const finish = (result: FetcherResult<TSuccess, TBackendError>) => {
       if (settled) return;
       settled = true;
+      removeAbortListener?.();
       resolve(result);
     };
 
@@ -88,6 +91,14 @@ export function uploadFetcher<TSuccess, TBackendError = unknown, TBody = FormDat
       request.onerror = () => finish(transportError<TBackendError>('Unable to reach the server.'));
       request.ontimeout = () => finish(transportError<TBackendError>('The request timed out.'));
       request.onabort = () => finish(transportError<TBackendError>('The upload was cancelled.'));
+      if (options.signal?.aborted) {
+        request.abort();
+        return;
+      }
+
+      const abort = () => request.abort();
+      options.signal?.addEventListener('abort', abort, { once: true });
+      removeAbortListener = () => options.signal?.removeEventListener('abort', abort);
       request.send(body);
     } catch {
       finish(transportError<TBackendError>('An unexpected error occurred.'));

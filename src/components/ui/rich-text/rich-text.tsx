@@ -1,6 +1,6 @@
 'use client';
 
-import type { Content, JSONContent } from '@tiptap/core';
+import type { JSONContent } from '@tiptap/core';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { Suspense, type ReactNode, useEffect, useMemo } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
@@ -100,7 +100,8 @@ type RichTextProps = Omit<VariantProps<typeof richTextVariants>, 'color' | 'vari
   ariaLabel?: string;
   className?: string;
   color?: TipTapActionColor;
-  content?: Content;
+  /** Rich-text form values are persisted as Tiptap JSON, never HTML. */
+  content?: JSONContent;
   editable?: boolean;
   headerActions?: ReactNode;
   id?: string;
@@ -171,7 +172,6 @@ function RichTextContainer({
       aria-busy={isLoading || undefined}
       aria-describedby={ariaDescribedBy}
       aria-invalid={ariaInvalid || undefined}
-      aria-label={ariaLabel}
       data-color={color}
       data-readonly={!editable || undefined}
       data-slot="rich-text"
@@ -217,7 +217,7 @@ function RichTextEditor({
       editorProps: {
         attributes: {
           'aria-describedby': ariaDescribedBy ?? '',
-          'aria-invalid': ariaInvalid ? 'true' : 'false',
+          ...(ariaInvalid ? { 'aria-invalid': 'true' } : {}),
           'aria-label': ariaLabel,
           'aria-multiline': 'true',
           id: id ?? '',
@@ -242,7 +242,8 @@ function RichTextEditor({
     else editor.view.dom.removeAttribute('id');
     if (ariaDescribedBy) editor.view.dom.setAttribute('aria-describedby', ariaDescribedBy);
     else editor.view.dom.removeAttribute('aria-describedby');
-    editor.view.dom.setAttribute('aria-invalid', String(Boolean(ariaInvalid)));
+    if (ariaInvalid) editor.view.dom.setAttribute('aria-invalid', 'true');
+    else editor.view.dom.removeAttribute('aria-invalid');
   }, [ariaDescribedBy, ariaInvalid, ariaLabel, editor, id]);
 
   useEffect(() => {
@@ -253,7 +254,7 @@ function RichTextEditor({
 
   useEffect(() => {
     if (!editor || !content) return;
-    const nextContent = typeof content === 'string' ? content : JSON.stringify(content);
+    const nextContent = JSON.stringify(content);
     const currentContent = JSON.stringify(editor.getJSON());
     if (currentContent !== nextContent) editor.commands.setContent(content, { emitUpdate: false });
   }, [content, editor]);

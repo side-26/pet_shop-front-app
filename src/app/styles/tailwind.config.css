@@ -26,6 +26,9 @@
   body {
     @apply tw:text-body-m;
   }
+  input[type='file'] {
+    @apply tw:hidden;
+  }
 }
 
 @theme inline {

@@ -3,8 +3,8 @@ import { mixed, object, string, type InferType } from 'yup';
 import { yupMessage } from '@/configs/yup.config';
 
 // Mirrors the backend `imageUpload` middleware used by POST /images.
-const IMAGE_UPLOAD_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
-const IMAGE_UPLOAD_MAX_SIZE_BYTES = 5 * 1024 * 1024;
+export const IMAGE_UPLOAD_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
+export const IMAGE_UPLOAD_MAX_SIZE_BYTES = 5 * 1024 * 1024;
 
 export const uploadImageSchema = object({
   mainImage: mixed<File>()

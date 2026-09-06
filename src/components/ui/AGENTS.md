@@ -346,8 +346,16 @@ children composed by the caller render; their state is isolated with Tiptap
 Each action uses the shared `Select` primitive with an appropriate decorative
 prefix icon, rather than a button group. `TipTapListAction` selects no list,
 bullet list, or ordered list. `TipTapImageUploadAction` accepts an optional
-`onUpload(file)` callback which must resolve to a durable image URL; without it,
-the action inserts a local data URL intended only for simple, transient drafts.
+`onUpload(file, { signal, onProgress })` callback controls image insertion. `RichTextField`
+uses a cancellable FileReader data URL for a local draft, then starts a background bucket upload
+without replacing the editor's `src`. `RichTextField` displays a blocking progress overlay for
+that upload or a related deletion. At submit, its entity handler replaces only remaining data URLs
+with values from the exposed `richTextDraftImageUrls` base64-to-bucket map. Submission warns and
+stops while an upload or deletion is pending. Removing a local draft image cancels its upload or
+deletes its completed bucket object, removing the map entry only after deletion succeeds; existing
+bucket-backed images loaded by an edit form are also deleted when their image node is removed.
+The Image extension permits base64 only to render unsaved drafts; persisted API payloads contain
+the submit-time bucket URLs.
 `InputOTP`, `InputOTPGroup`, `InputOTPSlot`, and `InputOTPSeparator` are the
 project-owned shadcn Input OTP primitives backed by `input-otp`. `InputOtpField`
 is their React Hook Form composition with `color="primary|secondary|info|success|warning|error"`

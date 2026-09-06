@@ -7,8 +7,12 @@ import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
 import { globalErrorHandler } from '@/utils/helpers';
 import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
-import { uploadRichTextImages } from '@/entities/images/images.client';
-import { isRichTextDocument } from '@/lib/rich-text';
+import {
+  hasPendingRichTextImageOperations,
+  persistRichTextDraftImages,
+  uploadRichTextImages,
+} from '@/entities/images/images.client';
+import { isRichTextDocument, type RichTextDocument } from '@/lib/rich-text';
 
 import {
   createPetAction,
@@ -26,9 +30,19 @@ import type {
   UpdatePetPriceInput,
 } from './pets.schema';
 
-export async function submitCreatePet(input: PetInput, setError: UseFormSetError<PetInput>) {
+export async function submitCreatePet(
+  input: PetInput,
+  setError: UseFormSetError<PetInput>,
+  onDescriptionUploaded?: (description: RichTextDocument) => void,
+) {
+  if (hasPendingRichTextImageOperations()) {
+    toast.add({ type: 'warning', title: 'لطفاً تکمیل بارگذاری یا حذف تصویر را منتظر بمانید.' });
+    return false;
+  }
   try {
-    input = { ...input, description: await uploadRichTextImages(input.description as never) };
+    const description = await uploadRichTextImages(input.description as RichTextDocument);
+    input = { ...input, description };
+    onDescriptionUploaded?.(description);
   } catch (error) {
     globalErrorHandler(error as FetcherError, { showErrorFields: setError });
     return false;
@@ -38,6 +52,7 @@ export async function submitCreatePet(input: PetInput, setError: UseFormSetError
     globalErrorHandler(result, { showErrorFields: setError });
     return false;
   }
+  persistRichTextDraftImages(input.description as RichTextDocument);
   toast.add({ type: 'success', title: result.message });
   return true;
 }
@@ -47,15 +62,22 @@ async function submitPetSection<T extends FieldValues>(
   input: T,
   setError: UseFormSetError<T>,
   action: (input: T & { id: string }) => Promise<FetcherResult<unknown>>,
+  onDescriptionUploaded?: (description: RichTextDocument) => void,
 ) {
+  if (hasPendingRichTextImageOperations()) {
+    toast.add({ type: 'warning', title: 'لطفاً تکمیل بارگذاری یا حذف تصویر را منتظر بمانید.' });
+    return false;
+  }
   try {
     if (isRichTextDocument((input as { description?: unknown }).description)) {
+      const description = await uploadRichTextImages(
+        (input as unknown as { description: RichTextDocument }).description,
+      );
       input = {
         ...input,
-        description: await uploadRichTextImages(
-          (input as unknown as { description: never }).description,
-        ),
+        description,
       };
+      onDescriptionUploaded?.(description);
     }
   } catch (error) {
     globalErrorHandler(error as FetcherError, { showErrorFields: setError });
@@ -66,6 +88,9 @@ async function submitPetSection<T extends FieldValues>(
     globalErrorHandler(result, { showErrorFields: setError });
     return false;
   }
+  if (isRichTextDocument((input as { description?: unknown }).description)) {
+    persistRichTextDraftImages((input as unknown as { description: RichTextDocument }).description);
+  }
   toast.add({ type: 'success', title: result.message });
   return true;
 }
@@ -74,7 +99,8 @@ export const submitUpdatePetBaseInfo = (
   id: string,
   input: UpdatePetBaseInfoInput,
   setError: UseFormSetError<UpdatePetBaseInfoInput>,
-) => submitPetSection(id, input, setError, updatePetBaseInfoAction);
+  onDescriptionUploaded?: (description: RichTextDocument) => void,
+) => submitPetSection(id, input, setError, updatePetBaseInfoAction, onDescriptionUploaded);
 
 export const submitUpdatePetImages = (
   id: string,
@@ -116,7 +142,12 @@ export function useCreatePet(onSuccess: () => void) {
       const form = formRef.current;
       if (!form || isPending) return;
       startTransition(async () => {
-        if (await submitCreatePet(input, form.setError)) onSuccess();
+        if (
+          await submitCreatePet(input, form.setError, (description) =>
+            form.setValue('description', description),
+          )
+        )
+          onSuccess();
       });
     },
     [isPending, onSuccess],
@@ -132,7 +163,12 @@ export function useUpdatePetBaseInfo(id: string, onSuccess: () => void) {
       const form = formRef.current;
       if (!form || isPending) return;
       startTransition(async () => {
-        if (await submitUpdatePetBaseInfo(id, input, form.setError)) onSuccess();
+        if (
+          await submitUpdatePetBaseInfo(id, input, form.setError, (description) =>
+            form.setValue('description', description),
+          )
+        )
+          onSuccess();
       });
     },
     [id, isPending, onSuccess],

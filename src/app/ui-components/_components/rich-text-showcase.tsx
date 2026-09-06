@@ -1,13 +1,45 @@
+import type { JSONContent } from '@tiptap/core';
+
 import { RichText, RichTextFullHeaderActions } from '@/components/ui/rich-text';
 
 import { ShowcaseSection } from './showcase-section';
 
-const initialContent = `
-  <h2>راهنمای نگهداری</h2>
-  <p>توضیحات تکمیلی درباره شرایط نگهداری حیوان را وارد کنید.</p>
-  <ul><li>آب تازه در دسترس باشد.</li><li>محیط آرام و تمیز بماند.</li></ul>
-  <blockquote>برای اطلاعات بیشتر با دامپزشک مشورت کنید.</blockquote>
-`;
+const initialContent = {
+  type: 'doc',
+  content: [
+    { type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'راهنمای نگهداری' }] },
+    {
+      type: 'paragraph',
+      content: [{ type: 'text', text: 'توضیحات تکمیلی درباره شرایط نگهداری حیوان را وارد کنید.' }],
+    },
+    {
+      type: 'bulletList',
+      content: [
+        {
+          type: 'listItem',
+          content: [
+            { type: 'paragraph', content: [{ type: 'text', text: 'آب تازه در دسترس باشد.' }] },
+          ],
+        },
+        {
+          type: 'listItem',
+          content: [
+            { type: 'paragraph', content: [{ type: 'text', text: 'محیط آرام و تمیز بماند.' }] },
+          ],
+        },
+      ],
+    },
+    {
+      type: 'blockquote',
+      content: [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'برای اطلاعات بیشتر با دامپزشک مشورت کنید.' }],
+        },
+      ],
+    },
+  ],
+} satisfies JSONContent;
 const variants = ['fill', 'tonal', 'outlined'] as const;
 const colors = ['primary', 'secondary', 'success', 'error'] as const;
 const textDirections = ['auto', 'rtl', 'ltr'] as const;

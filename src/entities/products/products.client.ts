@@ -7,8 +7,12 @@ import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
 import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
 import { globalErrorHandler } from '@/utils/helpers';
-import { uploadRichTextImages } from '@/entities/images/images.client';
-import { isRichTextDocument } from '@/lib/rich-text';
+import {
+  hasPendingRichTextImageOperations,
+  persistRichTextDraftImages,
+  uploadRichTextImages,
+} from '@/entities/images/images.client';
+import { isRichTextDocument, type RichTextDocument } from '@/lib/rich-text';
 import {
   createProductAction,
   deleteProductAction,
@@ -29,15 +33,22 @@ async function submit<T extends FieldValues>(
   input: T,
   setError: UseFormSetError<T>,
   action: (value: T) => Promise<FetcherResult<unknown>>,
+  onDescriptionUploaded?: (description: RichTextDocument) => void,
 ) {
+  if (hasPendingRichTextImageOperations()) {
+    toast.add({ type: 'warning', title: 'لطفاً تکمیل بارگذاری یا حذف تصویر را منتظر بمانید.' });
+    return false;
+  }
   try {
     if (isRichTextDocument((input as { description?: unknown }).description)) {
+      const description = await uploadRichTextImages(
+        (input as unknown as { description: RichTextDocument }).description,
+      );
       input = {
         ...input,
-        description: await uploadRichTextImages(
-          (input as unknown as { description: never }).description,
-        ),
+        description,
       };
+      onDescriptionUploaded?.(description);
     }
   } catch (error) {
     globalErrorHandler(error as FetcherError, { showErrorFields: setError });
@@ -48,16 +59,23 @@ async function submit<T extends FieldValues>(
     globalErrorHandler(result, { showErrorFields: setError });
     return false;
   }
+  if (isRichTextDocument((input as { description?: unknown }).description)) {
+    persistRichTextDraftImages((input as unknown as { description: RichTextDocument }).description);
+  }
   toast.add({ type: 'success', title: result.message });
   return true;
 }
-export const submitCreateProduct = (input: ProductInput, setError: UseFormSetError<ProductInput>) =>
-  submit(input, setError, createProductAction);
+export const submitCreateProduct = (
+  input: ProductInput,
+  setError: UseFormSetError<ProductInput>,
+  onDescriptionUploaded?: (description: RichTextDocument) => void,
+) => submit(input, setError, createProductAction, onDescriptionUploaded);
 export const submitUpdateProductBaseInfo = (
   id: string,
   input: UpdateProductBaseInfoInput,
   setError: UseFormSetError<UpdateProductBaseInfoInput>,
-) => submit({ id, ...input }, setError, updateProductBaseInfoAction);
+  onDescriptionUploaded?: (description: RichTextDocument) => void,
+) => submit({ id, ...input }, setError, updateProductBaseInfoAction, onDescriptionUploaded);
 export const submitUpdateProductImages = (
   id: string,
   input: UpdateProductImagesInput,
@@ -95,7 +113,12 @@ export function useCreateProduct(onSuccess: () => void) {
       const form = formRef.current;
       if (!form || isPending) return;
       startTransition(async () => {
-        if (await submitCreateProduct(input, form.setError)) onSuccess();
+        if (
+          await submitCreateProduct(input, form.setError, (description) =>
+            form.setValue('description', description),
+          )
+        )
+          onSuccess();
       });
     },
     [isPending, onSuccess],
@@ -111,7 +134,12 @@ export function useUpdateProductBaseInfo(id: string, onSuccess: () => void) {
       const form = formRef.current;
       if (!form || isPending) return;
       startTransition(async () => {
-        if (await submitUpdateProductBaseInfo(id, input, form.setError)) onSuccess();
+        if (
+          await submitUpdateProductBaseInfo(id, input, form.setError, (description) =>
+            form.setValue('description', description),
+          )
+        )
+          onSuccess();
       });
     },
     [id, isPending, onSuccess],

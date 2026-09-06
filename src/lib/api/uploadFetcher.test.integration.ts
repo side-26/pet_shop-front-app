@@ -97,6 +97,24 @@ describe('uploadFetcher', () => {
     });
   });
 
+  it('honors an AbortSignal and detaches it after the request settles', async () => {
+    const controller = new AbortController();
+    const pending = uploadFetcher({
+      url: '/uploads',
+      body: new FormData(),
+      signal: controller.signal,
+    });
+    const request = MockXMLHttpRequest.instances[0]!;
+
+    controller.abort();
+
+    await expect(pending).resolves.toMatchObject({
+      isSuccess: false,
+      message: 'The upload was cancelled.',
+    });
+    expect(request.sentBody).toBeInstanceOf(FormData);
+  });
+
   it('normalizes backend and network errors', async () => {
     const backend = uploadFetcher({ url: '/uploads', body: new FormData() });
     const backendRequest = MockXMLHttpRequest.instances[0]!;

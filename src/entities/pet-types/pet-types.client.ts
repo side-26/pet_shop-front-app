@@ -5,7 +5,12 @@ import type { UseFormSetError } from 'react-hook-form';
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
 import { globalErrorHandler } from '@/utils/helpers';
-import { uploadRichTextImages } from '@/entities/images/images.client';
+import {
+  hasPendingRichTextImageOperations,
+  persistRichTextDraftImages,
+  uploadRichTextImages,
+} from '@/entities/images/images.client';
+import type { RichTextDocument } from '@/lib/rich-text';
 import {
   deletePetTypeAction,
   disablePetTypeAction,
@@ -48,9 +53,16 @@ export function usePetTypeRowActions(onSuccess: () => void) {
 export async function submitCreatePetType(
   input: PetTypeInput,
   showErrorFields: UseFormSetError<PetTypeInput>,
+  onDescriptionUploaded?: (description: RichTextDocument) => void,
 ) {
+  if (hasPendingRichTextImageOperations()) {
+    toast.add({ type: 'warning', title: 'لطفاً تکمیل بارگذاری یا حذف تصویر را منتظر بمانید.' });
+    return false;
+  }
   try {
-    input = { ...input, description: await uploadRichTextImages(input.description as never) };
+    const description = await uploadRichTextImages(input.description as RichTextDocument);
+    input = { ...input, description };
+    onDescriptionUploaded?.(description);
   } catch (error) {
     globalErrorHandler(error as never, { showErrorFields });
     return false;
@@ -60,6 +72,7 @@ export async function submitCreatePetType(
     globalErrorHandler(result, { showErrorFields });
     return false;
   }
+  persistRichTextDraftImages(input.description as RichTextDocument);
   toast.add({ type: 'success', title: result.message });
   return true;
 }
@@ -72,7 +85,12 @@ export function useCreatePetType(onSuccess: () => void) {
       const form = formRef.current;
       if (!form || isPending) return;
       startTransition(async () => {
-        if (await submitCreatePetType(input, form.setError)) onSuccess();
+        if (
+          await submitCreatePetType(input, form.setError, (description) =>
+            form.setValue('description', description),
+          )
+        )
+          onSuccess();
       });
     },
     [isPending, onSuccess],
@@ -88,14 +106,24 @@ export function useUpdatePetType(id: string, onSuccess: () => void) {
       const form = formRef.current;
       if (!form || isPending) return;
       startTransition(async () => {
+        if (hasPendingRichTextImageOperations()) {
+          toast.add({
+            type: 'warning',
+            title: 'لطفاً تکمیل بارگذاری یا حذف تصویر را منتظر بمانید.',
+          });
+          return;
+        }
         try {
-          input = { ...input, description: await uploadRichTextImages(input.description as never) };
+          const description = await uploadRichTextImages(input.description as RichTextDocument);
+          input = { ...input, description };
+          form.setValue('description', description);
         } catch (error) {
           return globalErrorHandler(error as never, { showErrorFields: form.setError });
         }
         const result = await updatePetTypeAction({ id, ...input });
         if (!result.isSuccess)
           return globalErrorHandler(result, { showErrorFields: form.setError });
+        persistRichTextDraftImages(input.description as RichTextDocument);
         toast.add({ type: 'success', title: result.message });
         onSuccess();
       });

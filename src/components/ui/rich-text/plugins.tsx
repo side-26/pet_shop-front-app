@@ -57,7 +57,8 @@ function createTipTapExtensions(): Extensions {
       alignments: [...tipTapTextAlignments],
     }),
     Typography,
-    Image.configure({ allowBase64: false }),
+    // Data URLs are permitted only while a RichTextField draft is open; submit replaces them.
+    Image.configure({ allowBase64: true }),
   ];
 }
 

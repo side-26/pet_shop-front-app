@@ -29,7 +29,20 @@ beforeAll(() => {
 
 describe('RichText', () => {
   it('renders an SSR-safe, labelled editable surface', async () => {
-    render(<RichText ariaLabel="توضیحات محصول" content="<p>غذای مناسب برای گربه‌های بالغ</p>" />);
+    render(
+      <RichText
+        ariaLabel="توضیحات محصول"
+        content={{
+          type: 'doc',
+          content: [
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: 'غذای مناسب برای گربه‌های بالغ' }],
+            },
+          ],
+        }}
+      />,
+    );
 
     const editor = await screen.findByRole('textbox', { name: 'توضیحات محصول' });
 
@@ -49,7 +62,26 @@ describe('RichText', () => {
     render(
       <RichText
         ariaLabel="توضیحات راست‌به‌چپ"
-        content={'<h1>عنوان</h1><p style="text-align: center">متن</p><ul><li>مورد</li></ul>'}
+        content={{
+          type: 'doc',
+          content: [
+            { type: 'heading', attrs: { level: 1 }, content: [{ type: 'text', text: 'عنوان' }] },
+            {
+              type: 'paragraph',
+              attrs: { textAlign: 'center' },
+              content: [{ type: 'text', text: 'متن' }],
+            },
+            {
+              type: 'bulletList',
+              content: [
+                {
+                  type: 'listItem',
+                  content: [{ type: 'paragraph', content: [{ type: 'text', text: 'مورد' }] }],
+                },
+              ],
+            },
+          ],
+        }}
       />,
     );
 
@@ -67,7 +99,10 @@ describe('RichText', () => {
     render(
       <RichText
         ariaLabel="توضیحات با ابزار تراز"
-        content="<p>متن قابل تراز</p>"
+        content={{
+          type: 'doc',
+          content: [{ type: 'paragraph', content: [{ type: 'text', text: 'متن قابل تراز' }] }],
+        }}
         headerActions={
           <TipTapHeaderActions>
             <TipTapTextAlignAction />
@@ -96,7 +131,10 @@ describe('RichText', () => {
     render(
       <RichText
         ariaLabel="توضیحات با ابزارهای کامل"
-        content="<p>متن قابل ویرایش</p>"
+        content={{
+          type: 'doc',
+          content: [{ type: 'paragraph', content: [{ type: 'text', text: 'متن قابل ویرایش' }] }],
+        }}
         headerActions={
           <TipTapHeaderActions>
             <TipTapHeadingAction />
@@ -128,7 +166,10 @@ describe('RichText', () => {
     render(
       <RichText
         ariaLabel="توضیحات با فهرست و تصویر"
-        content="<p>متن قابل ویرایش</p>"
+        content={{
+          type: 'doc',
+          content: [{ type: 'paragraph', content: [{ type: 'text', text: 'متن قابل ویرایش' }] }],
+        }}
         headerActions={
           <TipTapHeaderActions>
             <TipTapListAction />
@@ -152,9 +193,50 @@ describe('RichText', () => {
     fireEvent.change(imageInput!, {
       target: { files: [file] },
     });
-    await waitFor(() => expect(onUpload).toHaveBeenCalledWith(file));
+    await waitFor(() => expect(onUpload).toHaveBeenCalledWith(file, expect.any(Object)));
     expect(editor.querySelector('img')?.getAttribute('src')).toBe(
       'https://cdn.example.com/pet.jpg',
     );
+  });
+
+  it('reports upload progress and keeps the original selection for the uploaded image', async () => {
+    let resolveUpload: ((url: string) => void) | undefined;
+    const onUpload = vi.fn(
+      (_file: File, { onProgress }: { onProgress: (progress: number) => void }) => {
+        onProgress(42);
+        return new Promise<string>((resolve) => {
+          resolveUpload = resolve;
+        });
+      },
+    );
+    render(
+      <RichText
+        ariaLabel="توضیحات با پیشرفت بارگذاری"
+        content={{
+          type: 'doc',
+          content: [{ type: 'paragraph', content: [{ type: 'text', text: 'متن' }] }],
+        }}
+        headerActions={
+          <TipTapHeaderActions>
+            <TipTapImageUploadAction onUpload={onUpload} />
+          </TipTapHeaderActions>
+        }
+      />,
+    );
+
+    await screen.findByRole('textbox', { name: 'توضیحات با پیشرفت بارگذاری' });
+    const imageInput = document.querySelector<HTMLInputElement>('input[type="file"]');
+    fireEvent.change(imageInput!, {
+      target: { files: [new File(['image'], 'pet.webp', { type: 'image/webp' })] },
+    });
+
+    expect(await screen.findByRole('progressbar', { name: 'پیشرفت 42 درصد' })).toBeTruthy();
+    expect(
+      (screen.getByRole('button', { name: 'در حال بارگذاری تصویر 42%' }) as HTMLButtonElement)
+        .disabled,
+    ).toBe(true);
+
+    resolveUpload?.('https://cdn.example.com/pet.webp');
+    await waitFor(() => expect(screen.queryByRole('progressbar')).toBeNull());
   });
 });
