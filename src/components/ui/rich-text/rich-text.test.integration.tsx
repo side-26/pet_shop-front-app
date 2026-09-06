@@ -10,7 +10,7 @@ import {
   TipTapTextDirectionAction,
 } from './index';
 import { tipTapTextAlignments, tipTapTextDirections, tipTapTypographyClassName } from './plugins';
-import { TipTap, tipTapVariants } from './tip-tap';
+import { RichText, richTextVariants } from './rich-text';
 
 afterEach(cleanup);
 
@@ -27,9 +27,9 @@ beforeAll(() => {
   });
 });
 
-describe('TipTap', () => {
+describe('RichText', () => {
   it('renders an SSR-safe, labelled editable surface', async () => {
-    render(<TipTap ariaLabel="توضیحات محصول" content="<p>غذای مناسب برای گربه‌های بالغ</p>" />);
+    render(<RichText ariaLabel="توضیحات محصول" content="<p>غذای مناسب برای گربه‌های بالغ</p>" />);
 
     const editor = await screen.findByRole('textbox', { name: 'توضیحات محصول' });
 
@@ -38,14 +38,16 @@ describe('TipTap', () => {
   });
 
   it('exposes the requested semantic container variants', () => {
-    expect(tipTapVariants({ color: 'success', variant: 'tonal' })).toContain('tw:bg-success-muted');
-    expect(tipTapVariants({ color: 'error', variant: 'outlined' })).toContain('tw:border-error');
-    expect(tipTapVariants({ color: 'secondary', variant: 'fill' })).toContain('tw:bg-secondary');
+    expect(richTextVariants({ color: 'success', variant: 'tonal' })).toContain(
+      'tw:bg-success-muted',
+    );
+    expect(richTextVariants({ color: 'error', variant: 'outlined' })).toContain('tw:border-error');
+    expect(richTextVariants({ color: 'secondary', variant: 'fill' })).toContain('tw:bg-secondary');
   });
 
   it('configures alignment, automatic direction, and project typography', async () => {
     render(
-      <TipTap
+      <RichText
         ariaLabel="توضیحات راست‌به‌چپ"
         content={'<h1>عنوان</h1><p style="text-align: center">متن</p><ul><li>مورد</li></ul>'}
       />,
@@ -63,7 +65,7 @@ describe('TipTap', () => {
 
   it('renders only the requested header actions and applies alignment', async () => {
     render(
-      <TipTap
+      <RichText
         ariaLabel="توضیحات با ابزار تراز"
         content="<p>متن قابل تراز</p>"
         headerActions={
@@ -92,7 +94,7 @@ describe('TipTap', () => {
 
   it('applies heading and direction commands from their requested action groups', async () => {
     render(
-      <TipTap
+      <RichText
         ariaLabel="توضیحات با ابزارهای کامل"
         content="<p>متن قابل ویرایش</p>"
         headerActions={
@@ -124,7 +126,7 @@ describe('TipTap', () => {
   it('applies list choices and inserts an uploaded image URL', async () => {
     const onUpload = vi.fn().mockResolvedValue('https://cdn.example.com/pet.jpg');
     render(
-      <TipTap
+      <RichText
         ariaLabel="توضیحات با فهرست و تصویر"
         content="<p>متن قابل ویرایش</p>"
         headerActions={

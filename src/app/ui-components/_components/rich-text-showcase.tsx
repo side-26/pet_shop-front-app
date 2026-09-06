@@ -1,4 +1,4 @@
-import { TipTap, TipTapFullHeaderActions } from '@/components/ui/tip-tap';
+import { RichText, RichTextFullHeaderActions } from '@/components/ui/rich-text';
 
 import { ShowcaseSection } from './showcase-section';
 
@@ -12,11 +12,11 @@ const variants = ['fill', 'tonal', 'outlined'] as const;
 const colors = ['primary', 'secondary', 'success', 'error'] as const;
 const textDirections = ['auto', 'rtl', 'ltr'] as const;
 
-export function TipTapShowcase() {
+export function RichTextShowcase() {
   return (
     <ShowcaseSection
-      id="tip-tap"
-      title="TipTap"
+      id="rich-text"
+      title="Rich Text"
       description="ویرایشگر متن با خروجی JSON ساخت‌یافته، جهت و تراز، فهرست، عنوان و ابزار کامل بارگذاری تصویر."
     >
       <div className="tw:flex tw:flex-col tw:gap-6">
@@ -25,7 +25,7 @@ export function TipTapShowcase() {
             <h4 className="tw:text-heading-4">حالت {variant}</h4>
             <div className="tw:grid tw:gap-3 tw:lg:grid-cols-2">
               {colors.map((color) => (
-                <TipTap
+                <RichText
                   key={color}
                   ariaLabel={`ویرایشگر ${color} با حالت ${variant}`}
                   color={color}
@@ -41,7 +41,7 @@ export function TipTapShowcase() {
           <h4 className="tw:text-heading-4">جهت متن</h4>
           <div className="tw:grid tw:gap-3 tw:lg:grid-cols-3">
             {textDirections.map((textDirection) => (
-              <TipTap
+              <RichText
                 key={textDirection}
                 ariaLabel={`ویرایشگر با جهت ${textDirection}`}
                 content={initialContent}
@@ -54,10 +54,10 @@ export function TipTapShowcase() {
 
         <section className="tw:flex tw:flex-col tw:gap-3">
           <h4 className="tw:text-heading-4">ابزارهای سرصفحه</h4>
-          <TipTap
+          <RichText
             ariaLabel="ویرایشگر با ابزارهای متن"
             content={initialContent}
-            headerActions={<TipTapFullHeaderActions />}
+            headerActions={<RichTextFullHeaderActions />}
             variant="outlined"
           />
         </section>

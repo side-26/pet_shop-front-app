@@ -1,4 +1,4 @@
-export { TipTap, tipTapVariants, type TipTapProps } from './tip-tap';
+export { RichText, richTextVariants, type RichTextProps } from './rich-text';
 export {
   TipTapHeaderActions,
   tipTapHeaderActionsVariants,
@@ -12,7 +12,7 @@ export {
   TipTapTextDirectionAction,
   type TipTapImageUploadActionProps,
 } from './plugins/actions/plugins';
-export { TipTapFullHeaderActions } from './plugins/actions/full';
+export { TipTapFullHeaderActions as RichTextFullHeaderActions } from './plugins/actions/full';
 export {
   createTipTapExtensions,
   TipTapTypographyScale,

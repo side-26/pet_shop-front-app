@@ -19,7 +19,7 @@ import {
 } from './plugins/actions/context';
 import styles from './styles.module.css';
 
-const tipTapVariants = tv({
+const richTextVariants = tv({
   base: [
     'tw:w-full tw:overflow-hidden tw:rounded-xl tw:border tw:shadow-xs tw:transition-[background-color,border-color,color,box-shadow] tw:duration-150 tw:ease-out',
     'tw:has-[.tiptap:focus-visible]:ring-3 tw:motion-reduce:transition-none',
@@ -94,7 +94,7 @@ const tipTapVariants = tv({
   defaultVariants: { color: 'primary', variant: 'fill' },
 });
 
-type TipTapProps = Omit<VariantProps<typeof tipTapVariants>, 'color' | 'variant'> & {
+type RichTextProps = Omit<VariantProps<typeof richTextVariants>, 'color' | 'variant'> & {
   ariaLabel?: string;
   className?: string;
   color?: TipTapActionColor;
@@ -106,17 +106,17 @@ type TipTapProps = Omit<VariantProps<typeof tipTapVariants>, 'color' | 'variant'
   variant?: TipTapActionVariant;
 };
 
-function TipTap({
+function RichText({
   ariaLabel = 'ویرایشگر متن',
   className,
   color = 'primary',
   variant = 'fill',
   ...props
-}: TipTapProps) {
+}: RichTextProps) {
   return (
     <Suspense
       fallback={
-        <TipTapContainer
+        <RichTextContainer
           ariaLabel={ariaLabel}
           className={className}
           color={color}
@@ -124,10 +124,10 @@ function TipTap({
           variant={variant}
         >
           <span aria-hidden className={styles.fallback} />
-        </TipTapContainer>
+        </RichTextContainer>
       }
     >
-      <TipTapEditor
+      <RichTextEditor
         {...props}
         ariaLabel={ariaLabel}
         className={className}
@@ -138,15 +138,15 @@ function TipTap({
   );
 }
 
-type TipTapContainerProps = Pick<
-  TipTapProps,
+type RichTextContainerProps = Pick<
+  RichTextProps,
   'ariaLabel' | 'className' | 'color' | 'editable' | 'variant'
 > & {
   children: ReactNode;
   isLoading?: boolean;
 };
 
-function TipTapContainer({
+function RichTextContainer({
   ariaLabel,
   children,
   className,
@@ -154,17 +154,17 @@ function TipTapContainer({
   editable = true,
   isLoading = false,
   variant = 'fill',
-}: TipTapContainerProps) {
+}: RichTextContainerProps) {
   return (
     <div
       aria-busy={isLoading || undefined}
       aria-label={ariaLabel}
       data-color={color}
       data-readonly={!editable || undefined}
-      data-slot="tip-tap"
+      data-slot="rich-text"
       data-variant={variant}
       className={cn(
-        tipTapVariants({ color, variant }),
+        richTextVariants({ color, variant }),
         tipTapTypographyClassName,
         styles.root,
         className,
@@ -175,7 +175,7 @@ function TipTapContainer({
   );
 }
 
-function TipTapEditor({
+function RichTextEditor({
   ariaLabel = 'ویرایشگر متن',
   className,
   content,
@@ -185,7 +185,7 @@ function TipTapEditor({
   color = 'primary',
   textDirection = 'auto',
   variant = 'fill',
-}: TipTapProps) {
+}: RichTextProps) {
   // The hook API keeps this small, standalone editor self-contained.
   const extensions = useMemo(() => createTipTapExtensions(), []);
   const editor = useEditor(
@@ -209,7 +209,7 @@ function TipTapEditor({
   );
 
   return (
-    <TipTapContainer
+    <RichTextContainer
       ariaLabel={ariaLabel}
       className={className}
       color={color}
@@ -222,8 +222,8 @@ function TipTapEditor({
         </TipTapActionsContext.Provider>
       ) : null}
       <EditorContent editor={editor} />
-    </TipTapContainer>
+    </RichTextContainer>
   );
 }
 
-export { TipTap, tipTapVariants, type TipTapProps };
+export { RichText, richTextVariants, type RichTextProps };

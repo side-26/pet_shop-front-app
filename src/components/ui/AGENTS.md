@@ -324,7 +324,7 @@ padding so text never collides with it in RTL or LTR.
 without password behavior. When `counter` is true, render a live character
 count at the physical bottom-left of the textarea, include `maxLength` when
 provided, and reserve bottom padding so user text cannot overlap the counter.
-`TipTap` is the SSR-safe base rich-text editor. It uses `immediatelyRender: false`,
+`RichText` is the SSR-safe base rich-text editor. It uses `immediatelyRender: false`,
 streams its editor initialization behind an internal Suspense boundary, and does not
 trigger React rerenders for each transaction. Its container supports
 only `variant="fill|tonal|outlined"` and
@@ -332,7 +332,7 @@ only `variant="fill|tonal|outlined"` and
 Filled and tonal containers resolve their semantic surface and foreground as a
 pair; outlined containers retain the standard foreground while their border,
 caret, and focus ring resolve from `color`.
-Its companion `ui/tip-tap/plugins.tsx` configures paragraph and heading alignment
+Its companion `ui/rich-text/plugins.tsx` configures paragraph and heading alignment
 for `left|center|right`, plus Tiptap Typography input rules. `textDirection`
 defaults to `auto` and accepts `auto|rtl|ltr`; callers can use Tiptap's
 `setTextDirection()` and `unsetTextDirection()` commands for node-level overrides.

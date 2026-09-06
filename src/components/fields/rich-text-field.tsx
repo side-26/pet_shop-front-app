@@ -5,7 +5,7 @@ import { useController, type FieldPath, type FieldValues } from 'react-hook-form
 
 import { Field } from '@/components/ui/field/default';
 import { FieldLabel } from '@/components/ui/field/label';
-import { TipTap, TipTapFullHeaderActions } from '@/components/ui/tip-tap';
+import { RichText, RichTextFullHeaderActions } from '@/components/ui/rich-text';
 import { deleteImageAction } from '@/entities/images/images.actions';
 import { type RichTextDocument } from '@/lib/rich-text';
 
@@ -64,12 +64,12 @@ function RichTextField<T extends FieldValues>({
         {label}
         {required ? ' *' : ''}
       </FieldLabel>
-      <TipTap
+      <RichText
         ariaLabel={label}
         content={content}
         color={fieldState.invalid ? 'error' : 'primary'}
         variant="outlined"
-        headerActions={<TipTapFullHeaderActions onUpload={() => null} />}
+        headerActions={<RichTextFullHeaderActions onUpload={() => null} />}
         onChange={(next) => {
           const nextUrls = imageUrls(next);
           for (const url of previousUrls.current) {
