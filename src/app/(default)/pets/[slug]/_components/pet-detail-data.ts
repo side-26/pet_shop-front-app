@@ -36,7 +36,7 @@ const max: PetDetail = {
   images: [
     { src: '/images/home/category-dog.jpg', alt: 'مکس، توله گلدن رتریور در فضای سبز' },
     { src: '/images/home/delivery.jpg', alt: 'مکس در محیط آرام خانه' },
-    { src: '/images/home/hero-pets.png', alt: 'مکس در کنار دیگر حیوانات خانگی' },
+    { src: '/images/home/hero-pets.jpeg', alt: 'مکس در کنار دیگر حیوانات خانگی' },
   ],
 };
 

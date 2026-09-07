@@ -14,7 +14,7 @@ export function PetHeroSection() {
     >
       <div className="tw:group/hero tw:relative tw:h-[530px] tw:overflow-hidden tw:rounded-3xl tw:shadow-lg tw:md:h-[600px]">
         <Image
-          src="/images/home/hero-pets.png"
+          src="/images/home/hero-pets.jpeg"
           alt="سگ گلدن رتریور و گربه پرشین در خانه‌ای روشن"
           fill
           priority

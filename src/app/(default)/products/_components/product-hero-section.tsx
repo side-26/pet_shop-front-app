@@ -80,7 +80,7 @@ export function ProductHeroRenderer() {
           <div className="tw:absolute tw:-inset-3 tw:rounded-[2.75rem] tw:border tw:border-primary/15 tw:bg-primary/5 tw:rotate-2" />
           <div className="tw:relative tw:aspect-[4/3] tw:overflow-hidden tw:rounded-[2.5rem] tw:border tw:border-border/60 tw:bg-card tw:shadow-2xl tw:shadow-primary/15">
             <Image
-              src="/images/home/hero-pets.png"
+              src="/images/home/hero-pets.jpeg"
               alt="گلدن رتریور و گربه پرشین در خانه روشن"
               fill
               priority
