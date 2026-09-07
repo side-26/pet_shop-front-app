@@ -59,6 +59,8 @@ export const routePaths = {
   adminProducts: PATHS.ADMIN_PRODUCTS,
   adminProfile: PATHS.ADMIN_PROFILE,
   adminProductsQuery: (query: URLSearchParams) => `${PATHS.ADMIN_PRODUCTS}?${query.toString()}`,
+  adminDashboardQuery: (query: URLSearchParams) =>
+    query.size === 0 ? PATHS.ADMIN : `${PATHS.ADMIN}?${query.toString()}`,
   adminPetsQuery: (query: URLSearchParams) => `${PATHS.ADMIN_PETS}?${query.toString()}`,
   adminBreedsQuery: (query: URLSearchParams) => `${PATHS.ADMIN_BREEDS}?${query.toString()}`,
   adminUsersQuery: (query: URLSearchParams) => `${PATHS.ADMIN_USERS}?${query.toString()}`,

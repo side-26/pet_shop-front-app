@@ -290,6 +290,14 @@ keeping the date text neutral. The label uses the selected field color; invalid 
 field border, label, icon, and message to error.
 preserve popover dismissal/focus restoration, and cover React Hook Form synchronization and
 ISO/Jalali conversion in Vitest plus portal interaction in Cypress. Do not add range mode.
+
+`RangedDatePicker` is the range counterpart and binds two typed React Hook Form ISO datetime fields:
+`fromDateKey` and `toDateKey`, which default to `from` and `to`. It accepts the same shared visual,
+accessibility, field, draft, and `hasTime` options as `DatePicker`, with `toRules` for end-date
+validation. It commits both fields only on Accept and emits `{ from, to }` through `onValueChange`.
+It does not initialize empty form fields on mount; opening creates local drafts, and only Accept
+writes them. When time selection is enabled, bundle and render both `TimeSelector` controls in the
+first open update and stack them vertically so nested use inside a Dialog has no first-use reset.
 When `hasTime` is true, dynamically import `TimeSelector`, render it between Calendar and
 `CalendarFooter`, and synchronize its `HH:mm:ss` value only with the draft date so Cancel still
 discards time edits. Omit the selector and its client chunk when `hasTime` is false.

@@ -1,16 +1,22 @@
 import type { Metadata } from 'next';
 
-import { DashboardContentWrapper } from './_components/dashboard-content-wrapper';
+import { DashboardHeaderActionsWrapper } from './_components/dashboard-header-actions-wrapper';
+import { DashboardPageContentWrapper } from './_components/dashboard-page-content-wrapper';
 
 export const metadata: Metadata = {
   title: 'داشبورد مدیریت | پت‌شاپ',
   description: 'مرور فروش، موجودی و سفارش‌های اخیر پت‌شاپ.',
 };
 
-export default function AdminDashboardPage() {
+type AdminDashboardPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default function AdminDashboardPage({ searchParams }: AdminDashboardPageProps) {
   return (
     <article className="tw:flex tw:min-h-0 tw:size-full tw:flex-col tw:p-3 tw:sm:p-4">
-      <DashboardContentWrapper />
+      <DashboardHeaderActionsWrapper searchParams={searchParams} />
+      <DashboardPageContentWrapper searchParams={searchParams} />
     </article>
   );
 }
