@@ -20,11 +20,7 @@ const calendarStartMonth = new Date(1920, 0, 1);
 const calendarEndMonth = new Date(2277, 11, 31);
 const prerenderDate = new Date(2026, 0, 1);
 const fridayHolidayMatcher: Matcher = { dayOfWeek: [5] };
-
-function normalizeMatchers(matcher: Matcher | Matcher[] | undefined): Matcher[] {
-  if (matcher === undefined) return [];
-  return Array.isArray(matcher) ? matcher : [matcher];
-}
+const defaultClassNames = getDefaultClassNames();
 
 function CalendarDropdown({
   options = [],
@@ -50,14 +46,17 @@ function CalendarDropdown({
       }
       color={color}
       onValueChange={(nextValue) => {
-        if (nextValue === null) return;
-
         onChange?.({
           target: { value: String(nextValue) },
         } as React.ChangeEvent<HTMLSelectElement>);
       }}
     />
   );
+}
+
+function normalizeMatchers(matcher: Matcher | Matcher[] | undefined): Matcher[] {
+  if (matcher === undefined) return [];
+  return Array.isArray(matcher) ? matcher : [matcher];
 }
 
 const calendarColorVariants = tv({
@@ -131,6 +130,30 @@ type CalendarColor = 'primary' | 'secondary' | 'neutral' | 'success' | 'error';
 type CalendarProps = React.ComponentProps<typeof DayPicker> & {
   color?: CalendarColor;
 };
+type CalendarFooterProps = React.ComponentProps<'div'>;
+
+function CalendarFooter({
+  children,
+  className,
+  role = 'group',
+  'aria-label': ariaLabel = 'عملیات تقویم',
+  ...props
+}: CalendarFooterProps) {
+  return (
+    <div
+      {...props}
+      data-slot="calendar-footer"
+      role={role}
+      aria-label={ariaLabel}
+      className={cn(
+        'tw:flex tw:w-full tw:items-center tw:gap-2 tw:[&>*]:w-10 tw:[&>*]:flex-auto',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
 
 function Calendar({
   className,
@@ -153,8 +176,7 @@ function Calendar({
   const [uncontrolledSelectedDate, setUncontrolledSelectedDate] = React.useState<
     Date | null | undefined
   >(null);
-  const defaultClassNames = getDefaultClassNames();
-  const colors = calendarColorVariants({ color });
+  const colors = React.useMemo(() => calendarColorVariants({ color }), [color]);
   const selectorColor = color === 'neutral' ? 'secondary' : color;
   const resolvedToday = today ?? clientToday ?? prerenderDate;
   const resolvedDefaultMonth = defaultMonth ?? resolvedToday;
@@ -174,14 +196,89 @@ function Calendar({
     [singleOnSelect],
   );
 
-  const uncontrolledSingleProps = isUncontrolledSingle
-    ? ({
-        selected: uncontrolledSelectedDate === null ? resolvedToday : uncontrolledSelectedDate,
-        onSelect: handleUncontrolledSingleSelect,
-      } satisfies Pick<PropsSingle, 'onSelect' | 'selected'>)
-    : {};
+  const uncontrolledSingleProps = React.useMemo(
+    () =>
+      isUncontrolledSingle
+        ? ({
+            selected: uncontrolledSelectedDate === null ? resolvedToday : uncontrolledSelectedDate,
+            onSelect: handleUncontrolledSingleSelect,
+          } satisfies Pick<PropsSingle, 'onSelect' | 'selected'>)
+        : {},
+    [handleUncontrolledSingleSelect, isUncontrolledSingle, resolvedToday, uncontrolledSelectedDate],
+  );
   const selectionOverride: object = uncontrolledSingleProps;
-  const holidayMatchers = [fridayHolidayMatcher, ...normalizeMatchers(modifiers?.holiday)];
+  const resolvedClassNames = React.useMemo(
+    () => ({
+      root: cn('tw:w-fit', defaultClassNames.root),
+      months: cn('tw:flex tw:flex-col tw:gap-4 tw:sm:flex-row', defaultClassNames.months),
+      month: cn('tw:flex tw:w-full tw:flex-col tw:gap-4', defaultClassNames.month),
+      month_caption: cn(
+        'tw:flex tw:min-h-8 tw:items-center tw:justify-center tw:text-label-m',
+        defaultClassNames.month_caption,
+      ),
+      dropdowns: cn(
+        'tw:flex tw:items-center tw:justify-center tw:gap-1',
+        defaultClassNames.dropdowns,
+      ),
+      dropdown_root: cn('tw:relative', defaultClassNames.dropdown_root),
+      dropdown: cn(colors.dropdown(), defaultClassNames.dropdown),
+      months_dropdown: cn(defaultClassNames.months_dropdown),
+      years_dropdown: cn(defaultClassNames.years_dropdown),
+      month_grid: cn('tw:w-full tw:border-collapse', defaultClassNames.month_grid),
+      weekdays: cn('tw:flex', defaultClassNames.weekdays),
+      weekday: cn(
+        'tw:flex-1 tw:text-center tw:text-label-s tw:text-muted-foreground',
+        defaultClassNames.weekday,
+      ),
+      week: cn('tw:mt-1 tw:flex tw:w-full', defaultClassNames.week),
+      day: cn('tw:relative tw:size-9 tw:p-0 tw:text-center', defaultClassNames.day),
+      day_button: cn(
+        'tw:flex tw:size-9 tw:items-center tw:justify-center tw:rounded-xl tw:text-label-s tw:transition-colors tw:focus-visible:ring-3',
+        colors.dayButton(),
+        defaultClassNames.day_button,
+      ),
+      selected: cn('tw:rounded-xl', colors.selected(), defaultClassNames.selected),
+      today: cn('tw:font-bold', colors.today(), defaultClassNames.today),
+      outside: cn('tw:text-muted-foreground/50', defaultClassNames.outside),
+      disabled: cn('tw:text-muted-foreground/40', defaultClassNames.disabled),
+      range_middle: cn('tw:rounded-xl', colors.rangeMiddle(), defaultClassNames.range_middle),
+      range_start: cn('tw:rounded-xl', colors.rangeStart(), defaultClassNames.range_start),
+      range_end: cn('tw:rounded-xl', colors.rangeEnd(), defaultClassNames.range_end),
+      ...classNames,
+    }),
+    [classNames, colors],
+  );
+  const resolvedModifiers = React.useMemo(
+    () => ({
+      ...modifiers,
+      holiday: [fridayHolidayMatcher, ...normalizeMatchers(modifiers?.holiday)],
+    }),
+    [modifiers],
+  );
+  const resolvedModifierClassNames = React.useMemo(
+    () => ({
+      ...modifiersClassNames,
+      holiday: cn(
+        "tw:after:pointer-events-none tw:after:absolute tw:after:top-1 tw:after:left-1 tw:after:size-1.5 tw:after:rounded-full tw:after:bg-error tw:after:ring-1 tw:after:ring-background tw:after:content-['']",
+        modifiersClassNames?.holiday,
+      ),
+    }),
+    [modifiersClassNames],
+  );
+  const resolvedLabels = React.useMemo(
+    () => ({
+      ...labels,
+      labelDayButton: (...args: Parameters<typeof labelDayButton>) => {
+        const resolvedLabel = (labels?.labelDayButton ?? labelDayButton)(...args);
+        return args[1].holiday ? `${resolvedLabel}، تعطیل` : resolvedLabel;
+      },
+      labelGridcell: (...args: Parameters<typeof labelGridcell>) => {
+        const resolvedLabel = (labels?.labelGridcell ?? labelGridcell)(...args);
+        return args[1]?.holiday ? `${resolvedLabel}، تعطیل` : resolvedLabel;
+      },
+    }),
+    [labels],
+  );
 
   React.useEffect(() => {
     if (defaultMonth !== undefined && today !== undefined) return;
@@ -193,6 +290,7 @@ function Calendar({
 
   return (
     <DayPicker
+      data-slot="calendar"
       key={defaultMonth === undefined ? clientToday?.getTime() : undefined}
       defaultMonth={resolvedDefaultMonth}
       today={resolvedToday}
@@ -202,76 +300,10 @@ function Calendar({
       hideNavigation
       showOutsideDays={showOutsideDays}
       className={cn('tw:rounded-2xl tw:bg-background tw:p-3 tw:text-foreground', className)}
-      classNames={{
-        root: cn('tw:w-fit', defaultClassNames.root),
-        months: cn('tw:flex tw:flex-col tw:gap-4 tw:sm:flex-row', defaultClassNames.months),
-        month: cn('tw:flex tw:w-full tw:flex-col tw:gap-4', defaultClassNames.month),
-        month_caption: cn(
-          'tw:flex tw:min-h-8 tw:items-center tw:justify-center tw:text-label-m',
-          defaultClassNames.month_caption,
-        ),
-        dropdowns: cn(
-          'tw:flex tw:items-center tw:justify-center tw:gap-1',
-          defaultClassNames.dropdowns,
-        ),
-        dropdown_root: cn('tw:relative', defaultClassNames.dropdown_root),
-        dropdown: cn(colors.dropdown(), defaultClassNames.dropdown),
-        months_dropdown: cn(defaultClassNames.months_dropdown),
-        years_dropdown: cn(defaultClassNames.years_dropdown),
-        month_grid: cn('tw:w-full tw:border-collapse', defaultClassNames.month_grid),
-        weekdays: cn('tw:flex', defaultClassNames.weekdays),
-        weekday: cn(
-          'tw:flex-1 tw:text-center tw:text-label-s tw:text-muted-foreground',
-          defaultClassNames.weekday,
-        ),
-        week: cn('tw:mt-1 tw:flex tw:w-full', defaultClassNames.week),
-        day: cn('tw:relative tw:size-9 tw:p-0 tw:text-center', defaultClassNames.day),
-        day_button: cn(
-          'tw:flex tw:size-9 tw:items-center tw:justify-center tw:rounded-xl tw:text-label-s tw:transition-colors tw:focus-visible:ring-3',
-          colors.dayButton(),
-          defaultClassNames.day_button,
-        ),
-        selected: cn('tw:rounded-xl', colors.selected(), defaultClassNames.selected),
-        today: cn('tw:font-bold', colors.today(), defaultClassNames.today),
-        outside: cn('tw:text-muted-foreground/50', defaultClassNames.outside),
-        disabled: cn('tw:text-muted-foreground/40', defaultClassNames.disabled),
-        range_middle: cn('tw:rounded-xl', colors.rangeMiddle(), defaultClassNames.range_middle),
-        range_start: cn('tw:rounded-xl', colors.rangeStart(), defaultClassNames.range_start),
-        range_end: cn('tw:rounded-xl', colors.rangeEnd(), defaultClassNames.range_end),
-        ...classNames,
-      }}
-      modifiers={{
-        ...modifiers,
-        holiday: holidayMatchers,
-      }}
-      modifiersClassNames={{
-        ...modifiersClassNames,
-        holiday: cn(
-          "tw:after:pointer-events-none tw:after:absolute tw:after:top-1 tw:after:left-1 tw:after:size-1.5 tw:after:rounded-full tw:after:bg-error tw:after:ring-1 tw:after:ring-background tw:after:content-['']",
-          modifiersClassNames?.holiday,
-        ),
-      }}
-      labels={{
-        ...labels,
-        labelDayButton: (date, dayModifiers, options, dateLib) => {
-          const resolvedLabel = (labels?.labelDayButton ?? labelDayButton)(
-            date,
-            dayModifiers,
-            options,
-            dateLib,
-          );
-          return dayModifiers.holiday ? `${resolvedLabel}، تعطیل` : resolvedLabel;
-        },
-        labelGridcell: (date, dayModifiers, options, dateLib) => {
-          const resolvedLabel = (labels?.labelGridcell ?? labelGridcell)(
-            date,
-            dayModifiers,
-            options,
-            dateLib,
-          );
-          return dayModifiers?.holiday ? `${resolvedLabel}، تعطیل` : resolvedLabel;
-        },
-      }}
+      classNames={resolvedClassNames}
+      modifiers={resolvedModifiers}
+      modifiersClassNames={resolvedModifierClassNames}
+      labels={resolvedLabels}
       components={{
         Dropdown: (dropdownProps) => <CalendarDropdown {...dropdownProps} color={selectorColor} />,
         ...components,
@@ -282,4 +314,4 @@ function Calendar({
   );
 }
 
-export { Calendar, type CalendarProps };
+export { Calendar, CalendarFooter, type CalendarFooterProps, type CalendarProps };

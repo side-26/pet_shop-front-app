@@ -39,7 +39,6 @@ describe('DatePicker', () => {
       </Form>,
     );
 
-    cy.tick(20);
     cy.get('button[aria-label="تاریخ و زمان"]')
       .invoke('text')
       .should('match', /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}$/);
@@ -67,5 +66,26 @@ describe('DatePicker', () => {
     cy.get('body').type('{esc}');
     cy.get('[data-slot="date-picker-content"]').should('not.exist');
     cy.get('@trigger').should('have.focus');
+  });
+
+  it('loads the optional time selector only when hasTime is enabled', () => {
+    cy.mount(
+      <Form<Values>
+        handleSubmit={() => undefined}
+        options={{ defaultValues: { scheduledAt: defaultValue } }}
+      >
+        <DatePicker<Values>
+          name="scheduledAt"
+          label="تاریخ و زمان"
+          aria-label="تاریخ و زمان"
+          hasTime
+        />
+      </Form>,
+    );
+
+    cy.get('button[aria-label="تاریخ و زمان"]').click();
+    cy.get('button[aria-label="ساعت"]').should('be.visible');
+    cy.get('button[aria-label="دقیقه"]').should('be.visible');
+    cy.get('button[aria-label="ثانیه"]').should('be.visible');
   });
 });

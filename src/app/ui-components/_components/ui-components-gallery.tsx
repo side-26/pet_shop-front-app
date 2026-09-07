@@ -40,6 +40,7 @@ import { RichTextShowcase } from './rich-text-showcase';
 import { ChartShowcase } from './chart-showcase';
 import { CalendarShowcase } from './calendar-showcase';
 import { DatePickerShowcase } from './date-picker-showcase';
+import { TimeSelectorShowcase } from './time-selector-showcase';
 import { ComboboxShowcase } from './combobox-showcase';
 import { VirtualSelectShowcase } from './virtual-select-showcase';
 
@@ -51,6 +52,7 @@ const navigation = [
   ['#charts', 'Chart'],
   ['#calendar', 'Calendar'],
   ['#date-picker', 'Date Picker'],
+  ['#time-selector', 'Time Selector'],
   ['#combobox', 'Combobox'],
   ['#virtual-select', 'Virtual Combobox'],
   ['#expandable-cards', 'Expandable Card'],
@@ -131,6 +133,7 @@ export function UiComponentsGallery() {
         <ChartShowcase />
         <CalendarShowcase />
         <DatePickerShowcase />
+        <TimeSelectorShowcase />
         <ComboboxShowcase />
         <VirtualSelectShowcase />
         <ExpandableCardShowcase />

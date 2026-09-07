@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { CalendarDaysIcon } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import type { ReactNode } from 'react';
 import {
   useController,
@@ -14,13 +15,19 @@ import {
 import { tv, type VariantProps } from 'tailwind-variants';
 
 import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
+import { Calendar, CalendarFooter } from '@/components/ui/calendar';
 import { Field } from '@/components/ui/field/default';
 import { FieldLabel } from '@/components/ui/field/label';
 import { inputVariants } from '@/components/ui/fields/input';
 import { textFieldColorClasses, textFieldVariants } from '@/components/ui/fields/text-field';
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from '@/components/ui/popover';
+import type { TimeSelectorValue } from '@/components/ui/time-selector';
 import { cn } from '@/lib/utils';
+
+const preloadTimeSelector = () => import('@/components/ui/time-selector');
+const LazyTimeSelector = dynamic(() =>
+  import('@/components/ui/time-selector').then((module) => module.TimeSelector),
+);
 
 const isoDateTimePattern =
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})$/;
@@ -48,16 +55,43 @@ function formatJalaliDateTime(date: Date, timeZone?: string) {
   return `${partValues.get('day')}/${partValues.get('month')}/${partValues.get('year')} ${partValues.get('hour')}:${partValues.get('minute')}:${partValues.get('second')}`;
 }
 
-function mergeSelectedDayWithTime(selectedDay: Date, timeSource: Date) {
-  const date = new Date(selectedDay);
-  date.setHours(
-    timeSource.getHours(),
-    timeSource.getMinutes(),
-    timeSource.getSeconds(),
-    timeSource.getMilliseconds(),
-  );
-  return date;
+function formatTimeValue(date: Date): TimeSelectorValue {
+  return [date.getHours(), date.getMinutes(), date.getSeconds()]
+    .map((part) => String(part).padStart(2, '0'))
+    .join(':') as TimeSelectorValue;
 }
+
+function mergeTimeWithDate(date: Date, value: TimeSelectorValue, milliseconds: number) {
+  const [hours, minutes, seconds] = value.split(':').map(Number);
+  const nextDate = new Date(date);
+  nextDate.setHours(hours, minutes, seconds, milliseconds);
+  return nextDate;
+}
+
+type DraftTime = { value: TimeSelectorValue; milliseconds: number };
+
+type DatePickerCalendarProps = {
+  selected: Date;
+  today?: Date;
+  onSelect: (selectedDay: Date | undefined) => void;
+};
+
+const DatePickerCalendar = React.memo(function DatePickerCalendar({
+  selected,
+  today,
+  onSelect,
+}: DatePickerCalendarProps) {
+  return (
+    <Calendar
+      mode="single"
+      required
+      selected={selected}
+      defaultMonth={selected}
+      today={today}
+      onSelect={onSelect}
+    />
+  );
+});
 
 const datePickerTriggerVariants = tv({
   extend: inputVariants,
@@ -81,6 +115,7 @@ type DatePickerProps<
   className?: string;
   defaultValue?: string;
   disabled?: boolean;
+  hasTime?: boolean;
   hint?: ReactNode;
   id?: string;
   label: ReactNode;
@@ -101,6 +136,7 @@ function DatePicker<
   control,
   defaultValue,
   disabled,
+  hasTime = false,
   hint,
   id: providedId,
   label,
@@ -132,10 +168,12 @@ function DatePicker<
     ref: fieldRef,
     value: fieldValue,
   } = field;
-  const [currentDate, setCurrentDate] = React.useState<Date>();
-  const [draftDate, setDraftDate] = React.useState<Date>();
+  const [currentDate, setCurrentDate] = React.useState(() => new Date());
+  const [draftDay, setDraftDay] = React.useState<Date>();
+  const [draftTime, setDraftTime] = React.useState<DraftTime>();
   const [open, setOpen] = React.useState(false);
   const hasInitializedValue = React.useRef(false);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
   const committedValue = normalizeIsoDateTime(
     typeof fieldValue === 'string' ? fieldValue : undefined,
   );
@@ -151,55 +189,93 @@ function DatePicker<
   const styles = textFieldVariants({ color, size });
 
   React.useEffect(() => {
-    const frameId = window.requestAnimationFrame(() => {
-      const now = new Date();
-      setCurrentDate(now);
+    if (!hasInitializedValue.current && !committedValue) {
+      handleFieldChange(currentDate.toISOString());
+    }
+    hasInitializedValue.current = true;
+  }, [committedValue, currentDate, handleFieldChange]);
 
-      if (!hasInitializedValue.current && !committedValue) {
-        handleFieldChange(now.toISOString());
-      }
-      hasInitializedValue.current = true;
+  React.useEffect(() => {
+    if (!hasTime) return;
+
+    const preload = () => void preloadTimeSelector();
+    if ('requestIdleCallback' in window) {
+      const idleId = window.requestIdleCallback(preload);
+      return () => window.cancelIdleCallback(idleId);
+    }
+
+    const timeoutId = globalThis.setTimeout(preload, 0);
+    return () => globalThis.clearTimeout(timeoutId);
+  }, [hasTime]);
+
+  React.useEffect(() => {
+    if (!open || draftDay || draftTime) return;
+
+    let timeoutId: number | undefined;
+    const frameId = window.requestAnimationFrame(() => {
+      timeoutId = window.setTimeout(() => {
+        const nextDraft = committedDate ?? new Date();
+        setDraftDay(nextDraft);
+        setDraftTime({
+          value: formatTimeValue(nextDraft),
+          milliseconds: nextDraft.getMilliseconds(),
+        });
+      }, 0);
     });
 
-    return () => window.cancelAnimationFrame(frameId);
-  }, [committedValue, handleFieldChange]);
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+    };
+  }, [committedDate, draftDay, draftTime, open]);
 
   const handleOpenChange = React.useCallback(
     (nextOpen: boolean) => {
-      setDraftDate(nextOpen ? (committedDate ?? new Date()) : committedDate);
       setOpen(nextOpen);
-      if (!nextOpen) handleFieldBlur();
+      if (!nextOpen) {
+        setDraftDay(undefined);
+        setDraftTime(undefined);
+        handleFieldBlur();
+        queueMicrotask(() => triggerRef.current?.focus());
+      }
     },
-    [committedDate, handleFieldBlur],
+    [handleFieldBlur],
   );
 
-  const handleDaySelect = React.useCallback(
-    (selectedDay: Date | undefined) => {
-      if (!selectedDay) return;
-      setDraftDate(mergeSelectedDayWithTime(selectedDay, draftDate ?? committedDate ?? new Date()));
-    },
-    [committedDate, draftDate],
-  );
+  const handleDaySelect = React.useCallback((selectedDay: Date | undefined) => {
+    if (selectedDay) setDraftDay(selectedDay);
+  }, []);
+
+  const handleTimeChange = React.useCallback((value: TimeSelectorValue) => {
+    setDraftTime((currentTime) => ({
+      value,
+      milliseconds: currentTime?.milliseconds ?? 0,
+    }));
+  }, []);
 
   const handleCancel = React.useCallback(() => {
-    setDraftDate(committedDate);
     handleOpenChange(false);
-  }, [committedDate, handleOpenChange]);
+  }, [handleOpenChange]);
 
   const handleToday = React.useCallback(() => {
     const now = new Date();
     setCurrentDate(now);
-    setDraftDate(now);
+    setDraftDay(now);
+    setDraftTime({ value: formatTimeValue(now), milliseconds: now.getMilliseconds() });
   }, []);
 
   const handleAccept = React.useCallback(() => {
-    if (!draftDate) return;
+    if (!draftDay || !draftTime) return;
 
-    const nextValue = draftDate.toISOString();
+    const nextValue = mergeTimeWithDate(
+      draftDay,
+      draftTime.value,
+      draftTime.milliseconds,
+    ).toISOString();
     handleFieldChange(nextValue);
     onValueChange?.(nextValue);
     handleOpenChange(false);
-  }, [draftDate, handleFieldChange, handleOpenChange, onValueChange]);
+  }, [draftDay, draftTime, handleFieldChange, handleOpenChange, onValueChange]);
 
   return (
     <Field
@@ -218,7 +294,10 @@ function DatePicker<
         <PopoverTrigger
           render={
             <button
-              ref={fieldRef}
+              ref={(node) => {
+                triggerRef.current = node;
+                fieldRef(node);
+              }}
               type="button"
               id={id}
               name={fieldName}
@@ -255,48 +334,49 @@ function DatePicker<
           </span>
         </PopoverTrigger>
 
-        <PopoverContent align="start" className="tw:w-auto" data-slot="date-picker-content">
-          <PopoverTitle className="tw:sr-only">انتخاب تاریخ و زمان</PopoverTitle>
-          <Calendar
-            key={draftDate ? `${draftDate.getFullYear()}-${draftDate.getMonth()}` : 'current'}
-            mode="single"
-            required
-            selected={draftDate}
-            defaultMonth={draftDate}
-            today={currentDate}
-            onSelect={handleDaySelect}
-          />
-          <div className="tw:flex tw:items-center tw:gap-2">
-            <Button
-              type="button"
-              size="sm"
-              className="tw:w-10 tw:flex-auto"
-              onClick={handleAccept}
-              disabled={!draftDate}
-            >
-              تأیید
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant="outlined"
-              className="tw:w-10 tw:flex-auto"
-              onClick={handleToday}
-            >
-              امروز
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant="outlined"
-              color="error"
-              className="tw:w-10 tw:flex-auto"
-              onClick={handleCancel}
-            >
-              لغو
-            </Button>
-          </div>
-        </PopoverContent>
+        {open ? (
+          <PopoverContent align="start" className="tw:w-auto" data-slot="date-picker-content">
+            <PopoverTitle className="tw:sr-only">انتخاب تاریخ و زمان</PopoverTitle>
+            {draftDay ? (
+              <DatePickerCalendar
+                selected={draftDay}
+                today={currentDate}
+                onSelect={handleDaySelect}
+              />
+            ) : (
+              <div
+                role="status"
+                aria-label="در حال آماده‌سازی تقویم"
+                className="skeleton tw:h-80 tw:w-[276px] tw:rounded-2xl"
+              />
+            )}
+            {hasTime && draftTime ? (
+              <LazyTimeSelector
+                value={draftTime.value}
+                color={color}
+                variant="outlined"
+                onValueChange={handleTimeChange}
+              />
+            ) : null}
+            <CalendarFooter>
+              <Button type="button" size="sm" onClick={handleAccept} disabled={!draftDay}>
+                تأیید
+              </Button>
+              <Button type="button" size="sm" variant="outlined" onClick={handleToday}>
+                امروز
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outlined"
+                color="error"
+                onClick={handleCancel}
+              >
+                لغو
+              </Button>
+            </CalendarFooter>
+          </PopoverContent>
+        ) : null}
       </Popover>
       <span
         id={descriptionId}

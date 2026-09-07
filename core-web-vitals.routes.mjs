@@ -12,4 +12,7 @@ export const dynamicRouteFixtures = {
  * When omitted, the test clicks the first visible non-submit button and falls
  * back to a fixed, layout-neutral probe for pages without interactive controls.
  */
-export const routeInteractionSelectors = {};
+export const routeInteractionSelectors = {
+  '/ui-components':
+    '[data-slot="calendar"] [data-day]:not([data-today="true"]):not([data-outside="true"]) button',
+};

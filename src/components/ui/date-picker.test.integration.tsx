@@ -126,6 +126,48 @@ describe('DatePicker', () => {
     );
   });
 
+  it('lazy-loads the time selector when hasTime and commits its draft time', async () => {
+    const onValueChange = vi.fn();
+    renderDatePicker(
+      <DatePicker<Values>
+        defaultValue={defaultValue}
+        name="scheduledAt"
+        label="تاریخ و زمان"
+        hasTime
+        onValueChange={onValueChange}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'تاریخ و زمان' }));
+    const hoursButton = await screen.findByRole('button', { name: 'ساعت' });
+    const initialDate = new Date(defaultValue);
+    expect(hoursButton.textContent).toBe(String(initialDate.getHours()).padStart(2, '0'));
+
+    fireEvent.click(hoursButton);
+    const hoursListbox = screen.getByRole('listbox', { name: 'ساعت' });
+    fireEvent.keyDown(hoursListbox, { key: 'ArrowDown' });
+    fireEvent.keyDown(hoursListbox, { key: 'Enter' });
+    fireEvent.click(screen.getByRole('button', { name: 'تأیید' }));
+
+    const expectedDate = new Date(defaultValue);
+    expectedDate.setHours(
+      expectedDate.getHours() + 1,
+      expectedDate.getMinutes(),
+      expectedDate.getSeconds(),
+      0,
+    );
+    expect(onValueChange).toHaveBeenCalledWith(expectedDate.toISOString());
+  });
+
+  it('does not render the time selector unless hasTime is enabled', () => {
+    renderDatePicker(
+      <DatePicker<Values> defaultValue={defaultValue} name="scheduledAt" label="تاریخ" />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'تاریخ' }));
+    expect(screen.queryByRole('button', { name: 'ساعت' })).toBeNull();
+  });
+
   it('prevents opening when disabled', () => {
     renderDatePicker(
       <DatePicker<Values>

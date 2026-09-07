@@ -241,11 +241,16 @@ library's single/range/multiple selection APIs, renders Jalali months, years, an
 in RTL, and defaults to the current Jalali month with shared `CalendarSelector`
 month/year navigation. The selector uses a button-anchored Popover and TanStack Virtual wheel,
 centers the selected item on opening, and scales/fades rows by distance from the center.
+Render dropdown navigation through the custom `MonthCaption` while DayPicker uses label-caption
+mode internally. This prevents DayPicker from regenerating its full native year-option collection
+on every day selection while preserving the shared month/year selector behavior and full range.
 Its controls are titled `ماه` and `سال`, sized to 105px and 95px respectively, and inherit the
 calendar's semantic color; the selected row uses that full color while the centered scroll highlight
 uses the same color at 80% opacity.
 Click or Enter commits an item and closes the overlay; arrow keys, Home, End, and Escape are supported.
-Keep closing content mounted through the Popover exit animation and honor reduced motion.
+Coalesce continuous wheel scroll events to one active-index update per animation frame, skip
+unchanged indexes, contain wheel layout/paint work, and cancel queued frames on unmount. Keep closing
+content mounted through the Popover exit animation and honor reduced motion.
 An uncontrolled `mode="single"` calendar initially selects today, remains
 interactive, and still permits deselection unless `required`; explicit controlled selection and
 range/multiple modes retain DayPicker's native contracts. Preserve DayPicker's controlled dropdown
@@ -262,6 +267,10 @@ It accepts `color="primary|secondary|neutral|success|error"` (default primary) f
 selected, today, hover, and range states. Every selected range day uses the standard `rounded-xl`
 geometry instead of a continuous range bar. Keep it represented in `/ui-components` and cover
 Jalali day selection and month/year navigation in Cypress.
+`CalendarFooter` is the Calendar compound layout for arbitrary children. It defaults to an
+accessibly named `group`, forwards native div props, and lays out each direct child at equal flexible
+width with the established `w-10 flex-auto` action sizing. Use it for Calendar-related action rows
+instead of duplicating footer layout classes at call sites.
 
 `DatePicker` is a single-date-only React Hook Form field. It requires typed `name` and `label` props,
 binds through `useController`, and optionally accepts `hint`, `control`, `rules`, and
@@ -281,6 +290,23 @@ keeping the date text neutral. The label uses the selected field color; invalid 
 field border, label, icon, and message to error.
 preserve popover dismissal/focus restoration, and cover React Hook Form synchronization and
 ISO/Jalali conversion in Vitest plus portal interaction in Cypress. Do not add range mode.
+When `hasTime` is true, dynamically import `TimeSelector`, render it between Calendar and
+`CalendarFooter`, and synchronize its `HH:mm:ss` value only with the draft date so Cancel still
+discards time edits. Omit the selector and its client chunk when `hasTime` is false.
+Preload that chunk during browser idle time. Open the popover with a deterministic, size-reserved,
+accessible loading surface, then initialize its draft content after the first paint so DayPicker
+mounting does not extend the opening interaction. Keep draft day and draft time as separate state and
+render Calendar through a memoized boundary so changing a time segment does not rerender DayPicker.
+
+`TimeSelector` composes three shared `CalendarSelector` wheels for a two-digit `HH:mm:ss` value.
+Hours cover `00`–`23`; minutes and seconds cover `00`–`59`. It supports controlled `value`,
+uncontrolled `defaultValue`, `onValueChange`, disabled state, and the shared Button semantic
+`color` and `variant` axes. The numeric controls remain LTR in RTL interfaces. Its visible label and
+selector row use physical `align="left|center|right"`, defaulting to center. Keep each segment
+accessibly named as `ساعت`, `دقیقه`, or `ثانیه` and represent alignment, color, variant, and disabled
+conditions in `/ui-components`.
+`defaultValue` accepts either an `HH:mm:ss` string or a JavaScript epoch timestamp in milliseconds;
+timestamps resolve their hours, minutes, and seconds in the user's local timezone.
 
 `VirtualSelect` composes the project-owned Base UI `Select` trigger, popup, group, and item
 components without visual changes, but virtualizes its option overlay with `@tanstack/react-virtual`.

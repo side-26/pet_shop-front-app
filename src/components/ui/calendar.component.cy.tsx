@@ -5,10 +5,13 @@ describe('Calendar', () => {
     const today = new Date(2026, 8, 6);
     cy.mount(<Calendar mode="single" today={today} />);
 
-    cy.get('[data-day="2026-09-06"]').should('have.attr', 'data-selected', 'true');
-    cy.get('[data-day="2026-09-07"] button').click();
-    cy.get('[data-day="2026-09-06"]').should('not.have.attr', 'data-selected');
-    cy.get('[data-day="2026-09-07"]').should('have.attr', 'data-selected', 'true');
+    cy.get('[data-day][data-today="true"]')
+      .as('today')
+      .should('have.attr', 'data-selected', 'true');
+    cy.get('[data-day]:not([data-today="true"]):not([data-outside="true"])').first().as('nextDay');
+    cy.get('@nextDay').find('button').click();
+    cy.get('@today').should('not.have.attr', 'data-selected');
+    cy.get('@nextDay').should('have.attr', 'data-selected', 'true');
   });
 
   it('uses virtual wheel selectors for Jalali month and year navigation', () => {

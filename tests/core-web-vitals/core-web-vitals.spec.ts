@@ -119,6 +119,13 @@ async function runInteraction(page: Page, pathname: string, routeTemplate: strin
   if (configuredSelector) {
     const configuredTarget = page.locator(configuredSelector).first();
     await expect(configuredTarget, `Configured interaction target for ${pathname}`).toBeVisible();
+    await configuredTarget.scrollIntoViewIfNeeded();
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) => {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+        }),
+    );
     await configuredTarget.click();
     return;
   }

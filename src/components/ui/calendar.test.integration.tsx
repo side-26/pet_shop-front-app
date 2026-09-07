@@ -1,11 +1,34 @@
-import { cleanup, fireEvent, render } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { Calendar } from './calendar';
+import { Calendar, CalendarFooter } from './calendar';
 
 afterEach(cleanup);
 
 describe('Calendar', () => {
+  it('renders the shared month and year selectors without native dropdown options', () => {
+    const { container } = render(<Calendar mode="single" defaultMonth={new Date(2026, 8, 6)} />);
+
+    expect(screen.getByRole('button', { name: 'ماه' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'سال' })).toBeTruthy();
+    expect(container.querySelector('select')).toBeNull();
+  });
+
+  it('composes arbitrary footer children and forwards native properties', () => {
+    render(
+      <CalendarFooter aria-label="کنترل‌های تاریخ" data-testid="calendar-footer">
+        <button type="button">تأیید</button>
+        <span>توضیح</span>
+      </CalendarFooter>,
+    );
+
+    const footer = screen.getByRole('group', { name: 'کنترل‌های تاریخ' });
+    expect(footer.getAttribute('data-slot')).toBe('calendar-footer');
+    expect(footer.getAttribute('data-testid')).toBe('calendar-footer');
+    expect(screen.getByRole('button', { name: 'تأیید' })).toBeTruthy();
+    expect(screen.getByText('توضیح')).toBeTruthy();
+  });
+
   it('defaults an uncontrolled single selection to today and updates after a day click', () => {
     const today = new Date(2026, 8, 6);
     const onSelect = vi.fn();

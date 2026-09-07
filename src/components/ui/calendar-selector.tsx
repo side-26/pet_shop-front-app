@@ -12,6 +12,7 @@ type CalendarSelectorProps = {
   items: CalendarSelectorItem[];
   value: number | null;
   label: string;
+  width?: number;
   color?: ButtonProps['color'];
   variant?: ButtonProps['variant'];
   disabled?: boolean;
@@ -20,20 +21,46 @@ type CalendarSelectorProps = {
 
 const rowHeight = 36;
 const padding = rowHeight * 3;
+const estimateRowSize = () => rowHeight;
 
 const selectorColorVariants = tv({
   slots: {
+    focus: '',
     highlight: '',
     selected: '',
   },
   variants: {
     color: {
-      primary: { highlight: 'tw:text-primary/80', selected: 'tw:text-primary' },
-      secondary: { highlight: 'tw:text-secondary/80', selected: 'tw:text-secondary' },
-      info: { highlight: 'tw:text-info/80', selected: 'tw:text-info' },
-      success: { highlight: 'tw:text-success/80', selected: 'tw:text-success' },
-      warning: { highlight: 'tw:text-warning/80', selected: 'tw:text-warning' },
-      error: { highlight: 'tw:text-error/80', selected: 'tw:text-error' },
+      primary: {
+        focus: 'tw:focus-visible:ring-primary/25',
+        highlight: 'tw:text-primary/80',
+        selected: 'tw:text-primary',
+      },
+      secondary: {
+        focus: 'tw:focus-visible:ring-secondary/25',
+        highlight: 'tw:text-secondary/80',
+        selected: 'tw:text-secondary',
+      },
+      info: {
+        focus: 'tw:focus-visible:ring-info/25',
+        highlight: 'tw:text-info/80',
+        selected: 'tw:text-info',
+      },
+      success: {
+        focus: 'tw:focus-visible:ring-success/25',
+        highlight: 'tw:text-success/80',
+        selected: 'tw:text-success',
+      },
+      warning: {
+        focus: 'tw:focus-visible:ring-warning/25',
+        highlight: 'tw:text-warning/80',
+        selected: 'tw:text-warning',
+      },
+      error: {
+        focus: 'tw:focus-visible:ring-error/25',
+        highlight: 'tw:text-error/80',
+        selected: 'tw:text-error',
+      },
     },
   },
   defaultVariants: { color: 'primary' },
@@ -43,28 +70,64 @@ function SelectorWheel({
   items,
   value,
   label,
+  width,
   color = 'primary',
   onValueChange,
 }: CalendarSelectorProps) {
   const scrollRef = React.useRef<HTMLDivElement>(null);
+  const scrollFrameRef = React.useRef<number | null>(null);
+  const pendingScrollTopRef = React.useRef(0);
   const id = React.useId();
-  const width = label === 'سال' ? 95 : 105;
+  const resolvedWidth = width ?? (label === 'سال' ? 95 : 105);
   const initialIndex = Math.max(
     0,
     items.findIndex((item) => item.value === value),
   );
   const [activeIndex, setActiveIndex] = React.useState(initialIndex);
+  const activeIndexRef = React.useRef(initialIndex);
   const colors = selectorColorVariants({ color });
+  const getScrollElement = React.useCallback(() => scrollRef.current, []);
   const virtualizer = useVirtualizer({
     count: items.length,
-    getScrollElement: () => scrollRef.current,
-    estimateSize: () => rowHeight,
+    getScrollElement,
+    estimateSize: estimateRowSize,
     overscan: 4,
     paddingStart: padding,
     paddingEnd: padding,
     initialOffset: initialIndex * rowHeight,
-    initialRect: { width, height: rowHeight * 7 },
+    initialRect: { width: resolvedWidth, height: rowHeight * 7 },
   });
+
+  const updateActiveIndex = React.useCallback(
+    (nextIndex: number) => {
+      const next = Math.max(0, Math.min(items.length - 1, nextIndex));
+      if (next === activeIndexRef.current) return;
+
+      activeIndexRef.current = next;
+      setActiveIndex(next);
+    },
+    [items.length],
+  );
+
+  const handleScroll = React.useCallback(
+    (event: React.UIEvent<HTMLDivElement>) => {
+      pendingScrollTopRef.current = event.currentTarget.scrollTop;
+      if (scrollFrameRef.current !== null) return;
+
+      scrollFrameRef.current = window.requestAnimationFrame(() => {
+        scrollFrameRef.current = null;
+        updateActiveIndex(Math.round(pendingScrollTopRef.current / rowHeight));
+      });
+    },
+    [updateActiveIndex],
+  );
+
+  React.useEffect(
+    () => () => {
+      if (scrollFrameRef.current !== null) window.cancelAnimationFrame(scrollFrameRef.current);
+    },
+    [],
+  );
 
   return (
     <div
@@ -73,15 +136,11 @@ function SelectorWheel({
       aria-label={label}
       aria-activedescendant={items.length ? `${id}-${activeIndex}` : undefined}
       tabIndex={0}
-      className="tw:h-63 tw:overflow-y-auto tw:overscroll-contain tw:outline-none tw:[scrollbar-width:thin] tw:focus-visible:ring-2 tw:focus-visible:ring-primary/25"
-      onScroll={(event) => {
-        setActiveIndex(
-          Math.max(
-            0,
-            Math.min(items.length - 1, Math.round(event.currentTarget.scrollTop / rowHeight)),
-          ),
-        );
-      }}
+      className={cn(
+        'tw:h-63 tw:overflow-y-auto tw:overscroll-contain tw:outline-none tw:[contain:layout_paint] tw:[scrollbar-width:thin] tw:focus-visible:ring-2',
+        colors.focus(),
+      )}
+      onScroll={handleScroll}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
@@ -102,7 +161,7 @@ function SelectorWheel({
         if (target === null) return;
         event.preventDefault();
         const next = Math.max(0, Math.min(items.length - 1, target));
-        setActiveIndex(next);
+        updateActiveIndex(next);
         virtualizer.scrollToIndex(next, { align: 'center' });
       }}
     >
@@ -150,18 +209,23 @@ function CalendarSelector({
   items,
   value,
   label,
+  width,
   color = 'primary',
   variant = 'flat',
   disabled,
   onValueChange,
 }: CalendarSelectorProps) {
   const [open, setOpen] = React.useState(false);
-  const widthClassName = label === 'سال' ? 'tw:w-[95px]' : 'tw:w-[105px]';
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
+  const widthClassName = width ? undefined : label === 'سال' ? 'tw:w-[95px]' : 'tw:w-[105px]';
+  const widthStyle = width ? { width } : undefined;
+  const colors = selectorColorVariants({ color });
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
         render={
           <Button
+            ref={triggerRef}
             type="button"
             size="sm"
             variant={variant}
@@ -169,6 +233,7 @@ function CalendarSelector({
             disabled={disabled}
             aria-label={label}
             className={widthClassName}
+            style={widthStyle}
           />
         }
       >
@@ -181,16 +246,21 @@ function CalendarSelector({
           widthClassName,
           'tw:gap-1 tw:rounded-2xl tw:border-border tw:bg-background tw:p-2 tw:text-foreground tw:duration-200 tw:motion-reduce:animate-none',
         )}
+        style={widthStyle}
       >
-        <PopoverTitle className="tw:py-2 tw:text-center tw:text-label-m">{label}</PopoverTitle>
+        <PopoverTitle className={cn('tw:py-2 tw:text-center tw:text-label-m', colors.selected())}>
+          {label}
+        </PopoverTitle>
         <SelectorWheel
           items={items}
           value={value}
           label={label}
+          width={width}
           color={color}
           onValueChange={(next) => {
             onValueChange(next);
             setOpen(false);
+            queueMicrotask(() => triggerRef.current?.focus());
           }}
         />
       </PopoverContent>

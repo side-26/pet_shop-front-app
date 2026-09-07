@@ -64,6 +64,7 @@ describe(routePaths.uiComponents, () => {
         'Card',
         'Calendar',
         'Date Picker',
+        'Time Selector',
         'Combobox',
         'Virtual Combobox',
         'Expandable Card',

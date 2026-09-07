@@ -39,6 +39,7 @@ export function DatePickerShowcase() {
             <DatePicker<DatePickerShowcaseValues>
               name="scheduledAt"
               label="زمان ارسال سفارش"
+              hasTime
               hint="تاریخ و زمان تحویل سفارش را انتخاب کنید."
               onValueChange={setAcceptedValue}
             />
