@@ -14,12 +14,7 @@ import {
 import { tv } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';
-import {
-  VirtualCombobox,
-  VirtualComboboxContent,
-  VirtualComboboxInput,
-  VirtualComboboxTrigger,
-} from '@/components/ui/virtual-combobox';
+import { CalendarSelector } from '@/components/ui/calendar-selector';
 
 const calendarStartMonth = new Date(1920, 0, 1);
 const calendarEndMonth = new Date(2277, 11, 31);
@@ -33,26 +28,27 @@ function normalizeMatchers(matcher: Matcher | Matcher[] | undefined): Matcher[] 
 
 function CalendarDropdown({
   options = [],
-  className,
   value,
   onChange,
   disabled,
-  style,
-  id,
   name,
-  required,
-  tabIndex,
-  title,
   'aria-label': ariaLabel,
-}: DropdownProps) {
+  color,
+}: DropdownProps & { color: Exclude<CalendarColor, 'neutral'> }) {
   const selectedValue =
     typeof value === 'number' ? value : typeof value === 'string' ? Number(value) : null;
 
   return (
-    <VirtualCombobox
+    <CalendarSelector
       items={options}
       value={selectedValue}
       disabled={disabled}
+      label={
+        name?.includes('year') || ariaLabel?.includes('Year') || ariaLabel?.includes('سال')
+          ? 'سال'
+          : 'ماه'
+      }
+      color={color}
       onValueChange={(nextValue) => {
         if (nextValue === null) return;
 
@@ -60,26 +56,7 @@ function CalendarDropdown({
           target: { value: String(nextValue) },
         } as React.ChangeEvent<HTMLSelectElement>);
       }}
-      size="xs"
-    >
-      <div className="tw:relative tw:w-28" style={style}>
-        <VirtualComboboxInput
-          id={id}
-          name={name}
-          required={required}
-          tabIndex={tabIndex}
-          title={title}
-          aria-label={ariaLabel}
-          disabled={disabled}
-          className={cn('tw:pe-8', className)}
-        />
-        <VirtualComboboxTrigger
-          aria-label={ariaLabel ? `${ariaLabel}، باز کردن فهرست` : 'باز کردن فهرست'}
-          disabled={disabled}
-        />
-      </div>
-      <VirtualComboboxContent renderCount={8} overscan={4} />
-    </VirtualCombobox>
+    />
   );
 }
 
@@ -178,6 +155,7 @@ function Calendar({
   >(null);
   const defaultClassNames = getDefaultClassNames();
   const colors = calendarColorVariants({ color });
+  const selectorColor = color === 'neutral' ? 'secondary' : color;
   const resolvedToday = today ?? clientToday ?? prerenderDate;
   const resolvedDefaultMonth = defaultMonth ?? resolvedToday;
   const singleOnSelect = props.mode === 'single' ? props.onSelect : undefined;
@@ -295,7 +273,7 @@ function Calendar({
         },
       }}
       components={{
-        Dropdown: CalendarDropdown,
+        Dropdown: (dropdownProps) => <CalendarDropdown {...dropdownProps} color={selectorColor} />,
         ...components,
       }}
       {...props}

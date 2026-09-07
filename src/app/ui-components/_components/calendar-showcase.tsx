@@ -7,7 +7,7 @@ export function CalendarShowcase() {
     <ShowcaseSection
       id="calendar"
       title="Calendar"
-      description="تقویم جلالی با جست‌وجو و انتخاب مجازی ماه و سال، انتخاب روز و رنگ‌های معنایی."
+      description="تقویم جلالی با انتخابگر چرخشی مجازی ماه و سال، انتخاب روز و رنگ‌های معنایی."
     >
       <div className="tw:flex tw:flex-wrap tw:gap-6">
         <Calendar mode="single" color="primary" modifiers={{ holiday: new Date(2026, 8, 8) }} />

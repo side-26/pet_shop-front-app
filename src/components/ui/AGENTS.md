@@ -238,8 +238,15 @@ animates height and opacity, with reduced-motion producing an immediate transiti
 
 `Calendar` is the project-owned shadcn `@daypicker/persian` primitive. It preserves the
 library's single/range/multiple selection APIs, renders Jalali months, years, and Persian numerals
-in RTL, and defaults to the current Jalali month with searchable, virtualized `VirtualCombobox`
-month/year navigation. An uncontrolled `mode="single"` calendar initially selects today, remains
+in RTL, and defaults to the current Jalali month with shared `CalendarSelector`
+month/year navigation. The selector uses a button-anchored Popover and TanStack Virtual wheel,
+centers the selected item on opening, and scales/fades rows by distance from the center.
+Its controls are titled `ماه` and `سال`, sized to 105px and 95px respectively, and inherit the
+calendar's semantic color; the selected row uses that full color while the centered scroll highlight
+uses the same color at 80% opacity.
+Click or Enter commits an item and closes the overlay; arrow keys, Home, End, and Escape are supported.
+Keep closing content mounted through the Popover exit animation and honor reduced motion.
+An uncontrolled `mode="single"` calendar initially selects today, remains
 interactive, and still permits deselection unless `required`; explicit controlled selection and
 range/multiple modes retain DayPicker's native contracts. Preserve DayPicker's controlled dropdown
 value and change contract when adapting those controls. Its selectable
