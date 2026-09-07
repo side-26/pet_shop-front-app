@@ -236,6 +236,60 @@ foreground so error, success, info, and warning notifications remain visually al
 `CollapsibleContent` preserves Base UI state/ARIA behavior while Framer Motion
 animates height and opacity, with reduced-motion producing an immediate transition.
 
+`Calendar` is the project-owned shadcn `@daypicker/persian` primitive. It preserves the
+library's single/range/multiple selection APIs, renders Jalali months, years, and Persian numerals
+in RTL, and defaults to the current Jalali month with searchable, virtualized `VirtualCombobox`
+month/year navigation. An uncontrolled `mode="single"` calendar initially selects today, remains
+interactive, and still permits deselection unless `required`; explicit controlled selection and
+range/multiple modes retain DayPicker's native contracts. Preserve DayPicker's controlled dropdown
+value and change contract when adapting those controls. Its selectable
+range defaults from January 1920 through December 2277 (displayed as Jalali years), and it removes
+month-navigation arrows in favor of the selectors.
+Its current-date default is deferred until client mount with a deterministic prerender fallback, so it remains
+compatible with Next.js Cache Components and does not call `new Date()` during prerender.
+Fridays are holidays by default and render a small semantic-error notification dot at the physical
+top-left of the day cell. Merge additional official or application-specific dates through DayPicker's
+`modifiers={{ holiday: matcher }}` contract; holiday day-button labels must include `تعطیل` so the
+status is not communicated by color alone.
+It accepts `color="primary|secondary|neutral|success|error"` (default primary) for semantic focus,
+selected, today, hover, and range states. Every selected range day uses the standard `rounded-xl`
+geometry instead of a continuous range bar. Keep it represented in `/ui-components` and cover
+Jalali day selection and month/year navigation in Cypress.
+
+`DatePicker` is a single-date-only React Hook Form field. It requires typed `name` and `label` props,
+binds through `useController`, and optionally accepts `hint`, `control`, `rules`, and
+`shouldUnregister`. It uses the shared `Field`, `FieldLabel`, and persistent hint/error description
+composition with `textFieldVariants`, including size-aware spacing and typography. It renders no
+native or hidden input. Its calendar-icon `PopoverTrigger` is a button styled from `inputVariants`
+with the same `color="primary|secondary|info|success|warning|error"` and
+`size="xs|sm|md|lg|xl"` axes as `TextField`; the trigger formats the committed ISO value in the user's local timezone as Jalali
+`DD/MM/YYYY HH:mm:ss` with Latin digits after client mount. An ISO `defaultValue` initializes the
+named field, while an omitted or empty initial value becomes the current ISO datetime after mount.
+Calendar selections preserve the local draft time of day. Today refreshes the complete draft
+instant, Cancel discards it, and Accept writes the ISO value through React Hook Form and emits
+`onValueChange`. In the RTL action row, render Accept, Today, then Cancel in DOM order and give each
+button `w-10 flex-auto` so all three share the available width. Keep the trigger accessibly named,
+vertically center its display text, and render the calendar icon with the selected field color while
+keeping the date text neutral. The label uses the selected field color; invalid state changes the
+field border, label, icon, and message to error.
+preserve popover dismissal/focus restoration, and cover React Hook Form synchronization and
+ISO/Jalali conversion in Vitest plus portal interaction in Cypress. Do not add range mode.
+
+`VirtualSelect` composes the project-owned Base UI `Select` trigger, popup, group, and item
+components without visual changes, but virtualizes its option overlay with `@tanstack/react-virtual`.
+It accepts the same root selection props plus required `items`, then composes `VirtualSelectTrigger`,
+`VirtualSelectValue`, and `VirtualSelectContent`. Content defaults to `renderCount={40}` visible rows
+and `overscan={10}`; it has no label API, so callers provide an accessible name on the trigger.
+
+`VirtualCombobox` is the searchable, virtualized alternative built from the shared `Combobox`.
+Compose its root with `VirtualComboboxInput`, `VirtualComboboxTrigger`, and
+`VirtualComboboxContent`; content defaults to `renderCount={40}` and `overscan={10}`.
+
+`Combobox` is the project-owned Base UI searchable selection primitive. Compose `ComboboxInput`,
+`ComboboxTrigger`, `ComboboxContent`, `ComboboxList`, `ComboboxCollection`, `ComboboxItem`, and
+`ComboboxEmpty`; items stay inside the collection. The root accepts `color` and `size`, defaulting
+to `primary` and `md`, and passes them to its input focus treatment.
+
 `DropdownMenu` is non-modal by default and closes on any captured scroll event,
 including window and nested scrolling containers. Preserve its complete group,
 checkbox, radio, separator, shortcut, and submenu composition. `Pagination` uses

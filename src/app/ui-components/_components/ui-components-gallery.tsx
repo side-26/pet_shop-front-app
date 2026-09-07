@@ -38,6 +38,10 @@ import { FileFieldShowcase } from './file-field-showcase';
 import { MultipleImageUploaderFieldShowcase } from './multiple-image-uploader-field-showcase';
 import { RichTextShowcase } from './rich-text-showcase';
 import { ChartShowcase } from './chart-showcase';
+import { CalendarShowcase } from './calendar-showcase';
+import { DatePickerShowcase } from './date-picker-showcase';
+import { ComboboxShowcase } from './combobox-showcase';
+import { VirtualSelectShowcase } from './virtual-select-showcase';
 
 const navigation = [
   ['#avatars', 'Avatar'],
@@ -45,6 +49,10 @@ const navigation = [
   ['#badges', 'Badge'],
   ['#cards', 'Card'],
   ['#charts', 'Chart'],
+  ['#calendar', 'Calendar'],
+  ['#date-picker', 'Date Picker'],
+  ['#combobox', 'Combobox'],
+  ['#virtual-select', 'Virtual Combobox'],
   ['#expandable-cards', 'Expandable Card'],
   ['#prices', 'Price'],
   ['#price-mask-fields', 'Price Mask Field'],
@@ -121,6 +129,10 @@ export function UiComponentsGallery() {
         <BadgeShowcase />
         <CardShowcase />
         <ChartShowcase />
+        <CalendarShowcase />
+        <DatePickerShowcase />
+        <ComboboxShowcase />
+        <VirtualSelectShowcase />
         <ExpandableCardShowcase />
         <PriceShowcase />
         <PriceMaskShowcase />
@@ -140,9 +152,7 @@ export function UiComponentsGallery() {
         <CollapsibleShowcase />
         <DropdownMenuShowcase />
         <PaginationShowcase />
-        <Suspense fallback={null}>
-          <DataTableShowcase />
-        </Suspense>
+        <DataTableShowcase />
         <CarouselShowcase />
         <ButtonGroupShowcase />
         <ToggleGroupShowcase />
@@ -160,4 +170,3 @@ export function UiComponentsGallery() {
     </main>
   );
 }
-import { Suspense } from 'react';

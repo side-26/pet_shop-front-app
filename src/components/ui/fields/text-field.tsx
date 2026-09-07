@@ -214,4 +214,4 @@ function TextField<
   );
 }
 
-export { TextField, textFieldVariants, type TextFieldProps };
+export { TextField, textFieldColorClasses, textFieldVariants, type TextFieldProps };

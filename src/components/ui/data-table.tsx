@@ -29,7 +29,21 @@ type DataTableProps<TData, TValue> = {
   getRowId?: (row: TData, index: number) => string;
 };
 
-function DataTable<TData, TValue>({
+const subscribeToHydration = () => () => undefined;
+
+function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
+  const isHydrated = React.useSyncExternalStore(
+    subscribeToHydration,
+    () => true,
+    () => false,
+  );
+
+  if (!isHydrated) return null;
+
+  return <HydratedDataTable {...props} />;
+}
+
+function HydratedDataTable<TData, TValue>({
   columns,
   data,
   emptyLabel = 'داده‌ای برای نمایش وجود ندارد.',
