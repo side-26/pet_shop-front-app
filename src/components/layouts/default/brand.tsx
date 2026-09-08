@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { appLogo } from '@/configs/app-logo';
 import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
 
@@ -30,7 +31,7 @@ export function Brand({ size = 'default', showName = true, className }: BrandPro
         aria-hidden="true"
       >
         <Image
-          src="/images/brand/pet-haven-mark.png"
+          src={appLogo.src}
           alt=""
           fill
           loading={isCompact ? 'eager' : 'lazy'}

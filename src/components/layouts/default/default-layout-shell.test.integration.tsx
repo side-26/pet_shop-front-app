@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
@@ -101,5 +101,16 @@ describe('DefaultLayoutShell', () => {
 
     expect(cartLinks.at(-1)?.getAttribute('aria-current')).toBe('page');
     expect(homeLinks.every((link) => link.getAttribute('aria-current') === null)).toBe(true);
+  });
+
+  it('marks the active desktop destination', () => {
+    navigationState.pathname = routePaths.products;
+
+    render(<DefaultLayoutShell>صفحه محصولات</DefaultLayoutShell>);
+
+    const desktopNavigation = screen.getByRole('navigation', { name: 'ناوبری اصلی' });
+    expect(
+      within(desktopNavigation).getByRole('link', { name: 'محصولات' }).getAttribute('aria-current'),
+    ).toBe('page');
   });
 });

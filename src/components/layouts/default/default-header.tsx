@@ -14,7 +14,7 @@ import { HeaderProductSearch } from './header-product-search';
 export function DefaultHeader() {
   return (
     <header className="tw:fixed tw:inset-x-0 tw:top-0 tw:z-50 tw:border-b tw:border-border/60 tw:bg-background/82 tw:shadow-sm tw:supports-backdrop-filter:backdrop-blur-2xl">
-      <div className="tw:mx-auto tw:flex tw:h-[76px] tw:w-full tw:max-w-7xl tw:items-center tw:justify-between tw:gap-3 tw:px-4 tw:md:px-8 tw:lg:h-[88px]">
+      <div className="tw:mx-auto tw:flex tw:h-[76px] tw:w-full tw:max-w-7xl tw:items-center tw:justify-between tw:gap-3 tw:px-4 tw:md:px-8 tw:lg:h-[88px] tw:lg:px-0">
         <div className="tw:flex tw:shrink-0 tw:items-center">
           <Brand size="compact" showName={false} className="tw:lg:hidden" />
           <Brand size="compact" className="tw:hidden tw:lg:inline-flex" />
