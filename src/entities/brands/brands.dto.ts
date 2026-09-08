@@ -1,4 +1,4 @@
-import type { BrandIdInput, BrandInput, BrandQueryInput } from './brands.schema';
+import type { BrandIdInput, BrandInput, BrandQueryInput, UpdateBrandInput } from './brands.schema';
 
 export type BrandDTO = {
   id: string;
@@ -16,4 +16,5 @@ export type BrandDTO = {
 export type BrandIdDTO = BrandIdInput;
 export type BrandQueryDTO = BrandQueryInput;
 export type CreateBrandDTO = BrandInput;
+export type UpdateBrandDTO = UpdateBrandInput;
 export type DeleteBrandResultDTO = { id: string };

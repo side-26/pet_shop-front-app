@@ -13,14 +13,29 @@ import {
   deleteBrandAction,
   disableBrandAction,
   enableBrandAction,
+  updateBrandAction,
 } from './brands.actions';
-import type { BrandInput } from './brands.schema';
+import type { BrandInput, UpdateBrandInput } from './brands.schema';
 
 export async function submitCreateBrand(
   input: BrandInput,
   showErrorFields: UseFormSetError<BrandInput>,
 ) {
   const result = await createBrandAction(input);
+  if (!result.isSuccess) {
+    globalErrorHandler(result, { showErrorFields });
+    return false;
+  }
+  toast.add({ type: 'success', title: result.message });
+  return true;
+}
+
+export async function submitUpdateBrand(
+  id: string,
+  input: UpdateBrandInput,
+  showErrorFields: UseFormSetError<UpdateBrandInput>,
+) {
+  const result = await updateBrandAction({ id, ...input });
   if (!result.isSuccess) {
     globalErrorHandler(result, { showErrorFields });
     return false;

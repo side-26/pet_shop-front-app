@@ -40,7 +40,9 @@ export const brandSchema = object({
   isEnable: boolean().default(true).required(),
   logo: logoSchema,
 });
+export const updateBrandSchema = brandSchema;
 
 export type BrandIdInput = InferType<typeof brandIdSchema>;
 export type BrandQueryInput = InferType<typeof brandQuerySchema>;
 export type BrandInput = InferType<typeof brandSchema>;
+export type UpdateBrandInput = InferType<typeof updateBrandSchema>;

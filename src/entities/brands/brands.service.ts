@@ -9,6 +9,7 @@ import type {
   BrandQueryDTO,
   CreateBrandDTO,
   DeleteBrandResultDTO,
+  UpdateBrandDTO,
 } from './brands.dto';
 import { brandQuerySchema } from './brands.schema';
 
@@ -60,7 +61,7 @@ export async function getBrandById(id: BrandIdDTO['id']) {
   });
 }
 
-function toBrandFormData(input: CreateBrandDTO) {
+function toBrandFormData(input: CreateBrandDTO | UpdateBrandDTO) {
   const body = new FormData();
   body.set('title', input.title);
   body.set('title_fa', input.title_fa);
@@ -87,6 +88,18 @@ export async function createBrand(input: CreateBrandDTO) {
     cache: 'no-store',
   });
   if (result.isSuccess) invalidate();
+  return result;
+}
+
+export async function updateBrand(id: string, input: UpdateBrandDTO) {
+  const result = await customFetcher<BrandDTO, unknown, FormData>({
+    url: `/brands/${id}`,
+    method: 'PUT',
+    body: toBrandFormData(input),
+    auth: true,
+    cache: 'no-store',
+  });
+  if (result.isSuccess) invalidate(id);
   return result;
 }
 

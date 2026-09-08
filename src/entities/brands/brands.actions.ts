@@ -7,7 +7,7 @@ import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
 import type { FetcherError } from '@/lib/api/customFetcher';
 import { getSession } from '@/utils/session';
 
-import { brandIdSchema, brandQuerySchema, brandSchema } from './brands.schema';
+import { brandIdSchema, brandQuerySchema, brandSchema, updateBrandSchema } from './brands.schema';
 import * as service from './brands.service';
 
 const accessError = (message: string): FetcherError => ({
@@ -54,6 +54,15 @@ export async function createBrandAction(input: unknown) {
   if (denied) return denied;
   const value = await validate(brandSchema, input);
   return 'isSuccess' in value ? value : service.createBrand(value);
+}
+
+export async function updateBrandAction(input: unknown) {
+  const denied = await authorizeManagement();
+  if (denied) return denied;
+  const id = await validate(brandIdSchema, input);
+  if ('isSuccess' in id) return id;
+  const value = await validate(updateBrandSchema, input);
+  return 'isSuccess' in value ? value : service.updateBrand(id.id, value);
 }
 
 async function runById<T>(input: unknown, action: (id: string) => Promise<T>) {
