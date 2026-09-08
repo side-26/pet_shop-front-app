@@ -71,7 +71,7 @@ describe('DefaultLayoutShell', () => {
     expect(screen.getAllByRole('link', { name: 'سبد خرید' })[0].getAttribute('href')).toBe(
       routePaths.cart,
     );
-    expect(screen.getByRole('button', { name: 'فعال‌سازی حالت تیره' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'تغییر حالت نمایش: سیستم' })).toBeTruthy();
   });
 
   it('keeps the six requested mobile and tablet destinations as real links', () => {

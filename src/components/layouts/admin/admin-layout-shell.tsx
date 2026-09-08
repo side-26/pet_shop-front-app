@@ -11,6 +11,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/components/ui/drawer';
 import { Separator } from '@/components/ui/separator';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { logoutUser } from '@/entities/auth/auth.client';
@@ -40,43 +41,31 @@ function AdminIdentity({
   collapsed = false,
   identity,
 }: Readonly<{ collapsed?: boolean; identity?: ReactNode }>) {
-  if (identity) {
-    return (
-      <div
-        data-collapsed={collapsed}
-        className={cn(
-          'tw:group/admin-identity tw:flex tw:min-h-16 tw:items-center tw:gap-3 tw:overflow-hidden tw:px-3',
-          collapsed && 'tw:justify-center tw:px-2',
-        )}
-      >
-        {identity}
-      </div>
-    );
-  }
-
   return (
     <div
+      data-collapsed={collapsed}
       className={cn(
-        'tw:flex tw:min-h-16 tw:items-center tw:gap-3 tw:overflow-hidden tw:px-3',
+        'tw:group/admin-identity tw:flex tw:min-h-16 tw:items-center tw:gap-3 tw:overflow-hidden tw:px-3',
         collapsed && 'tw:justify-center tw:px-2',
       )}
     >
-      <Avatar size="lg">
-        <AvatarFallback className="tw:bg-primary-muted tw:font-bold tw:text-primary">
-          م
-        </AvatarFallback>
-      </Avatar>
-      <div
-        className={cn(
-          'tw:min-w-0 tw:flex-1 tw:transition-[opacity,transform] tw:duration-200 tw:motion-reduce:transition-none',
-          collapsed && 'tw:pointer-events-none tw:absolute tw:translate-x-2 tw:opacity-0',
-        )}
-      >
-        <p className="tw:truncate tw:text-label-m tw:font-bold tw:text-sidebar-foreground">
-          پنل مدیریت
-        </p>
-        <p className="tw:truncate tw:text-label-s tw:text-muted-foreground">مدیر ارشد</p>
-      </div>
+      {identity ?? (
+        <>
+          <Avatar size="lg">
+            <AvatarFallback className="tw:bg-primary-muted tw:font-bold tw:text-primary">
+              م
+            </AvatarFallback>
+          </Avatar>
+          <div className="tw:min-w-0 tw:flex-1 tw:transition-[opacity,transform] tw:duration-200 tw:motion-reduce:transition-none">
+            <p className="tw:truncate tw:text-label-m tw:font-bold tw:text-sidebar-foreground">
+              پنل مدیریت
+            </p>
+            <p className="tw:truncate tw:text-label-s tw:text-muted-foreground">مدیر ارشد</p>
+          </div>
+          {!collapsed && <ThemeToggle variant="icon" />}
+        </>
+      )}
+      {identity && !collapsed ? <ThemeToggle variant="icon" /> : null}
     </div>
   );
 }

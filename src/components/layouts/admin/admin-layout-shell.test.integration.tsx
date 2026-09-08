@@ -59,6 +59,7 @@ describe('AdminLayoutShell', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'داشبورد' })).toBeTruthy();
     expect(document.querySelector('[data-slot="admin-page-title-icon"]')).toBeTruthy();
     expect(screen.queryByText('خوش آمدید، مدیر ارشد')).toBeNull();
+    expect(screen.getByRole('button', { name: 'تغییر حالت نمایش: سیستم' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'خروج' })).toBeTruthy();
     const navigationToggle = screen.getByRole('button', { name: 'جمع کردن نوار مدیریت' });
     expect(navigationToggle.getAttribute('data-variant')).toBe('flat');
@@ -209,6 +210,7 @@ describe('AdminLayoutShell', () => {
     fireEvent.click(screen.getByRole('button', { name: 'جمع کردن نوار مدیریت' }));
 
     expect(aside?.getAttribute('data-collapsed')).toBe('true');
+    expect(screen.queryByRole('button', { name: 'تغییر حالت نمایش: سیستم' })).toBeNull();
     expect(screen.getByRole('link', { name: 'سفارش‌ها' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'باز کردن نوار مدیریت' })).toBeTruthy();
   });
