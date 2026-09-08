@@ -24,6 +24,25 @@ export function CareGuideRenderer() {
       className="tw:bg-surface tw:px-4 tw:py-16 tw:sm:px-6 tw:md:px-8 tw:lg:py-24"
     >
       <div className="tw:mx-auto tw:grid tw:w-full tw:max-w-7xl tw:items-center tw:gap-10 tw:lg:grid-cols-2 tw:lg:gap-16">
+        <ParallaxProductMedia className="tw:relative tw:mx-auto tw:w-full tw:max-w-xl">
+          <div className="tw:absolute tw:-inset-3 tw:rounded-[2.5rem] tw:bg-secondary-muted tw:-rotate-3" />
+          <div className="tw:relative tw:aspect-[4/3] tw:overflow-hidden tw:rounded-[2.25rem] tw:border tw:border-border/70 tw:shadow-xl">
+            <Image
+              src="/images/home/care-guide-story-v4.jpg"
+              alt="داستان انتخاب آگاهانه محصولات پت از شناخت نیاز تا تحویل در خانه"
+              fill
+              sizes="(min-width: 1024px) 50vw, 92vw"
+              className="tw:object-cover"
+            />
+          </div>
+          <div className="tw:absolute tw:-bottom-5 tw:start-4 tw:max-w-64 tw:rounded-2xl tw:border tw:border-border/60 tw:bg-card/90 tw:p-4 tw:shadow-xl tw:supports-backdrop-filter:backdrop-blur-xl tw:sm:start-8">
+            <p className="tw:text-title-s">انتخاب متناسب با پت</p>
+            <p className="tw:text-body-s tw:text-muted-foreground">
+              غذا، مراقبت و بازی بر پایه نیاز واقعی
+            </p>
+          </div>
+        </ParallaxProductMedia>
+
         <MotionItem className="tw:flex tw:flex-col tw:items-start tw:gap-6">
           <Badge variant="tonal" color="secondary" size="lg">
             <HeartHandshake aria-hidden="true" />
@@ -65,23 +84,6 @@ export function CareGuideRenderer() {
             <ArrowLeft aria-hidden="true" data-icon="inline-end" />
           </a>
         </MotionItem>
-
-        <ParallaxProductMedia className="tw:relative tw:mx-auto tw:w-full tw:max-w-xl">
-          <div className="tw:absolute tw:-inset-3 tw:rounded-[2.5rem] tw:bg-secondary-muted tw:-rotate-3" />
-          <div className="tw:relative tw:aspect-[4/3] tw:overflow-hidden tw:rounded-[2.25rem] tw:border tw:border-border/70 tw:shadow-xl">
-            <Image
-              src="/images/home/delivery.jpg"
-              alt="تحویل بسته محصولات پت در درب منزل"
-              fill
-              sizes="(min-width: 1024px) 50vw, 92vw"
-              className="tw:object-cover"
-            />
-          </div>
-          <div className="tw:absolute tw:-bottom-5 tw:start-4 tw:max-w-64 tw:rounded-2xl tw:border tw:border-border/60 tw:bg-card/90 tw:p-4 tw:shadow-xl tw:supports-backdrop-filter:backdrop-blur-xl tw:sm:start-8">
-            <p className="tw:text-title-s">سنگین‌ها را هم به ما بسپار</p>
-            <p className="tw:text-body-s tw:text-muted-foreground">غذا و خاک پت، امن تا درِ خانه</p>
-          </div>
-        </ParallaxProductMedia>
       </div>
     </MotionSection>
   );

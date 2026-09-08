@@ -96,7 +96,9 @@ describe('Product landing page', () => {
     );
 
     expect(screen.getByAltText('گلدن رتریور و گربه پرشین در خانه روشن')).toBeTruthy();
-    expect(screen.getByAltText('تحویل بسته محصولات پت در درب منزل')).toBeTruthy();
+    expect(
+      screen.getByAltText('داستان انتخاب آگاهانه محصولات پت از شناخت نیاز تا تحویل در خانه'),
+    ).toBeTruthy();
     expect(screen.getByRole('link', { name: /مشاهده سبد خرید/ }).getAttribute('href')).toBe(
       routePaths.cart,
     );

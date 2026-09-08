@@ -19,7 +19,7 @@ export function DeliverySection() {
         <ParallaxMedia className="tw:relative tw:overflow-hidden tw:rounded-[2rem] tw:border tw:border-border/60 tw:bg-card tw:shadow-xl">
           <div className="tw:relative tw:aspect-[4/3]">
             <Image
-              src="/images/home/delivery.jpg"
+              src="/images/home/delivery-v2.jpg"
               alt="تحویل بسته محصولات پت در درب منزل"
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
