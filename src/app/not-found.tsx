@@ -66,7 +66,7 @@ export default function NotFound() {
               بازگشت به خانه
             </Link>
             <Link
-              href={routePaths.petsLanding}
+              href={routePaths.pets}
               className={cn(buttonVariants({ variant: 'outlined', size: 'lg' }), 'tw:group')}
             >
               دیدن حیوانات

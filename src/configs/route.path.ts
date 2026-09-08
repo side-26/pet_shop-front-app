@@ -1,7 +1,6 @@
 export const PATHS = {
   HOME: '/',
   PETS: '/pets',
-  PETS_LANDING: '/pets/landing',
   PETS_LIST: '/pets/list',
   PRODUCTS: '/products',
   PRODUCTS_LIST: '/products/list',
@@ -32,7 +31,6 @@ export const PATHS = {
 export const routePaths = {
   home: PATHS.HOME,
   pets: PATHS.PETS,
-  petsLanding: PATHS.PETS_LANDING,
   petsList: PATHS.PETS_LIST,
   petDetail: (slug: string) => `${PATHS.PETS}/${encodeURIComponent(slug)}`,
   products: PATHS.PRODUCTS,

@@ -22,7 +22,7 @@ export function PetListBreadcrumb() {
           <ChevronLeft />
         </BreadcrumbSeparator>
         <BreadcrumbItem>
-          <BreadcrumbLink render={<Link href={routePaths.petsLanding} />}>حیوانات</BreadcrumbLink>
+          <BreadcrumbLink render={<Link href={routePaths.pets} />}>حیوانات</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator>
           <ChevronLeft />
