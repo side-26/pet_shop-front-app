@@ -12,8 +12,8 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PetDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
   const pet = getPetDetail(slug);
-  if (!pet) return { title: 'حیوان پیدا نشد | پناهگاه پرشین' };
-  return { title: `${pet.name}، ${pet.breed} | پناهگاه پرشین`, description: pet.description };
+  if (!pet) return { title: 'حیوان پیدا نشد | پت شاپ پرشین' };
+  return { title: `${pet.name}، ${pet.breed} | پت شاپ پرشین`, description: pet.description };
 }
 
 export default function PetDetailPage({ params }: PetDetailPageProps) {

@@ -33,7 +33,7 @@ export function ProfilePageContent() {
                   niloofar.ahmadi@example.com
                 </bdi>
                 <p className="tw:text-body-s tw:text-muted-foreground">
-                  عضو پناهگاه پرشین از سال ۱۴۰۲
+                  عضو پت شاپ پرشین از سال ۱۴۰۲
                 </p>
               </div>
             </div>

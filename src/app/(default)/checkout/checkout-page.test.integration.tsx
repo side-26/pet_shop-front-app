@@ -54,6 +54,6 @@ describe(routePaths.checkout, () => {
   });
 
   it('defines checkout metadata', () => {
-    expect(metadata.title).toBe('ارسال و تحویل سفارش | پناهگاه پرشین');
+    expect(metadata.title).toBe('ارسال و تحویل سفارش | پت شاپ پرشین');
   });
 });

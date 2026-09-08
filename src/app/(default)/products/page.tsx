@@ -8,7 +8,7 @@ import { ProductCategoriesSection } from './_components/product-categories-secti
 import { ProductHeroSection } from './_components/product-hero-section';
 
 export const metadata: Metadata = {
-  title: 'فروشگاه محصولات حیوانات خانگی | پناهگاه پرشین',
+  title: 'فروشگاه محصولات حیوانات خانگی | پت شاپ پرشین',
   description: 'محصولات منتخب برای تغذیه، بازی و مراقبت سگ، گربه، پرندگان و حیوانات کوچک.',
 };
 

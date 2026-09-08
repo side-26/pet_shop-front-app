@@ -53,10 +53,10 @@ describe('DefaultLayoutShell', () => {
     expect(screen.getByRole('link', { name: 'حساب کاربری' }).getAttribute('href')).toBe(
       routePaths.login,
     );
-    expect(
-      screen.getByRole('link', { name: 'اینستاگرام پناهگاه پرشین' }).getAttribute('href'),
-    ).toBe('https://www.instagram.com');
-    expect(screen.getByRole('link', { name: 'تلگرام پناهگاه پرشین' }).getAttribute('href')).toBe(
+    expect(screen.getByRole('link', { name: 'اینستاگرام پت شاپ پرشین' }).getAttribute('href')).toBe(
+      'https://www.instagram.com',
+    );
+    expect(screen.getByRole('link', { name: 'تلگرام پت شاپ پرشین' }).getAttribute('href')).toBe(
       'https://t.me',
     );
   });

@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { ProfilePageContent } from './_components/profile-page-content';
 
 export const metadata: Metadata = {
-  title: 'حساب کاربری من | پناهگاه پرشین',
+  title: 'حساب کاربری من | پت شاپ پرشین',
   description: 'مدیریت اطلاعات شخصی، سفارش‌ها و نشانی‌های حساب کاربری.',
 };
 
