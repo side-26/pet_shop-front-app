@@ -1,0 +1,68 @@
+'use server';
+
+import { ValidationError } from 'yup';
+
+import { USER_ROLES } from '@/configs/user-role';
+import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
+import type { FetcherError } from '@/lib/api/customFetcher';
+import { getSession } from '@/utils/session';
+
+import { brandIdSchema, brandQuerySchema, brandSchema } from './brands.schema';
+import * as service from './brands.service';
+
+const accessError = (message: string): FetcherError => ({
+  isSuccess: false,
+  message,
+  data: { messages: {}, details: {} },
+});
+
+async function authorizeManagement() {
+  const role = (await getSession())?.role;
+  return role === USER_ROLES.ADMIN || role === USER_ROLES.SELLER
+    ? null
+    : accessError('شما اجازه مشاهده یا مدیریت برندها را ندارید.');
+}
+
+async function validate<T>(
+  schema: { validate(input: unknown, options: object): Promise<T> },
+  input: unknown,
+) {
+  try {
+    return await schema.validate(input, { abortEarly: false, stripUnknown: true });
+  } catch (error) {
+    if (error instanceof ValidationError) return validationErrorToFetcherError(error);
+    throw error;
+  }
+}
+
+export async function getAllBrandsAction(input: unknown = {}) {
+  const denied = await authorizeManagement();
+  if (denied) return denied;
+  const query = await validate(brandQuerySchema, input);
+  return 'isSuccess' in query ? query : service.getAllBrands(query);
+}
+
+export async function getBrandByIdAction(input: unknown) {
+  const denied = await authorizeManagement();
+  if (denied) return denied;
+  const value = await validate(brandIdSchema, input);
+  return 'isSuccess' in value ? value : service.getBrandById(value.id);
+}
+
+export async function createBrandAction(input: unknown) {
+  const denied = await authorizeManagement();
+  if (denied) return denied;
+  const value = await validate(brandSchema, input);
+  return 'isSuccess' in value ? value : service.createBrand(value);
+}
+
+async function runById<T>(input: unknown, action: (id: string) => Promise<T>) {
+  const denied = await authorizeManagement();
+  if (denied) return denied;
+  const value = await validate(brandIdSchema, input);
+  return 'isSuccess' in value ? value : action(value.id);
+}
+
+export const enableBrandAction = (input: unknown) => runById(input, service.enableBrand);
+export const disableBrandAction = (input: unknown) => runById(input, service.disableBrand);
+export const deleteBrandAction = (input: unknown) => runById(input, service.deleteBrand);

@@ -37,7 +37,9 @@ const labels = {
   size: 'اندازه',
   sort: 'مرتب‌سازی',
   title: 'عنوان',
+  title_fa: 'عنوان فارسی',
   avatar: 'تصویر پروفایل',
+  logo: 'لوگو',
   value: 'مقدار ویژگی',
   verificationCode: 'کد تأیید',
 } as const;
