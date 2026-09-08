@@ -76,7 +76,6 @@ export function PetCard({ pet, eager = false }: PetCardProps) {
         </div>
         <Price
           number={pet.price}
-          prefix="تومان"
           className={cn(
             'tw:text-price-m tw:text-primary',
             !pet.available && 'tw:text-muted-foreground',

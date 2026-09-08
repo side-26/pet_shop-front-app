@@ -73,7 +73,6 @@ export function ProductCard({ product }: ProductCardProps) {
           <div className="tw:flex tw:items-center tw:gap-2">
             <Price
               number={product.previousPrice}
-              prefix="تومان"
               className="tw:text-label-s tw:text-muted-foreground tw:line-through"
             />
             <Badge size="xs" color="error" variant="tonal">
@@ -83,7 +82,6 @@ export function ProductCard({ product }: ProductCardProps) {
         ) : null}
         <Price
           number={product.price}
-          prefix="تومان"
           className={cn(
             'tw:text-price-s tw:text-primary tw:sm:text-price-m',
             !product.available && 'tw:text-muted-foreground',

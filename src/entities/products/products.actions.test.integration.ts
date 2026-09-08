@@ -1,11 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { USER_ROLES } from '@/configs/user-role';
+import { getAllCategories } from '@/entities/categories/categories.service';
 import { getSession } from '@/utils/session';
+import { getAllPetTypes } from '@/entities/pet-types/pet-types.service';
+import { getAllSubCategories } from '@/entities/sub-categories/sub-categories.service';
 import {
   createProductAction,
   deleteProductAction,
   getCustomerProductsAction,
   getManagementProductsAction,
+  getProductFormOptionsAction,
   getProductMainInfoAction,
   updateProductPriceAction,
 } from './products.actions';
@@ -13,6 +17,11 @@ import * as service from './products.service';
 import { deleteImage } from '@/entities/images/images.service';
 
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
+vi.mock('@/entities/categories/categories.service', () => ({ getAllCategories: vi.fn() }));
+vi.mock('@/entities/pet-types/pet-types.service', () => ({ getAllPetTypes: vi.fn() }));
+vi.mock('@/entities/sub-categories/sub-categories.service', () => ({
+  getAllSubCategories: vi.fn(),
+}));
 vi.mock('@/entities/images/images.service', () => ({ deleteImage: vi.fn() }));
 vi.mock('./products.service', () => ({
   createProduct: vi.fn(),
@@ -75,6 +84,42 @@ describe('product actions', () => {
     session.mockResolvedValue({ role: USER_ROLES.CUSTOMER } as never);
     await expect(getProductMainInfoAction({ id })).resolves.toMatchObject({ isSuccess: false });
     expect(service.getProductMainInfo).toHaveBeenCalledTimes(1);
+  });
+  it('maps category select options with pet-type labels and related images', async () => {
+    vi.mocked(getAllCategories).mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: [
+        {
+          id: category,
+          title: 'غذای خشک',
+          petType: '507f1f77bcf86cd799439012',
+          mainImage: 'https://cdn.example.test/categories/dry-food.webp',
+          mainThumbnailImage: 'data:image/webp;base64,AAAA',
+        },
+      ],
+    } as never);
+    vi.mocked(getAllPetTypes).mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: [{ id: '507f1f77bcf86cd799439012', title: 'سگ' }],
+    } as never);
+    vi.mocked(getAllSubCategories).mockResolvedValue({ isSuccess: true, message: null, data: [] });
+
+    await expect(getProductFormOptionsAction()).resolves.toMatchObject({
+      isSuccess: true,
+      data: {
+        categories: [
+          {
+            id: category,
+            title: 'غذای خشک',
+            petTypeTitle: 'سگ',
+            mainImage: 'https://cdn.example.test/categories/dry-food.webp',
+            mainThumbnailImage: 'data:image/webp;base64,AAAA',
+          },
+        ],
+      },
+    });
   });
   it('rejects customer management and non-admin deletion', async () => {
     session.mockResolvedValue({ role: USER_ROLES.CUSTOMER } as never);

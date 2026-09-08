@@ -6,6 +6,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { routePaths } from '@/configs/route.path';
+import { APP_CURRENCY } from '@/configs/currency';
 
 import { popularPets } from './pet-landing-data';
 
@@ -57,7 +58,7 @@ export function PopularPetsSection() {
                 <CardContent className="tw:px-0">
                   <Separator className="tw:mb-3 tw:hidden tw:lg:block" />
                   <p className="tw:text-price-s tw:text-primary tw:sm:text-price-m" dir="ltr">
-                    <bdi>{pet.price}</bdi> <span className="tw:text-caption">تومان</span>
+                    <bdi>{pet.price}</bdi> <span className="tw:text-caption">{APP_CURRENCY}</span>
                   </p>
                 </CardContent>
               </div>

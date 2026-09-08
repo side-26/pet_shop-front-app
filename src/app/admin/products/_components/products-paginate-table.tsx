@@ -108,7 +108,7 @@ export function ProductsPaginateTable({
                   <bdi dir="ltr">{product.quantity}</bdi>
                 </TableCell>
                 <TableCell>
-                  <Price number={product.price} prefix="تومان" />
+                  <Price number={product.price} />
                 </TableCell>
                 <TableCell>
                   <ProductEnabledSwitch

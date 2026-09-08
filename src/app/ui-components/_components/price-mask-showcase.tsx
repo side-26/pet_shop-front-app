@@ -15,7 +15,7 @@ type PriceFormValues = {
   priceSm: number | null;
   priceXl: number | null;
   priceXs: number | null;
-  tomanPrice: number | null;
+  customAdornmentPrice: number | null;
 };
 
 const sizeExamples = [
@@ -38,7 +38,7 @@ export function PriceMaskShowcase() {
         options={{
           defaultValues: {
             price: 2_333_333,
-            tomanPrice: 89_988,
+            customAdornmentPrice: 89_988,
             disabledPrice: 1_250_000,
             priceXs: 1_250,
             priceSm: 12_500,
@@ -55,9 +55,8 @@ export function PriceMaskShowcase() {
           hint="مقدار فرم بدون جداکننده ذخیره می‌شود."
         />
         <PriceMaskField<PriceFormValues>
-          name="tomanPrice"
+          name="customAdornmentPrice"
           label="قیمت سفارشی"
-          prefix="تومان"
           postfixIcon={<BadgeDollarSign aria-hidden="true" />}
           color="success"
         />

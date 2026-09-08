@@ -207,11 +207,7 @@ export function ShipmentForm({
                           {method.price === 0 ? (
                             <span className="tw:text-success">رایگان</span>
                           ) : (
-                            <Price
-                              number={method.price}
-                              prefix="تومان"
-                              className="tw:text-primary"
-                            />
+                            <Price number={method.price} className="tw:text-primary" />
                           )}
                         </span>
                         <span className="tw:text-body-s tw:text-muted-foreground">
@@ -373,13 +369,13 @@ export function ShipmentForm({
               <div className="tw:flex tw:justify-between tw:gap-4">
                 <dt className="tw:text-body-s tw:text-muted-foreground">قیمت کالاها</dt>
                 <dd className="tw:text-label-m">
-                  <Price number={totals.merchandise} prefix="تومان" />
+                  <Price number={totals.merchandise} />
                 </dd>
               </div>
               <div className="tw:flex tw:justify-between tw:gap-4">
                 <dt className="tw:text-body-s tw:text-muted-foreground">تخفیف کالاها</dt>
                 <dd className="tw:text-label-m tw:text-error">
-                  <Price number={totals.discount} prefix="تومان" />
+                  <Price number={totals.discount} />
                 </dd>
               </div>
               <div className="tw:flex tw:justify-between tw:gap-4">
@@ -389,7 +385,7 @@ export function ShipmentForm({
                     shippingPrice === 0 ? 'tw:text-label-m tw:text-success' : 'tw:text-label-m'
                   }
                 >
-                  {shippingPrice === 0 ? 'رایگان' : <Price number={shippingPrice} prefix="تومان" />}
+                  {shippingPrice === 0 ? 'رایگان' : <Price number={shippingPrice} />}
                 </dd>
               </div>
             </dl>
@@ -398,7 +394,6 @@ export function ShipmentForm({
               <span className="tw:text-title-s">مبلغ قابل پرداخت</span>
               <Price
                 number={totals.payable + shippingPrice}
-                prefix="تومان"
                 className="tw:text-price-m tw:text-primary"
               />
             </div>

@@ -3,6 +3,7 @@ import { ArrowUpDown } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DataTable, type ColumnDef } from '@/components/ui/data-table';
+import { APP_CURRENCY } from '@/configs/currency';
 import { ShowcaseSection } from './showcase-section';
 
 type Order = {
@@ -12,12 +13,22 @@ type Order = {
   status: 'success' | 'warning' | 'error';
 };
 const data: Order[] = [
-  { id: 'PET-1042', customer: 'سارا احمدی', amount: '۱٬۲۵۰٬۰۰۰ تومان', status: 'success' },
-  { id: 'PET-1043', customer: 'علی رضایی', amount: '۸۹۰٬۰۰۰ تومان', status: 'warning' },
-  { id: 'PET-1044', customer: 'مریم کریمی', amount: '۲٬۱۰۰٬۰۰۰ تومان', status: 'error' },
-  { id: 'PET-1045', customer: 'رضا محمدی', amount: '۵۴۰٬۰۰۰ تومان', status: 'success' },
-  { id: 'PET-1046', customer: 'نازنین اکبری', amount: '۷۶۰٬۰۰۰ تومان', status: 'success' },
-  { id: 'PET-1047', customer: 'امیر حسینی', amount: '۳۳۰٬۰۰۰ تومان', status: 'warning' },
+  {
+    id: 'PET-1042',
+    customer: 'سارا احمدی',
+    amount: `۱٬۲۵۰٬۰۰۰ ${APP_CURRENCY}`,
+    status: 'success',
+  },
+  { id: 'PET-1043', customer: 'علی رضایی', amount: `۸۹۰٬۰۰۰ ${APP_CURRENCY}`, status: 'warning' },
+  { id: 'PET-1044', customer: 'مریم کریمی', amount: `۲٬۱۰۰٬۰۰۰ ${APP_CURRENCY}`, status: 'error' },
+  { id: 'PET-1045', customer: 'رضا محمدی', amount: `۵۴۰٬۰۰۰ ${APP_CURRENCY}`, status: 'success' },
+  {
+    id: 'PET-1046',
+    customer: 'نازنین اکبری',
+    amount: `۷۶۰٬۰۰۰ ${APP_CURRENCY}`,
+    status: 'warning',
+  },
+  { id: 'PET-1047', customer: 'امیر حسینی', amount: `۳۳۰٬۰۰۰ ${APP_CURRENCY}`, status: 'warning' },
 ];
 const labels = { success: 'تکمیل', warning: 'در انتظار', error: 'ناموفق' } as const;
 const columns: ColumnDef<Order>[] = [

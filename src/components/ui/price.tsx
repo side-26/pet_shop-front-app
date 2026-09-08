@@ -1,12 +1,10 @@
 import type { ComponentProps } from 'react';
 
+import { APP_CURRENCY } from '@/configs/currency';
 import { cn } from '@/lib/utils';
-
-type PricePrefix = '$' | 'ریال' | 'تومان';
 
 type PriceProps = Omit<ComponentProps<'span'>, 'children'> & {
   number: number;
-  prefix: PricePrefix;
 };
 
 const priceFormatter = new Intl.NumberFormat('fa-IR', {
@@ -14,22 +12,20 @@ const priceFormatter = new Intl.NumberFormat('fa-IR', {
   useGrouping: true,
 });
 
-function Price({ number, prefix, className, ...props }: PriceProps) {
+function Price({ number, className, ...props }: PriceProps) {
   const formattedNumber = priceFormatter.format(number);
-  const isDollar = prefix === '$';
 
   return (
     <span
       data-slot="price"
-      data-prefix={prefix}
+      data-currency={APP_CURRENCY}
       className={cn('tw:inline-flex tw:items-baseline tw:gap-1 tw:whitespace-nowrap', className)}
       {...props}
     >
-      {isDollar ? <span aria-hidden="true">{prefix}</span> : null}
       <bdi dir="ltr">{formattedNumber}</bdi>
-      {!isDollar ? <span>{prefix}</span> : null}
+      <span>{APP_CURRENCY}</span>
     </span>
   );
 }
 
-export { Price, type PricePrefix, type PriceProps };
+export { Price, type PriceProps };

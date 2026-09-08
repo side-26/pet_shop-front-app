@@ -21,6 +21,7 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { routePaths } from '@/configs/route.path';
+import { APP_CURRENCY } from '@/configs/currency';
 import { cn } from '@/lib/utils';
 
 import { MotionItem, MotionSection } from './product-landing-motion';
@@ -120,7 +121,7 @@ function ProductPreviewCard({ product }: ProductPreviewCardProps) {
       <CardContent className="tw:mt-auto">
         <p className="tw:flex tw:items-baseline tw:gap-1 tw:text-price-m tw:text-primary">
           <bdi>{product.price}</bdi>
-          <span className="tw:text-label-s tw:font-normal">تومان</span>
+          <span className="tw:text-label-s tw:font-normal">{APP_CURRENCY}</span>
         </p>
       </CardContent>
       <CardFooter>

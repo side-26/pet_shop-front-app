@@ -167,11 +167,7 @@ export function PetDetailContent({ pet, isSkeleton = false }: PetDetailContentPr
             <CardContent className="tw:flex tw:items-end tw:justify-between tw:gap-4">
               <div>
                 <p className="tw:mb-1 tw:text-label-s tw:text-muted-foreground">هزینه واگذاری</p>
-                <Price
-                  number={pet.price}
-                  prefix="تومان"
-                  className="tw:text-price-l tw:text-primary"
-                />
+                <Price number={pet.price} className="tw:text-price-l tw:text-primary" />
               </div>
               <Button size="xl">درخواست واگذاری</Button>
             </CardContent>
@@ -185,7 +181,7 @@ export function PetDetailContent({ pet, isSkeleton = false }: PetDetailContentPr
         className="tw:fixed tw:inset-x-4 tw:bottom-20 tw:z-30 tw:rounded-2xl tw:py-3 tw:sm:inset-x-6 tw:sm:bottom-28 tw:lg:hidden"
       >
         <CardFooter className="tw:flex-nowrap tw:justify-between">
-          <Price number={pet.price} prefix="تومان" className="tw:text-price-s tw:text-primary" />
+          <Price number={pet.price} className="tw:text-price-s tw:text-primary" />
           <Button size="lg" className="tw:flex-1">
             درخواست واگذاری
           </Button>

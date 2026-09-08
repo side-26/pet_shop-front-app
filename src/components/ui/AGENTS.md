@@ -188,15 +188,15 @@ Component Testing.
 `Avatar` composes Base UI Avatar with `size="sm|default|lg"`, defaulting to `default`.
 Always provide `AvatarFallback`; use `AvatarBadge` for a separately named status when needed.
 
-`Price` accepts a numeric `number`, `prefix="$|ریال|تومان"`, and root
-`className`. It formats values with Persian thousands separators, isolates the
-numeric run as LTR, places `$` before the number, and places rial/toman after it.
+`Price` accepts a numeric `number` and root `className`. It formats values with
+Persian thousands separators, isolates the numeric run as LTR, and always places
+the application currency label from `configs/currency.ts` after it.
 
 `PriceMask` is an editable LTR numeric input that displays Latin digits grouped
 in threes while exposing an unformatted `number | null` through `onValueChange`.
-It accepts Persian, Arabic, or Latin input digits, defaults to a `ریال` prefix
+It accepts Persian, Arabic, or Latin input digits, defaults to the application currency prefix
 with typography smaller than the numeric value at every size, and a dollar-sign
-postfix icon. It supports custom adornments. `PriceMaskField`
+postfix icon. It supports a custom postfix adornment. `PriceMaskField`
 adds the shared label, persistent hint/error region, React Hook Form controller,
 disabled state, semantic color, and `xs|sm|md|lg|xl` sizing contract.
 

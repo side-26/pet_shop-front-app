@@ -20,6 +20,7 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { routePaths } from '@/configs/route.path';
+import { APP_CURRENCY } from '@/configs/currency';
 import { cn } from '@/lib/utils';
 
 import { featuredProducts } from './home-data';
@@ -79,13 +80,13 @@ export function OffersSection() {
                     </CardHeader>
                     <CardContent className="tw:mt-auto">
                       <del className="tw:text-caption tw:text-muted-foreground">
-                        <bdi>{product.previousPrice}</bdi> تومان
+                        <bdi>{product.previousPrice}</bdi> {APP_CURRENCY}
                       </del>
                     </CardContent>
                     <CardFooter className="tw:justify-between">
                       <p className="tw:flex tw:items-baseline tw:gap-1 tw:text-price-m tw:text-primary">
                         <bdi>{product.currentPrice}</bdi>
-                        <span className="tw:text-label-s tw:font-normal">تومان</span>
+                        <span className="tw:text-label-s tw:font-normal">{APP_CURRENCY}</span>
                       </p>
                       <Link
                         href={routePaths.products}
