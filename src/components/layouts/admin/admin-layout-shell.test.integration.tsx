@@ -178,6 +178,7 @@ describe('AdminLayoutShell', () => {
       'محصولات',
       'حیوانات',
       'دسته‌بندی',
+      'برندها',
       'زیردسته‌بندی',
       'نژاد',
       'نوع حیوان',
@@ -192,6 +193,9 @@ describe('AdminLayoutShell', () => {
     );
     expect(adminNavigationItems.find(({ label }) => label === 'دسته‌بندی')?.href).toBe(
       routePaths.adminCategories,
+    );
+    expect(adminNavigationItems.find(({ label }) => label === 'برندها')?.href).toBe(
+      routePaths.adminBrands,
     );
     expect(adminNavigationItems.find(({ label }) => label === 'زیردسته‌بندی')?.href).toBe(
       routePaths.adminSubCategories,

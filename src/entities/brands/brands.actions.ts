@@ -72,6 +72,14 @@ async function runById<T>(input: unknown, action: (id: string) => Promise<T>) {
   return 'isSuccess' in value ? value : action(value.id);
 }
 
-export const enableBrandAction = (input: unknown) => runById(input, service.enableBrand);
-export const disableBrandAction = (input: unknown) => runById(input, service.disableBrand);
-export const deleteBrandAction = (input: unknown) => runById(input, service.deleteBrand);
+export async function enableBrandAction(input: unknown) {
+  return runById(input, service.enableBrand);
+}
+
+export async function disableBrandAction(input: unknown) {
+  return runById(input, service.disableBrand);
+}
+
+export async function deleteBrandAction(input: unknown) {
+  return runById(input, service.deleteBrand);
+}

@@ -73,3 +73,38 @@ export function useCreateBrand(onSuccess: () => void) {
   );
   return { formRef, handleSubmit, isPending } as const;
 }
+
+export function useUpdateBrand(id: string, onSuccess: () => void) {
+  const formRef = useRef<FormHandle<UpdateBrandInput>>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const handleSubmit = useCallback(
+    (input: UpdateBrandInput) => {
+      const form = formRef.current;
+      if (!form || isPending) return;
+
+      startTransition(async () => {
+        if (await submitUpdateBrand(id, input, form.setError)) onSuccess();
+      });
+    },
+    [id, isPending, onSuccess],
+  );
+
+  return { formRef, handleSubmit, isPending } as const;
+}
+
+export function useBrandStatus(onSuccess: () => void) {
+  const [isPending, startTransition] = useTransition();
+  const update = useCallback(
+    (id: string, enabled: boolean) => {
+      if (isPending) return;
+
+      startTransition(async () => {
+        if (await submitBrandEnabledUpdate(id, enabled)) onSuccess();
+      });
+    },
+    [isPending, onSuccess],
+  );
+
+  return { isPending, update } as const;
+}
