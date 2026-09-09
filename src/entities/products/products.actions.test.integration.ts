@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { USER_ROLES } from '@/configs/user-role';
 import { getAllCategories } from '@/entities/categories/categories.service';
+import { getAllBrands } from '@/entities/brands/brands.service';
 import { getSession } from '@/utils/session';
 import { getAllPetTypes } from '@/entities/pet-types/pet-types.service';
 import { getAllSubCategories } from '@/entities/sub-categories/sub-categories.service';
@@ -18,6 +19,7 @@ import { deleteImage } from '@/entities/images/images.service';
 
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
 vi.mock('@/entities/categories/categories.service', () => ({ getAllCategories: vi.fn() }));
+vi.mock('@/entities/brands/brands.service', () => ({ getAllBrands: vi.fn() }));
 vi.mock('@/entities/pet-types/pet-types.service', () => ({ getAllPetTypes: vi.fn() }));
 vi.mock('@/entities/sub-categories/sub-categories.service', () => ({
   getAllSubCategories: vi.fn(),
@@ -42,6 +44,7 @@ vi.mock('./products.service', () => ({
 const session = vi.mocked(getSession);
 const id = '507f1f77bcf86cd799439010';
 const category = '507f1f77bcf86cd799439011';
+const brand = '507f1f77bcf86cd799439012';
 const description = { type: 'doc' as const, content: [] };
 const image = new File(['x'], 'product.webp', { type: 'image/webp' });
 const ok = { isSuccess: true as const, message: 'ok', data: {} as never };
@@ -68,6 +71,7 @@ describe('product actions', () => {
       title: ' غذا ',
       description,
       category,
+      brand,
       images: { images: [image], mainImageIndex: 0 },
     });
     await updateProductPriceAction({ id, price: 10 });
@@ -105,6 +109,11 @@ describe('product actions', () => {
       data: [{ id: '507f1f77bcf86cd799439012', title: 'سگ' }],
     } as never);
     vi.mocked(getAllSubCategories).mockResolvedValue({ isSuccess: true, message: null, data: [] });
+    vi.mocked(getAllBrands).mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: [{ id: brand, title: 'Acme', title_fa: 'اکمی' }],
+    } as never);
 
     await expect(getProductFormOptionsAction()).resolves.toMatchObject({
       isSuccess: true,
@@ -116,6 +125,14 @@ describe('product actions', () => {
             petTypeTitle: 'سگ',
             mainImage: 'https://cdn.example.test/categories/dry-food.webp',
             mainThumbnailImage: 'data:image/webp;base64,AAAA',
+          },
+        ],
+        brands: [
+          {
+            id: brand,
+            title: 'اکمی',
+            logo: undefined,
+            thumbnailLogo: undefined,
           },
         ],
       },

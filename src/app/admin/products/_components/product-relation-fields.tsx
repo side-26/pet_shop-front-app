@@ -12,13 +12,67 @@ type Props<T extends FieldValues> = {
   subCategoryName: FieldPath<T>;
   options: ProductFormOptions;
   disabled?: boolean;
+  categoryClassName?: string;
+  subCategoryClassName?: string;
 };
+
+type BrandProps<T extends FieldValues> = {
+  name: FieldPath<T>;
+  options: ProductFormOptions;
+  disabled?: boolean;
+  className?: string;
+};
+
+export function ProductBrandField<T extends FieldValues>({
+  name,
+  options,
+  disabled = false,
+  className,
+}: BrandProps<T>) {
+  return (
+    <SelectField<T>
+      name={name}
+      label="برند"
+      options={options.brands.map(({ id, title, logo, thumbnailLogo }) => ({
+        value: id,
+        label: (
+          <span className="tw:flex tw:items-center tw:gap-2">
+            <Avatar
+              size="sm"
+              aria-hidden="true"
+              style={
+                thumbnailLogo
+                  ? {
+                      backgroundImage: `url("${thumbnailLogo}")`,
+                      backgroundPosition: 'center',
+                      backgroundSize: 'cover',
+                    }
+                  : undefined
+              }
+            >
+              <AvatarImage src={logo ?? undefined} alt="" />
+              <AvatarFallback className={thumbnailLogo ? 'tw:bg-transparent' : undefined}>
+                {title.slice(0, 1)}
+              </AvatarFallback>
+            </Avatar>
+            <span>{title}</span>
+          </span>
+        ),
+      }))}
+      disabled={disabled}
+      required
+      className={className}
+    />
+  );
+}
 
 export function ProductRelationFields<T extends FieldValues>({
   categoryName,
   subCategoryName,
   options,
   disabled = false,
+  categoryClassName,
+  subCategoryClassName,
 }: Props<T>) {
   const category = useWatch<T>({ name: categoryName });
   return (
@@ -50,6 +104,7 @@ export function ProductRelationFields<T extends FieldValues>({
         )}
         disabled={disabled}
         required
+        className={categoryClassName}
       />
       <SelectField<T>
         name={subCategoryName}
@@ -58,6 +113,7 @@ export function ProductRelationFields<T extends FieldValues>({
           .filter(({ category: categoryId }) => !category || categoryId === category)
           .map(({ id, title }) => ({ value: id, label: title }))}
         disabled={disabled || !category}
+        className={subCategoryClassName}
       />
     </>
   );

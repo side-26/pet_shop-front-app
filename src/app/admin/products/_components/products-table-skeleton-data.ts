@@ -7,6 +7,7 @@ export const productsTableSkeletonData: ProductTableRow[] = Array.from(
     mainImage: '',
     mainImageThumbnail: '',
     title: 'عنوان محصول',
+    brand: 'برند محصول',
     category: 'دسته‌بندی محصول',
     subCategory: 'زیر دسته‌بندی محصول',
     quantity: 0,

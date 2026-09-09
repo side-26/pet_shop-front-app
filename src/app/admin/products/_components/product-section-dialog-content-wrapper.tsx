@@ -32,7 +32,7 @@ import {
 import { cn } from '@/lib/utils';
 
 import type { ProductFormOptions } from './product-form-options.types';
-import { ProductRelationFields } from './product-relation-fields';
+import { ProductBrandField, ProductRelationFields } from './product-relation-fields';
 import type {
   ProductFormOptionsRequest,
   ProductSection,
@@ -41,8 +41,13 @@ import type {
 
 const AsyncContent = dynamic(() => import('./product-section-dialog-content'));
 const formId = (section: ProductSection) => `product-${section}-form`;
-const relationId = (value: ProductRelationDTO | string) =>
-  typeof value === 'string' ? value : value.id;
+const relationId = (value: ProductRelationDTO | string | null | undefined) =>
+  typeof value === 'string' ? value : (value?.id ?? '');
+const emptyProductFormOptions: ProductFormOptions = {
+  categories: [],
+  subCategories: [],
+  brands: [],
+};
 type Common = {
   section: ProductSection;
   isSkeleton?: boolean;
@@ -124,6 +129,7 @@ function SectionForm({
     );
   }
   const value = data as ProductBaseInfoDTO | undefined;
+  const relationOptions = options ?? emptyProductFormOptions;
   return (
     <Form<UpdateProductBaseInfoInput>
       ref={baseFormRef}
@@ -135,6 +141,7 @@ function SectionForm({
           summary: value?.summary,
           description: value?.description,
           category: value ? relationId(value.category) : '',
+          brand: value ? relationId(value.brand) : '',
           subCategory: value?.subCategory ? relationId(value.subCategory) : null,
           quantity: value?.quantity,
         },
@@ -147,20 +154,27 @@ function SectionForm({
       <fieldset disabled={isSkeleton} className="tw:flex tw:w-full tw:min-w-0 tw:flex-col tw:gap-4">
         <div className="tw:grid tw:gap-4 tw:sm:grid-cols-2">
           <TextField<UpdateProductBaseInfoInput> name="title" label="عنوان" />
+          <ProductBrandField<UpdateProductBaseInfoInput>
+            name="brand"
+            options={relationOptions}
+            disabled={isSkeleton}
+          />
+        </div>
+        <div className="tw:grid tw:gap-4 tw:sm:grid-cols-5">
+          <ProductRelationFields<UpdateProductBaseInfoInput>
+            categoryName="category"
+            subCategoryName="subCategory"
+            options={relationOptions}
+            disabled={isSkeleton}
+            categoryClassName="tw:sm:col-span-2"
+            subCategoryClassName="tw:sm:col-span-2"
+          />
           <TextField<UpdateProductBaseInfoInput>
             name="quantity"
             label="موجودی"
             type="number"
             min={0}
           />
-          {options ? (
-            <ProductRelationFields<UpdateProductBaseInfoInput>
-              categoryName="category"
-              subCategoryName="subCategory"
-              options={options}
-              disabled={isSkeleton}
-            />
-          ) : null}
         </div>
         <TextareaField<UpdateProductBaseInfoInput>
           name="summary"
@@ -216,6 +230,7 @@ export function ProductSectionDialogContentWrapper({
       submitText="ذخیره تغییرات"
       title={`${titles[section]} ${productTitle}`}
       size="lg"
+      className="tw:max-w-[730px]"
       contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
     >
       <Suspense fallback={<SectionForm section={section} isSkeleton {...formProps} />}>

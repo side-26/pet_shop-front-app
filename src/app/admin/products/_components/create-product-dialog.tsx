@@ -11,7 +11,7 @@ import { useCreateProduct } from '@/entities/products/products.client';
 import { productSchema, type ProductInput } from '@/entities/products/products.schema';
 
 import type { ProductFormOptions } from './product-form-options.types';
-import { ProductRelationFields } from './product-relation-fields';
+import { ProductBrandField, ProductRelationFields } from './product-relation-fields';
 
 const FORM_ID = 'create-product-form';
 type Props = {
@@ -30,6 +30,7 @@ export function CreateProductDialog({ open, options, onOpenChange, onCreated }: 
         title="افزودن محصول جدید"
         submitText="ایجاد محصول"
         size="xl"
+        className="tw:max-w-[730px]"
         isLoading={isPending}
         onClose={() => onOpenChange(false)}
         contentClassName="tw:max-h-[72dvh] tw:overflow-y-auto"
@@ -44,6 +45,7 @@ export function CreateProductDialog({ open, options, onOpenChange, onCreated }: 
               summary: '',
               description: { type: 'doc', content: [] },
               category: '',
+              brand: '',
               subCategory: null,
               quantity: 0,
               images: { images: [], mainImageIndex: 0 },
@@ -55,6 +57,18 @@ export function CreateProductDialog({ open, options, onOpenChange, onCreated }: 
           <fieldset className="tw:flex tw:w-full tw:min-w-0 tw:flex-col tw:gap-5">
             <div className="tw:grid tw:gap-4 tw:sm:grid-cols-2">
               <TextField<ProductInput> name="title" label="عنوان" required />
+              {options ? <ProductBrandField<ProductInput> name="brand" options={options} /> : null}
+            </div>
+            <div className="tw:grid tw:gap-4 tw:sm:grid-cols-5">
+              {options ? (
+                <ProductRelationFields<ProductInput>
+                  categoryName="category"
+                  subCategoryName="subCategory"
+                  options={options}
+                  categoryClassName="tw:sm:col-span-2"
+                  subCategoryClassName="tw:sm:col-span-2"
+                />
+              ) : null}
               <TextField<ProductInput>
                 name="quantity"
                 label="موجودی"
@@ -62,13 +76,6 @@ export function CreateProductDialog({ open, options, onOpenChange, onCreated }: 
                 min={0}
                 required
               />
-              {options ? (
-                <ProductRelationFields<ProductInput>
-                  categoryName="category"
-                  subCategoryName="subCategory"
-                  options={options}
-                />
-              ) : null}
             </div>
             <TextareaField<ProductInput> name="summary" label="خلاصه" maxLength={500} counter />
             <RichTextField<ProductInput> name="description" label="توضیحات" required />

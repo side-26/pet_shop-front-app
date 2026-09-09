@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { mapProductsPageViewModel } from './products-table.mapper';
 
 describe('mapProductsPageViewModel', () => {
-  it('maps relation objects and missing subcategories into table-safe rows', () => {
+  it('prefers the Persian brand title and maps missing relations into table-safe rows', () => {
     const result = mapProductsPageViewModel({
       result: [
         {
@@ -14,8 +14,10 @@ describe('mapProductsPageViewModel', () => {
           images: [],
           description: '',
           category: { id: 'category-1', title: 'غذا' },
+          brand: { id: 'brand-1', title: 'Royal Canin', title_fa: 'رویال کنین' },
           subCategory: null,
           quantity: 3,
+          salesVolume: 0,
           price: 0,
           discountPercentage: 0,
           isEnable: true,
@@ -43,6 +45,7 @@ describe('mapProductsPageViewModel', () => {
           mainImage: '',
           mainImageThumbnail: '',
           title: 'غذای خشک',
+          brand: 'رویال کنین',
           category: 'غذا',
           subCategory: '_',
           quantity: 3,

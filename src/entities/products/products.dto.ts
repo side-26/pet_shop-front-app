@@ -9,7 +9,12 @@ import type {
   UpdateProductPriceInput,
 } from './products.schema';
 
-export type ProductRelationDTO = { id: string; title: string; [key: string]: unknown };
+export type ProductRelationDTO = {
+  id: string;
+  title: string;
+  title_fa?: string;
+  [key: string]: unknown;
+};
 export type ManagementProductDTO = {
   id: string;
   title: string;
@@ -19,6 +24,7 @@ export type ManagementProductDTO = {
   summary?: string;
   description: RichTextFormValue;
   category: ProductRelationDTO | string;
+  brand: ProductRelationDTO | string;
   subCategory: ProductRelationDTO | string | null;
   quantity: number;
   price: number;
@@ -43,10 +49,11 @@ export type CustomerProductListItemDTO = Pick<
   | 'discountPercentage'
   | 'isEnable'
   | 'slug'
-> & { category: string; subCategory: string | null };
+> & { category: string; brand: string; subCategory: string | null };
 export type CustomerProductDetailDTO = CustomerProductListItemDTO & {
   images: string[];
   category: ProductRelationDTO;
+  brand: ProductRelationDTO;
   subCategory: ProductRelationDTO | null;
 };
 export type ProductImagesDTO = {
@@ -57,9 +64,10 @@ export type ProductImagesDTO = {
 export type ProductPriceDTO = { price: number; discountPercentage: number };
 export type ProductBaseInfoDTO = Pick<
   ManagementProductDTO,
-  'title' | 'summary' | 'description' | 'category' | 'subCategory' | 'quantity'
+  'title' | 'summary' | 'description' | 'category' | 'brand' | 'subCategory' | 'quantity'
 >;
-export type ManagementProductsPageDTO = PaginateDataDTO<ManagementProductDTO>;
+export type ManagementProductListItemDTO = ManagementProductDTO & { salesVolume: number };
+export type ManagementProductsPageDTO = PaginateDataDTO<ManagementProductListItemDTO>;
 export type CustomerProductsPageDTO = PaginateDataDTO<CustomerProductListItemDTO>;
 export type CreateProductDTO = ProductInput;
 export type UpdateProductBaseInfoDTO = UpdateProductBaseInfoInput;
