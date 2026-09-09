@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 export default function AdminBrandsPage() {
   return (
-    <article className="tw:flex tw:min-h-0 tw:size-full tw:flex-col tw:p-3 tw:sm:p-4">
+    <article className="tw:flex tw:min-h-0 tw:size-full tw:flex-col tw:overflow-hidden tw:p-3 tw:sm:p-4">
       <BrandsHeaderActions />
       <BrandsTableWrapper />
     </article>

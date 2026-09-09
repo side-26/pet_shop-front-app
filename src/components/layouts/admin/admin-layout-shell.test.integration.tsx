@@ -43,6 +43,9 @@ describe('AdminLayoutShell', () => {
     ).toBe('true');
     expect(screen.queryByRole('link', { name: 'تنظیمات' })).toBeNull();
     const header = screen.getByRole('banner');
+    const adminShell = screen.getByRole('complementary').parentElement;
+    expect(adminShell?.className).toContain('tw:h-svh');
+    expect(adminShell?.className).toContain('tw:overflow-hidden');
     expect(header.className).toContain('tw:px-4');
     expect(document.querySelector('[data-slot="admin-header-card"]')?.className).toContain(
       'tw:h-16',

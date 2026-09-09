@@ -22,32 +22,32 @@ export function BrandsTable({
     <section
       aria-busy={isSkeleton || undefined}
       className={cn(
-        'tw:flex tw:min-h-0 tw:flex-1',
+        'tw:flex tw:h-10 tw:min-h-0 tw:flex-auto tw:flex-col',
         isSkeleton && 'skeleton tw:pointer-events-none tw:select-none',
       )}
     >
-      <div className="tw:min-h-0 tw:flex-1 tw:overflow-auto tw:rounded-2xl tw:border tw:border-border">
+      <div className="tw:min-h-0 tw:flex-1 tw:overflow-auto tw:rounded-2xl tw:border tw:border-border tw:[&>[data-slot=table-container]]:overflow-visible">
         <Table className="tw:table-fixed">
           <TableHeader>
-            <TableRow>
-              <TableHead className="tw:w-16">
+            <TableRow className="tw:shadow-sm">
+              <TableHead className="tw:sticky tw:top-0 tw:z-10 tw:w-16 tw:bg-background">
                 <div>
                   <span className="tw:sr-only">لوگو</span>
                 </div>
               </TableHead>
-              <TableHead>
+              <TableHead className="tw:sticky tw:top-0 tw:z-10 tw:bg-background">
                 <div>عنوان</div>
               </TableHead>
-              <TableHead>
+              <TableHead className="tw:sticky tw:top-0 tw:z-10 tw:bg-background">
                 <div>عنوان فارسی</div>
               </TableHead>
-              <TableHead className="tw:w-[40%]">
+              <TableHead className="tw:sticky tw:top-0 tw:z-10 tw:w-[40%] tw:bg-background">
                 <div>توضیحات</div>
               </TableHead>
-              <TableHead>
+              <TableHead className="tw:sticky tw:top-0 tw:z-10 tw:bg-background">
                 <div>وضعیت</div>
               </TableHead>
-              <TableHead className="tw:w-16">
+              <TableHead className="tw:sticky tw:top-0 tw:z-10 tw:w-16 tw:bg-background">
                 <div>
                   <span className="tw:sr-only">عملیات</span>
                 </div>

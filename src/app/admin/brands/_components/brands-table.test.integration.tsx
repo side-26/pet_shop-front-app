@@ -33,8 +33,17 @@ describe('BrandsTable', () => {
     );
 
     const descriptionElement = screen.getByText(description);
+    const table = screen.getByRole('table');
+    const headers = screen.getAllByRole('columnheader');
 
-    expect(screen.getByRole('table').className).toContain('tw:table-fixed');
+    expect(table.className).toContain('tw:table-fixed');
+    expect(table.parentElement?.parentElement?.className).toContain('tw:overflow-auto');
+    expect(table.parentElement?.parentElement?.className).toContain(
+      'tw:[&>[data-slot=table-container]]:overflow-visible',
+    );
+    expect(headers).toHaveLength(6);
+    expect(headers.every((header) => header.className.includes('tw:sticky'))).toBe(true);
+    expect(headers.every((header) => header.className.includes('tw:top-0'))).toBe(true);
     expect(descriptionElement.className).toContain('tw:truncate');
     expect(descriptionElement.getAttribute('title')).toBe(description);
     expect(descriptionElement.closest('td')?.className).toContain('tw:max-w-0');

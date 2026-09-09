@@ -12,7 +12,7 @@ type Props = { searchParams: Promise<Record<string, string | string[] | undefine
 
 export default function AdminPetsPage({ searchParams }: Props) {
   return (
-    <article className="tw:flex tw:min-h-0 tw:size-full tw:flex-col tw:p-3 tw:sm:p-4">
+    <article className="tw:flex tw:min-h-0 tw:size-full tw:flex-col tw:overflow-hidden tw:p-3 tw:sm:p-4">
       <PetsHeaderActionsWrapper searchParams={searchParams} />
       <PetsPageContentWrapper searchParams={searchParams} />
     </article>

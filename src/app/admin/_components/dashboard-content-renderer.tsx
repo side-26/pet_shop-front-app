@@ -77,7 +77,7 @@ export function DashboardContentRenderer({
     <section
       aria-busy={isSkeleton || undefined}
       className={cn(
-        'tw:flex tw:min-h-0 tw:flex-col tw:gap-4 tw:sm:gap-6',
+        'tw:flex tw:min-h-0 tw:flex-auto tw:flex-col tw:gap-4 tw:overflow-y-auto tw:overscroll-contain tw:sm:gap-6',
         isSkeleton && 'skeleton tw:pointer-events-none tw:select-none',
       )}
     >

@@ -238,7 +238,7 @@ export function AdminLayoutShellView({
 
   return (
     <AdminLayoutContent entityName={entityName} headerActions={headerActions}>
-      <div className="tw:flex tw:min-h-svh tw:bg-muted/50 tw:text-foreground">
+      <div className="tw:flex tw:h-svh tw:overflow-hidden tw:bg-muted/50 tw:text-foreground">
         <aside
           data-collapsed={collapsed}
           className={cn(
