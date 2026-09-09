@@ -9,7 +9,12 @@ import type {
   UpdateProductPriceInput,
 } from './products.schema';
 
-export type ProductRelationDTO = { id: string; title: string; [key: string]: unknown };
+export type ProductRelationDTO = {
+  id: string;
+  title: string;
+  title_fa?: string;
+  [key: string]: unknown;
+};
 export type ManagementProductDTO = {
   id: string;
   title: string;

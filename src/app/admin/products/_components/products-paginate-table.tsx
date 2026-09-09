@@ -47,6 +47,9 @@ export function ProductsPaginateTable({
                 <div>عنوان</div>
               </TableHead>
               <TableHead>
+                <div>برند</div>
+              </TableHead>
+              <TableHead>
                 <div>دسته‌بندی</div>
               </TableHead>
               <TableHead>
@@ -97,6 +100,9 @@ export function ProductsPaginateTable({
                 </TableCell>
                 <TableCell className="tw:max-w-64 tw:font-medium tw:whitespace-normal">
                   <div className="tw:line-clamp-2">{product.title}</div>
+                </TableCell>
+                <TableCell className="tw:max-w-56 tw:whitespace-normal">
+                  <div className="tw:line-clamp-2">{product.brand}</div>
                 </TableCell>
                 <TableCell className="tw:max-w-56 tw:whitespace-normal">
                   <div className="tw:line-clamp-2">{product.category}</div>

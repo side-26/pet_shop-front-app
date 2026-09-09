@@ -30,7 +30,7 @@ export function CreateProductDialog({ open, options, onOpenChange, onCreated }: 
         title="افزودن محصول جدید"
         submitText="ایجاد محصول"
         size="xl"
-        className="tw:max-w-[610px]"
+        className="tw:max-w-[730px]"
         isLoading={isPending}
         onClose={() => onOpenChange(false)}
         contentClassName="tw:max-h-[72dvh] tw:overflow-y-auto"

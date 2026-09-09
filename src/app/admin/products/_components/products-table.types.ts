@@ -3,6 +3,7 @@ export type ProductTableRow = {
   mainImage: string;
   mainImageThumbnail: string;
   title: string;
+  brand: string;
   category: string;
   subCategory: string;
   quantity: number;

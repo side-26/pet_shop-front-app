@@ -230,7 +230,7 @@ export function ProductSectionDialogContentWrapper({
       submitText="ذخیره تغییرات"
       title={`${titles[section]} ${productTitle}`}
       size="lg"
-      className="tw:max-w-[610px]"
+      className="tw:max-w-[730px]"
       contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
     >
       <Suspense fallback={<SectionForm section={section} isSkeleton {...formProps} />}>
