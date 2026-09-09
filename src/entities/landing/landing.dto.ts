@@ -15,6 +15,7 @@ export type LandingProductDTO = {
   id: string;
   title: string;
   mainImage: string;
+  mainImageThumbnail?: string;
   summary?: string;
   price: number;
   discountPercentage: number;

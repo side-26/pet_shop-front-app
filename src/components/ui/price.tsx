@@ -13,7 +13,7 @@ const priceFormatter = new Intl.NumberFormat('fa-IR', {
 });
 
 function Price({ number, className, ...props }: PriceProps) {
-  const formattedNumber = priceFormatter.format(number);
+  const formattedNumber = priceFormatter.format(Math.floor(number));
 
   return (
     <span

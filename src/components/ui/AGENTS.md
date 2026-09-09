@@ -188,9 +188,9 @@ Component Testing.
 `Avatar` composes Base UI Avatar with `size="sm|default|lg"`, defaulting to `default`.
 Always provide `AvatarFallback`; use `AvatarBadge` for a separately named status when needed.
 
-`Price` accepts a numeric `number` and root `className`. It formats values with
-Persian thousands separators, isolates the numeric run as LTR, and always places
-the application currency label from `configs/currency.ts` after it.
+`Price` accepts a numeric `number` and root `className`. It floors decimal values
+before formatting with Persian thousands separators, isolates the numeric run as LTR,
+and always places the application currency label from `configs/currency.ts` after it.
 
 `PriceMask` is an editable LTR numeric input that displays Latin digits grouped
 in threes while exposing an unformatted `number | null` through `onValueChange`.

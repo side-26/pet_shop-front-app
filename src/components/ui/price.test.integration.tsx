@@ -18,12 +18,12 @@ describe('Price', () => {
     expect(screen.getByText(APP_CURRENCY)).toBeTruthy();
   });
 
-  it('isolates the number and accepts a custom class name', () => {
+  it('floors decimal amounts, isolates the number, and accepts a custom class name', () => {
     render(<Price number={49.99} className="custom-price" aria-label="price" />);
 
     const price = screen.getByLabelText('price');
     expect(price.className).toContain('custom-price');
-    expect(price.textContent).toBe(`۴۹٫۹۹${APP_CURRENCY}`);
+    expect(price.textContent).toBe(`۴۹${APP_CURRENCY}`);
     expect(price.querySelector('bdi')?.getAttribute('dir')).toBe('ltr');
   });
 });

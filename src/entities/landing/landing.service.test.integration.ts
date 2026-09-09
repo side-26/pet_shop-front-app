@@ -33,6 +33,7 @@ const landingProduct: LandingProductDTO = {
   id: 'product-1',
   title: 'غذای گربه',
   mainImage: 'https://cdn.example.com/cat-food.webp',
+  mainImageThumbnail: 'data:image/webp;base64,AAAA',
   summary: 'غذای کامل',
   price: 200_000,
   discountPercentage: 20,
@@ -81,6 +82,7 @@ describe('landing service', () => {
     expect(result).toEqual({ isSuccess: true, message: null, data: [landingProduct] });
     if (!result.isSuccess) throw new Error('Expected the mocked landing request to succeed.');
     expect(result.data[0]?.discountPrice).toBe(40_000);
+    expect(result.data[0]?.mainImageThumbnail).toBe('data:image/webp;base64,AAAA');
   });
 
   it('validates and requests customer-safe details by slug', async () => {
