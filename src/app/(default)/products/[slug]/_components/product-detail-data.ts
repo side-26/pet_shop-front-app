@@ -51,7 +51,7 @@ const royalCaninMaxiAdult: ProductDetail = {
     },
     {
       src: '/images/home/delivery.jpg',
-      alt: 'بسته‌بندی و ارسال محصولات پناهگاه پرشین',
+      alt: 'بسته‌بندی و ارسال محصولات پت شاپ پرشین',
     },
   ],
   description:

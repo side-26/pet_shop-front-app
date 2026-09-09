@@ -19,7 +19,7 @@ export function DefaultFooter() {
               href="https://www.instagram.com"
               target="_blank"
               rel="noreferrer"
-              aria-label="اینستاگرام پناهگاه پرشین"
+              aria-label="اینستاگرام پت شاپ پرشین"
               className="tw:flex tw:size-10 tw:items-center tw:justify-center tw:rounded-xl tw:text-primary tw:outline-none tw:transition-[background-color,color,transform] tw:hover:-translate-y-0.5 tw:hover:bg-primary tw:hover:text-primary-foreground tw:focus-visible:ring-3 tw:focus-visible:ring-primary/25 tw:motion-reduce:transition-none tw:motion-reduce:hover:transform-none"
             >
               <Camera aria-hidden="true" className="tw:size-5" />
@@ -28,7 +28,7 @@ export function DefaultFooter() {
               href="https://t.me"
               target="_blank"
               rel="noreferrer"
-              aria-label="تلگرام پناهگاه پرشین"
+              aria-label="تلگرام پت شاپ پرشین"
               className="tw:flex tw:size-10 tw:items-center tw:justify-center tw:rounded-xl tw:text-primary tw:outline-none tw:transition-[background-color,color,transform] tw:hover:-translate-y-0.5 tw:hover:bg-primary tw:hover:text-primary-foreground tw:focus-visible:ring-3 tw:focus-visible:ring-primary/25 tw:motion-reduce:transition-none tw:motion-reduce:hover:transform-none"
             >
               <Send aria-hidden="true" className="tw:size-5" />
@@ -73,7 +73,7 @@ export function DefaultFooter() {
       </div>
 
       <div className="tw:border-t tw:border-border/70 tw:px-4 tw:py-4 tw:text-center tw:text-caption tw:text-muted-foreground">
-        تمامی حقوق برای پناهگاه حیوانات پرشین محفوظ است.
+        تمامی حقوق برای پت شاپ پرشین محفوظ است.
       </div>
     </footer>
   );

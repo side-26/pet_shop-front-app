@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
-import { PetHeroSection } from './_components/pet-hero-section';
-import { PetTypesSection } from './_components/pet-types-section';
-import { PopularPetsSection } from './_components/popular-pets-section';
-import { RehomingSection } from './_components/rehoming-section';
+import { PetHeroSection } from './landing/_components/pet-hero-section';
+import { PetTypesSection } from './landing/_components/pet-types-section';
+import { PopularPetsSection } from './landing/_components/popular-pets-section';
+import { RehomingSection } from './landing/_components/rehoming-section';
 
 export const metadata: Metadata = {
   title: 'حیوانات خانگی | پت‌شاپ پرمیوم',

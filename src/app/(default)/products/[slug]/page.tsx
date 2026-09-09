@@ -17,11 +17,11 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   const product = getProductDetail(slug);
 
   if (!product) {
-    return { title: 'محصول پیدا نشد | پناهگاه پرشین' };
+    return { title: 'محصول پیدا نشد | پت شاپ پرشین' };
   }
 
   return {
-    title: `${product.title} | پناهگاه پرشین`,
+    title: `${product.title} | پت شاپ پرشین`,
     description: product.description,
   };
 }

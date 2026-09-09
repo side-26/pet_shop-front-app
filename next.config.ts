@@ -34,7 +34,14 @@ function excludeDateFnsFromNextSwcLoader(rules: unknown[]): void {
 const nextConfig: NextConfig = {
   cacheComponents: true,
   images: {
-    remotePatterns: [{ protocol: 'https', hostname: 'flagpedia.net', pathname: '/data/flags/**' }],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'flagpedia.net', pathname: '/data/flags/**' },
+      {
+        protocol: 'https',
+        hostname: 's3.ir-thr-at1.arvanstorage.ir',
+        pathname: '/pet-shop/**',
+      },
+    ],
   },
   experimental: {
     serverActions: {

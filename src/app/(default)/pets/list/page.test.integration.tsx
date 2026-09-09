@@ -28,6 +28,6 @@ describe(routePaths.petsList, () => {
   });
 
   it('defines route metadata while keeping the page server-rendered', () => {
-    expect(metadata.title).toBe('فهرست حیوانات خانگی | پناهگاه پرشین');
+    expect(metadata.title).toBe('فهرست حیوانات خانگی | پت شاپ پرشین');
   });
 });

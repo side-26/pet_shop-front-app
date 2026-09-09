@@ -18,7 +18,7 @@ describe('Not found page', () => {
       routePaths.home,
     );
     expect(screen.getByRole('link', { name: /دیدن حیوانات/ }).getAttribute('href')).toBe(
-      routePaths.petsLanding,
+      routePaths.pets,
     );
   });
 });

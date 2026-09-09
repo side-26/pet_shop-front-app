@@ -43,6 +43,6 @@ describe(routePaths.productsList, () => {
   });
 
   it('defines route metadata while keeping the page server-rendered', () => {
-    expect(metadata.title).toBe('فهرست محصولات حیوانات خانگی | پناهگاه پرشین');
+    expect(metadata.title).toBe('فهرست محصولات حیوانات خانگی | پت شاپ پرشین');
   });
 });

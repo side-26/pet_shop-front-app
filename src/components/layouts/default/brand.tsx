@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { appLogo } from '@/configs/app-logo';
 import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
 
@@ -16,7 +17,7 @@ export function Brand({ size = 'default', showName = true, className }: BrandPro
   return (
     <Link
       href={routePaths.home}
-      aria-label="پناهگاه حیوانات پرشین، صفحه اصلی"
+      aria-label="پت شاپ پرشین، صفحه اصلی"
       className={cn(
         'tw:inline-flex tw:shrink-0 tw:items-center tw:gap-2.5 tw:rounded-xl tw:outline-none tw:focus-visible:ring-3 tw:focus-visible:ring-primary/25',
         className,
@@ -30,7 +31,7 @@ export function Brand({ size = 'default', showName = true, className }: BrandPro
         aria-hidden="true"
       >
         <Image
-          src="/images/brand/pet-haven-mark.png"
+          src={appLogo.src}
           alt=""
           fill
           loading={isCompact ? 'eager' : 'lazy'}
@@ -48,7 +49,7 @@ export function Brand({ size = 'default', showName = true, className }: BrandPro
               : 'tw:text-title-m tw:lg:text-heading-3',
           )}
         >
-          پناهگاه پرشین
+          پت شاپ پرشین
         </span>
       ) : null}
     </Link>

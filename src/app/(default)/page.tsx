@@ -7,7 +7,7 @@ import { HeroSection } from './_components/home/hero-section';
 import { OffersSection } from './_components/home/offers-section';
 
 export const metadata: Metadata = {
-  title: 'پناهگاه پرشین | محصولات و مراقبت حیوانات خانگی',
+  title: 'پت شاپ پرشین | محصولات و مراقبت حیوانات خانگی',
   description: 'محصولات مطمئن، مراقبت حرفه‌ای و ارسال آسان برای حیوانات خانگی شما.',
 };
 

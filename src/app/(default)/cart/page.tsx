@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { CartPageContent } from './_components/cart-page-content';
 
 export const metadata: Metadata = {
-  title: 'سبد خرید | پناهگاه پرشین',
+  title: 'سبد خرید | پت شاپ پرشین',
   description: 'مشاهده کالاها، تخفیف‌ها و مبلغ نهایی سبد خرید.',
 };
 

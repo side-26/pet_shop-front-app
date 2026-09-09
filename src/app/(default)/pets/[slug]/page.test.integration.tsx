@@ -43,6 +43,6 @@ describe(routePaths.petDetail('max'), () => {
     expect(generateStaticParams()).toContainEqual({ slug: 'max' });
     expect(routePaths.petDetail('golden dog')).toBe('/pets/golden%20dog');
     const metadata = await generateMetadata({ params: Promise.resolve({ slug: 'max' }) });
-    expect(metadata.title).toBe('مکس، گلدن رتریور | پناهگاه پرشین');
+    expect(metadata.title).toBe('مکس، گلدن رتریور | پت شاپ پرشین');
   });
 });

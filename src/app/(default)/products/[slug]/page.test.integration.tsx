@@ -60,6 +60,6 @@ describe(routePaths.productDetail('adult-dog-food'), () => {
     const metadata = await generateMetadata({
       params: Promise.resolve({ slug: 'adult-dog-food' }),
     });
-    expect(metadata.title).toBe('غذای خشک سگ مدل رویال کنین Maxi Adult | پناهگاه پرشین');
+    expect(metadata.title).toBe('غذای خشک سگ مدل رویال کنین Maxi Adult | پت شاپ پرشین');
   });
 });

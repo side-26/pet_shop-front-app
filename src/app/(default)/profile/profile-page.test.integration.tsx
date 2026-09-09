@@ -49,6 +49,6 @@ describe(routePaths.profile, () => {
   });
 
   it('defines profile metadata', () => {
-    expect(metadata.title).toBe('حساب کاربری من | پناهگاه پرشین');
+    expect(metadata.title).toBe('حساب کاربری من | پت شاپ پرشین');
   });
 });

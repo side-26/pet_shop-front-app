@@ -43,17 +43,20 @@ beforeEach(() => {
 
 describe(routePaths.uiComponents, () => {
   it('lists every public UI component family and its supported conditions', () => {
-    render(
+    const { container } = render(
       <DirectionProvider direction="rtl">
         <UiComponentsPage />
       </DirectionProvider>,
     );
+    const getButtonByName = (name: string) =>
+      Array.from(container.querySelectorAll('button')).find(
+        (button) =>
+          button.getAttribute('aria-label') === name || button.textContent?.includes(name),
+      );
 
-    expect(
-      screen.getByRole('heading', { level: 1, name: 'کتابخانه اجزای رابط کاربری' }),
-    ).toBeTruthy();
+    expect(container.querySelector('h1')?.textContent).toBe('کتابخانه اجزای رابط کاربری');
     const sectionTitles = new Set(
-      screen.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent),
+      Array.from(container.querySelectorAll('h3')).map((heading) => heading.textContent),
     );
 
     expect([...sectionTitles]).toEqual(
@@ -101,25 +104,29 @@ describe(routePaths.uiComponents, () => {
         'Empty',
       ]),
     );
+    expect(getButtonByName('نمایش توضیحات کامل')?.getAttribute('aria-expanded')).toBe('false');
+    expect(getButtonByName('بستن راهنما')?.getAttribute('aria-expanded')).toBe('true');
+    expect(getButtonByName('نمایش فرم گفتگو')).toBeTruthy();
+    expect(getButtonByName('نمایش فیلتر')).toBeTruthy();
+    expect(getButtonByName('کشوی error')).toBeTruthy();
+    expect(container.querySelector('[role="tablist"][aria-label="اطلاعات محصول"]')).toBeTruthy();
     expect(
-      screen.getByRole('button', { name: 'نمایش توضیحات کامل' }).getAttribute('aria-expanded'),
-    ).toBe('false');
-    expect(screen.getByRole('button', { name: 'بستن راهنما' }).getAttribute('aria-expanded')).toBe(
-      'true',
-    );
-    expect(screen.getByRole('button', { name: 'نمایش فرم گفتگو' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'نمایش فیلتر' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'کشوی error' })).toBeTruthy();
-    expect(screen.getByRole('tablist', { name: 'اطلاعات محصول' })).toBeTruthy();
-    expect(screen.getByRole('group', { name: 'وزن محصول · outlined' })).toBeTruthy();
-    expect(
-      screen.getByRole('heading', { level: 4, name: 'هنوز محصولی ثبت نشده است' }),
+      container.querySelector('[role="group"][aria-label="وزن محصول · outlined"]'),
     ).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'افزودن محصول' })).toBeTruthy();
-    expect(screen.getByRole('group', { name: 'tonal' })).toBeTruthy();
-    expect(screen.getByLabelText('کد تأیید')).toBeTruthy();
-    expect(screen.getAllByRole('timer').length).toBeGreaterThan(0);
-    expect(screen.getByText('زمان به پایان رسید')).toBeTruthy();
+    expect(
+      Array.from(container.querySelectorAll('[role="heading"][aria-level="4"]')).some(
+        (heading) => heading.textContent === 'هنوز محصولی ثبت نشده است',
+      ),
+    ).toBe(true);
+    expect(getButtonByName('افزودن محصول')).toBeTruthy();
+    expect(container.querySelector('[role="group"][aria-label="tonal"]')).toBeTruthy();
+    const verificationLabel = Array.from(container.querySelectorAll('label')).find((label) =>
+      label.textContent?.includes('کد تأیید'),
+    );
+    expect(verificationLabel?.htmlFor).toBeTruthy();
+    expect(container.querySelector(`[id="${verificationLabel?.htmlFor}"]`)).toBeTruthy();
+    expect(container.querySelectorAll('[role="timer"]').length).toBeGreaterThan(0);
+    expect(container.textContent).toContain('زمان به پایان رسید');
 
     expect(screen.getAllByText('خیلی کوچک').length).toBeGreaterThan(0);
     expect(screen.getByText('خنثی · tonal')).toBeTruthy();

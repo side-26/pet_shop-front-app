@@ -41,6 +41,6 @@ describe(routePaths.cart, () => {
   });
 
   it('defines cart metadata', () => {
-    expect(metadata.title).toBe('سبد خرید | پناهگاه پرشین');
+    expect(metadata.title).toBe('سبد خرید | پت شاپ پرشین');
   });
 });
