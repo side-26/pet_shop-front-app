@@ -18,6 +18,8 @@ export type LandingProductDTO = {
   summary?: string;
   price: number;
   discountPercentage: number;
+  /** Calculated by the landing API; it is not persisted on the product. */
+  discountPrice: number;
 };
 
 export type LandingPetDetailDTO = CustomerPetDetailDTO;

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { customFetcher } from '@/lib/api/customFetcher';
 
+import type { LandingProductDTO } from './landing.dto';
 import {
   getAllLandingPetTypes,
   getDiscountedLandingProducts,
@@ -28,10 +29,20 @@ vi.mock('@/utils/entityCache', () => ({
 
 const fetcher = vi.mocked(customFetcher);
 
+const landingProduct: LandingProductDTO = {
+  id: 'product-1',
+  title: 'غذای گربه',
+  mainImage: 'https://cdn.example.com/cat-food.webp',
+  summary: 'غذای کامل',
+  price: 200_000,
+  discountPercentage: 20,
+  discountPrice: 40_000,
+};
+
 describe('landing service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    fetcher.mockResolvedValue({ isSuccess: true, message: null, data: [] as never });
+    fetcher.mockResolvedValue({ isSuccess: true, message: null, data: [landingProduct] as never });
   });
 
   it('requests every public landing collection with shared caching', async () => {
@@ -62,6 +73,14 @@ describe('landing service', () => {
       ]),
     );
     expect(mocks.registerList).toHaveBeenCalledTimes(4);
+  });
+
+  it('exposes the API-calculated discount amount for product sections', async () => {
+    const result = await getDiscountedLandingProducts({ limit: 1 });
+
+    expect(result).toEqual({ isSuccess: true, message: null, data: [landingProduct] });
+    if (!result.isSuccess) throw new Error('Expected the mocked landing request to succeed.');
+    expect(result.data[0]?.discountPrice).toBe(40_000);
   });
 
   it('validates and requests customer-safe details by slug', async () => {
