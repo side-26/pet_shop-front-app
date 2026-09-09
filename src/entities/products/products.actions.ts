@@ -5,6 +5,7 @@ import { ValidationError } from 'yup';
 import { USER_ROLES } from '@/configs/user-role';
 import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
 import { deleteImage } from '@/entities/images/images.service';
+import { getAllBrands } from '@/entities/brands/brands.service';
 import { getAllCategories } from '@/entities/categories/categories.service';
 import { getAllPetTypes } from '@/entities/pet-types/pet-types.service';
 import { getAllSubCategories } from '@/entities/sub-categories/sub-categories.service';
@@ -75,14 +76,16 @@ export async function getProductFormOptionsAction() {
   const error = await authorizeManagement();
   if (error) return error;
 
-  const [categories, petTypes, subCategories] = await Promise.all([
+  const [categories, petTypes, subCategories, brands] = await Promise.all([
     getAllCategories({ includeDisabled: false }),
     getAllPetTypes({ includeDisabled: false }),
     getAllSubCategories(),
+    getAllBrands({ includeDisabled: false }),
   ]);
   if (!categories.isSuccess) return categories;
   if (!petTypes.isSuccess) return petTypes;
   if (!subCategories.isSuccess) return subCategories;
+  if (!brands.isSuccess) return brands;
 
   const petTypeTitles = new Map(petTypes.data.map(({ id, title }) => [id, title]));
 
@@ -98,6 +101,12 @@ export async function getProductFormOptionsAction() {
         mainThumbnailImage,
       })),
       subCategories: subCategories.data.map(({ id, title, category }) => ({ id, title, category })),
+      brands: brands.data.map(({ id, title, title_fa, logo, thumbnailLogo }) => ({
+        id,
+        title: title_fa || title,
+        logo,
+        thumbnailLogo,
+      })),
     },
   };
 }

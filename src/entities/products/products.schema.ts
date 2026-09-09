@@ -45,6 +45,7 @@ const productFields = {
     .test('structured-json', 'توضیحات باید به صورت JSON ساخت‌یافته ارسال شود.', isRichTextDocument)
     .required(),
   category: objectId,
+  brand: objectId,
   subCategory: objectId.nullable().optional(),
   quantity: number().integer().min(0).default(0).required(),
 };
@@ -62,6 +63,7 @@ export const updateProductBaseInfoSchema = object({
     )
     .optional(),
   category: objectId.optional(),
+  brand: objectId,
   subCategory: objectId.nullable().optional(),
   quantity: number().integer().min(0).optional(),
 }).test('has-update', 'حداقل یک مقدار برای ویرایش لازم است.', (value) =>
