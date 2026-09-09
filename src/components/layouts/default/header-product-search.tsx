@@ -65,7 +65,7 @@ export function HeaderProductSearch({ className }: HeaderProductSearchProps) {
   };
 
   return (
-    <div className={cn('tw:w-[min(42vw,11rem)] tw:sm:w-64 tw:lg:w-72', className)}>
+    <div className={cn('tw:min-w-0 tw:w-full tw:lg:w-72', className)}>
       <div className="tw:hidden tw:lg:block">
         <HoverCard open={desktopOpen} onOpenChange={setDesktopOpen}>
           <HoverCardTrigger delay={0} closeDelay={180} render={<div className="tw:w-full" />}>

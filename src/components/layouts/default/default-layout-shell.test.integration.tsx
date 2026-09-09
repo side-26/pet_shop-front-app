@@ -1,4 +1,4 @@
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
@@ -50,9 +50,11 @@ describe('DefaultLayoutShell', () => {
     expect(screen.getAllByRole('link', { name: 'درباره ما' })[0].getAttribute('href')).toBe(
       routePaths.about,
     );
-    expect(screen.getByRole('link', { name: 'حساب کاربری' }).getAttribute('href')).toBe(
-      routePaths.login,
-    );
+    expect(
+      screen
+        .getAllByRole('link', { name: 'حساب کاربری' })
+        .every((link) => link.getAttribute('href') === routePaths.login),
+    ).toBe(true);
     expect(screen.getByRole('link', { name: 'اینستاگرام پت شاپ پرشین' }).getAttribute('href')).toBe(
       'https://www.instagram.com',
     );
@@ -64,7 +66,7 @@ describe('DefaultLayoutShell', () => {
   it('keeps compact header actions accessible', () => {
     render(<DefaultLayoutShell>صفحه</DefaultLayoutShell>);
 
-    expect(screen.queryByRole('button', { name: 'باز کردن منوی اصلی' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'باز کردن منوی بیشتر' })).toBeTruthy();
     expect(screen.getByRole('searchbox', { name: 'جستجو در محصولات' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'باز کردن جستجوی محصولات' })).toBeTruthy();
     expect(screen.getByRole('search').getAttribute('action')).toBe(routePaths.products);
@@ -74,20 +76,32 @@ describe('DefaultLayoutShell', () => {
     expect(screen.getByRole('button', { name: 'تغییر حالت نمایش: سیستم' })).toBeTruthy();
   });
 
-  it('keeps the six requested mobile and tablet destinations as real links', () => {
+  it('moves services and about links into the mobile header overflow menu', async () => {
+    render(<DefaultLayoutShell>صفحه</DefaultLayoutShell>);
+
+    fireEvent.click(screen.getByRole('button', { name: 'باز کردن منوی بیشتر' }));
+
+    expect((await screen.findByRole('menuitem', { name: 'خدمات ما' })).getAttribute('href')).toBe(
+      routePaths.services,
+    );
+    expect(screen.getByRole('menuitem', { name: 'درباره ما' }).getAttribute('href')).toBe(
+      routePaths.about,
+    );
+  });
+
+  it('keeps the five requested mobile and tablet destinations as real links', () => {
     render(<DefaultLayoutShell>صفحه</DefaultLayoutShell>);
 
     const mobileNavigation = screen.getByRole('navigation', { name: 'ناوبری موبایل' });
     const links = Array.from(mobileNavigation.querySelectorAll('a'));
 
-    expect(links).toHaveLength(6);
+    expect(links).toHaveLength(5);
     expect(links.map((link) => link.getAttribute('href'))).toEqual([
       routePaths.home,
       routePaths.pets,
       routePaths.products,
-      routePaths.services,
-      routePaths.about,
       routePaths.cart,
+      routePaths.login,
     ]);
   });
 

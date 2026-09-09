@@ -1,4 +1,12 @@
-import { HeartHandshake, House, Info, PawPrint, ShoppingBag, ShoppingCart } from 'lucide-react';
+import {
+  HeartHandshake,
+  House,
+  Info,
+  PawPrint,
+  ShoppingBag,
+  ShoppingCart,
+  UserRound,
+} from 'lucide-react';
 
 import { routePaths } from '@/configs/route.path';
 
@@ -14,9 +22,13 @@ export const mobileNavigationItems = [
   { label: 'خانه', href: routePaths.home, icon: House },
   { label: 'حیوانات', href: routePaths.pets, icon: PawPrint },
   { label: 'محصولات', href: routePaths.products, icon: ShoppingBag },
-  { label: 'خدمات', href: routePaths.services, icon: HeartHandshake },
-  { label: 'درباره ما', href: routePaths.about, icon: Info },
   { label: 'سبد خرید', href: routePaths.cart, icon: ShoppingCart },
+  { label: 'حساب کاربری', href: routePaths.login, icon: UserRound },
+] as const;
+
+export const mobileOverflowNavigationItems = [
+  { label: 'خدمات ما', href: routePaths.services, icon: HeartHandshake },
+  { label: 'درباره ما', href: routePaths.about, icon: Info },
 ] as const;
 
 export function isNavigationItemActive(pathname: string, href: string) {

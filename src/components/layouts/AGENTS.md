@@ -71,6 +71,12 @@ tablet before splitting at `lg`. Reuse the transparent
 `public/images/brand/pet-haven-mark.png` asset and canonical `routePaths`
 entries rather than duplicating brand art or route literals.
 
+Below `lg`, keep services and about links out of the bottom dock: expose them
+through the accessible overflow menu beside the compact brand, and keep the
+account destination as the dock's final item. Let the mobile/tablet product
+search consume the remaining header space without weakening its accessible
+dialog trigger.
+
 The header product search uses a controlled shadcn Hover Card from `lg` upward
 and an accessible Dialog overlay below `lg`. Both surfaces reuse the same
 popular-search and debounced-suggestion renderer. Keep product search links on

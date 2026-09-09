@@ -10,13 +10,15 @@ import { cn } from '@/lib/utils';
 import { Brand } from './brand';
 import { DesktopNavigation, DesktopNavigationView } from './desktop-navigation';
 import { HeaderProductSearch } from './header-product-search';
+import { MobileHeaderMenu } from './mobile-header-menu';
 
 export function DefaultHeader() {
   return (
     <header className="tw:fixed tw:inset-x-0 tw:top-0 tw:z-50 tw:border-b tw:border-border/60 tw:bg-background/82 tw:shadow-sm tw:supports-backdrop-filter:backdrop-blur-2xl">
       <div className="tw:mx-auto tw:flex tw:h-[76px] tw:w-full tw:max-w-7xl tw:items-center tw:justify-between tw:gap-3 tw:px-4 tw:md:px-8 tw:lg:h-[88px] tw:lg:px-0">
-        <div className="tw:flex tw:shrink-0 tw:items-center">
+        <div className="tw:flex tw:shrink-0 tw:items-center tw:gap-1">
           <Brand size="compact" showName={false} className="tw:lg:hidden" />
+          <MobileHeaderMenu />
           <Brand size="compact" className="tw:hidden tw:lg:inline-flex" />
         </div>
 
@@ -24,8 +26,8 @@ export function DefaultHeader() {
           <DesktopNavigation />
         </Suspense>
 
-        <div className="tw:flex tw:min-w-0 tw:items-center tw:gap-1 tw:sm:gap-1.5">
-          <HeaderProductSearch />
+        <div className="tw:flex tw:min-w-0 tw:flex-1 tw:items-center tw:gap-1 tw:sm:gap-1.5 tw:lg:flex-none">
+          <HeaderProductSearch className="tw:flex-1" />
           <ThemeToggle variant="icon" />
           <Link
             href={routePaths.cart}
