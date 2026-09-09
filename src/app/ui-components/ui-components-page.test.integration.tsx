@@ -126,10 +126,8 @@ describe(routePaths.uiComponents, () => {
     expect(screen.getByText('ناموجود · tonal')).toBeTruthy();
     expect(screen.getByText('کارت شیشه‌ای')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'نمایش گفت‌وگوی بزرگ' })).toBeTruthy();
-    expect(screen.getByRole('group', { name: 'حالت نمایش' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'روشن' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'تیره' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'سیستم' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'حالت نمایش: سیستم' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'تغییر حالت نمایش: سیستم' })).toBeTruthy();
   }, 60_000);
 
   it('defines route metadata without making the page a Client Component', () => {

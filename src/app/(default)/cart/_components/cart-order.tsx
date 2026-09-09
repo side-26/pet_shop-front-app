@@ -23,7 +23,7 @@ function SummaryRow({ label, value }: Readonly<{ label: string; value: number }>
     <div className="tw:flex tw:items-center tw:justify-between tw:gap-4">
       <dt className="tw:text-body-m tw:text-muted-foreground">{label}</dt>
       <dd className="tw:text-label-l tw:text-card-foreground">
-        <Price number={value} prefix="تومان" />
+        <Price number={value} />
       </dd>
     </div>
   );
@@ -105,13 +105,11 @@ export function CartOrder({ initialItems }: CartOrderProps) {
                     {item.previousPrice ? (
                       <Price
                         number={item.previousPrice * item.quantity}
-                        prefix="تومان"
                         className="tw:text-label-s tw:text-muted-foreground tw:line-through"
                       />
                     ) : null}
                     <Price
                       number={item.price * item.quantity}
-                      prefix="تومان"
                       className="tw:text-price-s tw:text-primary tw:sm:text-price-m"
                     />
                   </div>
@@ -166,11 +164,7 @@ export function CartOrder({ initialItems }: CartOrderProps) {
             <Separator className="tw:my-5" />
             <div className="tw:flex tw:items-center tw:justify-between tw:gap-4">
               <span className="tw:text-title-s">مبلغ قابل پرداخت</span>
-              <Price
-                number={merchandiseTotal}
-                prefix="تومان"
-                className="tw:text-price-m tw:text-primary"
-              />
+              <Price number={merchandiseTotal} className="tw:text-price-m tw:text-primary" />
             </div>
           </CardContent>
           <CardFooter className="tw:flex-col tw:items-stretch">

@@ -43,6 +43,7 @@ import { TextField } from '@/components/ui/fields/text-field';
 import { Form } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/components/ui/toast';
+import { APP_CURRENCY } from '@/configs/currency';
 
 type ProfileFormValues = {
   firstName: string;
@@ -75,7 +76,7 @@ const orders: readonly Order[] = [
   {
     id: 'PH-1405-2841',
     date: '۱۸ مرداد ۱۴۰۵',
-    total: '۲٬۴۸۰٬۰۰۰ تومان',
+    total: `۲٬۴۸۰٬۰۰۰ ${APP_CURRENCY}`,
     itemCount: 3,
     status: 'delivered',
     statusLabel: 'تحویل‌شده',
@@ -85,7 +86,7 @@ const orders: readonly Order[] = [
   {
     id: 'PH-1405-2716',
     date: '۱۲ مرداد ۱۴۰۵',
-    total: '۱٬۳۲۰٬۰۰۰ تومان',
+    total: `۱٬۳۲۰٬۰۰۰ ${APP_CURRENCY}`,
     itemCount: 2,
     status: 'processing',
     statusLabel: 'در حال آماده‌سازی',
@@ -95,7 +96,7 @@ const orders: readonly Order[] = [
   {
     id: 'PH-1405-2559',
     date: '۳ مرداد ۱۴۰۵',
-    total: '۸۶۵٬۰۰۰ تومان',
+    total: `۸۶۵٬۰۰۰ ${APP_CURRENCY}`,
     itemCount: 1,
     status: 'cancelled',
     statusLabel: 'لغوشده',

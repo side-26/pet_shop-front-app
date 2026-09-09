@@ -6,6 +6,7 @@ import { USER_ROLES } from '@/configs/user-role';
 import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
 import { deleteImage } from '@/entities/images/images.service';
 import { getAllCategories } from '@/entities/categories/categories.service';
+import { getAllPetTypes } from '@/entities/pet-types/pet-types.service';
 import { getAllSubCategories } from '@/entities/sub-categories/sub-categories.service';
 import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
 import { getRichTextImageUrls } from '@/lib/rich-text';
@@ -74,18 +75,28 @@ export async function getProductFormOptionsAction() {
   const error = await authorizeManagement();
   if (error) return error;
 
-  const [categories, subCategories] = await Promise.all([
+  const [categories, petTypes, subCategories] = await Promise.all([
     getAllCategories({ includeDisabled: false }),
+    getAllPetTypes({ includeDisabled: false }),
     getAllSubCategories(),
   ]);
   if (!categories.isSuccess) return categories;
+  if (!petTypes.isSuccess) return petTypes;
   if (!subCategories.isSuccess) return subCategories;
+
+  const petTypeTitles = new Map(petTypes.data.map(({ id, title }) => [id, title]));
 
   return {
     isSuccess: true as const,
     message: null,
     data: {
-      categories: categories.data.map(({ id, title }) => ({ id, title })),
+      categories: categories.data.map(({ id, title, petType, mainImage, mainThumbnailImage }) => ({
+        id,
+        title,
+        petTypeTitle: petTypeTitles.get(petType) ?? 'نوع حیوان نامشخص',
+        mainImage,
+        mainThumbnailImage,
+      })),
       subCategories: subCategories.data.map(({ id, title, category }) => ({ id, title, category })),
     },
   };

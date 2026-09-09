@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { Button } from '@/components/ui/button';
+import { APP_CURRENCY } from '@/configs/currency';
 import { Form } from '@/components/ui/form';
 
 import { PriceMaskField } from './price-mask-field';
@@ -23,26 +24,19 @@ describe('PriceMask', () => {
     expect(onValueChange).toHaveBeenLastCalledWith(2_333_333);
     expect(input.inputMode).toBe('numeric');
     expect(input.dir).toBe('ltr');
-    expect(screen.getByText('ریال')).toBeTruthy();
+    expect(screen.getByText(APP_CURRENCY)).toBeTruthy();
     expect(document.querySelector('[data-slot="price-mask-postfix"] svg')).toBeTruthy();
 
     fireEvent.change(input, { target: { value: '٨٩٩٨٨' } });
     expect(input.value).toBe('89,988');
   });
 
-  it('formats reusable controlled values and supports custom adornments', () => {
-    render(
-      <PriceMask
-        aria-label="قیمت دلخواه"
-        value={89_988}
-        prefix="تومان"
-        postfixIcon={<span>€</span>}
-      />,
-    );
+  it('formats reusable controlled values and supports a custom postfix adornment', () => {
+    render(<PriceMask aria-label="قیمت دلخواه" value={89_988} postfixIcon={<span>€</span>} />);
 
     expect((screen.getByLabelText('قیمت دلخواه') as HTMLInputElement).value).toBe('89,988');
     expect(screen.getByText('€')).toBeTruthy();
-    expect(screen.getByText('تومان')).toBeTruthy();
+    expect(screen.getByText(APP_CURRENCY)).toBeTruthy();
     expect(formatPriceMask(2_333_333)).toBe('2,333,333');
   });
 

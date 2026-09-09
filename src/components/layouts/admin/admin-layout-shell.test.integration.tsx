@@ -43,6 +43,9 @@ describe('AdminLayoutShell', () => {
     ).toBe('true');
     expect(screen.queryByRole('link', { name: 'تنظیمات' })).toBeNull();
     const header = screen.getByRole('banner');
+    const adminShell = screen.getByRole('complementary').parentElement;
+    expect(adminShell?.className).toContain('tw:h-svh');
+    expect(adminShell?.className).toContain('tw:overflow-hidden');
     expect(header.className).toContain('tw:px-4');
     expect(document.querySelector('[data-slot="admin-header-card"]')?.className).toContain(
       'tw:h-16',
@@ -59,6 +62,7 @@ describe('AdminLayoutShell', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'داشبورد' })).toBeTruthy();
     expect(document.querySelector('[data-slot="admin-page-title-icon"]')).toBeTruthy();
     expect(screen.queryByText('خوش آمدید، مدیر ارشد')).toBeNull();
+    expect(screen.getByRole('button', { name: 'تغییر حالت نمایش: سیستم' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'خروج' })).toBeTruthy();
     const navigationToggle = screen.getByRole('button', { name: 'جمع کردن نوار مدیریت' });
     expect(navigationToggle.getAttribute('data-variant')).toBe('flat');
@@ -177,6 +181,7 @@ describe('AdminLayoutShell', () => {
       'محصولات',
       'حیوانات',
       'دسته‌بندی',
+      'برندها',
       'زیردسته‌بندی',
       'نژاد',
       'نوع حیوان',
@@ -191,6 +196,9 @@ describe('AdminLayoutShell', () => {
     );
     expect(adminNavigationItems.find(({ label }) => label === 'دسته‌بندی')?.href).toBe(
       routePaths.adminCategories,
+    );
+    expect(adminNavigationItems.find(({ label }) => label === 'برندها')?.href).toBe(
+      routePaths.adminBrands,
     );
     expect(adminNavigationItems.find(({ label }) => label === 'زیردسته‌بندی')?.href).toBe(
       routePaths.adminSubCategories,
@@ -209,6 +217,7 @@ describe('AdminLayoutShell', () => {
     fireEvent.click(screen.getByRole('button', { name: 'جمع کردن نوار مدیریت' }));
 
     expect(aside?.getAttribute('data-collapsed')).toBe('true');
+    expect(screen.queryByRole('button', { name: 'تغییر حالت نمایش: سیستم' })).toBeNull();
     expect(screen.getByRole('link', { name: 'سفارش‌ها' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'باز کردن نوار مدیریت' })).toBeTruthy();
   });

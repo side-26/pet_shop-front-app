@@ -10,6 +10,7 @@ import {
   Settings,
   ShoppingCart,
   Tags,
+  BadgeCheck,
   UsersRound,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -29,6 +30,7 @@ export const adminNavigationItems = [
   { label: 'محصولات', href: routePaths.adminProducts, icon: Package },
   { label: 'حیوانات', href: routePaths.adminPets, icon: PawPrint },
   { label: 'دسته‌بندی', href: routePaths.adminCategories, icon: Tags },
+  { label: 'برندها', href: routePaths.adminBrands, icon: BadgeCheck },
   { label: 'زیردسته‌بندی', href: routePaths.adminSubCategories, icon: FolderTree },
   { label: 'نژاد', href: routePaths.adminBreeds, icon: Dog },
   { label: 'نوع حیوان', href: routePaths.adminPetTypes, icon: PawPrint },

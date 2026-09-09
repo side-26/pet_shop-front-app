@@ -28,6 +28,7 @@ describe('AdminLayoutShell', () => {
     cy.get('aside').should('not.be.visible');
     cy.get('button[aria-label="باز کردن منوی مدیریت"]').should('be.visible').click();
     cy.get('[role="dialog"]').should('be.visible').and('contain.text', 'محصولات').and('be.focused');
+    cy.get('[role="dialog"]').find('button[aria-label="تغییر حالت نمایش: سیستم"]').should('exist');
     cy.get('body').type('{esc}');
     cy.get('[role="dialog"]').should('not.exist');
   });

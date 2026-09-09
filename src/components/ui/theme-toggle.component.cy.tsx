@@ -10,25 +10,42 @@ describe('ThemeToggle', () => {
     });
   });
 
-  it('persists and applies dark and light modes to the document', () => {
+  it('persists and applies dark and light modes from the appearance dropdown', () => {
     cy.mount(<ThemeToggle />);
 
-    cy.contains('button', 'تیره').click().should('have.attr', 'aria-pressed', 'true');
+    cy.contains('button', 'حالت نمایش: سیستم').click();
+    cy.get('[role="menuitemradio"][data-checked]').should('contain.text', 'سیستم');
+    cy.get('[role="menuitemradio"]').contains('تیره').click();
     cy.document().its('documentElement').should('have.class', 'dark');
     cy.window().its('localStorage').invoke('getItem', THEME_STORAGE_KEY).should('equal', 'dark');
 
-    cy.contains('button', 'روشن').click().should('have.attr', 'aria-pressed', 'true');
+    cy.contains('button', 'حالت نمایش: تیره').click();
+    cy.get('[role="menuitemradio"]').contains('روشن').click();
     cy.document().its('documentElement').should('not.have.class', 'dark');
     cy.document().its('documentElement.dataset.theme').should('equal', 'light');
   });
 
-  it('offers a compact accessible control for navigation surfaces', () => {
+  it('uses the system color scheme when system mode is selected', () => {
+    cy.mount(<ThemeToggle />);
+
+    cy.contains('button', 'حالت نمایش: سیستم').click();
+    cy.get('[role="menuitemradio"]').contains('تیره').click();
+    cy.contains('button', 'حالت نمایش: تیره').click();
+    cy.get('[role="menuitemradio"]').contains('سیستم').click();
+
+    cy.document().its('documentElement.dataset.theme').should('equal', 'system');
+    cy.window().its('localStorage').invoke('getItem', THEME_STORAGE_KEY).should('equal', 'system');
+  });
+
+  it('offers a compact appearance dropdown for navigation surfaces', () => {
     cy.window().then((window) => window.localStorage.setItem(THEME_STORAGE_KEY, 'light'));
     cy.mount(<ThemeToggle variant="icon" />);
 
-    cy.get('button[aria-label="فعال‌سازی حالت تیره"]').click();
+    cy.get('button[aria-label="تغییر حالت نمایش: روشن"]').click();
+    cy.get('[role="menuitemradio"]').contains('تیره').click();
     cy.document().its('documentElement').should('have.class', 'dark');
-    cy.get('button[aria-label="فعال‌سازی حالت روشن"]').click();
-    cy.document().its('documentElement').should('not.have.class', 'dark');
+    cy.get('button[aria-label="تغییر حالت نمایش: تیره"]').click();
+    cy.get('[role="menuitemradio"]').contains('سیستم').click();
+    cy.document().its('documentElement.dataset.theme').should('equal', 'system');
   });
 });

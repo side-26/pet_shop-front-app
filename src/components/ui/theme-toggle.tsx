@@ -4,7 +4,15 @@ import { Monitor, Moon, Sun } from 'lucide-react';
 import { useEffect, useState, useSyncExternalStore } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { ButtonGroup } from '@/components/ui/button-group';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { THEME_STORAGE_KEY, type ThemePreference } from '@/components/ui/theme.helpers';
 
 const themeOptions = [
@@ -48,75 +56,79 @@ function setThemePreference(theme: ThemePreference) {
 }
 
 type ThemeToggleProps = Readonly<{
-  variant?: 'segmented' | 'icon';
+  variant?: 'dropdown' | 'icon';
 }>;
 
-function ThemeToggle({ variant = 'segmented' }: ThemeToggleProps) {
+function ThemeToggle({ variant = 'dropdown' }: ThemeToggleProps) {
   const theme = useSyncExternalStore<ThemePreference>(
     subscribeToTheme,
     getThemeSnapshot,
     () => 'system',
   );
-  const [isDark, setIsDark] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const colorScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const colorScheme = window.matchMedia?.('(prefers-color-scheme: dark)');
     const syncTheme = () => {
-      const nextIsDark = theme === 'dark' || (theme === 'system' && colorScheme.matches);
-      applyTheme(theme, colorScheme.matches);
-      setIsDark(nextIsDark);
+      const prefersDark = colorScheme?.matches ?? false;
+      applyTheme(theme, prefersDark);
     };
 
     syncTheme();
 
-    if (theme === 'system') colorScheme.addEventListener('change', syncTheme);
-    return () => colorScheme.removeEventListener('change', syncTheme);
+    if (theme === 'system') colorScheme?.addEventListener('change', syncTheme);
+    return () => colorScheme?.removeEventListener('change', syncTheme);
   }, [theme]);
 
-  if (variant === 'icon') {
-    const Icon = isDark ? Sun : Moon;
-    const label = isDark ? 'فعال‌سازی حالت روشن' : 'فعال‌سازی حالت تیره';
-
-    return (
-      <Button
-        type="button"
-        size="lg"
-        variant="flat"
-        color="primary"
-        iconOnly
-        aria-label={label}
-        title={label}
-        onClick={() => setThemePreference(isDark ? 'light' : 'dark')}
-      >
-        <Icon aria-hidden="true" />
-      </Button>
-    );
-  }
+  const activeTheme = themeOptions.find(({ value }) => value === theme) ?? themeOptions[2];
+  const ActiveThemeIcon = activeTheme.icon;
+  const isIconOnly = variant === 'icon';
+  const triggerLabel = `تغییر حالت نمایش: ${activeTheme.label}`;
 
   return (
-    <div className="tw:flex tw:flex-col tw:gap-2" aria-label="انتخاب حالت نمایش">
-      <span className="tw:text-label-s tw:text-muted-foreground">حالت نمایش</span>
-      <ButtonGroup aria-label="حالت نمایش">
-        {themeOptions.map(({ value, label, icon: Icon }) => {
-          const isActive = theme === value;
-
-          return (
-            <Button
-              key={value}
-              type="button"
-              size="sm"
-              variant={isActive ? 'fill' : 'outlined'}
-              color="primary"
-              aria-pressed={isActive}
-              onClick={() => setThemePreference(value)}
-            >
-              <Icon aria-hidden="true" />
-              {label}
-            </Button>
-          );
-        })}
-      </ButtonGroup>
-    </div>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            type="button"
+            size="sm"
+            variant="flat"
+            color="secondary"
+            block={!isIconOnly}
+            iconOnly={isIconOnly}
+            aria-label={isIconOnly ? triggerLabel : undefined}
+            title={isIconOnly ? triggerLabel : undefined}
+            className={isIconOnly ? 'tw:shrink-0' : undefined}
+          />
+        }
+      >
+        <ActiveThemeIcon data-icon="inline-start" aria-hidden="true" />
+        {isIconOnly ? null : <>حالت نمایش: {activeTheme.label}</>}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="start"
+        side={isIconOnly ? 'bottom' : 'top'}
+        className="tw:min-w-36"
+      >
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>حالت نمایش</DropdownMenuLabel>
+          <DropdownMenuRadioGroup
+            value={theme}
+            onValueChange={(value) => {
+              setThemePreference(value as ThemePreference);
+              setIsOpen(false);
+            }}
+          >
+            {themeOptions.map(({ value, label, icon: Icon }) => (
+              <DropdownMenuRadioItem key={value} value={value}>
+                <Icon aria-hidden="true" />
+                {label}
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 

@@ -33,9 +33,9 @@ export function CategoriesTable({ categories, petTypes = [], isSkeleton = false 
         isSkeleton && 'skeleton tw:pointer-events-none tw:select-none',
       )}
     >
-      <div className="tw:min-h-0 tw:flex-1 tw:overflow-auto tw:rounded-2xl tw:border tw:border-border">
+      <div className="tw:min-h-0 tw:flex-1 tw:overflow-auto tw:rounded-2xl tw:border tw:border-border tw:[&>[data-slot=table-container]]:overflow-visible">
         <Table>
-          <TableHeader>
+          <TableHeader className="tw:[&_[data-slot=table-head]]:sticky tw:[&_[data-slot=table-head]]:top-0 tw:[&_[data-slot=table-head]]:z-10 tw:[&_[data-slot=table-head]]:bg-background">
             <TableRow>
               <TableHead className="tw:w-16">
                 <div>

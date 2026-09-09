@@ -188,15 +188,15 @@ Component Testing.
 `Avatar` composes Base UI Avatar with `size="sm|default|lg"`, defaulting to `default`.
 Always provide `AvatarFallback`; use `AvatarBadge` for a separately named status when needed.
 
-`Price` accepts a numeric `number`, `prefix="$|ریال|تومان"`, and root
-`className`. It formats values with Persian thousands separators, isolates the
-numeric run as LTR, places `$` before the number, and places rial/toman after it.
+`Price` accepts a numeric `number` and root `className`. It formats values with
+Persian thousands separators, isolates the numeric run as LTR, and always places
+the application currency label from `configs/currency.ts` after it.
 
 `PriceMask` is an editable LTR numeric input that displays Latin digits grouped
 in threes while exposing an unformatted `number | null` through `onValueChange`.
-It accepts Persian, Arabic, or Latin input digits, defaults to a `ریال` prefix
+It accepts Persian, Arabic, or Latin input digits, defaults to the application currency prefix
 with typography smaller than the numeric value at every size, and a dollar-sign
-postfix icon. It supports custom adornments. `PriceMaskField`
+postfix icon. It supports a custom postfix adornment. `PriceMaskField`
 adds the shared label, persistent hint/error region, React Hook Form controller,
 disabled state, semantic color, and `xs|sm|md|lg|xl` sizing contract.
 
@@ -513,10 +513,10 @@ fixed-size action controls and counter group remain stable; reduced motion disab
 
 `ThemeToggle` provides `light|dark|system` appearance modes. It persists the
 preference under `petshop-theme`, applies `.dark` to the root element, and keeps
-the browser `color-scheme` synchronized. Use the default `segmented` variant
-when all three preferences must remain visible and `variant="icon"` on compact
-navigation surfaces; the icon variant toggles the resolved light/dark mode with
-an accessible action label. All primitives must use semantic color
+the browser `color-scheme` synchronized. Its default `dropdown` variant uses a
+radio-style menu; `variant="icon"` presents the same three choices behind a
+compact, accessible icon trigger for account/profile navigation. Hide that
+trigger when a navigation rail is collapsed. All primitives must use semantic color
 tokens so the existing light and dark token maps theme components and portalled
 surfaces consistently; do not add component-local hardcoded dark colors.
 

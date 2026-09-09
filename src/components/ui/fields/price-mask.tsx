@@ -5,6 +5,7 @@ import { forwardRef, useState, type ChangeEvent, type ReactNode, type Ref } from
 import { tv, type VariantProps } from 'tailwind-variants';
 
 import { Input, type InputProps } from '@/components/ui/fields/input';
+import { APP_CURRENCY } from '@/configs/currency';
 import { cn } from '@/lib/utils';
 
 const priceMaskVariants = tv({
@@ -96,7 +97,6 @@ type PriceMaskProps = Omit<
     onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
     onValueChange?: (value: number | null) => void;
     postfixIcon?: ReactNode;
-    prefix?: ReactNode;
     value?: number | null;
   };
 
@@ -107,7 +107,6 @@ function PriceMaskInner(
     onChange,
     onValueChange,
     postfixIcon = <DollarSign aria-hidden="true" />,
-    prefix = 'ریال',
     size = 'md',
     value,
     ...props
@@ -134,7 +133,7 @@ function PriceMaskInner(
   return (
     <div data-slot="price-mask" dir="ltr" className={styles.root()}>
       <span aria-hidden="true" data-slot="price-mask-prefix" className={styles.prefix()}>
-        {prefix}
+        {APP_CURRENCY}
       </span>
       <Input
         {...props}

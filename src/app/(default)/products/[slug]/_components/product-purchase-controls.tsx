@@ -36,10 +36,9 @@ export function ProductPurchaseControls({
           <div className="tw:flex tw:flex-col tw:gap-1">
             <Price
               number={previousPrice}
-              prefix="تومان"
               className="tw:text-label-s tw:text-muted-foreground tw:line-through"
             />
-            <Price number={price} prefix="تومان" className="tw:text-price-m tw:text-primary" />
+            <Price number={price} className="tw:text-price-m tw:text-primary" />
           </div>
           <span className="tw:text-label-s tw:text-error">
             تنها {stock.toLocaleString('fa-IR')} عدد باقیست!
@@ -51,7 +50,6 @@ export function ProductPurchaseControls({
         {!isDesktop ? (
           <Price
             number={price}
-            prefix="تومان"
             className="tw:hidden tw:text-price-s tw:text-primary tw:sm:inline-flex"
           />
         ) : null}

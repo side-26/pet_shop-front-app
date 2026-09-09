@@ -77,7 +77,7 @@ export function DashboardContentRenderer({
     <section
       aria-busy={isSkeleton || undefined}
       className={cn(
-        'tw:flex tw:min-h-0 tw:flex-col tw:gap-4 tw:sm:gap-6',
+        'tw:flex tw:min-h-0 tw:flex-auto tw:flex-col tw:gap-4 tw:overflow-y-auto tw:overscroll-contain tw:sm:gap-6',
         isSkeleton && 'skeleton tw:pointer-events-none tw:select-none',
       )}
     >
@@ -98,7 +98,7 @@ export function DashboardContentRenderer({
         <MetricCard
           icon={ChartNoAxesCombinedIcon}
           label="فروش خالص"
-          value={<Price number={summary.netRevenue} prefix="تومان" />}
+          value={<Price number={summary.netRevenue} />}
           description="پس از تخفیف و هزینه ارسال"
         />
         <MetricCard
@@ -110,7 +110,7 @@ export function DashboardContentRenderer({
         <MetricCard
           icon={PackageCheckIcon}
           label="میانگین سفارش"
-          value={<Price number={summary.averageOrderValue} prefix="تومان" />}
+          value={<Price number={summary.averageOrderValue} />}
           description="ارزش متوسط هر سفارش"
         />
       </div>
@@ -237,7 +237,7 @@ export function DashboardContentRenderer({
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Price number={order.totalPrice} prefix="تومان" />
+                    <Price number={order.totalPrice} />
                   </TableCell>
                   <TableCell>{formatDate(order.createdAt)}</TableCell>
                 </TableRow>
