@@ -57,15 +57,21 @@ describe('Pet landing page', () => {
     }
   });
 
-  it('uses canonical pet-list navigation and an accessible RTL adoption carousel', () => {
+  it('uses a non-interactive category skeleton and an accessible RTL adoption carousel', () => {
     render(<PetLandingPage />);
 
     expect(screen.getByRole('link', { name: /شروع جستجو/ }).getAttribute('href')).toBe(
       routePaths.petsList,
     );
-    expect(screen.getByRole('link', { name: 'مشاهده سگ‌ها' }).getAttribute('href')).toBe(
-      routePaths.petsList,
-    );
+    const petTypesSection = document.getElementById('pet-types');
+    if (!petTypesSection) throw new Error('Pet types section was not rendered.');
+    const petTypesSkeleton = petTypesSection.querySelector('[aria-roledescription="carousel"]');
+    expect(petTypesSkeleton).toBeTruthy();
+    expect(
+      within(petTypesSkeleton as HTMLElement)
+        .getAllByRole('link')
+        .every((link) => link.getAttribute('tabindex') === '-1'),
+    ).toBe(true);
     expect(screen.getByRole('link', { name: 'مشاهده مکس' }).getAttribute('href')).toBe(
       routePaths.petsList,
     );

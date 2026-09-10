@@ -1,10 +1,4 @@
-import { Bird, Cat, Dog, Fish, Shapes, Snail, type LucideIcon } from 'lucide-react';
-
-type PetType = Readonly<{
-  name: string;
-  icon: LucideIcon;
-  color: 'primary' | 'secondary' | 'info' | 'success' | 'warning';
-}>;
+import { type LucideIcon } from 'lucide-react';
 
 export type PopularPet = Readonly<{
   name: string;
@@ -20,15 +14,6 @@ export type RehomingPet = Readonly<{
   image: string;
   imageAlt: string;
 }>;
-
-export const petTypes: readonly PetType[] = [
-  { name: 'سگ‌ها', icon: Dog, color: 'primary' },
-  { name: 'گربه‌ها', icon: Cat, color: 'secondary' },
-  { name: 'پرندگان', icon: Bird, color: 'info' },
-  { name: 'ماهی‌ها', icon: Fish, color: 'success' },
-  { name: 'خزندگان', icon: Snail, color: 'warning' },
-  { name: 'سایر', icon: Shapes, color: 'primary' },
-] as const;
 
 export const popularPets: readonly PopularPet[] = [
   {
@@ -87,11 +72,3 @@ export const rehomingPets: readonly RehomingPet[] = [
     imageAlt: 'پیکو، توله سگ میکس بیگل آماده واگذاری',
   },
 ] as const;
-
-export const petTypeIconStyles = {
-  primary: 'tw:bg-primary-muted tw:text-primary-muted-foreground',
-  secondary: 'tw:bg-secondary-muted tw:text-secondary-muted-foreground',
-  info: 'tw:bg-info-muted tw:text-info-muted-foreground',
-  success: 'tw:bg-success-muted tw:text-success-muted-foreground',
-  warning: 'tw:bg-warning-muted tw:text-warning-muted-foreground',
-} as const;

@@ -1,12 +1,14 @@
-import Link from 'next/link';
+import { Suspense } from 'react';
 
-import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { routePaths } from '@/configs/route.path';
-import { cn } from '@/lib/utils';
+import { getAllLandingPetTypes } from '@/entities/landing/landing.service';
 
-import { petTypeIconStyles, petTypes } from './pet-landing-data';
+import { PetTypesSectionContainer } from './pet-types-section-container';
+import { PetTypesSectionRenderer } from './pet-types-section-renderer';
+import { petTypesSectionSkeletonData } from './pet-types-section-skeleton-data';
 
 export function PetTypesSection() {
+  const petTypesPromise = getAllLandingPetTypes();
+
   return (
     <section
       id="pet-types"
@@ -22,30 +24,11 @@ export function PetTypesSection() {
         </p>
       </div>
 
-      <div className="tw:grid tw:grid-cols-2 tw:gap-4 tw:sm:grid-cols-3 tw:lg:grid-cols-6">
-        {petTypes.map(({ name, icon: Icon, color }) => (
-          <Link
-            key={name}
-            href={routePaths.petsList}
-            aria-label={`مشاهده ${name}`}
-            className="tw:rounded-3xl tw:outline-none tw:focus-visible:ring-3 tw:focus-visible:ring-primary/25"
-          >
-            <Card variant="outlined" size="sm" className="tw:h-full tw:min-h-36 tw:justify-center">
-              <CardHeader className="tw:items-center tw:text-center">
-                <span
-                  className={cn(
-                    'tw:flex tw:size-16 tw:items-center tw:justify-center tw:rounded-full tw:md:size-20',
-                    petTypeIconStyles[color],
-                  )}
-                >
-                  <Icon aria-hidden="true" className="tw:size-8 tw:md:size-10" />
-                </span>
-                <CardTitle className="tw:mt-2 tw:text-label-m tw:md:text-title-l">{name}</CardTitle>
-              </CardHeader>
-            </Card>
-          </Link>
-        ))}
-      </div>
+      <Suspense
+        fallback={<PetTypesSectionRenderer petTypes={petTypesSectionSkeletonData} isSkeleton />}
+      >
+        <PetTypesSectionContainer petTypesPromise={petTypesPromise} />
+      </Suspense>
     </section>
   );
 }

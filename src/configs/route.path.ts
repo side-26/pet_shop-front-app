@@ -33,6 +33,8 @@ export const routePaths = {
   home: PATHS.HOME,
   pets: PATHS.PETS,
   petsList: PATHS.PETS_LIST,
+  petsListByPetType: (petTypeId: string) =>
+    `${PATHS.PETS_LIST}?petType=${encodeURIComponent(petTypeId)}`,
   petDetail: (slug: string) => `${PATHS.PETS}/${encodeURIComponent(slug)}`,
   products: PATHS.PRODUCTS,
   productsList: PATHS.PRODUCTS_LIST,
