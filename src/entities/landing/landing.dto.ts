@@ -11,6 +11,17 @@ export type LandingPetTypeDTO = {
   summary?: string;
 };
 
+export type LandingPetDTO = {
+  id: string;
+  title: string;
+  slug: string;
+  mainImage: string;
+  mainImageThumbnail?: string;
+  petType: string;
+  breed: string;
+  price: number;
+};
+
 export type LandingProductDTO = {
   id: string;
   title: string;

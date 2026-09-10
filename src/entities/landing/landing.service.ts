@@ -5,6 +5,7 @@ import { EntityTag } from '@/utils/entityCache';
 
 import type {
   LandingDiscountLimitDTO,
+  LandingPetDTO,
   LandingPetDetailDTO,
   LandingPetTypeDTO,
   LandingProductDetailDTO,
@@ -65,6 +66,10 @@ export async function getDiscountedLandingProducts(input: Partial<LandingDiscoun
 
 export function getPopularLandingProducts() {
   return fetchLandingList<LandingProductDTO[]>('/landing/products/popular', 'products:popular');
+}
+
+export function getPopularLandingPets() {
+  return fetchLandingList<LandingPetDTO[]>('/landing/pets/popular', 'pets:popular');
 }
 
 export async function getLandingPetBySlug(input: LandingSlugDTO['slug']) {

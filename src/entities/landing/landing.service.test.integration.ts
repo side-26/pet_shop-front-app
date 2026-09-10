@@ -9,6 +9,7 @@ import {
   getFeaturedLandingPetTypes,
   getLandingPetBySlug,
   getLandingProductBySlug,
+  getPopularLandingPets,
   getPopularLandingProducts,
 } from './landing.service';
 
@@ -51,6 +52,7 @@ describe('landing service', () => {
     await getAllLandingPetTypes();
     await getDiscountedLandingProducts({ limit: 2 });
     await getPopularLandingProducts();
+    await getPopularLandingPets();
 
     expect(fetcher.mock.calls.map(([options]) => options)).toEqual(
       expect.arrayContaining([
@@ -71,9 +73,14 @@ describe('landing service', () => {
           auth: false,
           cache: 'force-cache',
         }),
+        expect.objectContaining({
+          url: '/landing/pets/popular',
+          auth: false,
+          cache: 'force-cache',
+        }),
       ]),
     );
-    expect(mocks.registerList).toHaveBeenCalledTimes(4);
+    expect(mocks.registerList).toHaveBeenCalledTimes(5);
   });
 
   it('exposes the API-calculated discount amount for product sections', async () => {

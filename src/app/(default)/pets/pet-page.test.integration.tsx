@@ -52,8 +52,11 @@ describe('Pet landing page', () => {
     expect(screen.getByRole('heading', { name: 'پرطرفدارترین حیوانات' })).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'حیوانات آماده واگذاری' })).toBeTruthy();
 
-    for (const name of ['مکس', 'برفی', 'تدی', 'پشمک', 'فندق', 'نبات', 'طوطی', 'پیکو']) {
+    for (const name of ['فندق', 'نبات', 'طوطی', 'پیکو']) {
       expect(screen.getByRole('heading', { name })).toBeTruthy();
+    }
+    for (const name of ['حیوان اول', 'حیوان دوم', 'حیوان سوم', 'حیوان چهارم']) {
+      expect(screen.getAllByRole('heading', { name })).toHaveLength(2);
     }
   });
 
@@ -72,9 +75,21 @@ describe('Pet landing page', () => {
         .getAllByRole('link')
         .every((link) => link.getAttribute('tabindex') === '-1'),
     ).toBe(true);
-    expect(screen.getByRole('link', { name: 'مشاهده مکس' }).getAttribute('href')).toBe(
-      routePaths.petsList,
-    );
+    const popularPetsSection = screen
+      .getByRole('heading', { name: 'پرطرفدارترین حیوانات' })
+      .closest('section');
+    if (!popularPetsSection) throw new Error('Popular pets section was not rendered.');
+    const popularPetsCarousel = within(popularPetsSection).getByRole('region', {
+      name: 'حیوانات پرطرفدار',
+    });
+    const popularPetsFallback = popularPetsSection.querySelector('[aria-busy="true"]');
+    if (!popularPetsFallback) throw new Error('Popular pets fallback was not rendered.');
+    expect(within(popularPetsCarousel).getAllByRole('group')).toHaveLength(4);
+    expect(
+      within(popularPetsFallback as HTMLElement)
+        .getAllByRole('link')
+        .every((link) => link.getAttribute('tabindex') === '-1'),
+    ).toBe(true);
 
     const carousel = screen
       .getAllByRole('region', { name: 'حیوانات آماده واگذاری' })
