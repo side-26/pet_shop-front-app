@@ -44,6 +44,7 @@ import { RangedDatePickerShowcase } from './ranged-date-picker-showcase';
 import { TimeSelectorShowcase } from './time-selector-showcase';
 import { ComboboxShowcase } from './combobox-showcase';
 import { VirtualSelectShowcase } from './virtual-select-showcase';
+import { ApiSectionErrorFallbackShowcase } from './api-section-error-fallback-showcase';
 
 const navigation = [
   ['#avatars', 'Avatar'],
@@ -90,6 +91,7 @@ const navigation = [
   ['#countdowns', 'Countdown'],
   ['#counters', 'Counter'],
   ['#empty-states', 'Empty'],
+  ['#api-section-error-fallback', 'API Section Error Fallback'],
 ] as const;
 
 export function UiComponentsGallery() {
@@ -172,6 +174,7 @@ export function UiComponentsGallery() {
         <CountdownShowcase />
         <CounterShowcase />
         <EmptyShowcase />
+        <ApiSectionErrorFallbackShowcase />
       </div>
     </main>
   );

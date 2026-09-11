@@ -341,6 +341,14 @@ Codex/Claude Code must:
 
 ## Form dialog content
 
+## API section error fallback
+
+`ApiSectionErrorFallback` is the shared client-side fallback for a failed API-backed content
+section. Supply its required `onRetry` callback with the narrow data-boundary recovery action
+(such as Next.js error-boundary `retry`); it keeps that retry separate from the built-in hard page
+reload action. It composes the shared glass `Card` and `Button` primitives, uses a visible error
+icon and title, and labels both recovery actions in Persian.
+
 `FormDialogContent` composes `DialogContent` with a filled `Card`, a `CardHeader` containing the
 required `DialogTitle`, a customizable `CardContent`, and a `CardFooter` action row. The submit
 button is `fill + primary`, supports an optional external `formId`, owns Button loading through
