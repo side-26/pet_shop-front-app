@@ -7,6 +7,7 @@ import { routePaths } from '@/configs/route.path';
 import { getPopularLandingPets } from '@/entities/landing/landing.service';
 
 import { PopularPetsSectionContainer } from './popular-pets-section-container';
+import { PopularPetsSectionErrorBoundary } from './popular-pets-section-error-boundary';
 import { PopularPetsSectionRenderer } from './popular-pets-section-renderer';
 import { popularPetsSectionSkeletonData } from './popular-pets-section-skeleton-data';
 
@@ -31,7 +32,9 @@ export function PopularPetsSection() {
       <Suspense
         fallback={<PopularPetsSectionRenderer pets={popularPetsSectionSkeletonData} isSkeleton />}
       >
-        <PopularPetsSectionContainer petsPromise={petsPromise} />
+        <PopularPetsSectionErrorBoundary>
+          <PopularPetsSectionContainer petsPromise={petsPromise} />
+        </PopularPetsSectionErrorBoundary>
       </Suspense>
     </section>
   );

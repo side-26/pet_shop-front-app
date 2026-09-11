@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
@@ -7,6 +7,14 @@ import type { LandingPetDTO } from '@/entities/landing/landing.dto';
 import { PopularPetsSectionContainer } from './popular-pets-section-container';
 import { PopularPetsSectionRenderer } from './popular-pets-section-renderer';
 import { popularPetsSectionSkeletonData } from './popular-pets-section-skeleton-data';
+
+const { retryLandingPopularPetsActionMock } = vi.hoisted(() => ({
+  retryLandingPopularPetsActionMock: vi.fn(),
+}));
+
+vi.mock('@/entities/landing/landing.actions', () => ({
+  retryLandingPopularPetsAction: retryLandingPopularPetsActionMock,
+}));
 
 const pet: LandingPetDTO = {
   id: 'pet-1',
@@ -96,6 +104,8 @@ describe('PopularPetsSection', () => {
     const { rerender } = render(error);
 
     expect(screen.getByText('دریافت حیوانات پرطرفدار انجام نشد')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'دریافت دوباره اطلاعات' }));
+    expect(retryLandingPopularPetsActionMock).toHaveBeenCalledOnce();
     rerender(empty);
     expect(screen.getByText('حیوان پرطرفداری برای نمایش وجود ندارد')).toBeTruthy();
   });
