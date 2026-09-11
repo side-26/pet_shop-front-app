@@ -343,7 +343,7 @@ Codex/Claude Code must:
 
 ## API section error fallback
 
-`SectionFetchError` is the shared client-side fallback for a failed API-backed content
+`FetchErrorSectionBoundary` is the shared client-side fallback for a failed API-backed content
 section. Supply its required `onRetry` callback with the narrow data-boundary recovery action
 (such as Next.js error-boundary `retry`); it keeps that retry separate from the built-in hard page
 reload action. It composes the shared glass `Card` and `Button` primitives, uses a visible error

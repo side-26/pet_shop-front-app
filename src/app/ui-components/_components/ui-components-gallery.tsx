@@ -44,7 +44,7 @@ import { RangedDatePickerShowcase } from './ranged-date-picker-showcase';
 import { TimeSelectorShowcase } from './time-selector-showcase';
 import { ComboboxShowcase } from './combobox-showcase';
 import { VirtualSelectShowcase } from './virtual-select-showcase';
-import { SectionFetchErrorShowcase } from './section-fetch-error-showcase';
+import { FetchErrorSectionBoundaryShowcase } from './fetch-error-section-boundary-showcase';
 
 const navigation = [
   ['#avatars', 'Avatar'],
@@ -91,7 +91,7 @@ const navigation = [
   ['#countdowns', 'Countdown'],
   ['#counters', 'Counter'],
   ['#empty-states', 'Empty'],
-  ['#section-fetch-error', 'Section Fetch Error'],
+  ['#fetch-error-section-boundary', 'Fetch Error Section Boundary'],
 ] as const;
 
 export function UiComponentsGallery() {
@@ -174,7 +174,7 @@ export function UiComponentsGallery() {
         <CountdownShowcase />
         <CounterShowcase />
         <EmptyShowcase />
-        <SectionFetchErrorShowcase />
+        <FetchErrorSectionBoundaryShowcase />
       </div>
     </main>
   );

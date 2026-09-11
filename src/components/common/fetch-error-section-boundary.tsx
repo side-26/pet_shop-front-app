@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-type SectionFetchErrorProps = Readonly<{
+type FetchErrorSectionBoundaryProps = Readonly<{
   className?: string;
   description?: ReactNode;
   icon?: LucideIcon;
@@ -29,13 +29,13 @@ type SectionFetchErrorProps = Readonly<{
  * `retry` from an error boundary). The page reload action intentionally performs
  * a hard browser reload to recover from broader stale-client or route failures.
  */
-function SectionFetchError({
+function FetchErrorSectionBoundary({
   className,
   description = 'دریافت اطلاعات این بخش با مشکل روبه‌رو شد. دوباره تلاش کنید.',
   icon: Icon = RefreshCw,
   onRetry,
   title = 'بارگذاری اطلاعات انجام نشد',
-}: SectionFetchErrorProps) {
+}: FetchErrorSectionBoundaryProps) {
   const [isRetrying, startRetryTransition] = useTransition();
 
   function handleRetry() {
@@ -87,4 +87,4 @@ function SectionFetchError({
   );
 }
 
-export { SectionFetchError, type SectionFetchErrorProps };
+export { FetchErrorSectionBoundary, type FetchErrorSectionBoundaryProps };

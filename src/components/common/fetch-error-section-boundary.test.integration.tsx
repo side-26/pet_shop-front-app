@@ -1,14 +1,14 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { SectionFetchError } from './section-fetch-error';
+import { FetchErrorSectionBoundary } from './fetch-error-section-boundary';
 
 afterEach(cleanup);
 
-describe('SectionFetchError', () => {
+describe('FetchErrorSectionBoundary', () => {
   it('renders an accessible glass error fallback with customizable content', () => {
     render(
-      <SectionFetchError
+      <FetchErrorSectionBoundary
         description="فهرست نژادها در دسترس نیست."
         onRetry={vi.fn()}
         title="خطا در دریافت نژادها"
@@ -26,7 +26,7 @@ describe('SectionFetchError', () => {
   it('uses the supplied recovery callback to retry only the failed data request', () => {
     const onRetry = vi.fn();
 
-    render(<SectionFetchError onRetry={onRetry} />);
+    render(<FetchErrorSectionBoundary onRetry={onRetry} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'دریافت دوباره اطلاعات' }));
     expect(onRetry).toHaveBeenCalledOnce();

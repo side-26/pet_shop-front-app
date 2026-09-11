@@ -2,20 +2,20 @@
 
 import { useState } from 'react';
 
-import { SectionFetchError } from '@/components/common/section-fetch-error';
+import { FetchErrorSectionBoundary } from '@/components/common/fetch-error-section-boundary';
 
 import { ShowcaseSection } from './showcase-section';
 
-export function SectionFetchErrorShowcase() {
+export function FetchErrorSectionBoundaryShowcase() {
   const [retryCount, setRetryCount] = useState(0);
 
   return (
     <ShowcaseSection
-      id="section-fetch-error"
-      title="Section Fetch Error"
+      id="fetch-error-section-boundary"
+      title="Fetch Error Section Boundary"
       description="بازیابی بخش‌های وابسته به API با اقدام مستقل برای دریافت دوباره داده یا بارگذاری کامل صفحه."
     >
-      <SectionFetchError
+      <FetchErrorSectionBoundary
         description={
           retryCount === 0
             ? 'فهرست نژادها در دسترس نیست. دوباره تلاش کنید.'
