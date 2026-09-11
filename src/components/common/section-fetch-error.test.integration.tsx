@@ -1,14 +1,14 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { ApiSectionErrorFallback } from './api-section-error-fallback';
+import { SectionFetchError } from './section-fetch-error';
 
 afterEach(cleanup);
 
-describe('ApiSectionErrorFallback', () => {
+describe('SectionFetchError', () => {
   it('renders an accessible glass error fallback with customizable content', () => {
     render(
-      <ApiSectionErrorFallback
+      <SectionFetchError
         description="فهرست نژادها در دسترس نیست."
         onRetry={vi.fn()}
         title="خطا در دریافت نژادها"
@@ -26,7 +26,7 @@ describe('ApiSectionErrorFallback', () => {
   it('uses the supplied recovery callback to retry only the failed data request', () => {
     const onRetry = vi.fn();
 
-    render(<ApiSectionErrorFallback onRetry={onRetry} />);
+    render(<SectionFetchError onRetry={onRetry} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'دریافت دوباره اطلاعات' }));
     expect(onRetry).toHaveBeenCalledOnce();

@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-type ApiSectionErrorFallbackProps = Readonly<{
+type SectionFetchErrorProps = Readonly<{
   className?: string;
   description?: ReactNode;
   icon?: LucideIcon;
@@ -29,13 +29,13 @@ type ApiSectionErrorFallbackProps = Readonly<{
  * `retry` from an error boundary). The page reload action intentionally performs
  * a hard browser reload to recover from broader stale-client or route failures.
  */
-function ApiSectionErrorFallback({
+function SectionFetchError({
   className,
   description = 'دریافت اطلاعات این بخش با مشکل روبه‌رو شد. دوباره تلاش کنید.',
   icon: Icon = RefreshCw,
   onRetry,
   title = 'بارگذاری اطلاعات انجام نشد',
-}: ApiSectionErrorFallbackProps) {
+}: SectionFetchErrorProps) {
   const [isRetrying, startRetryTransition] = useTransition();
 
   function handleRetry() {
@@ -87,4 +87,4 @@ function ApiSectionErrorFallback({
   );
 }
 
-export { ApiSectionErrorFallback, type ApiSectionErrorFallbackProps };
+export { SectionFetchError, type SectionFetchErrorProps };
