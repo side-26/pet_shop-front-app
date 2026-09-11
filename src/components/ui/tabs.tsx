@@ -1,7 +1,7 @@
 'use client';
 
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs';
-import * as React from 'react';
+import { createContext, useContext } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';
@@ -63,7 +63,7 @@ type TabsStyleProps = {
   size?: NonNullable<VariantProps<typeof tabsTriggerVariants>['size']>;
 };
 
-const TabsContext = React.createContext<Required<TabsStyleProps>>({ color: 'primary', size: 'md' });
+const TabsContext = createContext<Required<TabsStyleProps>>({ color: 'primary', size: 'md' });
 
 type TabsProps = TabsPrimitive.Root.Props & TabsStyleProps;
 
@@ -97,7 +97,7 @@ function Tabs({
 type TabsListProps = TabsPrimitive.List.Props &
   Pick<VariantProps<typeof tabsListVariants>, 'variant'>;
 function TabsList({ className, variant = 'default', ...props }: TabsListProps) {
-  const { size } = React.useContext(TabsContext);
+  const { size } = useContext(TabsContext);
   return (
     <TabsPrimitive.List
       {...props}
@@ -115,7 +115,7 @@ function TabsList({ className, variant = 'default', ...props }: TabsListProps) {
 
 type TabsTriggerProps = TabsPrimitive.Tab.Props;
 function TabsTrigger({ className, ...props }: TabsTriggerProps) {
-  const { color, size } = React.useContext(TabsContext);
+  const { color, size } = useContext(TabsContext);
   return (
     <TabsPrimitive.Tab
       {...props}

@@ -2,7 +2,8 @@
 
 import { useVirtualizer } from '@tanstack/react-virtual';
 import type { Select as SelectPrimitive } from '@base-ui/react/select';
-import * as React from 'react';
+import { createContext, useCallback, useContext, useMemo, useRef } from 'react';
+import type * as React from 'react';
 
 import {
   Select,
@@ -58,10 +59,10 @@ type VirtualSelectContextValue = {
   items: readonly VirtualSelectOption<unknown>[];
 };
 
-const VirtualSelectContext = React.createContext<VirtualSelectContextValue | null>(null);
+const VirtualSelectContext = createContext<VirtualSelectContextValue | null>(null);
 
 function useVirtualSelectContext<Value>() {
-  const context = React.useContext(VirtualSelectContext);
+  const context = useContext(VirtualSelectContext);
 
   if (!context) {
     throw new Error('VirtualSelect components must be used inside <VirtualSelect>.');
@@ -81,9 +82,9 @@ function VirtualSelect<Value, Multiple extends boolean | undefined = false>({
   itemToStringLabel,
   ...props
 }: VirtualSelectProps<Value, Multiple>) {
-  const itemMap = React.useMemo(() => new Map(items.map((item) => [item.value, item])), [items]);
+  const itemMap = useMemo(() => new Map(items.map((item) => [item.value, item])), [items]);
 
-  const getItemLabel = React.useCallback(
+  const getItemLabel = useCallback(
     (value: Value) => {
       if (itemToStringLabel) {
         return itemToStringLabel(value);
@@ -100,7 +101,7 @@ function VirtualSelect<Value, Multiple extends boolean | undefined = false>({
     [itemMap, itemToStringLabel],
   );
 
-  const contextValue = React.useMemo<VirtualSelectContextValue>(
+  const contextValue = useMemo<VirtualSelectContextValue>(
     () => ({
       items: items as readonly VirtualSelectOption<unknown>[],
     }),
@@ -174,13 +175,13 @@ function VirtualSelectList<Value>({
   overscan,
   renderItem,
 }: VirtualSelectListProps<Value>) {
-  const parentRef = React.useRef<HTMLDivElement>(null);
+  const parentRef = useRef<HTMLDivElement>(null);
 
   const safeVisibleItemCount = Math.max(1, visibleItemCount);
 
   const viewportHeight = safeVisibleItemCount * itemHeight;
 
-  const getItemKey = React.useCallback(
+  const getItemKey = useCallback(
     (index: number) => {
       const value = items[index]?.value;
 

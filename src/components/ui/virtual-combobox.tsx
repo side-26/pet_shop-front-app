@@ -2,7 +2,8 @@
 
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Combobox as ComboboxPrimitive } from '@base-ui/react/combobox';
-import * as React from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type * as React from 'react';
 
 import {
   Combobox,
@@ -20,7 +21,7 @@ type VirtualComboboxProps<Value, Multiple extends boolean | undefined = false> =
   'items'
 > & { items: readonly VirtualComboboxOption<Value>[] };
 
-const VirtualComboboxContext = React.createContext<{
+const VirtualComboboxContext = createContext<{
   items: readonly VirtualComboboxOption<unknown>[];
   selectedValue: unknown;
   open: boolean;
@@ -36,13 +37,10 @@ function VirtualCombobox<Value, Multiple extends boolean | undefined = false>({
   onOpenChange,
   ...props
 }: VirtualComboboxProps<Value, Multiple>) {
-  const [selectedValue, setSelectedValue] = React.useState<unknown>(value ?? defaultValue ?? null);
-  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen ?? false);
-  const itemValues = React.useMemo(() => items.map((item) => item.value), [items]);
-  const optionByValue = React.useMemo(
-    () => new Map(items.map((item) => [item.value, item])),
-    [items],
-  );
+  const [selectedValue, setSelectedValue] = useState<unknown>(value ?? defaultValue ?? null);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
+  const itemValues = useMemo(() => items.map((item) => item.value), [items]);
+  const optionByValue = useMemo(() => new Map(items.map((item) => [item.value, item])), [items]);
   const isOpen = open ?? uncontrolledOpen;
 
   return (
@@ -88,7 +86,7 @@ function VirtualComboboxContent({
   renderCount?: number;
   overscan?: number;
 }) {
-  const context = React.useContext(VirtualComboboxContext);
+  const context = useContext(VirtualComboboxContext);
   if (!context) throw new Error('VirtualComboboxContent must be used within VirtualCombobox.');
   return (
     <ComboboxContent {...props}>
@@ -111,11 +109,8 @@ function VirtualComboboxList({
   overscan: number;
 }) {
   const filteredItems = ComboboxPrimitive.useFilteredItems<unknown>();
-  const optionByValue = React.useMemo(
-    () => new Map(items.map((item) => [item.value, item])),
-    [items],
-  );
-  const parentRef = React.useRef<HTMLDivElement>(null);
+  const optionByValue = useMemo(() => new Map(items.map((item) => [item.value, item])), [items]);
+  const parentRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
     count: filteredItems.length,
@@ -125,7 +120,7 @@ function VirtualComboboxList({
     overscan,
     enabled: open,
   });
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) return;
 
     const valueToReveal = Array.isArray(selectedValue) ? selectedValue[0] : selectedValue;

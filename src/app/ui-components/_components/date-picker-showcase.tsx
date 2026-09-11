@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
@@ -16,7 +16,7 @@ type DatePickerShowcaseValues = {
 };
 
 export function DatePickerShowcase() {
-  const [acceptedValue, setAcceptedValue] = React.useState(exampleIsoValue);
+  const [acceptedValue, setAcceptedValue] = useState(exampleIsoValue);
 
   return (
     <ShowcaseSection

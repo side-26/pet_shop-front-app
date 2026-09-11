@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { memo, useCallback, useId, useMemo, useRef, useState } from 'react';
 import { CalendarDaysIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import {
@@ -63,7 +63,7 @@ type RangedDatePickerCalendarProps = {
   onSelect: (range: DateRange | undefined) => void;
 };
 
-const RangedDatePickerCalendar = React.memo(function RangedDatePickerCalendar({
+const RangedDatePickerCalendar = memo(function RangedDatePickerCalendar({
   selected,
   onSelect,
 }: RangedDatePickerCalendarProps) {
@@ -127,7 +127,7 @@ function RangedDatePicker<
   toDateKey = 'to' as TToDateKey,
   toRules,
 }: RangedDatePickerProps<TFieldValues, TFromDateKey, TToDateKey>) {
-  const generatedId = React.useId();
+  const generatedId = useId();
   const id = providedId ?? generatedId;
   const descriptionId = `${id}-description`;
   const normalizedDefaultValue = normalizeRangeValue(defaultValue);
@@ -164,16 +164,16 @@ function RangedDatePicker<
     ref: toFieldRef,
     value: toFieldValue,
   } = toField;
-  const [open, setOpen] = React.useState(false);
-  const [draftRange, setDraftRange] = React.useState<DateRange>();
-  const [draftFromTime, setDraftFromTime] = React.useState<DraftTime>();
-  const [draftToTime, setDraftToTime] = React.useState<DraftTime>();
-  const triggerRef = React.useRef<HTMLButtonElement>(null);
-  const currentValue = React.useMemo(
+  const [open, setOpen] = useState(false);
+  const [draftRange, setDraftRange] = useState<DateRange>();
+  const [draftFromTime, setDraftFromTime] = useState<DraftTime>();
+  const [draftToTime, setDraftToTime] = useState<DraftTime>();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const currentValue = useMemo(
     () => normalizeRangeValue({ from: fromFieldValue, to: toFieldValue }),
     [fromFieldValue, toFieldValue],
   );
-  const currentRange = React.useMemo<DateRange | undefined>(
+  const currentRange = useMemo<DateRange | undefined>(
     () =>
       currentValue
         ? { from: new Date(currentValue.from), to: new Date(currentValue.to) }
@@ -188,7 +188,7 @@ function RangedDatePicker<
       ? `${formatJalaliDateTime(currentRange.from)} — ${formatJalaliDateTime(currentRange.to)}`
       : '';
 
-  const handleOpenChange = React.useCallback(
+  const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
       if (nextOpen) {
         const from = currentRange?.from ?? new Date();
@@ -211,9 +211,9 @@ function RangedDatePicker<
     [currentRange, handleFromBlur, handleToBlur],
   );
 
-  const close = React.useCallback(() => handleOpenChange(false), [handleOpenChange]);
+  const close = useCallback(() => handleOpenChange(false), [handleOpenChange]);
 
-  const accept = React.useCallback(() => {
+  const accept = useCallback(() => {
     if (!draftRange?.from || !draftRange.to || !draftFromTime || !draftToTime) return;
     const value = {
       from: mergeTime(draftRange.from, draftFromTime).toISOString(),
@@ -233,7 +233,7 @@ function RangedDatePicker<
     onValueChange,
   ]);
 
-  const selectToday = React.useCallback(() => {
+  const selectToday = useCallback(() => {
     const now = new Date();
     setDraftRange({ from: now, to: now });
     const time = { value: formatTime(now), milliseconds: now.getMilliseconds() };

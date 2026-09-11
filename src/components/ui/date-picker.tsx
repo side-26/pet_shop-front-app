@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { memo, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { CalendarDaysIcon } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import type { ReactNode } from 'react';
@@ -76,7 +76,7 @@ type DatePickerCalendarProps = {
   onSelect: (selectedDay: Date | undefined) => void;
 };
 
-const DatePickerCalendar = React.memo(function DatePickerCalendar({
+const DatePickerCalendar = memo(function DatePickerCalendar({
   selected,
   today,
   onSelect,
@@ -147,7 +147,7 @@ function DatePicker<
   shouldUnregister,
   size = 'md',
 }: DatePickerProps<TFieldValues, TName>) {
-  const generatedId = React.useId();
+  const generatedId = useId();
   const id = providedId ?? generatedId;
   const descriptionId = `${id}-description`;
   const normalizedDefaultValue = normalizeIsoDateTime(defaultValue);
@@ -168,34 +168,40 @@ function DatePicker<
     ref: fieldRef,
     value: fieldValue,
   } = field;
-  const [currentDate, setCurrentDate] = React.useState(() => new Date());
-  const [draftDay, setDraftDay] = React.useState<Date>();
-  const [draftTime, setDraftTime] = React.useState<DraftTime>();
-  const [open, setOpen] = React.useState(false);
-  const hasInitializedValue = React.useRef(false);
-  const triggerRef = React.useRef<HTMLButtonElement>(null);
+  const [currentDate, setCurrentDate] = useState<Date>();
+  const [draftDay, setDraftDay] = useState<Date>();
+  const [draftTime, setDraftTime] = useState<DraftTime>();
+  const [open, setOpen] = useState(false);
+  const hasInitializedValue = useRef(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const committedValue = normalizeIsoDateTime(
     typeof fieldValue === 'string' ? fieldValue : undefined,
   );
-  const committedDate = React.useMemo(
+  const committedDate = useMemo(
     () => (committedValue ? new Date(committedValue) : undefined),
     [committedValue],
   );
-  const displayValue = React.useMemo(
+  const displayValue = useMemo(
     () => (currentDate && committedDate ? formatJalaliDateTime(committedDate) : ''),
     [committedDate, currentDate],
   );
   const message = fieldState.error?.message ?? hint;
   const styles = textFieldVariants({ color, size });
 
-  React.useEffect(() => {
-    if (!hasInitializedValue.current && !committedValue) {
+  useEffect(() => {
+    queueMicrotask(() => setCurrentDate(new Date()));
+  }, []);
+
+  useEffect(() => {
+    if (!currentDate || hasInitializedValue.current || committedValue) return;
+
+    if (!committedValue) {
       handleFieldChange(currentDate.toISOString());
     }
     hasInitializedValue.current = true;
   }, [committedValue, currentDate, handleFieldChange]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!hasTime) return;
 
     const preload = () => void preloadTimeSelector();
@@ -208,7 +214,7 @@ function DatePicker<
     return () => globalThis.clearTimeout(timeoutId);
   }, [hasTime]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open || draftDay || draftTime) return;
 
     let timeoutId: number | undefined;
@@ -229,7 +235,7 @@ function DatePicker<
     };
   }, [committedDate, draftDay, draftTime, open]);
 
-  const handleOpenChange = React.useCallback(
+  const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
       setOpen(nextOpen);
       if (!nextOpen) {
@@ -242,29 +248,29 @@ function DatePicker<
     [handleFieldBlur],
   );
 
-  const handleDaySelect = React.useCallback((selectedDay: Date | undefined) => {
+  const handleDaySelect = useCallback((selectedDay: Date | undefined) => {
     if (selectedDay) setDraftDay(selectedDay);
   }, []);
 
-  const handleTimeChange = React.useCallback((value: TimeSelectorValue) => {
+  const handleTimeChange = useCallback((value: TimeSelectorValue) => {
     setDraftTime((currentTime) => ({
       value,
       milliseconds: currentTime?.milliseconds ?? 0,
     }));
   }, []);
 
-  const handleCancel = React.useCallback(() => {
+  const handleCancel = useCallback(() => {
     handleOpenChange(false);
   }, [handleOpenChange]);
 
-  const handleToday = React.useCallback(() => {
+  const handleToday = useCallback(() => {
     const now = new Date();
     setCurrentDate(now);
     setDraftDay(now);
     setDraftTime({ value: formatTimeValue(now), milliseconds: now.getMilliseconds() });
   }, []);
 
-  const handleAccept = React.useCallback(() => {
+  const handleAccept = useCallback(() => {
     if (!draftDay || !draftTime) return;
 
     const nextValue = mergeTimeWithDate(

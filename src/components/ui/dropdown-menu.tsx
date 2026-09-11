@@ -1,6 +1,7 @@
 'use client';
 
-import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type * as React from 'react';
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 
 import { cn } from '@/lib/utils';
@@ -13,19 +14,19 @@ function DropdownMenu({
   onOpenChangeComplete,
   ...props
 }: MenuPrimitive.Root.Props) {
-  const fallbackActionsRef = React.useRef<MenuPrimitive.Root.Actions>(null);
+  const fallbackActionsRef = useRef<MenuPrimitive.Root.Actions>(null);
   const menuActionsRef = actionsRef ?? fallbackActionsRef;
-  const [scrollDismissArmed, setScrollDismissArmed] = React.useState(false);
-  const armFrameRef = React.useRef<number | null>(null);
+  const [scrollDismissArmed, setScrollDismissArmed] = useState(false);
+  const armFrameRef = useRef<number | null>(null);
 
-  React.useEffect(
+  useEffect(
     () => () => {
       if (armFrameRef.current !== null) cancelAnimationFrame(armFrameRef.current);
     },
     [],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!scrollDismissArmed) return;
     const closeOnScroll = () => menuActionsRef.current?.close();
     document.addEventListener('scroll', closeOnScroll, { capture: true, passive: true });

@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useState } from 'react';
 
 import { RangedDatePicker, type RangedDatePickerValue } from '@/components/ui/ranged-date-picker';
 import { Form } from '@/components/ui/form';
@@ -20,7 +20,7 @@ const exampleRange = {
 };
 
 export function RangedDatePickerShowcase() {
-  const [range, setRange] = React.useState(exampleRange);
+  const [range, setRange] = useState(exampleRange);
 
   return (
     <ShowcaseSection

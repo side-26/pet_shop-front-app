@@ -2,7 +2,8 @@
 
 import { Combobox as ComboboxPrimitive } from '@base-ui/react/combobox';
 import { CheckIcon, ChevronDownIcon } from 'lucide-react';
-import * as React from 'react';
+import { createContext, useCallback, useContext } from 'react';
+import type * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -10,7 +11,7 @@ type ComboboxColor = 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 
 type ComboboxSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 type ComboboxContextValue = { color: ComboboxColor; size: ComboboxSize };
 
-const ComboboxContext = React.createContext<ComboboxContextValue>({ color: 'primary', size: 'md' });
+const ComboboxContext = createContext<ComboboxContextValue>({ color: 'primary', size: 'md' });
 
 const sizeClasses: Record<ComboboxSize, string> = {
   xs: 'tw:h-7 tw:px-2.5 tw:text-label-s',
@@ -41,7 +42,7 @@ function Combobox<Value, Multiple extends boolean | undefined = false>({
   itemToStringLabel,
   ...props
 }: ComboboxProps<Value, Multiple>) {
-  const resolveItemLabel = React.useCallback(
+  const resolveItemLabel = useCallback(
     (value: Value) => {
       if (itemToStringLabel) return itemToStringLabel(value);
 
@@ -78,7 +79,7 @@ function Combobox<Value, Multiple extends boolean | undefined = false>({
 }
 
 function ComboboxInput({ className, ...props }: ComboboxPrimitive.Input.Props) {
-  const { color, size } = React.useContext(ComboboxContext);
+  const { color, size } = useContext(ComboboxContext);
   return (
     <ComboboxPrimitive.Input
       data-slot="combobox-input"

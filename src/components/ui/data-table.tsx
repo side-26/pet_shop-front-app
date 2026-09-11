@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import {
   flexRender,
   getCoreRowModel,
@@ -32,7 +32,7 @@ type DataTableProps<TData, TValue> = {
 const subscribeToHydration = () => () => undefined;
 
 function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
-  const isHydrated = React.useSyncExternalStore(
+  const isHydrated = useSyncExternalStore(
     subscribeToHydration,
     () => true,
     () => false,
@@ -50,7 +50,7 @@ function HydratedDataTable<TData, TValue>({
   pageSize = 5,
   getRowId,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
   // TanStack Table intentionally returns a stateful API whose methods are not compiler-memoizable.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({

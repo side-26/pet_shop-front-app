@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useCallback, useEffect, useId, useRef, useState, type UIEvent } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { tv } from 'tailwind-variants';
 import { Button, type ButtonProps } from '@/components/ui/button';
@@ -74,19 +74,19 @@ function SelectorWheel({
   color = 'primary',
   onValueChange,
 }: CalendarSelectorProps) {
-  const scrollRef = React.useRef<HTMLDivElement>(null);
-  const scrollFrameRef = React.useRef<number | null>(null);
-  const pendingScrollTopRef = React.useRef(0);
-  const id = React.useId();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollFrameRef = useRef<number | null>(null);
+  const pendingScrollTopRef = useRef(0);
+  const id = useId();
   const resolvedWidth = width ?? (label === 'سال' ? 95 : 105);
   const initialIndex = Math.max(
     0,
     items.findIndex((item) => item.value === value),
   );
-  const [activeIndex, setActiveIndex] = React.useState(initialIndex);
-  const activeIndexRef = React.useRef(initialIndex);
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const activeIndexRef = useRef(initialIndex);
   const colors = selectorColorVariants({ color });
-  const getScrollElement = React.useCallback(() => scrollRef.current, []);
+  const getScrollElement = useCallback(() => scrollRef.current, []);
   const virtualizer = useVirtualizer({
     count: items.length,
     getScrollElement,
@@ -98,7 +98,7 @@ function SelectorWheel({
     initialRect: { width: resolvedWidth, height: rowHeight * 7 },
   });
 
-  const updateActiveIndex = React.useCallback(
+  const updateActiveIndex = useCallback(
     (nextIndex: number) => {
       const next = Math.max(0, Math.min(items.length - 1, nextIndex));
       if (next === activeIndexRef.current) return;
@@ -109,8 +109,8 @@ function SelectorWheel({
     [items.length],
   );
 
-  const handleScroll = React.useCallback(
-    (event: React.UIEvent<HTMLDivElement>) => {
+  const handleScroll = useCallback(
+    (event: UIEvent<HTMLDivElement>) => {
       pendingScrollTopRef.current = event.currentTarget.scrollTop;
       if (scrollFrameRef.current !== null) return;
 
@@ -122,7 +122,7 @@ function SelectorWheel({
     [updateActiveIndex],
   );
 
-  React.useEffect(
+  useEffect(
     () => () => {
       if (scrollFrameRef.current !== null) window.cancelAnimationFrame(scrollFrameRef.current);
     },
@@ -215,8 +215,8 @@ function CalendarSelector({
   disabled,
   onValueChange,
 }: CalendarSelectorProps) {
-  const [open, setOpen] = React.useState(false);
-  const triggerRef = React.useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const widthClassName = width ? undefined : label === 'سال' ? 'tw:w-[95px]' : 'tw:w-[105px]';
   const widthStyle = width ? { width } : undefined;
   const colors = selectorColorVariants({ color });

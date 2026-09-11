@@ -1,6 +1,7 @@
 'use client';
 
-import * as React from 'react';
+import { createContext, useContext, useId } from 'react';
+import type * as React from 'react';
 import * as RechartsPrimitive from 'recharts';
 import type { TooltipPayloadEntry, TooltipValueType } from 'recharts';
 
@@ -19,10 +20,10 @@ export type ChartConfig = Record<
   )
 >;
 
-const ChartContext = React.createContext<{ config: ChartConfig } | null>(null);
+const ChartContext = createContext<{ config: ChartConfig } | null>(null);
 
 function useChart() {
-  const context = React.useContext(ChartContext);
+  const context = useContext(ChartContext);
   if (!context) throw new Error('useChart must be used within a <ChartContainer />');
   return context;
 }
@@ -37,7 +38,7 @@ function ChartContainer({
   config: ChartConfig;
   children: React.ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children'];
 }) {
-  const uniqueId = React.useId();
+  const uniqueId = useId();
   const chartId = `chart-${id ?? uniqueId.replace(/:/g, '')}`;
 
   return (

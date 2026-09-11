@@ -1,6 +1,7 @@
 'use client';
 
-import * as React from 'react';
+import { createContext, useContext, useMemo } from 'react';
+import type * as React from 'react';
 import { Drawer as DrawerPrimitive } from '@base-ui/react/drawer';
 import { tv, type VariantProps } from 'tailwind-variants';
 
@@ -35,10 +36,10 @@ type DrawerContextProps = {
   swipeDirection: NonNullable<DrawerPrimitive.Root.Props['swipeDirection']>;
 };
 
-const DrawerContext = React.createContext<DrawerContextProps | null>(null);
+const DrawerContext = createContext<DrawerContextProps | null>(null);
 
 function useDrawer() {
-  const context = React.useContext(DrawerContext);
+  const context = useContext(DrawerContext);
 
   if (!context) {
     throw new Error('useDrawer must be used within a Drawer.');
@@ -57,7 +58,7 @@ function Drawer({
   showSwipeHandle?: boolean;
 }) {
   const hasSnapPoints = snapPoints != null && snapPoints.length > 0;
-  const contextValue = React.useMemo(
+  const contextValue = useMemo(
     () => ({ hasSnapPoints, modal, showSwipeHandle, swipeDirection }),
     [hasSnapPoints, modal, showSwipeHandle, swipeDirection],
   );

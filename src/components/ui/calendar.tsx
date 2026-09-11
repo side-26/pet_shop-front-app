@@ -1,6 +1,7 @@
 'use client';
 
-import * as React from 'react';
+import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from 'react';
+import type * as React from 'react';
 import { DayPicker } from '@daypicker/persian';
 import {
   getDefaultClassNames,
@@ -48,7 +49,7 @@ function CalendarDropdown({
       onValueChange={(nextValue) => {
         onChange?.({
           target: { value: String(nextValue) },
-        } as React.ChangeEvent<HTMLSelectElement>);
+        } as ChangeEvent<HTMLSelectElement>);
       }}
     />
   );
@@ -172,18 +173,18 @@ function Calendar({
   modifiersClassNames,
   ...props
 }: CalendarProps) {
-  const [clientToday, setClientToday] = React.useState<Date>();
-  const [uncontrolledSelectedDate, setUncontrolledSelectedDate] = React.useState<
-    Date | null | undefined
-  >(null);
-  const colors = React.useMemo(() => calendarColorVariants({ color }), [color]);
+  const [clientToday, setClientToday] = useState<Date>();
+  const [uncontrolledSelectedDate, setUncontrolledSelectedDate] = useState<Date | null | undefined>(
+    null,
+  );
+  const colors = useMemo(() => calendarColorVariants({ color }), [color]);
   const selectorColor = color === 'neutral' ? 'secondary' : color;
   const resolvedToday = today ?? clientToday ?? prerenderDate;
   const resolvedDefaultMonth = defaultMonth ?? resolvedToday;
   const singleOnSelect = props.mode === 'single' ? props.onSelect : undefined;
   const isUncontrolledSingle = props.mode === 'single' && props.selected === undefined;
 
-  const handleUncontrolledSingleSelect = React.useCallback<OnSelectHandler<Date | undefined>>(
+  const handleUncontrolledSingleSelect = useCallback<OnSelectHandler<Date | undefined>>(
     (selectedDate, triggerDate, modifiers, event) => {
       setUncontrolledSelectedDate(selectedDate);
       (singleOnSelect as OnSelectHandler<Date | undefined> | undefined)?.(
@@ -196,7 +197,7 @@ function Calendar({
     [singleOnSelect],
   );
 
-  const uncontrolledSingleProps = React.useMemo(
+  const uncontrolledSingleProps = useMemo(
     () =>
       isUncontrolledSingle
         ? ({
@@ -207,7 +208,7 @@ function Calendar({
     [handleUncontrolledSingleSelect, isUncontrolledSingle, resolvedToday, uncontrolledSelectedDate],
   );
   const selectionOverride: object = uncontrolledSingleProps;
-  const resolvedClassNames = React.useMemo(
+  const resolvedClassNames = useMemo(
     () => ({
       root: cn('tw:w-fit', defaultClassNames.root),
       months: cn('tw:flex tw:flex-col tw:gap-4 tw:sm:flex-row', defaultClassNames.months),
@@ -248,14 +249,14 @@ function Calendar({
     }),
     [classNames, colors],
   );
-  const resolvedModifiers = React.useMemo(
+  const resolvedModifiers = useMemo(
     () => ({
       ...modifiers,
       holiday: [fridayHolidayMatcher, ...normalizeMatchers(modifiers?.holiday)],
     }),
     [modifiers],
   );
-  const resolvedModifierClassNames = React.useMemo(
+  const resolvedModifierClassNames = useMemo(
     () => ({
       ...modifiersClassNames,
       holiday: cn(
@@ -265,7 +266,7 @@ function Calendar({
     }),
     [modifiersClassNames],
   );
-  const resolvedLabels = React.useMemo(
+  const resolvedLabels = useMemo(
     () => ({
       ...labels,
       labelDayButton: (...args: Parameters<typeof labelDayButton>) => {
@@ -280,7 +281,7 @@ function Calendar({
     [labels],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (defaultMonth !== undefined && today !== undefined) return;
 
     const frameId = window.requestAnimationFrame(() => setClientToday(new Date()));

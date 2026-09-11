@@ -2,7 +2,8 @@
 
 import { Toggle as TogglePrimitive } from '@base-ui/react/toggle';
 import { ToggleGroup as ToggleGroupPrimitive } from '@base-ui/react/toggle-group';
-import * as React from 'react';
+import { createContext, useContext } from 'react';
+import type * as React from 'react';
 
 import { toggleVariants, type ToggleProps } from '@/components/ui/toggle';
 import { cn } from '@/lib/utils';
@@ -12,7 +13,7 @@ type ToggleGroupStyleProps = Pick<ToggleProps, 'variant' | 'color' | 'size'> & {
   orientation?: 'horizontal' | 'vertical';
 };
 
-const ToggleGroupContext = React.createContext<ToggleGroupStyleProps>({
+const ToggleGroupContext = createContext<ToggleGroupStyleProps>({
   variant: 'flat',
   color: 'primary',
   size: 'md',
@@ -69,7 +70,7 @@ function ToggleGroupItem({
   iconOnly = false,
   ...props
 }: ToggleGroupItemProps) {
-  const context = React.useContext(ToggleGroupContext);
+  const context = useContext(ToggleGroupContext);
   const resolvedVariant = context.variant ?? variant;
   const resolvedColor = context.color ?? color;
   const resolvedSize = context.size ?? size;

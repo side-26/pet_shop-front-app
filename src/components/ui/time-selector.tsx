@@ -1,6 +1,7 @@
 'use client';
 
-import * as React from 'react';
+import { useCallback, useState } from 'react';
+import type * as React from 'react';
 import { tv } from 'tailwind-variants';
 import type { ButtonProps } from '@/components/ui/button';
 import { CalendarSelector } from '@/components/ui/calendar-selector';
@@ -92,9 +93,7 @@ function TimeSelector({
   className,
   ...props
 }: TimeSelectorProps) {
-  const [uncontrolledValue, setUncontrolledValue] = React.useState(() =>
-    normalizeTime(defaultValue),
-  );
+  const [uncontrolledValue, setUncontrolledValue] = useState(() => normalizeTime(defaultValue));
   const currentValue = normalizeTime(value ?? uncontrolledValue);
   const [hours, minutes, seconds] = currentValue.split(':').map(Number);
   const isControlled = value !== undefined;
@@ -102,7 +101,7 @@ function TimeSelector({
   const colors = timeSelectorColorVariants({ color });
   const accessibleName = ariaLabel ?? (typeof label === 'string' ? label : 'انتخاب زمان');
 
-  const updatePart = React.useCallback(
+  const updatePart = useCallback(
     (part: 0 | 1 | 2, nextPart: number) => {
       const parts = [hours, minutes, seconds];
       parts[part] = nextPart;

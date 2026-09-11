@@ -8,6 +8,13 @@ user-invocable: false
 
 Apply these rules when writing or reviewing Next.js code.
 
+## React Imports
+
+Import React runtime APIs by name and call them directly: use `useEffect`, `useState`, `useMemo`,
+`useRef`, `createContext`, and `memo` rather than `React.useEffect`, `React.useState`, or other
+runtime namespace calls. Import React types with `import type` as needed; a type-only React namespace
+is acceptable for complex type annotations.
+
 ## File Conventions
 
 See [file-conventions.md](./file-conventions.md) for:
@@ -150,4 +157,3 @@ See [self-hosting.md](./self-hosting.md) for:
 See [debug-tricks.md](./debug-tricks.md) for:
 - MCP endpoint for AI-assisted debugging
 - Rebuild specific routes with `--debug-build-paths`
-
