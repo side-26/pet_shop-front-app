@@ -1,10 +1,9 @@
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty';
-import { FetchErrorSectionBoundary } from '@/components/common/fetch-error-section-boundary';
-import { retryLandingHomeOffersAction } from '@/entities/landing/landing.actions';
 import type { LandingProductDTO } from '@/entities/landing/landing.dto';
 import type { FetcherResult } from '@/lib/api/customFetcher';
 
 import { mapOffersProducts } from './offers-section.mapper';
+import { OffersSectionFetchError } from './offers-section-fetch-error';
 import { OffersSectionRenderer } from './offers-section-renderer';
 
 type Props = Readonly<{
@@ -15,13 +14,7 @@ export async function OffersSectionContainer({ productsPromise }: Props) {
   const result = await productsPromise;
 
   if (!result.isSuccess) {
-    return (
-      <FetchErrorSectionBoundary
-        description={result.message ?? undefined}
-        onRetry={retryLandingHomeOffersAction}
-        title="دریافت پیشنهادها انجام نشد"
-      />
-    );
+    return <OffersSectionFetchError description={result.message} />;
   }
 
   if (result.data.length === 0) {

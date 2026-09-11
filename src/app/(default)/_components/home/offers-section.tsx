@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 import { getDiscountedLandingProducts } from '@/entities/landing/landing.service';
 
 import { OffersSectionContainer } from './offers-section-container';
+import { OffersSectionErrorBoundary } from './offers-section-error-boundary';
 import { OffersSectionRenderer } from './offers-section-renderer';
 import { offersSectionSkeletonData } from './offers-section-skeleton-data';
 import { RevealItem, RevealSection } from './motion-primitives';
@@ -34,7 +35,9 @@ export function OffersSection() {
           <Suspense
             fallback={<OffersSectionRenderer products={offersSectionSkeletonData} isSkeleton />}
           >
-            <OffersSectionContainer productsPromise={productsPromise} />
+            <OffersSectionErrorBoundary>
+              <OffersSectionContainer productsPromise={productsPromise} />
+            </OffersSectionErrorBoundary>
           </Suspense>
         </RevealItem>
       </div>
