@@ -15,7 +15,7 @@ import { PetTypePropertyDefinitionsFormBody } from './pet-type-property-definiti
 
 const refresh = vi.fn();
 
-vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh }) }));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh }) }));
 vi.mock('@/entities/pet-types/pet-types.actions', () => ({
   deletePetTypeAction: vi.fn(),
   getPetTypeByIdAction: vi.fn(),

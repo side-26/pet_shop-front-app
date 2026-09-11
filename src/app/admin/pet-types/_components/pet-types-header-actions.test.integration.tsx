@@ -9,7 +9,7 @@ import { PetTypesHeaderActions } from './pet-types-header-actions';
 
 const refresh = vi.fn();
 
-vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh }) }));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh }) }));
 
 afterEach(() => {
   cleanup();

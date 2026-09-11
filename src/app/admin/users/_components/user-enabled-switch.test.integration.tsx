@@ -6,7 +6,7 @@ import { useUserEnabledUpdate } from '@/entities/users/users.client';
 
 import { UserEnabledSwitch } from './user-enabled-switch';
 
-vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock('@/entities/users/users.client', () => ({ useUserEnabledUpdate: vi.fn() }));
 
 const useUserEnabledUpdateMock = vi.mocked(useUserEnabledUpdate);

@@ -1,7 +1,7 @@
 'use client';
 
 import { CameraIcon, SaveIcon, UserRoundIcon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'nextjs-toploader/app';
 import { useRef, useTransition } from 'react';
 
 import { ImageFileField } from '@/components/common/image-file-field';

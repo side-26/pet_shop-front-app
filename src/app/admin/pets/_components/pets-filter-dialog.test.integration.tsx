@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { PetsFilterDialog } from './pets-filter-dialog';
 
-vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ push: vi.fn() }) }));
 vi.mock('@/entities/breeds/breeds.actions', () => ({
   getBreedsAction: vi.fn(async () => ({ isSuccess: true, message: null, data: [] })),
 }));

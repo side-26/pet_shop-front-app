@@ -8,7 +8,7 @@ import { routePaths } from '@/configs/route.path';
 import { SubCategoriesHeaderActions } from './sub-categories-header-actions';
 
 const refresh = vi.fn();
-vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh }) }));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh }) }));
 
 afterEach(() => {
   cleanup();

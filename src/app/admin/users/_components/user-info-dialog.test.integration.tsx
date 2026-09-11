@@ -15,7 +15,7 @@ import { UsersRowActions } from './users-row-actions';
 
 const refresh = vi.fn();
 
-vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh }) }));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh }) }));
 vi.mock('@/entities/users/users.actions', () => ({
   deleteUserByIdAction: vi.fn(),
   userGetDetailByIdAction: vi.fn(),

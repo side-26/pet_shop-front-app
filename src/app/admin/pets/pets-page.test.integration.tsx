@@ -8,7 +8,7 @@ import { PetsPaginateTable } from './_components/pets-paginate-table';
 import { petsTableSkeletonData } from './_components/pets-table-skeleton-data';
 import { PetsTableContainer } from './_components/pets-table-container';
 
-vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }) }));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }) }));
 vi.mock('@/entities/pets/pets.client', () => ({
   usePetRowActions: () => ({
     isPending: false,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'nextjs-toploader/app';
 
 import { Switch } from '@/components/ui/fields/switch';
 import { usePetTypeRowActions } from '@/entities/pet-types/pet-types.client';

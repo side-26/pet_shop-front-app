@@ -13,7 +13,7 @@ import { categoriesTableSkeletonData } from './_components/categories-table-skel
 import { CategoriesTable } from './_components/categories-table';
 import { CategoriesTableWrapper } from './_components/categories-table-wrapper';
 
-vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock('@/entities/categories/categories.actions', () => ({
   getAllCategoriesAction: vi.fn(() => new Promise(() => undefined)),
   getCategoryByIdAction: vi.fn(),

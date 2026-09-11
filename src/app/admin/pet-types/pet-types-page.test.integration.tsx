@@ -12,7 +12,7 @@ import { petTypesTableSkeletonData } from './_components/pet-types-table-skeleto
 import { PetTypesTable } from './_components/pet-types-table';
 import { PetTypesTableWrapper } from './_components/pet-types-table-wrapper';
 
-vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock('@/entities/pet-types/pet-types.actions', () => ({
   getAllPetTypesAction: vi.fn(() => new Promise(() => undefined)),
   getPetTypeByIdAction: vi.fn(),

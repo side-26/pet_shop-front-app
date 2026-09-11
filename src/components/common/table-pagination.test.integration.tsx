@@ -8,7 +8,7 @@ import { TablePagination } from './table-pagination';
 
 const push = vi.fn();
 
-vi.mock('next/navigation', () => ({ useRouter: () => ({ push }) }));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ push }) }));
 
 afterEach(() => {
   cleanup();

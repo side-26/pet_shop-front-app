@@ -11,7 +11,7 @@ import { CreateBrandDialog } from './create-brand-dialog';
 
 const refresh = vi.fn();
 
-vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh }) }));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh }) }));
 vi.mock('@/entities/brands/brands.actions', () => ({
   deleteBrandAction: vi.fn(),
 }));

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import Script from 'next/script';
 
+import { NavigationPageBar } from '@/components/common/navigation-page-bar';
 import { RtlLayout } from '@/components/layouts/rtl-layout';
 import { themeInitScript } from '@/components/ui/theme.helpers';
 import { Toaster } from '@/components/ui/toast';
@@ -69,6 +70,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Script id="theme-init" strategy="beforeInteractive">
           {themeInitScript}
         </Script>
+        <NavigationPageBar />
         <RtlLayout>
           <Toaster>{children}</Toaster>
         </RtlLayout>

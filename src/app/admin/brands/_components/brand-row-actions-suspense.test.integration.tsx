@@ -13,7 +13,7 @@ vi.mock('next/dynamic', () => ({
       throw neverResolvingDialog;
     },
 }));
-vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock('@/entities/brands/brands.actions', () => ({ deleteBrandAction: vi.fn() }));
 
 afterEach(cleanup);

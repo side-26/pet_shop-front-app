@@ -14,7 +14,7 @@ import { subCategoriesTableSkeletonData } from './_components/sub-categories-tab
 import { SubCategoriesTableWrapper } from './_components/sub-categories-table-wrapper';
 import { SubCategoriesTable } from './_components/sub-categories-table';
 
-vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock('@/entities/sub-categories/sub-categories.actions', () => ({
   getAllSubCategoriesAction: vi.fn(() => new Promise(() => undefined)),
   getSubCategoryByIdAction: vi.fn(),

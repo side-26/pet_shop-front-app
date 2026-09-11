@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import { Suspense, useRef, useState } from 'react';
 import { EyeIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'nextjs-toploader/app';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,

@@ -1,7 +1,7 @@
 'use client';
 
 import { SearchIcon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'nextjs-toploader/app';
 
 import { FilterFormDialogContent } from '@/components/common/filter-form-dialog-content';
 import { Dialog } from '@/components/ui/dialog';

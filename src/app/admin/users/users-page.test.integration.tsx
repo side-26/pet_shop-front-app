@@ -10,7 +10,7 @@ import { usersTableSkeletonData } from './_components/users-table-skeleton-data'
 import { UsersTableContainer } from './_components/users-table-container';
 import type { UserTableRow } from './_components/users-table.types';
 
-vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 const users: UserTableRow[] = [
   {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useLayoutEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'nextjs-toploader/app';
 
 import {
   type AdminHeaderActions,

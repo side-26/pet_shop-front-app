@@ -6,7 +6,7 @@ import { useBreedStatus } from '@/entities/breeds/breeds.client';
 
 import { BreedEnabledSwitch } from './breed-enabled-switch';
 
-vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock('@/entities/breeds/breeds.client', () => ({ useBreedStatus: vi.fn() }));
 
 const useBreedStatusMock = vi.mocked(useBreedStatus);

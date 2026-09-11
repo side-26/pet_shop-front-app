@@ -1,6 +1,6 @@
 'use client';
 import { lazy, Suspense, useLayoutEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'nextjs-toploader/app';
 import {
   useAdminLayoutContext,
   type AdminHeaderActions,
