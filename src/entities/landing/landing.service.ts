@@ -15,7 +15,11 @@ import type {
 import { landingDiscountLimitSchema, landingSlugSchema } from './landing.schema';
 
 const landingCache = new EntityTag('landing');
+const featuredPetTypesCacheKey = 'pet-types:featured';
 const allPetTypesCacheKey = 'pet-types:all';
+const discountedProductsCacheKey = (limit: number) => `products:discounted:${limit}`;
+const popularProductsCacheKey = 'products:popular';
+const popularPetsCacheKey = 'pets:popular';
 
 async function fetchLandingList<T>(path: string, key: string, query?: Record<string, number>) {
   'use cache';
@@ -47,7 +51,7 @@ async function fetchLandingDetail<T>(path: string, slug: string) {
 }
 
 export function getFeaturedLandingPetTypes() {
-  return fetchLandingList<LandingPetTypeDTO[]>('/landing/pet-types', 'pet-types:featured');
+  return fetchLandingList<LandingPetTypeDTO[]>('/landing/pet-types', featuredPetTypesCacheKey);
 }
 
 export function getAllLandingPetTypes() {
@@ -58,11 +62,16 @@ export function invalidateAllLandingPetTypes() {
   landingCache.invalidateQuery(allPetTypesCacheKey);
 }
 
+export function invalidateLandingPetTypeCollections() {
+  landingCache.invalidateQuery(featuredPetTypesCacheKey);
+  landingCache.invalidateQuery(allPetTypesCacheKey);
+}
+
 export async function getDiscountedLandingProducts(input: Partial<LandingDiscountLimitDTO> = {}) {
   const { limit } = await landingDiscountLimitSchema.validate(input, { stripUnknown: true });
   return fetchLandingList<LandingProductDTO[]>(
     '/landing/products/discounted',
-    `products:discounted:${limit}`,
+    discountedProductsCacheKey(limit),
     {
       limit,
     },
@@ -70,11 +79,26 @@ export async function getDiscountedLandingProducts(input: Partial<LandingDiscoun
 }
 
 export function getPopularLandingProducts() {
-  return fetchLandingList<LandingProductDTO[]>('/landing/products/popular', 'products:popular');
+  return fetchLandingList<LandingProductDTO[]>(
+    '/landing/products/popular',
+    popularProductsCacheKey,
+  );
 }
 
 export function getPopularLandingPets() {
-  return fetchLandingList<LandingPetDTO[]>('/landing/pets/popular', 'pets:popular');
+  return fetchLandingList<LandingPetDTO[]>('/landing/pets/popular', popularPetsCacheKey);
+}
+
+export function invalidateLandingHomeOffers() {
+  landingCache.invalidateQuery(discountedProductsCacheKey(5));
+}
+
+export function invalidateLandingPopularProducts() {
+  landingCache.invalidateQuery(popularProductsCacheKey);
+}
+
+export function invalidateLandingPopularPets() {
+  landingCache.invalidateQuery(popularPetsCacheKey);
 }
 
 export async function getLandingPetBySlug(input: LandingSlugDTO['slug']) {

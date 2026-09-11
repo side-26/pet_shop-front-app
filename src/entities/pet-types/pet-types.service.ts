@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { customFetcher } from '@/lib/api/customFetcher';
+import { invalidateLandingPetTypeCollections } from '@/entities/landing/landing.service';
 import { EntityTag } from '@/utils/entityCache';
 
 import type {
@@ -74,6 +75,7 @@ export async function getPetTypePropertyDefinitions(id: PetTypeIdDTO['id']) {
 function invalidate(id?: string) {
   petTypesCache.invalidateList();
   if (id) petTypesCache.invalidateDetail(id);
+  invalidateLandingPetTypeCollections();
 }
 
 function toPetTypeFormData(input: CreatePetTypeDTO | UpdatePetTypeDTO) {

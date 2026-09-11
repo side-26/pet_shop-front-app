@@ -1,12 +1,6 @@
-import { CircleAlertIcon } from 'lucide-react';
-
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@/components/ui/empty';
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty';
+import { FetchErrorSectionBoundary } from '@/components/common/fetch-error-section-boundary';
+import { retryLandingPopularPetsAction } from '@/entities/landing/landing.actions';
 import type { LandingPetDTO } from '@/entities/landing/landing.dto';
 import type { FetcherResult } from '@/lib/api/customFetcher';
 
@@ -19,15 +13,11 @@ export async function PopularPetsSectionContainer({ petsPromise }: Props) {
 
   if (!result.isSuccess) {
     return (
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <CircleAlertIcon aria-hidden="true" />
-          </EmptyMedia>
-          <EmptyTitle>دریافت حیوانات پرطرفدار انجام نشد</EmptyTitle>
-          <EmptyDescription>{result.message ?? 'لطفاً دوباره تلاش کنید.'}</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+      <FetchErrorSectionBoundary
+        description={result.message ?? undefined}
+        onRetry={retryLandingPopularPetsAction}
+        title="دریافت حیوانات پرطرفدار انجام نشد"
+      />
     );
   }
 

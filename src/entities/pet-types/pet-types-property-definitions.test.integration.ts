@@ -6,14 +6,19 @@ import {
   rangePetTypePropertyDefinitions,
 } from './pet-types.service';
 
-const { cacheLifeMock, invalidateDetailMock, invalidateListMock, registerDetailMock } = vi.hoisted(
-  () => ({
-    cacheLifeMock: vi.fn(),
-    invalidateDetailMock: vi.fn(),
-    invalidateListMock: vi.fn(),
-    registerDetailMock: vi.fn(),
-  }),
-);
+const {
+  cacheLifeMock,
+  invalidateDetailMock,
+  invalidateListMock,
+  invalidateQueryMock,
+  registerDetailMock,
+} = vi.hoisted(() => ({
+  cacheLifeMock: vi.fn(),
+  invalidateDetailMock: vi.fn(),
+  invalidateListMock: vi.fn(),
+  invalidateQueryMock: vi.fn(),
+  registerDetailMock: vi.fn(),
+}));
 
 vi.mock('@/lib/api/customFetcher', () => ({ customFetcher: vi.fn() }));
 vi.mock('@/utils/entityCache', () => ({
@@ -22,6 +27,7 @@ vi.mock('@/utils/entityCache', () => ({
     this.registerDetail = registerDetailMock;
     this.invalidateDetail = invalidateDetailMock;
     this.invalidateList = invalidateListMock;
+    this.invalidateQuery = invalidateQueryMock;
   }),
 }));
 
@@ -70,5 +76,7 @@ describe('pet-type property-definition APIs', () => {
     });
     expect(invalidateDetailMock).toHaveBeenCalledWith(id);
     expect(invalidateListMock).toHaveBeenCalledOnce();
+    expect(invalidateQueryMock).toHaveBeenCalledWith('pet-types:featured');
+    expect(invalidateQueryMock).toHaveBeenCalledWith('pet-types:all');
   });
 });

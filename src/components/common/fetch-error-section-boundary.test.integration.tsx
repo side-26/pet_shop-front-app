@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { FetchErrorSectionBoundary } from './fetch-error-section-boundary';
@@ -30,5 +30,23 @@ describe('FetchErrorSectionBoundary', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'دریافت دوباره اطلاعات' }));
     expect(onRetry).toHaveBeenCalledOnce();
+  });
+
+  it('prevents repeated retries until its short cooldown expires', () => {
+    vi.useFakeTimers();
+    const onRetry = vi.fn();
+
+    render(<FetchErrorSectionBoundary onRetry={onRetry} retryCooldownMs={500} />);
+
+    const retryButton = screen.getByRole('button', { name: 'دریافت دوباره اطلاعات' });
+    fireEvent.click(retryButton);
+    fireEvent.click(retryButton);
+    expect(onRetry).toHaveBeenCalledOnce();
+    expect(retryButton).toHaveProperty('disabled', true);
+
+    act(() => vi.advanceTimersByTime(500));
+    fireEvent.click(retryButton);
+    expect(onRetry).toHaveBeenCalledTimes(2);
+    vi.useRealTimers();
   });
 });

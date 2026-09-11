@@ -32,6 +32,9 @@ const {
   registerDetailMock: vi.fn(),
   registerListMock: vi.fn(),
 }));
+const { invalidateLandingPopularPetsMock } = vi.hoisted(() => ({
+  invalidateLandingPopularPetsMock: vi.fn(),
+}));
 
 vi.mock('@/lib/api/customFetcher', () => ({ customFetcher: vi.fn() }));
 vi.mock('@/utils/entityCache', () => ({
@@ -44,6 +47,9 @@ vi.mock('@/utils/entityCache', () => ({
     this.detail = (id: string) => `pets:detail:${id}`;
     this.list = 'pets:list';
   }),
+}));
+vi.mock('@/entities/landing/landing.service', () => ({
+  invalidateLandingPopularPets: invalidateLandingPopularPetsMock,
 }));
 
 const fetcher = vi.mocked(customFetcher);
@@ -169,6 +175,7 @@ describe('pet service', () => {
       body: { price: 200 },
     });
     expect(invalidateDetailMock).toHaveBeenCalledWith(id);
+    expect(invalidateLandingPopularPetsMock).toHaveBeenCalledTimes(4);
   });
 
   it('uses status/delete endpoints and never invalidates failed mutations', async () => {
@@ -194,5 +201,6 @@ describe('pet service', () => {
     });
     expect(invalidateListMock).not.toHaveBeenCalled();
     expect(invalidateDetailMock).not.toHaveBeenCalled();
+    expect(invalidateLandingPopularPetsMock).not.toHaveBeenCalled();
   });
 });

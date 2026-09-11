@@ -1,6 +1,10 @@
 import 'server-only';
 
 import { customFetcher } from '@/lib/api/customFetcher';
+import {
+  invalidateLandingHomeOffers,
+  invalidateLandingPopularProducts,
+} from '@/entities/landing/landing.service';
 import { EntityTag } from '@/utils/entityCache';
 import type {
   CreateProductDTO,
@@ -116,6 +120,8 @@ function toFormData(input: CreateProductDTO | UpdateProductImagesDTO) {
 function invalidate(id?: string) {
   productsCache.invalidateList();
   if (id) productsCache.invalidateDetail(id);
+  invalidateLandingHomeOffers();
+  invalidateLandingPopularProducts();
 }
 export async function createProduct(input: CreateProductDTO) {
   const result = await customFetcher<ManagementProductDTO, unknown, FormData>({

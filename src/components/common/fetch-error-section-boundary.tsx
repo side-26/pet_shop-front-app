@@ -1,7 +1,7 @@
 'use client';
 
 import { RefreshCw, RotateCcw, type LucideIcon } from 'lucide-react';
-import { useTransition, type ReactNode } from 'react';
+import { useEffect, useState, useTransition, type ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -19,6 +19,7 @@ type FetchErrorSectionBoundaryProps = Readonly<{
   description?: ReactNode;
   icon?: LucideIcon;
   onRetry: () => void;
+  retryCooldownMs?: number;
   title?: ReactNode;
 }>;
 
@@ -34,11 +35,23 @@ function FetchErrorSectionBoundary({
   description = 'دریافت اطلاعات این بخش با مشکل روبه‌رو شد. دوباره تلاش کنید.',
   icon: Icon = RefreshCw,
   onRetry,
+  retryCooldownMs = 3_000,
   title = 'بارگذاری اطلاعات انجام نشد',
 }: FetchErrorSectionBoundaryProps) {
   const [isRetrying, startRetryTransition] = useTransition();
+  const [isRetryCoolingDown, setIsRetryCoolingDown] = useState(false);
+
+  useEffect(() => {
+    if (!isRetryCoolingDown) return;
+
+    const timeout = window.setTimeout(() => setIsRetryCoolingDown(false), retryCooldownMs);
+    return () => window.clearTimeout(timeout);
+  }, [isRetryCoolingDown, retryCooldownMs]);
 
   function handleRetry() {
+    if (isRetryCoolingDown) return;
+
+    setIsRetryCoolingDown(true);
     startRetryTransition(onRetry);
   }
 
@@ -71,6 +84,7 @@ function FetchErrorSectionBoundary({
       <CardFooter className="tw:justify-center">
         <Button
           type="button"
+          disabled={isRetryCoolingDown}
           isLoading={isRetrying}
           loadingText="در حال دریافت اطلاعات..."
           onClick={handleRetry}

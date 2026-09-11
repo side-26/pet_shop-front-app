@@ -8,6 +8,9 @@ const { invalidateDetailMock, invalidateListMock } = vi.hoisted(() => ({
   invalidateDetailMock: vi.fn(),
   invalidateListMock: vi.fn(),
 }));
+const { invalidateLandingPetTypeCollectionsMock } = vi.hoisted(() => ({
+  invalidateLandingPetTypeCollectionsMock: vi.fn(),
+}));
 
 vi.mock('@/lib/api/customFetcher', () => ({ customFetcher: vi.fn() }));
 vi.mock('@/utils/entityCache', () => ({
@@ -15,6 +18,9 @@ vi.mock('@/utils/entityCache', () => ({
     this.invalidateDetail = invalidateDetailMock;
     this.invalidateList = invalidateListMock;
   }),
+}));
+vi.mock('@/entities/landing/landing.service', () => ({
+  invalidateLandingPetTypeCollections: invalidateLandingPetTypeCollectionsMock,
 }));
 
 const id = '507f1f77bcf86cd799439011';
@@ -57,5 +63,6 @@ describe('pet-type service image updates', () => {
     });
     expect(invalidateListMock).toHaveBeenCalledOnce();
     expect(invalidateDetailMock).toHaveBeenCalledWith(id);
+    expect(invalidateLandingPetTypeCollectionsMock).toHaveBeenCalledOnce();
   });
 });

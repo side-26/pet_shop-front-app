@@ -347,7 +347,9 @@ Codex/Claude Code must:
 section. Supply its required `onRetry` callback with the narrow data-boundary recovery action
 (such as Next.js error-boundary `retry`); it keeps that retry separate from the built-in hard page
 reload action. It composes the shared glass `Card` and `Button` primitives, uses a visible error
-icon and title, and labels both recovery actions in Persian.
+icon and title, and labels both recovery actions in Persian. Its retry is disabled for a short
+client-side cooldown (default `retryCooldownMs={3000}`) to prevent accidental repeat requests; this
+is UI protection, not a substitute for server-side abuse controls.
 
 `FormDialogContent` composes `DialogContent` with a filled `Card`, a `CardHeader` containing the
 required `DialogTitle`, a customizable `CardContent`, and a `CardFooter` action row. The submit
