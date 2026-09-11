@@ -8,13 +8,6 @@ export type PopularPet = Readonly<{
   imageAlt: string;
 }>;
 
-export type RehomingPet = Readonly<{
-  name: string;
-  details: string;
-  image: string;
-  imageAlt: string;
-}>;
-
 export const popularPets: readonly PopularPet[] = [
   {
     name: 'مکس',
@@ -43,32 +36,5 @@ export const popularPets: readonly PopularPet[] = [
     price: '۱۱,۰۰۰,۰۰۰',
     image: '/images/home/category-cat.jpg',
     imageAlt: 'پشمک، گربه پرشین سفید و آرام',
-  },
-] as const;
-
-export const rehomingPets: readonly RehomingPet[] = [
-  {
-    name: 'فندق',
-    details: 'میکس بیگل • ۲ ماهه',
-    image: '/images/home/category-dog.jpg',
-    imageAlt: 'فندق، توله سگ میکس بیگل آماده واگذاری',
-  },
-  {
-    name: 'نبات',
-    details: 'DSH • ۳ ماهه',
-    image: '/images/home/category-cat.jpg',
-    imageAlt: 'نبات، بچه گربه آماده واگذاری',
-  },
-  {
-    name: 'طوطی',
-    details: 'مرغ عشق • ۱ ساله',
-    image: '/images/home/category-bird.jpg',
-    imageAlt: 'مرغ عشق رنگارنگ آماده واگذاری',
-  },
-  {
-    name: 'پیکو',
-    details: 'میکس بیگل • ۴ ماهه',
-    image: '/images/home/category-dog.jpg',
-    imageAlt: 'پیکو، توله سگ میکس بیگل آماده واگذاری',
   },
 ] as const;

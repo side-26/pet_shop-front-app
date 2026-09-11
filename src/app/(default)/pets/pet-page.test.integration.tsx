@@ -52,9 +52,6 @@ describe('Pet landing page', () => {
     expect(screen.getByRole('heading', { name: 'پرطرفدارترین حیوانات' })).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'حیوانات آماده واگذاری' })).toBeTruthy();
 
-    for (const name of ['فندق', 'نبات', 'طوطی', 'پیکو']) {
-      expect(screen.getByRole('heading', { name })).toBeTruthy();
-    }
     for (const name of ['حیوان اول', 'حیوان دوم', 'حیوان سوم', 'حیوان چهارم']) {
       expect(screen.getAllByRole('heading', { name })).toHaveLength(2);
     }
@@ -99,5 +96,11 @@ describe('Pet landing page', () => {
     expect(carousel.getAttribute('aria-roledescription')).toBe('carousel');
     expect(carousel.getAttribute('dir')).toBe('rtl');
     expect(within(carousel).getAllByRole('group')).toHaveLength(4);
+    expect(carousel.getAttribute('aria-busy')).toBe('true');
+    expect(
+      within(carousel)
+        .getAllByRole('link')
+        .every((link) => link.getAttribute('tabindex') === '-1'),
+    ).toBe(true);
   });
 });
