@@ -15,6 +15,7 @@ import type {
 import { landingDiscountLimitSchema, landingSlugSchema } from './landing.schema';
 
 const landingCache = new EntityTag('landing');
+const allPetTypesCacheKey = 'pet-types:all';
 
 async function fetchLandingList<T>(path: string, key: string, query?: Record<string, number>) {
   'use cache';
@@ -27,7 +28,7 @@ async function fetchLandingList<T>(path: string, key: string, query?: Record<str
     query,
     auth: false,
     cache: 'force-cache',
-    next: { tags: [landingCache.list] },
+    next: { tags: [landingCache.list, landingCache.query(key)] },
   });
 }
 
@@ -50,7 +51,11 @@ export function getFeaturedLandingPetTypes() {
 }
 
 export function getAllLandingPetTypes() {
-  return fetchLandingList<LandingPetTypeDTO[]>('/landing/pet-types/all', 'pet-types:all');
+  return fetchLandingList<LandingPetTypeDTO[]>('/landing/pet-types/all', allPetTypesCacheKey);
+}
+
+export function invalidateAllLandingPetTypes() {
+  landingCache.invalidateQuery(allPetTypesCacheKey);
 }
 
 export async function getDiscountedLandingProducts(input: Partial<LandingDiscountLimitDTO> = {}) {

@@ -9,6 +9,7 @@ import { getAllLandingPetTypes } from '@/entities/landing/landing.service';
 import { cn } from '@/lib/utils';
 
 import { CategoriesSectionContainer } from './categories-section-container';
+import { CategoriesSectionErrorBoundary } from './categories-section-error-boundary';
 import { categoriesSectionSkeletonData } from './categories-section-skeleton-data';
 import { RevealItem, RevealSection } from './motion-primitives';
 
@@ -42,7 +43,9 @@ export function CategoriesSection() {
               <PetTypesCarouselSection petTypes={categoriesSectionSkeletonData} isLoading />
             }
           >
-            <CategoriesSectionContainer petTypesPromise={petTypesPromise} />
+            <CategoriesSectionErrorBoundary>
+              <CategoriesSectionContainer petTypesPromise={petTypesPromise} />
+            </CategoriesSectionErrorBoundary>
           </Suspense>
         </RevealItem>
       </div>

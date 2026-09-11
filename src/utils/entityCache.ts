@@ -48,4 +48,8 @@ export class EntityTag {
   invalidateDetail(id: string) {
     updateTag(this.detail(id));
   }
+
+  invalidateQuery(key: string) {
+    updateTag(this.query(key));
+  }
 }

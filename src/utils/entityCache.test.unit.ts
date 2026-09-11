@@ -94,10 +94,12 @@ describe('EntityTag', () => {
     products.invalidateAll();
     products.invalidateList();
     products.invalidateDetail('product-42');
+    products.invalidateQuery('page=2');
 
     expect(updateTagMock).toHaveBeenNthCalledWith(1, 'products');
     expect(updateTagMock).toHaveBeenNthCalledWith(2, 'products:list');
     expect(updateTagMock).toHaveBeenNthCalledWith(3, 'products:detail:product-42');
-    expect(updateTagMock).toHaveBeenCalledTimes(3);
+    expect(updateTagMock).toHaveBeenNthCalledWith(4, 'products:query:page=2');
+    expect(updateTagMock).toHaveBeenCalledTimes(4);
   });
 });

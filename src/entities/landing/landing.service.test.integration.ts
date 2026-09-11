@@ -7,6 +7,7 @@ import {
   getAllLandingPetTypes,
   getDiscountedLandingProducts,
   getFeaturedLandingPetTypes,
+  invalidateAllLandingPetTypes,
   getLandingPetBySlug,
   getLandingProductBySlug,
   getPopularLandingPets,
@@ -16,7 +17,9 @@ import {
 const mocks = vi.hoisted(() => ({
   cacheLife: vi.fn(),
   detail: vi.fn((id: string) => `landing:detail:${id}`),
+  invalidateQuery: vi.fn(),
   list: 'landing:list',
+  query: vi.fn((key: string) => `landing:query:${key}`),
   registerDetail: vi.fn(),
   registerList: vi.fn(),
 }));
@@ -81,6 +84,18 @@ describe('landing service', () => {
       ]),
     );
     expect(mocks.registerList).toHaveBeenCalledTimes(5);
+    expect(fetcher).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: '/landing/pet-types/all',
+        next: { tags: ['landing:list', 'landing:query:pet-types:all'] },
+      }),
+    );
+  });
+
+  it('invalidates only the all-pet-types query cache for a targeted retry', () => {
+    invalidateAllLandingPetTypes();
+
+    expect(mocks.invalidateQuery).toHaveBeenCalledWith('pet-types:all');
   });
 
   it('exposes the API-calculated discount amount for product sections', async () => {
