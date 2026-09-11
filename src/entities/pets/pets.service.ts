@@ -1,7 +1,10 @@
 import 'server-only';
 
 import { customFetcher } from '@/lib/api/customFetcher';
-import { invalidateLandingPopularPets } from '@/entities/landing/landing.service';
+import {
+  invalidateLandingPopularPets,
+  invalidateLandingRecentPets,
+} from '@/entities/landing/landing.service';
 import { EntityTag } from '@/utils/entityCache';
 
 import type {
@@ -147,6 +150,7 @@ function invalidate(id?: string) {
   petsCache.invalidateList();
   if (id) petsCache.invalidateDetail(id);
   invalidateLandingPopularPets();
+  invalidateLandingRecentPets();
 }
 
 export async function createPet(input: CreatePetDTO) {

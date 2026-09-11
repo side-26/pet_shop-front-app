@@ -6,11 +6,13 @@ import {
   retryAllLandingPetTypesAction,
   retryLandingHomeOffersAction,
   retryLandingPopularPetsAction,
+  retryLandingRecentPetsAction,
 } from './landing.actions';
 import {
   invalidateAllLandingPetTypes,
   invalidateLandingHomeOffers,
   invalidateLandingPopularPets,
+  invalidateLandingRecentPets,
 } from './landing.service';
 
 const { refreshMock } = vi.hoisted(() => ({ refreshMock: vi.fn() }));
@@ -20,6 +22,7 @@ vi.mock('./landing.service', () => ({
   invalidateAllLandingPetTypes: vi.fn(),
   invalidateLandingHomeOffers: vi.fn(),
   invalidateLandingPopularPets: vi.fn(),
+  invalidateLandingRecentPets: vi.fn(),
 }));
 
 beforeEach(() => {
@@ -37,9 +40,11 @@ describe('retryAllLandingPetTypesAction', () => {
   it('refreshes only the cache scope requested by each landing retry action', async () => {
     await retryLandingHomeOffersAction();
     await retryLandingPopularPetsAction();
+    await retryLandingRecentPetsAction();
 
     expect(invalidateLandingHomeOffers).toHaveBeenCalledOnce();
     expect(invalidateLandingPopularPets).toHaveBeenCalledOnce();
-    expect(refreshMock).toHaveBeenCalledTimes(2);
+    expect(invalidateLandingRecentPets).toHaveBeenCalledOnce();
+    expect(refreshMock).toHaveBeenCalledTimes(3);
   });
 });

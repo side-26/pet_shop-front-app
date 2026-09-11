@@ -20,6 +20,7 @@ const allPetTypesCacheKey = 'pet-types:all';
 const discountedProductsCacheKey = (limit: number) => `products:discounted:${limit}`;
 const popularProductsCacheKey = 'products:popular';
 const popularPetsCacheKey = 'pets:popular';
+const recentPetsCacheKey = 'pets:recent';
 
 async function fetchLandingList<T>(path: string, key: string, query?: Record<string, number>) {
   'use cache';
@@ -89,6 +90,10 @@ export function getPopularLandingPets() {
   return fetchLandingList<LandingPetDTO[]>('/landing/pets/popular', popularPetsCacheKey);
 }
 
+export function getRecentLandingPets() {
+  return fetchLandingList<LandingPetDTO[]>('/landing/pets/recent', recentPetsCacheKey);
+}
+
 export function invalidateLandingHomeOffers() {
   landingCache.invalidateQuery(discountedProductsCacheKey(5));
 }
@@ -99,6 +104,10 @@ export function invalidateLandingPopularProducts() {
 
 export function invalidateLandingPopularPets() {
   landingCache.invalidateQuery(popularPetsCacheKey);
+}
+
+export function invalidateLandingRecentPets() {
+  landingCache.invalidateQuery(recentPetsCacheKey);
 }
 
 export async function getLandingPetBySlug(input: LandingSlugDTO['slug']) {

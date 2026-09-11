@@ -12,6 +12,8 @@ import {
   getLandingProductBySlug,
   getPopularLandingPets,
   getPopularLandingProducts,
+  getRecentLandingPets,
+  invalidateLandingRecentPets,
 } from './landing.service';
 
 const mocks = vi.hoisted(() => ({
@@ -56,6 +58,7 @@ describe('landing service', () => {
     await getDiscountedLandingProducts({ limit: 2 });
     await getPopularLandingProducts();
     await getPopularLandingPets();
+    await getRecentLandingPets();
 
     expect(fetcher.mock.calls.map(([options]) => options)).toEqual(
       expect.arrayContaining([
@@ -81,9 +84,14 @@ describe('landing service', () => {
           auth: false,
           cache: 'force-cache',
         }),
+        expect.objectContaining({
+          url: '/landing/pets/recent',
+          auth: false,
+          cache: 'force-cache',
+        }),
       ]),
     );
-    expect(mocks.registerList).toHaveBeenCalledTimes(5);
+    expect(mocks.registerList).toHaveBeenCalledTimes(6);
     expect(fetcher).toHaveBeenCalledWith(
       expect.objectContaining({
         url: '/landing/pet-types/all',
@@ -94,8 +102,10 @@ describe('landing service', () => {
 
   it('invalidates only the all-pet-types query cache for a targeted retry', () => {
     invalidateAllLandingPetTypes();
+    invalidateLandingRecentPets();
 
     expect(mocks.invalidateQuery).toHaveBeenCalledWith('pet-types:all');
+    expect(mocks.invalidateQuery).toHaveBeenCalledWith('pets:recent');
   });
 
   it('exposes the API-calculated discount amount for product sections', async () => {

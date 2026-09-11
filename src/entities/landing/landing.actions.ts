@@ -6,6 +6,7 @@ import {
   invalidateAllLandingPetTypes,
   invalidateLandingHomeOffers,
   invalidateLandingPopularPets,
+  invalidateLandingRecentPets,
 } from './landing.service';
 
 /** Expires only the home pet-type collection, then requests updated route data. */
@@ -21,5 +22,10 @@ export async function retryLandingHomeOffersAction() {
 
 export async function retryLandingPopularPetsAction() {
   invalidateLandingPopularPets();
+  refresh();
+}
+
+export async function retryLandingRecentPetsAction() {
+  invalidateLandingRecentPets();
   refresh();
 }
