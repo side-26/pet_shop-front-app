@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import { getAllLandingPetTypes } from '@/entities/landing/landing.service';
 
 import { PetTypesSectionContainer } from './pet-types-section-container';
+import { PetTypesSectionErrorBoundary } from './pet-types-section-error-boundary';
 import { PetTypesSectionRenderer } from './pet-types-section-renderer';
 import { petTypesSectionSkeletonData } from './pet-types-section-skeleton-data';
 
@@ -27,7 +28,9 @@ export function PetTypesSection() {
       <Suspense
         fallback={<PetTypesSectionRenderer petTypes={petTypesSectionSkeletonData} isSkeleton />}
       >
-        <PetTypesSectionContainer petTypesPromise={petTypesPromise} />
+        <PetTypesSectionErrorBoundary>
+          <PetTypesSectionContainer petTypesPromise={petTypesPromise} />
+        </PetTypesSectionErrorBoundary>
       </Suspense>
     </section>
   );

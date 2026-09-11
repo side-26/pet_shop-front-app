@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
@@ -7,6 +7,14 @@ import type { LandingPetTypeDTO } from '@/entities/landing/landing.dto';
 import { PetTypesSectionContainer } from './pet-types-section-container';
 import { PetTypesSectionRenderer } from './pet-types-section-renderer';
 import { petTypesSectionSkeletonData } from './pet-types-section-skeleton-data';
+
+const { retryAllLandingPetTypesActionMock } = vi.hoisted(() => ({
+  retryAllLandingPetTypesActionMock: vi.fn(),
+}));
+
+vi.mock('@/entities/landing/landing.actions', () => ({
+  retryAllLandingPetTypesAction: retryAllLandingPetTypesActionMock,
+}));
 
 const petType: LandingPetTypeDTO = {
   id: 'pet-type-1',
@@ -95,6 +103,8 @@ describe('PetTypesSection', () => {
 
     expect(screen.getByText('دریافت دسته‌بندی‌ها انجام نشد')).toBeTruthy();
     expect(screen.getByText('ارتباط با سرور برقرار نشد.')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'دریافت دوباره اطلاعات' }));
+    expect(retryAllLandingPetTypesActionMock).toHaveBeenCalledOnce();
 
     rerender(empty);
     expect(screen.getByText('دسته‌بندی فعالی برای نمایش وجود ندارد')).toBeTruthy();
