@@ -72,6 +72,8 @@ describe('ProductCategoriesSection', () => {
     expect(screen.getByRole('link', { name: 'مشاهده محصولات بیشتر' }).getAttribute('href')).toBe(
       routePaths.productsList,
     );
+    expect(screen.getByText('بیشتر').className).toContain('tw:sm:hidden');
+    expect(screen.getByText('مشاهده محصولات بیشتر').className).toContain('tw:sm:inline');
   });
 
   it('renders a pet-type image, title, and canonical filtered-products link without legacy copy', () => {

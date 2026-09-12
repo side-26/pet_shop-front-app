@@ -30,7 +30,11 @@ vi.mock('./_components/product-landing-motion', () => ({
   ),
   MotionItem: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   HeroMotion: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-  ParallaxProductMedia: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  ParallaxProductMedia: ({ children, className }: { children: ReactNode; className?: string }) => (
+    <div data-slot="parallax-product-media" className={className}>
+      {children}
+    </div>
+  ),
 }));
 
 beforeEach(() => {
@@ -119,7 +123,14 @@ describe('Product landing page', () => {
       </>,
     );
 
-    expect(screen.getByAltText('گلدن رتریور و گربه پرشین در خانه روشن')).toBeTruthy();
+    expect(
+      screen.getByAltText('گلدن رتریور و گربه پرشین در خانه روشن').getAttribute('loading'),
+    ).toBe('lazy');
+    expect(
+      screen
+        .getByAltText('گلدن رتریور و گربه پرشین در خانه روشن')
+        .closest('[data-slot="parallax-product-media"]')?.className,
+    ).toContain('tw:lg:block');
     expect(
       screen.getByAltText('داستان انتخاب آگاهانه محصولات پت از شناخت نیاز تا تحویل در خانه'),
     ).toBeTruthy();

@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-import { HeroMotion, MotionItem, ParallaxProductMedia } from './product-landing-motion';
+import { ParallaxProductMedia } from './product-landing-motion';
 
 export async function ProductHeroSection() {
   'use cache';
@@ -25,15 +25,15 @@ export function ProductHeroRenderer() {
       <div className="tw:absolute tw:inset-x-0 tw:top-0 tw:-z-10 tw:h-2/3 tw:bg-linear-to-b tw:from-primary-muted/75 tw:to-transparent" />
       <div className="tw:absolute tw:start-[8%] tw:top-16 tw:-z-10 tw:size-44 tw:rounded-full tw:bg-secondary/15 tw:blur-3xl" />
       <div className="tw:mx-auto tw:grid tw:w-full tw:max-w-7xl tw:items-center tw:gap-12 tw:lg:grid-cols-[0.9fr_1.1fr] tw:lg:gap-16">
-        <HeroMotion className="tw:flex tw:flex-col tw:items-start tw:gap-6">
-          <MotionItem>
+        <div className="tw:flex tw:flex-col tw:items-start tw:gap-6">
+          <div>
             <Badge variant="tonal" color="primary" size="lg">
               <PawPrint aria-hidden="true" />
               فروشگاه تخصصی پت
             </Badge>
-          </MotionItem>
+          </div>
 
-          <MotionItem className="tw:flex tw:flex-col tw:gap-4">
+          <div className="tw:flex tw:flex-col tw:gap-4">
             <h1
               id="product-hero-title"
               className="tw:max-w-2xl tw:text-heading-1 tw:font-extrabold tw:text-foreground tw:sm:text-display-l tw:lg:text-display-xl"
@@ -44,9 +44,9 @@ export function ProductHeroRenderer() {
               انتخاب‌های مطمئن برای تغذیه، بازی و مراقبت؛ مرتب‌شده برای خریدی سریع‌تر و زندگی شادتر
               کنار پت شما.
             </p>
-          </MotionItem>
+          </div>
 
-          <MotionItem className="tw:flex tw:w-full tw:flex-col tw:gap-3 tw:sm:w-auto tw:sm:flex-row">
+          <div className="tw:flex tw:w-full tw:flex-col tw:gap-3 tw:sm:w-auto tw:sm:flex-row">
             <a
               href="#featured-products"
               className={cn(buttonVariants({ size: 'xl' }), 'tw:group tw:sm:min-w-44')}
@@ -64,26 +64,25 @@ export function ProductHeroRenderer() {
             >
               انتخاب بر اساس پت
             </a>
-          </MotionItem>
+          </div>
 
-          <MotionItem className="tw:flex tw:flex-wrap tw:gap-x-5 tw:gap-y-2 tw:text-label-m tw:text-muted-foreground">
+          <div className="tw:flex tw:flex-wrap tw:gap-x-5 tw:gap-y-2 tw:text-label-m tw:text-muted-foreground">
             {['تضمین کیفیت', 'ارسال امن', 'انتخاب تخصصی'].map((item) => (
               <span key={item} className="tw:flex tw:items-center tw:gap-1.5">
                 <Check aria-hidden="true" className="tw:size-4 tw:text-success" />
                 {item}
               </span>
             ))}
-          </MotionItem>
-        </HeroMotion>
+          </div>
+        </div>
 
-        <ParallaxProductMedia className="tw:hidden tw:relative tw:mx-auto tw:w-full tw:max-w-2xl tw:sm:block">
+        <ParallaxProductMedia className="tw:hidden tw:relative tw:mx-auto tw:w-full tw:max-w-2xl tw:lg:block">
           <div className="tw:absolute tw:-inset-3 tw:rounded-[2.75rem] tw:border tw:border-primary/15 tw:bg-primary/5 tw:rotate-2" />
           <div className="tw:relative tw:aspect-[4/3] tw:overflow-hidden tw:rounded-[2.5rem] tw:border tw:border-border/60 tw:bg-card tw:shadow-2xl tw:shadow-primary/15">
             <Image
               src="/images/home/hero-pets.jpeg"
               alt="گلدن رتریور و گربه پرشین در خانه روشن"
               fill
-              priority
               sizes="(min-width: 1024px) 55vw, 92vw"
               className="tw:object-cover"
             />

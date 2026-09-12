@@ -32,12 +32,14 @@ export function ProductCategoriesSection() {
           <Link
             href={routePaths.productsList}
             prefetch
+            aria-label="مشاهده محصولات بیشتر"
             className={cn(
               'tw:sm:h-10 tw:sm:gap-2 tw:sm:px-4 tw:sm:text-label-m',
               buttonVariants({ variant: 'text', color: 'primary', size: 'xs' }),
             )}
           >
-            مشاهده محصولات بیشتر
+            <span className="tw:sm:hidden">بیشتر</span>
+            <span className="tw:hidden tw:sm:inline">مشاهده محصولات بیشتر</span>
             <ArrowLeftIcon aria-hidden="true" data-icon="inline-end" />
           </Link>
         </div>
