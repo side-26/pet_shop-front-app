@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { cacheLife } from 'next/cache';
 
 import { CareGuideSection } from './_components/care-guide-section';
 import { FeaturedProductsSection } from './_components/featured-products-section';
@@ -12,10 +11,7 @@ export const metadata: Metadata = {
   description: 'محصولات منتخب برای تغذیه، بازی و مراقبت سگ، گربه، پرندگان و حیوانات کوچک.',
 };
 
-export default async function ProductLandingPage() {
-  'use cache';
-  cacheLife('max');
-
+export default function ProductLandingPage() {
   return (
     <div className="tw:overflow-clip">
       <ProductHeroSection />

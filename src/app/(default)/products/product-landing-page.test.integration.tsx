@@ -7,7 +7,7 @@ import { routePaths } from '@/configs/route.path';
 import { CareGuideRenderer } from './_components/care-guide-section';
 import { FeaturedProductsRenderer } from './_components/featured-products-section';
 import { ProductAssuranceRenderer } from './_components/product-assurance-section';
-import { ProductCategoriesRenderer } from './_components/product-categories-section';
+import { ProductCategoriesSectionRenderer } from './_components/product-categories-section-renderer';
 import { ProductHeroRenderer } from './_components/product-hero-section';
 
 vi.mock('./_components/product-landing-motion', () => ({
@@ -73,17 +73,26 @@ describe('Product landing page', () => {
       <>
         <ProductHeroRenderer />
         <ProductAssuranceRenderer />
-        <ProductCategoriesRenderer />
+        <ProductCategoriesSectionRenderer
+          petTypes={[
+            {
+              id: 'dog',
+              title: 'سگ‌ها',
+              mainImage: 'https://cdn.example.com/dog.webp',
+              thumbnail: 'data:image/webp;base64,AAAA',
+            },
+          ]}
+        />
         <FeaturedProductsRenderer />
         <CareGuideRenderer />
       </>,
     );
 
     expect(screen.getByRole('heading', { level: 1, name: /واقعاً نیاز دارد/ })).toBeTruthy();
-    expect(screen.getByRole('heading', { name: 'از دنیای او شروع کن' })).toBeTruthy();
+    expect(screen.getAllByRole('heading', { name: 'سگ‌ها' })).toHaveLength(2);
     expect(screen.getByRole('heading', { name: 'انتخاب‌های محبوب' })).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'مسیر انتخاب را کوتاه کرده‌ایم' })).toBeTruthy();
-    expect(screen.getAllByText('انتخاب‌های پیشنهادی')).toHaveLength(4);
+    expect(screen.queryByText('انتخاب‌های پیشنهادی')).toBeNull();
   });
 
   it('uses local descriptive imagery and canonical navigation', () => {

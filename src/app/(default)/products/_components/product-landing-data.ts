@@ -1,39 +1,4 @@
-import { Bird, Bone, Cat, Dog, PackageCheck, Rabbit, ShieldCheck, Sparkles } from 'lucide-react';
-
-export const productCategories = [
-  {
-    title: 'برای سگ‌ها',
-    description: 'غذا، تشویقی و بازی',
-    image: '/images/home/category-dog.jpg',
-    imageAlt: 'توله گلدن رتریور در فضای سبز',
-    icon: Dog,
-    tone: 'tw:bg-primary-muted tw:text-primary-muted-foreground',
-  },
-  {
-    title: 'برای گربه‌ها',
-    description: 'غذا، خاک و مراقبت',
-    image: '/images/home/category-cat.jpg',
-    imageAlt: 'گربه پرشین سفید روی بالشت مخملی',
-    icon: Cat,
-    tone: 'tw:bg-secondary-muted tw:text-secondary-muted-foreground',
-  },
-  {
-    title: 'برای پرندگان',
-    description: 'دان، ویتامین و سرگرمی',
-    image: '/images/home/category-bird.jpg',
-    imageAlt: 'طوطی ماکائوی رنگارنگ روی استند چوبی',
-    icon: Bird,
-    tone: 'tw:bg-info-muted tw:text-info-muted-foreground',
-  },
-  {
-    title: 'برای کوچولوها',
-    description: 'خوراک، بستر و خانه',
-    image: '/images/home/category-hamster.jpg',
-    imageAlt: 'همستر کوچک در حال خوردن دانه',
-    icon: Rabbit,
-    tone: 'tw:bg-warning-muted tw:text-warning-muted-foreground',
-  },
-] as const;
+import { Bone, PackageCheck, ShieldCheck, Sparkles } from 'lucide-react';
 
 export const landingProducts = [
   {
