@@ -25,11 +25,31 @@ describe('logoutUser service', () => {
     vi.clearAllMocks();
   });
 
-  it('deletes the encrypted session cookie without calling an API', async () => {
-    await logoutUser();
+  it('invalidates the active backend session before deleting the encrypted session cookie', async () => {
+    const response = { isSuccess: true as const, message: 'خارج شدید.', data: undefined };
+    customFetcherMock.mockResolvedValue(response);
 
+    await expect(logoutUser()).resolves.toBe(response);
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/users/logout',
+      method: 'POST',
+      body: undefined,
+      auth: true,
+      cache: 'no-store',
+    });
     expect(deleteSessionCookieMock).toHaveBeenCalledOnce();
-    expect(customFetcherMock).not.toHaveBeenCalled();
+  });
+
+  it('keeps the encrypted session cookie when backend session invalidation fails', async () => {
+    const response = {
+      isSuccess: false as const,
+      message: 'خروج ناموفق بود.',
+      data: { messages: {}, details: {} },
+    };
+    customFetcherMock.mockResolvedValue(response);
+
+    await expect(logoutUser()).resolves.toBe(response);
+    expect(deleteSessionCookieMock).not.toHaveBeenCalled();
   });
 });
 

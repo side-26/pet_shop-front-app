@@ -82,8 +82,10 @@ export async function loginUserAction(input: LoginUserInput) {
 }
 
 export async function logoutUserAction() {
+  let result: Awaited<ReturnType<typeof logoutUser>>;
+
   try {
-    await logoutUser();
+    result = await logoutUser();
   } catch (error: unknown) {
     return {
       isSuccess: false as const,
@@ -91,6 +93,8 @@ export async function logoutUserAction() {
       data: { messages: {}, details: {} },
     };
   }
+
+  if (!result.isSuccess) return result;
 
   redirect(PATHS.AUTH.LOGIN_AFTER_LOGOUT);
 }

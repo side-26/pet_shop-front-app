@@ -282,8 +282,8 @@ describe('auth actions', () => {
     expect(redirectMock).toHaveBeenCalledWith(PATHS.AUTH.LOGIN);
   });
 
-  it('deletes the session and redirects with the logout success marker', async () => {
-    logoutUserMock.mockResolvedValue(undefined);
+  it('redirects with the logout success marker after backend session invalidation', async () => {
+    logoutUserMock.mockResolvedValue({ isSuccess: true, message: 'خارج شدید.', data: undefined });
     redirectMock.mockImplementation(() => {
       throw new Error('NEXT_REDIRECT');
     });
@@ -295,8 +295,12 @@ describe('auth actions', () => {
     expect(deleteSessionCookieMock).not.toHaveBeenCalled();
   });
 
-  it('returns the deletion error without redirecting', async () => {
-    logoutUserMock.mockRejectedValue(new Error('امکان حذف نشست وجود ندارد.'));
+  it('returns the backend invalidation failure without redirecting', async () => {
+    logoutUserMock.mockResolvedValue({
+      isSuccess: false,
+      message: 'امکان حذف نشست وجود ندارد.',
+      data: { messages: {}, details: {} },
+    });
 
     await expect(logoutUserAction()).resolves.toEqual({
       isSuccess: false,

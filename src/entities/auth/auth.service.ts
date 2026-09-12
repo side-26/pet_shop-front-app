@@ -15,8 +15,20 @@ import type {
 import { customFetcher } from '@/lib/api/customFetcher';
 import { deleteSessionCookie } from '@/utils/session';
 
-export async function logoutUser(): Promise<void> {
-  await deleteSessionCookie();
+export async function logoutUser() {
+  const result = await customFetcher<void, unknown, undefined>({
+    url: '/users/logout',
+    method: 'POST',
+    body: undefined,
+    auth: true,
+    cache: 'no-store',
+  });
+
+  if (result.isSuccess) {
+    await deleteSessionCookie();
+  }
+
+  return result;
 }
 
 export function registerUser(input: RegisterUserDTO) {
