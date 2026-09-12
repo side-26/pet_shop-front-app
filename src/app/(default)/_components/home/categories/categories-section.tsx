@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import { CategoriesSectionContainer } from './categories-section-container';
 import { CategoriesSectionErrorBoundary } from './categories-section-error-boundary';
 import { categoriesSectionSkeletonData } from './categories-section-skeleton-data';
-import { RevealItem, RevealSection } from './motion-primitives';
+import { RevealItem, RevealSection } from '../shared/motion-primitives';
 
 export function CategoriesSection() {
   const petTypesPromise = getAllLandingPetTypes();

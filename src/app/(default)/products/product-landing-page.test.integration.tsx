@@ -5,14 +5,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { routePaths } from '@/configs/route.path';
 import type { LandingPopularProductDTO } from '@/entities/landing/landing.dto';
 
-import { CareGuideRenderer } from './_components/care-guide-section';
-import { FeaturedProductsRenderer } from './_components/featured-products-section';
-import { ProductAssuranceRenderer } from './_components/product-assurance-section';
-import { ProductCategoriesSectionRenderer } from './_components/product-categories-section-renderer';
-import { ProductHeroRenderer } from './_components/product-hero-section';
-import { PopularBrandsSectionRenderer } from './_components/popular-brands-section-renderer';
+import { CareGuideRenderer } from './_components/care-guide/care-guide-section';
+import { FeaturedProductsRenderer } from './_components/featured-products/featured-products-section';
+import { ProductAssuranceRenderer } from './_components/assurance/product-assurance-section';
+import { ProductCategoriesSectionRenderer } from './_components/categories/product-categories-section-renderer';
+import { ProductHeroRenderer } from './_components/hero/product-hero-section';
+import { PopularBrandsSectionRenderer } from './_components/popular-brands/popular-brands-section-renderer';
 
-vi.mock('./_components/product-landing-motion', () => ({
+vi.mock('./_components/shared/product-landing-motion', () => ({
   MotionSection: ({
     children,
     labelledBy,

@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { routePaths } from '@/configs/route.path';
 
-import { ParallaxMedia, RevealItem, RevealSection } from './motion-primitives';
+import { ParallaxMedia, RevealItem, RevealSection } from '../shared/motion-primitives';
 
 export function DeliverySection() {
   return (

@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-import { ParallaxProductMedia } from './product-landing-motion';
+import { ParallaxProductMedia } from '../shared/product-landing-motion';
 
 export async function ProductHeroSection() {
   'use cache';

@@ -7,7 +7,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
 
-import { HeroSequence, RevealItem } from './motion-primitives';
+import { HeroSequence, RevealItem } from '../shared/motion-primitives';
 import { ShaderBackground } from './shader-background';
 
 export function HeroSection() {

@@ -11,7 +11,7 @@ import { FeaturedProductsSectionContainer } from './featured-products-section-co
 import { FeaturedProductsSectionErrorBoundary } from './featured-products-section-error-boundary';
 import { FeaturedProductsRenderer } from './featured-products-section-renderer';
 import { featuredProductsSectionSkeletonData } from './featured-products-section-skeleton-data';
-import { MotionItem, MotionSection } from './product-landing-motion';
+import { MotionItem, MotionSection } from '../shared/product-landing-motion';
 
 export { FeaturedProductsRenderer } from './featured-products-section-renderer';
 

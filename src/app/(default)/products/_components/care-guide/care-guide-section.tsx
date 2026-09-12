@@ -7,8 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { routePaths } from '@/configs/route.path';
 
-import { MotionItem, MotionSection, ParallaxProductMedia } from './product-landing-motion';
-import { careSteps } from './product-landing-data';
+import { MotionItem, MotionSection, ParallaxProductMedia } from '../shared/product-landing-motion';
+import { careSteps } from '../shared/product-landing-data';
 
 export async function CareGuideSection() {
   'use cache';

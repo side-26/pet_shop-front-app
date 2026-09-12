@@ -1,7 +1,7 @@
 import { cacheLife } from 'next/cache';
 
-import { MotionItem, MotionSection } from './product-landing-motion';
-import { shoppingPromises } from './product-landing-data';
+import { MotionItem, MotionSection } from '../shared/product-landing-motion';
+import { shoppingPromises } from '../shared/product-landing-data';
 
 export async function ProductAssuranceSection() {
   'use cache';

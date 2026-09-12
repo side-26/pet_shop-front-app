@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 import { benefitIconStyles, homeBenefits } from './home-data';
-import { RevealItem, RevealSection } from './motion-primitives';
+import { RevealItem, RevealSection } from '../shared/motion-primitives';
 
 export function BenefitsSection() {
   return (

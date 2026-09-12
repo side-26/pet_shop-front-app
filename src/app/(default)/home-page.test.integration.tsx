@@ -6,11 +6,11 @@ import { routePaths } from '@/configs/route.path';
 
 import HomePage from './page';
 
-vi.mock('./_components/home/shader-background', () => ({
+vi.mock('./_components/home/hero/shader-background', () => ({
   ShaderBackground: () => <div data-testid="shader-background" />,
 }));
 
-vi.mock('./_components/home/motion-primitives', () => ({
+vi.mock('./_components/home/shared/motion-primitives', () => ({
   RevealSection: ({ children, labelledBy }: { children: ReactNode; labelledBy?: string }) => (
     <section aria-labelledby={labelledBy}>{children}</section>
   ),

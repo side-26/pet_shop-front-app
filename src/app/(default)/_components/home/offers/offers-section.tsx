@@ -7,7 +7,7 @@ import { OffersSectionContainer } from './offers-section-container';
 import { OffersSectionErrorBoundary } from './offers-section-error-boundary';
 import { OffersSectionRenderer } from './offers-section-renderer';
 import { offersSectionSkeletonData } from './offers-section-skeleton-data';
-import { RevealItem, RevealSection } from './motion-primitives';
+import { RevealItem, RevealSection } from '../shared/motion-primitives';
 
 export function OffersSection() {
   const productsPromise = getDiscountedLandingProducts({ limit: 5 });
