@@ -30,8 +30,16 @@ export type LandingProductDTO = {
   summary?: string;
   price: number;
   discountPercentage: number;
-  /** Calculated by the landing API; it is not persisted on the product. */
+  /** Discount amount calculated by discounted and featured landing endpoints. */
   discountPrice: number;
+};
+
+/**
+ * Product summary returned by the popular-products endpoint.
+ * Unlike other landing product summaries, `discountPrice` is the final payable price.
+ */
+export type LandingPopularProductDTO = LandingProductDTO & {
+  slug: string;
 };
 
 export type LandingFeaturedProductTag =

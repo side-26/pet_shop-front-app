@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
+import type { LandingPopularProductDTO } from '@/entities/landing/landing.dto';
 
 import { CareGuideRenderer } from './_components/care-guide-section';
 import { FeaturedProductsRenderer } from './_components/featured-products-section';
@@ -68,6 +69,19 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe('Product landing page', () => {
+  const popularProducts: LandingPopularProductDTO[] = [
+    {
+      id: 'product-1',
+      slug: 'cat-food',
+      title: 'غذای گربه',
+      mainImage: 'https://cdn.example.com/cat-food.webp',
+      mainImageThumbnail: 'data:image/webp;base64,AAAA',
+      price: 200_000,
+      discountPercentage: 20,
+      discountPrice: 160_000,
+    },
+  ];
+
   it('renders the complete Persian storefront journey', () => {
     render(
       <>
@@ -83,14 +97,14 @@ describe('Product landing page', () => {
             },
           ]}
         />
-        <FeaturedProductsRenderer />
+        <FeaturedProductsRenderer products={popularProducts} />
         <CareGuideRenderer />
       </>,
     );
 
     expect(screen.getByRole('heading', { level: 1, name: /واقعاً نیاز دارد/ })).toBeTruthy();
     expect(screen.getAllByRole('heading', { name: 'سگ‌ها' })).toHaveLength(2);
-    expect(screen.getByRole('heading', { name: 'انتخاب‌های محبوب' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'غذای گربه' })).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'مسیر انتخاب را کوتاه کرده‌ایم' })).toBeTruthy();
     expect(screen.queryByText('انتخاب‌های پیشنهادی')).toBeNull();
   });
@@ -99,7 +113,7 @@ describe('Product landing page', () => {
     render(
       <>
         <ProductHeroRenderer />
-        <FeaturedProductsRenderer />
+        <FeaturedProductsRenderer products={popularProducts} />
         <CareGuideRenderer />
       </>,
     );
@@ -108,11 +122,36 @@ describe('Product landing page', () => {
     expect(
       screen.getByAltText('داستان انتخاب آگاهانه محصولات پت از شناخت نیاز تا تحویل در خانه'),
     ).toBeTruthy();
-    expect(screen.getByRole('link', { name: /مشاهده سبد خرید/ }).getAttribute('href')).toBe(
-      routePaths.cart,
+    expect(screen.getByRole('link', { name: /مشاهده جزییات محصول/ }).getAttribute('href')).toBe(
+      routePaths.productDetail('cat-food'),
     );
+    expect(screen.getByText('پرفروش')).toBeTruthy();
+    expect(screen.getByText('۱۶۰٬۰۰۰')).toBeTruthy();
     expect(
-      screen.getByRole('region', { name: 'محصولات منتخب' }).getAttribute('aria-roledescription'),
+      screen.getByRole('region', { name: 'محصولات محبوب' }).getAttribute('aria-roledescription'),
     ).toBe('carousel');
+  });
+
+  it('keeps popular-product skeleton cards non-interactive', () => {
+    render(<FeaturedProductsRenderer products={popularProducts} isSkeleton />);
+
+    expect(
+      screen.getByRole('link', { name: /مشاهده جزییات محصول/ }).getAttribute('aria-disabled'),
+    ).toBe('true');
+    expect(screen.getByRole('link', { name: /مشاهده جزییات محصول/ }).getAttribute('tabindex')).toBe(
+      '-1',
+    );
+  });
+
+  it('emphasizes the regular price when a popular product has no discount', () => {
+    render(
+      <FeaturedProductsRenderer
+        products={[{ ...popularProducts[0], discountPercentage: 0, discountPrice: 200_000 }]}
+      />,
+    );
+
+    expect(screen.getByText('۲۰۰٬۰۰۰').parentElement?.parentElement?.className).toContain(
+      'tw:text-price-m',
+    );
   });
 });

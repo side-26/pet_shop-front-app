@@ -9,6 +9,7 @@ import type {
   LandingPetDTO,
   LandingPetDetailDTO,
   LandingPetTypeDTO,
+  LandingPopularProductDTO,
   LandingProductDetailDTO,
   LandingProductDTO,
   LandingSlugDTO,
@@ -82,7 +83,7 @@ export async function getDiscountedLandingProducts(input: Partial<LandingDiscoun
 }
 
 export function getPopularLandingProducts() {
-  return fetchLandingList<LandingProductDTO[]>(
+  return fetchLandingList<LandingPopularProductDTO[]>(
     '/landing/products/popular',
     popularProductsCacheKey,
   );

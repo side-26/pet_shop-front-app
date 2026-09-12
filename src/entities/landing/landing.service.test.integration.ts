@@ -2,7 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { customFetcher } from '@/lib/api/customFetcher';
 
-import type { LandingFeaturedProductDTO, LandingProductDTO } from './landing.dto';
+import type {
+  LandingFeaturedProductDTO,
+  LandingPopularProductDTO,
+  LandingProductDTO,
+} from './landing.dto';
 import {
   getAllLandingPetTypes,
   getDiscountedLandingProducts,
@@ -51,6 +55,12 @@ const landingProduct: LandingProductDTO = {
 const featuredProduct: LandingFeaturedProductDTO = {
   tag: 'mostPurchased',
   product: landingProduct,
+};
+
+const popularProduct: LandingPopularProductDTO = {
+  ...landingProduct,
+  slug: 'cat-food',
+  discountPrice: 160_000,
 };
 
 describe('landing service', () => {
@@ -140,6 +150,16 @@ describe('landing service', () => {
     if (!result.isSuccess) throw new Error('Expected the mocked landing request to succeed.');
     expect(result.data[0]?.discountPrice).toBe(40_000);
     expect(result.data[0]?.mainImageThumbnail).toBe('data:image/webp;base64,AAAA');
+  });
+
+  it('exposes the final payable price and public slug returned for popular product cards', async () => {
+    fetcher.mockResolvedValue({ isSuccess: true, message: null, data: [popularProduct] });
+
+    await expect(getPopularLandingProducts()).resolves.toEqual({
+      isSuccess: true,
+      message: null,
+      data: [popularProduct],
+    });
   });
 
   it('validates and requests customer-safe details by slug', async () => {

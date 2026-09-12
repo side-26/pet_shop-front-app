@@ -1,44 +1,5 @@
 import { Bone, PackageCheck, ShieldCheck, Sparkles } from 'lucide-react';
 
-export const landingProducts = [
-  {
-    title: 'غذای خشک سگ پرشین',
-    description: 'فرمول کامل برای سگ‌های بالغ',
-    image: '/images/home/product-dog-food.jpg',
-    imageAlt: 'بسته غذای خشک سگ پرشین پت هیون',
-    badge: 'پرفروش',
-    badgeColor: 'primary' as const,
-    price: '۹۶۰٬۰۰۰',
-  },
-  {
-    title: 'خاک گربه کربن‌دار',
-    description: 'جذب بالا و کنترل بوی طولانی',
-    image: '/images/home/product-cat-litter.jpg',
-    imageAlt: 'بسته خاک گربه با طراحی روشن',
-    badge: '۱۵٪ تخفیف',
-    badgeColor: 'error' as const,
-    price: '۲۹۷٬۵۰۰',
-  },
-  {
-    title: 'آب‌خوری هوشمند',
-    description: 'پمپ کم‌صدا و فیلتر چندلایه',
-    image: '/images/home/product-water-fountain.jpg',
-    imageAlt: 'آب‌خوری هوشمند سفید حیوانات خانگی',
-    badge: 'انتخاب ویژه',
-    badgeColor: 'info' as const,
-    price: '۱٬۷۵۰٬۰۰۰',
-  },
-  {
-    title: 'پک اسباب‌بازی دندانی',
-    description: 'طناب مقاوم برای بازی روزانه',
-    image: '/images/home/product-rope-toys.jpg',
-    imageAlt: 'مجموعه اسباب‌بازی طنابی رنگی سگ',
-    badge: 'محبوب',
-    badgeColor: 'secondary' as const,
-    price: '۴۰۵٬۰۰۰',
-  },
-] as const;
-
 export const shoppingPromises = [
   {
     title: 'انتخاب مطمئن',
