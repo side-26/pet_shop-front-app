@@ -7,6 +7,7 @@ import {
   invalidateLandingFeaturedProducts,
   invalidateLandingHomeOffers,
   invalidateLandingPopularProducts,
+  invalidateLandingPopularBrands,
   invalidateLandingPopularPets,
   invalidateLandingRecentPets,
 } from './landing.service';
@@ -29,6 +30,11 @@ export async function retryLandingFeaturedProductsAction() {
 
 export async function retryLandingPopularProductsAction() {
   invalidateLandingPopularProducts();
+  refresh();
+}
+
+export async function retryLandingPopularBrandsAction() {
+  invalidateLandingPopularBrands();
   refresh();
 }
 

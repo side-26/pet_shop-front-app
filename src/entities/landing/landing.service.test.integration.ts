@@ -4,6 +4,7 @@ import { customFetcher } from '@/lib/api/customFetcher';
 
 import type {
   LandingFeaturedProductDTO,
+  LandingPopularBrandDTO,
   LandingPopularProductDTO,
   LandingProductDTO,
 } from './landing.dto';
@@ -17,9 +18,11 @@ import {
   getLandingPetBySlug,
   getLandingProductBySlug,
   getPopularLandingPets,
+  getPopularLandingBrands,
   getPopularLandingProducts,
   getRecentLandingPets,
   invalidateLandingRecentPets,
+  invalidateLandingPopularBrands,
 } from './landing.service';
 
 const mocks = vi.hoisted(() => ({
@@ -63,6 +66,16 @@ const popularProduct: LandingPopularProductDTO = {
   discountPrice: 160_000,
 };
 
+const popularBrand: LandingPopularBrandDTO = {
+  id: 'brand-1',
+  title: 'Royal Canin',
+  title_fa: 'رویال کنین',
+  logo: 'https://cdn.example.com/royal-canin.webp',
+  thumbnailLogo: 'data:image/webp;base64,AAAA',
+  slug: 'royal-canin',
+  productCount: 12,
+};
+
 describe('landing service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -75,6 +88,7 @@ describe('landing service', () => {
     await getDiscountedLandingProducts({ limit: 2 });
     await getFeaturedLandingProducts();
     await getPopularLandingProducts();
+    await getPopularLandingBrands();
     await getPopularLandingPets();
     await getRecentLandingPets();
 
@@ -103,6 +117,11 @@ describe('landing service', () => {
           cache: 'force-cache',
         }),
         expect.objectContaining({
+          url: '/landing/brands/popular',
+          auth: false,
+          cache: 'force-cache',
+        }),
+        expect.objectContaining({
           url: '/landing/pets/popular',
           auth: false,
           cache: 'force-cache',
@@ -114,7 +133,7 @@ describe('landing service', () => {
         }),
       ]),
     );
-    expect(mocks.registerList).toHaveBeenCalledTimes(7);
+    expect(mocks.registerList).toHaveBeenCalledTimes(8);
     expect(fetcher).toHaveBeenCalledWith(
       expect.objectContaining({
         url: '/landing/pet-types/all',
@@ -126,10 +145,12 @@ describe('landing service', () => {
   it('invalidates only the all-pet-types query cache for a targeted retry', () => {
     invalidateAllLandingPetTypes();
     invalidateLandingFeaturedProducts();
+    invalidateLandingPopularBrands();
     invalidateLandingRecentPets();
 
     expect(mocks.invalidateQuery).toHaveBeenCalledWith('pet-types:all');
     expect(mocks.invalidateQuery).toHaveBeenCalledWith('products:featured');
+    expect(mocks.invalidateQuery).toHaveBeenCalledWith('brands:popular');
     expect(mocks.invalidateQuery).toHaveBeenCalledWith('pets:recent');
   });
 
@@ -159,6 +180,16 @@ describe('landing service', () => {
       isSuccess: true,
       message: null,
       data: [popularProduct],
+    });
+  });
+
+  it('exposes enabled brands with their enabled-product counts', async () => {
+    fetcher.mockResolvedValue({ isSuccess: true, message: null, data: [popularBrand] });
+
+    await expect(getPopularLandingBrands()).resolves.toEqual({
+      isSuccess: true,
+      message: null,
+      data: [popularBrand],
     });
   });
 

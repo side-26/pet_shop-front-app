@@ -38,6 +38,11 @@ vi.mock('@/utils/entityCache', () => ({
 }));
 
 const customFetcherMock = vi.mocked(customFetcher);
+const invalidateLandingPopularBrandsMock = vi.hoisted(() => vi.fn());
+
+vi.mock('@/entities/landing/landing.service', () => ({
+  invalidateLandingPopularBrands: invalidateLandingPopularBrandsMock,
+}));
 const id = '507f1f77bcf86cd799439012';
 const logo = new File(['logo'], 'brand.webp', { type: 'image/webp' });
 const brand = {
@@ -109,6 +114,7 @@ describe('brand service', () => {
     });
     expect(invalidateListMock).toHaveBeenCalledOnce();
     expect(invalidateDetailMock).not.toHaveBeenCalled();
+    expect(invalidateLandingPopularBrandsMock).toHaveBeenCalledOnce();
   });
 
   it('invalidates list and detail only for successful status and deletion mutations', async () => {
@@ -117,6 +123,7 @@ describe('brand service', () => {
     await deleteBrand(id);
     expect(invalidateListMock).toHaveBeenCalledTimes(2);
     expect(invalidateDetailMock).toHaveBeenCalledWith(id);
+    expect(invalidateLandingPopularBrandsMock).toHaveBeenCalledTimes(2);
 
     vi.clearAllMocks();
     customFetcherMock.mockResolvedValue({
@@ -127,5 +134,6 @@ describe('brand service', () => {
     await disableBrand(id);
     expect(invalidateListMock).not.toHaveBeenCalled();
     expect(invalidateDetailMock).not.toHaveBeenCalled();
+    expect(invalidateLandingPopularBrandsMock).not.toHaveBeenCalled();
   });
 });

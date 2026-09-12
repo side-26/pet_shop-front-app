@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { customFetcher } from '@/lib/api/customFetcher';
+import { invalidateLandingPopularBrands } from '@/entities/landing/landing.service';
 import { EntityTag } from '@/utils/entityCache';
 
 import type {
@@ -77,6 +78,7 @@ function toBrandFormData(input: CreateBrandDTO | UpdateBrandDTO) {
 function invalidate(id?: string) {
   brandsCache.invalidateList();
   if (id) brandsCache.invalidateDetail(id);
+  invalidateLandingPopularBrands();
 }
 
 export async function createBrand(input: CreateBrandDTO) {

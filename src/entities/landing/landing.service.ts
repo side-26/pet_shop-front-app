@@ -9,6 +9,7 @@ import type {
   LandingPetDTO,
   LandingPetDetailDTO,
   LandingPetTypeDTO,
+  LandingPopularBrandDTO,
   LandingPopularProductDTO,
   LandingProductDetailDTO,
   LandingProductDTO,
@@ -22,6 +23,7 @@ const allPetTypesCacheKey = 'pet-types:all';
 const discountedProductsCacheKey = (limit: number) => `products:discounted:${limit}`;
 const featuredProductsCacheKey = 'products:featured';
 const popularProductsCacheKey = 'products:popular';
+const popularBrandsCacheKey = 'brands:popular';
 const popularPetsCacheKey = 'pets:popular';
 const recentPetsCacheKey = 'pets:recent';
 
@@ -89,6 +91,13 @@ export function getPopularLandingProducts() {
   );
 }
 
+export function getPopularLandingBrands() {
+  return fetchLandingList<LandingPopularBrandDTO[]>(
+    '/landing/brands/popular',
+    popularBrandsCacheKey,
+  );
+}
+
 export function getFeaturedLandingProducts() {
   return fetchLandingList<LandingFeaturedProductDTO[]>(
     '/landing/products/featured',
@@ -110,6 +119,10 @@ export function invalidateLandingHomeOffers() {
 
 export function invalidateLandingPopularProducts() {
   landingCache.invalidateQuery(popularProductsCacheKey);
+}
+
+export function invalidateLandingPopularBrands() {
+  landingCache.invalidateQuery(popularBrandsCacheKey);
 }
 
 export function invalidateLandingFeaturedProducts() {

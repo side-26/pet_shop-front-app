@@ -42,6 +42,17 @@ export type LandingPopularProductDTO = LandingProductDTO & {
   slug: string;
 };
 
+/** Enabled brand summary ranked by its enabled-product count. */
+export type LandingPopularBrandDTO = {
+  id: string;
+  title: string;
+  title_fa?: string;
+  logo?: string;
+  thumbnailLogo?: string;
+  slug?: string;
+  productCount: number;
+};
+
 export type LandingFeaturedProductTag =
   'mostPurchased' | 'mostDiscounted' | 'cheapest' | 'mostWishlisted';
 

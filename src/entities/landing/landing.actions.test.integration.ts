@@ -7,6 +7,7 @@ import {
   retryLandingFeaturedProductsAction,
   retryLandingHomeOffersAction,
   retryLandingPopularProductsAction,
+  retryLandingPopularBrandsAction,
   retryLandingPopularPetsAction,
   retryLandingRecentPetsAction,
 } from './landing.actions';
@@ -15,6 +16,7 @@ import {
   invalidateLandingFeaturedProducts,
   invalidateLandingHomeOffers,
   invalidateLandingPopularProducts,
+  invalidateLandingPopularBrands,
   invalidateLandingPopularPets,
   invalidateLandingRecentPets,
 } from './landing.service';
@@ -27,6 +29,7 @@ vi.mock('./landing.service', () => ({
   invalidateLandingFeaturedProducts: vi.fn(),
   invalidateLandingHomeOffers: vi.fn(),
   invalidateLandingPopularProducts: vi.fn(),
+  invalidateLandingPopularBrands: vi.fn(),
   invalidateLandingPopularPets: vi.fn(),
   invalidateLandingRecentPets: vi.fn(),
 }));
@@ -47,14 +50,16 @@ describe('retryAllLandingPetTypesAction', () => {
     await retryLandingHomeOffersAction();
     await retryLandingFeaturedProductsAction();
     await retryLandingPopularProductsAction();
+    await retryLandingPopularBrandsAction();
     await retryLandingPopularPetsAction();
     await retryLandingRecentPetsAction();
 
     expect(invalidateLandingHomeOffers).toHaveBeenCalledOnce();
     expect(invalidateLandingFeaturedProducts).toHaveBeenCalledOnce();
     expect(invalidateLandingPopularProducts).toHaveBeenCalledOnce();
+    expect(invalidateLandingPopularBrands).toHaveBeenCalledOnce();
     expect(invalidateLandingPopularPets).toHaveBeenCalledOnce();
     expect(invalidateLandingRecentPets).toHaveBeenCalledOnce();
-    expect(refreshMock).toHaveBeenCalledTimes(5);
+    expect(refreshMock).toHaveBeenCalledTimes(6);
   });
 });
