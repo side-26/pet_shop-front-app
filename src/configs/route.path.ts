@@ -40,6 +40,8 @@ export const routePaths = {
   productsList: PATHS.PRODUCTS_LIST,
   productsListByPetType: (petTypeId: string) =>
     `${PATHS.PRODUCTS_LIST}?pet-type=${encodeURIComponent(petTypeId)}`,
+  productsListByBrand: (brandTitle: string) =>
+    `${PATHS.PRODUCTS_LIST}?brand=${encodeURIComponent(brandTitle)}`,
   productDetail: (slug: string) => `${PATHS.PRODUCTS}/${encodeURIComponent(slug)}`,
   productsSearch: (query: string) => `${PATHS.PRODUCTS}?q=${encodeURIComponent(query)}`,
   services: PATHS.SERVICES,

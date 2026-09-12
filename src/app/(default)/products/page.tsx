@@ -5,6 +5,7 @@ import { FeaturedProductsSection } from './_components/featured-products-section
 import { ProductAssuranceSection } from './_components/product-assurance-section';
 import { ProductCategoriesSection } from './_components/product-categories-section';
 import { ProductHeroSection } from './_components/product-hero-section';
+import { PopularBrandsSection } from './_components/popular-brands-section';
 
 export const metadata: Metadata = {
   title: 'فروشگاه محصولات حیوانات خانگی | پت شاپ پرشین',
@@ -17,6 +18,7 @@ export default function ProductLandingPage() {
       <ProductHeroSection />
       <ProductAssuranceSection />
       <ProductCategoriesSection />
+      <PopularBrandsSection />
       <FeaturedProductsSection />
       <CareGuideSection />
     </div>

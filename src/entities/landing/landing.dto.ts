@@ -47,8 +47,8 @@ export type LandingPopularBrandDTO = {
   id: string;
   title: string;
   title_fa?: string;
-  logo?: string;
-  thumbnailLogo?: string;
+  logo: string;
+  thumbnailLogo: string;
   slug?: string;
   productCount: number;
 };

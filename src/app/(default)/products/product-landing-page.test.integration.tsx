@@ -10,6 +10,7 @@ import { FeaturedProductsRenderer } from './_components/featured-products-sectio
 import { ProductAssuranceRenderer } from './_components/product-assurance-section';
 import { ProductCategoriesSectionRenderer } from './_components/product-categories-section-renderer';
 import { ProductHeroRenderer } from './_components/product-hero-section';
+import { PopularBrandsSectionRenderer } from './_components/popular-brands-section-renderer';
 
 vi.mock('./_components/product-landing-motion', () => ({
   MotionSection: ({
@@ -140,6 +141,27 @@ describe('Product landing page', () => {
     ).toBe('true');
     expect(screen.getByRole('link', { name: /مشاهده جزییات محصول/ }).getAttribute('tabindex')).toBe(
       '-1',
+    );
+  });
+
+  it('links each popular brand logo to its brand-filtered product list', () => {
+    render(
+      <PopularBrandsSectionRenderer
+        brands={[
+          {
+            id: 'brand-1',
+            title: 'Royal Canin',
+            title_fa: 'رویال کنین',
+            logo: 'https://cdn.example.com/royal-canin.webp',
+            thumbnailLogo: 'data:image/webp;base64,AAAA',
+            productCount: 12,
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByRole('link', { name: 'محصولات برند رویال کنین' }).getAttribute('href')).toBe(
+      routePaths.productsListByBrand('Royal Canin'),
     );
   });
 
