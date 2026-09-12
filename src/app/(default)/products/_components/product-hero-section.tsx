@@ -76,7 +76,7 @@ export function ProductHeroRenderer() {
           </MotionItem>
         </HeroMotion>
 
-        <ParallaxProductMedia className="tw:relative tw:mx-auto tw:w-full tw:max-w-2xl">
+        <ParallaxProductMedia className="tw:hidden tw:relative tw:mx-auto tw:w-full tw:max-w-2xl tw:sm:block">
           <div className="tw:absolute tw:-inset-3 tw:rounded-[2.75rem] tw:border tw:border-primary/15 tw:bg-primary/5 tw:rotate-2" />
           <div className="tw:relative tw:aspect-[4/3] tw:overflow-hidden tw:rounded-[2.5rem] tw:border tw:border-border/60 tw:bg-card tw:shadow-2xl tw:shadow-primary/15">
             <Image

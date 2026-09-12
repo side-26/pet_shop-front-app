@@ -1,9 +1,11 @@
 import { ArrowLeft, HeartHandshake } from 'lucide-react';
 import { cacheLife } from 'next/cache';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
+import { routePaths } from '@/configs/route.path';
 
 import { MotionItem, MotionSection, ParallaxProductMedia } from './product-landing-motion';
 import { careSteps } from './product-landing-data';
@@ -24,7 +26,7 @@ export function CareGuideRenderer() {
       className="tw:bg-surface tw:px-4 tw:py-16 tw:sm:px-6 tw:md:px-8 tw:lg:py-24"
     >
       <div className="tw:mx-auto tw:grid tw:w-full tw:max-w-7xl tw:items-center tw:gap-10 tw:lg:grid-cols-2 tw:lg:gap-16">
-        <ParallaxProductMedia className="tw:relative tw:mx-auto tw:w-full tw:max-w-xl">
+        <ParallaxProductMedia className="tw:hidden tw:relative tw:mx-auto tw:w-full tw:max-w-xl tw:sm:block">
           <div className="tw:absolute tw:-inset-3 tw:rounded-[2.5rem] tw:bg-secondary-muted tw:-rotate-3" />
           <div className="tw:relative tw:aspect-[4/3] tw:overflow-hidden tw:rounded-[2.25rem] tw:border tw:border-border/70 tw:shadow-xl">
             <Image
@@ -76,13 +78,14 @@ export function CareGuideRenderer() {
             ))}
           </ol>
 
-          <a
-            href="#featured-products"
+          <Link
+            href={routePaths.productsList}
+            prefetch
             className={buttonVariants({ variant: 'fill', color: 'primary', size: 'lg' })}
           >
-            دیدن انتخاب‌ها
+            شروع کن
             <ArrowLeft aria-hidden="true" data-icon="inline-end" />
-          </a>
+          </Link>
         </MotionItem>
       </div>
     </MotionSection>
