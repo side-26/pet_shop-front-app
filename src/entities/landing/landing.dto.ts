@@ -34,6 +34,14 @@ export type LandingProductDTO = {
   discountPrice: number;
 };
 
+export type LandingFeaturedProductTag =
+  'mostPurchased' | 'mostDiscounted' | 'cheapest' | 'mostWishlisted';
+
+export type LandingFeaturedProductDTO = {
+  tag: LandingFeaturedProductTag;
+  product: LandingProductDTO;
+};
+
 export type LandingPetDetailDTO = CustomerPetDetailDTO;
 export type LandingProductDetailDTO = CustomerProductDetailDTO;
 export type LandingDiscountLimitDTO = LandingDiscountLimitInput;

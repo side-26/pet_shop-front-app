@@ -2,6 +2,7 @@ import 'server-only';
 
 import { customFetcher } from '@/lib/api/customFetcher';
 import {
+  invalidateLandingFeaturedProducts,
   invalidateLandingHomeOffers,
   invalidateLandingPopularProducts,
 } from '@/entities/landing/landing.service';
@@ -121,6 +122,7 @@ function invalidate(id?: string) {
   productsCache.invalidateList();
   if (id) productsCache.invalidateDetail(id);
   invalidateLandingHomeOffers();
+  invalidateLandingFeaturedProducts();
   invalidateLandingPopularProducts();
 }
 export async function createProduct(input: CreateProductDTO) {

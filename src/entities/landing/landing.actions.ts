@@ -4,6 +4,7 @@ import { refresh } from 'next/cache';
 
 import {
   invalidateAllLandingPetTypes,
+  invalidateLandingFeaturedProducts,
   invalidateLandingHomeOffers,
   invalidateLandingPopularPets,
   invalidateLandingRecentPets,
@@ -17,6 +18,11 @@ export async function retryAllLandingPetTypesAction() {
 
 export async function retryLandingHomeOffersAction() {
   invalidateLandingHomeOffers();
+  refresh();
+}
+
+export async function retryLandingFeaturedProductsAction() {
+  invalidateLandingFeaturedProducts();
   refresh();
 }
 

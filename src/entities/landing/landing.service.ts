@@ -5,6 +5,7 @@ import { EntityTag } from '@/utils/entityCache';
 
 import type {
   LandingDiscountLimitDTO,
+  LandingFeaturedProductDTO,
   LandingPetDTO,
   LandingPetDetailDTO,
   LandingPetTypeDTO,
@@ -18,6 +19,7 @@ const landingCache = new EntityTag('landing');
 const featuredPetTypesCacheKey = 'pet-types:featured';
 const allPetTypesCacheKey = 'pet-types:all';
 const discountedProductsCacheKey = (limit: number) => `products:discounted:${limit}`;
+const featuredProductsCacheKey = 'products:featured';
 const popularProductsCacheKey = 'products:popular';
 const popularPetsCacheKey = 'pets:popular';
 const recentPetsCacheKey = 'pets:recent';
@@ -86,6 +88,13 @@ export function getPopularLandingProducts() {
   );
 }
 
+export function getFeaturedLandingProducts() {
+  return fetchLandingList<LandingFeaturedProductDTO[]>(
+    '/landing/products/featured',
+    featuredProductsCacheKey,
+  );
+}
+
 export function getPopularLandingPets() {
   return fetchLandingList<LandingPetDTO[]>('/landing/pets/popular', popularPetsCacheKey);
 }
@@ -100,6 +109,10 @@ export function invalidateLandingHomeOffers() {
 
 export function invalidateLandingPopularProducts() {
   landingCache.invalidateQuery(popularProductsCacheKey);
+}
+
+export function invalidateLandingFeaturedProducts() {
+  landingCache.invalidateQuery(featuredProductsCacheKey);
 }
 
 export function invalidateLandingPopularPets() {

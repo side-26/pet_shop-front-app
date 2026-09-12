@@ -2,12 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { customFetcher } from '@/lib/api/customFetcher';
 
-import type { LandingProductDTO } from './landing.dto';
+import type { LandingFeaturedProductDTO, LandingProductDTO } from './landing.dto';
 import {
   getAllLandingPetTypes,
   getDiscountedLandingProducts,
+  getFeaturedLandingProducts,
   getFeaturedLandingPetTypes,
   invalidateAllLandingPetTypes,
+  invalidateLandingFeaturedProducts,
   getLandingPetBySlug,
   getLandingProductBySlug,
   getPopularLandingPets,
@@ -46,6 +48,11 @@ const landingProduct: LandingProductDTO = {
   discountPrice: 40_000,
 };
 
+const featuredProduct: LandingFeaturedProductDTO = {
+  tag: 'mostPurchased',
+  product: landingProduct,
+};
+
 describe('landing service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -56,6 +63,7 @@ describe('landing service', () => {
     await getFeaturedLandingPetTypes();
     await getAllLandingPetTypes();
     await getDiscountedLandingProducts({ limit: 2 });
+    await getFeaturedLandingProducts();
     await getPopularLandingProducts();
     await getPopularLandingPets();
     await getRecentLandingPets();
@@ -80,6 +88,11 @@ describe('landing service', () => {
           cache: 'force-cache',
         }),
         expect.objectContaining({
+          url: '/landing/products/featured',
+          auth: false,
+          cache: 'force-cache',
+        }),
+        expect.objectContaining({
           url: '/landing/pets/popular',
           auth: false,
           cache: 'force-cache',
@@ -91,7 +104,7 @@ describe('landing service', () => {
         }),
       ]),
     );
-    expect(mocks.registerList).toHaveBeenCalledTimes(6);
+    expect(mocks.registerList).toHaveBeenCalledTimes(7);
     expect(fetcher).toHaveBeenCalledWith(
       expect.objectContaining({
         url: '/landing/pet-types/all',
@@ -102,10 +115,22 @@ describe('landing service', () => {
 
   it('invalidates only the all-pet-types query cache for a targeted retry', () => {
     invalidateAllLandingPetTypes();
+    invalidateLandingFeaturedProducts();
     invalidateLandingRecentPets();
 
     expect(mocks.invalidateQuery).toHaveBeenCalledWith('pet-types:all');
+    expect(mocks.invalidateQuery).toHaveBeenCalledWith('products:featured');
     expect(mocks.invalidateQuery).toHaveBeenCalledWith('pets:recent');
+  });
+
+  it('exposes the backend selection tag with every featured product', async () => {
+    fetcher.mockResolvedValue({ isSuccess: true, message: null, data: [featuredProduct] });
+
+    await expect(getFeaturedLandingProducts()).resolves.toEqual({
+      isSuccess: true,
+      message: null,
+      data: [featuredProduct],
+    });
   });
 
   it('exposes the API-calculated discount amount for product sections', async () => {
