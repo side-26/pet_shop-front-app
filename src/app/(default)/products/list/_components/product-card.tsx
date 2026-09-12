@@ -1,17 +1,36 @@
-import { Bell, Heart, Star } from 'lucide-react';
+import { Bell, Heart } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Price } from '@/components/ui/price';
+import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
 
-import type { ProductListItem } from './product-list-data';
+export type ProductCardViewModel = {
+  available: boolean;
+  brand: string;
+  category: string;
+  discountPercentage: number;
+  id: string;
+  image: string;
+  imageThumbnail: string;
+  price: number;
+  slug: string;
+  title: string;
+};
 
-type ProductCardProps = Readonly<{ product: ProductListItem }>;
+type ProductCardProps = Readonly<{
+  isSkeleton?: boolean;
+  product: ProductCardViewModel;
+}>;
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ isSkeleton = false, product }: ProductCardProps) {
+  const hasDiscount = product.discountPercentage > 0;
+  const discountedPrice = product.price * (1 - product.discountPercentage / 100);
+
   return (
     <Card
       size="xs"
@@ -21,21 +40,28 @@ export function ProductCard({ product }: ProductCardProps) {
       )}
     >
       <div className="tw:relative tw:mx-2 tw:mt-2 tw:aspect-square tw:overflow-hidden tw:rounded-2xl tw:bg-muted tw:sm:mx-3 tw:sm:mt-3">
-        <Image
-          src={product.image}
-          alt={product.imageAlt}
-          fill
-          sizes="(min-width: 1280px) 20vw, (min-width: 640px) 30vw, 46vw"
-          className={cn(
-            'tw:object-cover tw:transition-transform tw:duration-500 tw:group-hover/card:scale-105 tw:motion-reduce:transition-none tw:motion-reduce:group-hover/card:transform-none',
-            !product.available && 'tw:grayscale tw:opacity-55',
-          )}
-        />
+        {isSkeleton ? (
+          <div className="tw:absolute tw:inset-0" />
+        ) : (
+          <Image
+            src={product.image}
+            alt={product.title}
+            fill
+            placeholder={product.imageThumbnail ? 'blur' : 'empty'}
+            blurDataURL={product.imageThumbnail}
+            sizes="(min-width: 1280px) 20vw, (min-width: 640px) 30vw, 46vw"
+            className={cn(
+              'tw:object-cover tw:transition-transform tw:duration-500 tw:group-hover/card:scale-105 tw:motion-reduce:transition-none tw:motion-reduce:group-hover/card:transform-none',
+              !product.available && 'tw:grayscale tw:opacity-55',
+            )}
+          />
+        )}
         <Button
           iconOnly
           size="sm"
           variant="transparent"
           color="error"
+          disabled={isSkeleton}
           aria-label={`افزودن ${product.title} به علاقه‌مندی‌ها`}
           className="tw:absolute tw:end-2 tw:top-2"
         >
@@ -49,19 +75,13 @@ export function ProductCard({ product }: ProductCardProps) {
       </div>
 
       <CardHeader className="tw:gap-2">
-        <div className="tw:flex tw:items-center tw:justify-between tw:gap-1">
-          <div className="tw:flex tw:min-w-0 tw:gap-1">
-            <Badge size="xs" variant="tonal" color="secondary">
-              {product.animal}
-            </Badge>
-            <Badge size="xs" variant="flat" color="primary" className="tw:hidden tw:sm:inline-flex">
-              {product.category}
-            </Badge>
-          </div>
-          <span className="tw:inline-flex tw:items-center tw:gap-1 tw:text-label-s tw:text-warning-active">
-            <Star aria-hidden="true" className="tw:fill-current" />
-            <bdi>{product.rating.toLocaleString('fa-IR')}</bdi>
-          </span>
+        <div className="tw:flex tw:min-w-0 tw:gap-1">
+          <Badge size="xs" variant="tonal" color="secondary">
+            {product.brand}
+          </Badge>
+          <Badge size="xs" variant="flat" color="neutral" className="tw:hidden tw:sm:inline-flex">
+            {product.category}
+          </Badge>
         </div>
         <CardTitle className="tw:line-clamp-2 tw:min-h-10 tw:text-label-s tw:leading-5 tw:sm:min-h-12 tw:sm:text-title-s">
           {product.title}
@@ -69,19 +89,14 @@ export function ProductCard({ product }: ProductCardProps) {
       </CardHeader>
 
       <CardContent className="tw:mt-auto tw:flex tw:min-h-12 tw:flex-col tw:items-end tw:justify-end tw:gap-1 tw:sm:min-h-14">
-        {product.previousPrice ? (
-          <div className="tw:flex tw:items-center tw:gap-2">
-            <Price
-              number={product.previousPrice}
-              className="tw:text-label-s tw:text-muted-foreground tw:line-through"
-            />
-            <Badge size="xs" color="error" variant="tonal">
-              {product.discount}
-            </Badge>
-          </div>
+        {hasDiscount ? (
+          <Price
+            number={product.price}
+            className="tw:text-label-s tw:text-muted-foreground tw:line-through"
+          />
         ) : null}
         <Price
-          number={product.price}
+          number={hasDiscount ? discountedPrice : product.price}
           className={cn(
             'tw:text-price-s tw:text-primary tw:sm:text-price-m',
             !product.available && 'tw:text-muted-foreground',
@@ -90,15 +105,25 @@ export function ProductCard({ product }: ProductCardProps) {
       </CardContent>
 
       <CardFooter className="tw:mt-auto">
-        <Button
-          block
-          size="sm"
-          variant={product.available ? 'tonal' : 'outlined'}
-          color={product.available ? 'primary' : 'secondary'}
-        >
-          {!product.available ? <Bell data-icon="inline-start" aria-hidden="true" /> : null}
-          {product.available ? 'مشاهده محصول' : 'موجود شد خبرم کن'}
-        </Button>
+        {product.available && !isSkeleton ? (
+          <Link
+            href={routePaths.productDetail(product.slug)}
+            prefetch
+            className={buttonVariants({
+              block: true,
+              color: 'primary',
+              size: 'sm',
+              variant: 'tonal',
+            })}
+          >
+            مشاهده محصول
+          </Link>
+        ) : (
+          <Button block size="sm" variant="outlined" color="secondary" disabled>
+            {!isSkeleton ? <Bell data-icon="inline-start" aria-hidden="true" /> : null}
+            {isSkeleton ? 'مشاهده محصول' : 'موجود شد خبرم کن'}
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

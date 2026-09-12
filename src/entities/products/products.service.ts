@@ -34,7 +34,9 @@ const queryKey = (query: CustomerProductQueryDTO | ManagementProductQueryDTO) =>
       .map(([key, value]) => [key, String(value)]),
   ).toString();
 
-export async function getCustomerProducts(input: Partial<CustomerProductQueryDTO> = {}) {
+export async function getCustomerProducts(
+  input: Partial<CustomerProductQueryDTO> | Readonly<Record<string, string>> = {},
+) {
   return fetchCustomerProducts(
     await customerProductQuerySchema.validate(input, { stripUnknown: true }),
   );

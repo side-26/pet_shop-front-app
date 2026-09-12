@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 
+import type { PaginationSearchParams } from '@/entities/pagination/pagination.helpers';
+
 import { ProductListContent } from './_components/product-list-content';
 
 export const metadata: Metadata = {
@@ -7,6 +9,10 @@ export const metadata: Metadata = {
   description: 'خرید محصولات منتخب تغذیه، بازی و مراقبت سگ و گربه.',
 };
 
-export default function ProductListPage() {
-  return <ProductListContent />;
+type ProductListPageProps = Readonly<{ searchParams?: Promise<PaginationSearchParams> }>;
+
+export default function ProductListPage({
+  searchParams = Promise.resolve({}),
+}: ProductListPageProps = {}) {
+  return <ProductListContent searchParams={searchParams} />;
 }

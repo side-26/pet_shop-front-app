@@ -43,7 +43,9 @@ function queryKey(
   ).toString();
 }
 
-export async function getCustomerPetsPage(input: Partial<CustomerPetPaginateQueryDTO> = {}) {
+export async function getCustomerPetsPage(
+  input: Partial<CustomerPetPaginateQueryDTO> | Readonly<Record<string, string>> = {},
+) {
   const query = await customerPetPaginateQuerySchema.validate(input, { stripUnknown: true });
   return fetchCustomerPetsPage(query);
 }

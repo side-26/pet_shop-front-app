@@ -1,4 +1,5 @@
 import type { PaginateDataDTO } from '@/entities/pagination/pagination.dto';
+import type { FilterDTO, SortDTO } from '@/entities/pagination/pagination.types';
 import type { RichTextFormValue } from '@/lib/rich-text';
 
 import type {
@@ -49,7 +50,7 @@ export type CustomerPetListItemDTO = Pick<
   | 'slug'
 > & { petType: string; breed: string };
 
-export type CustomerPetDetailDTO = CustomerPetListItemDTO & {
+export type CustomerPetDetailDTO = Omit<CustomerPetListItemDTO, 'petType' | 'breed'> & {
   images: string[];
   petType: PetRelationDTO;
   breed: PetRelationDTO;
@@ -57,7 +58,7 @@ export type CustomerPetDetailDTO = CustomerPetListItemDTO & {
 
 export type ManagementPetsPageDTO = PaginateDataDTO<ManagementPetDTO>;
 export type CustomerPetsPageDTO = PaginateDataDTO<CustomerPetListItemDTO>;
-export type CustomerPetDetailsPageDTO = PaginateDataDTO<CustomerPetDetailDTO>;
+export type CustomerPetDetailsPageDTO = PaginateDataDTO<CustomerPetDetailDTO, FilterDTO, SortDTO>;
 export type CreatePetDTO = PetInput;
 export type UpdatePetBaseInfoDTO = UpdatePetBaseInfoInput;
 export type UpdatePetImagesDTO = UpdatePetImagesInput;

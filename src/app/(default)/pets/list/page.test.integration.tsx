@@ -1,28 +1,73 @@
 import { cleanup, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
+import type { CustomerPetDetailsPageDTO } from '@/entities/pets/pets.dto';
 
-import PetListPage, { metadata } from './page';
+import { PetListRenderer } from './_components/pet-list-renderer';
+import { metadata } from './page';
+
+vi.mock('nextjs-toploader/app', () => ({
+  useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
+}));
+
+const data: CustomerPetDetailsPageDTO = {
+  result: [
+    {
+      id: 'pet-1',
+      title: 'مکس',
+      mainImage: 'https://cdn.example.com/max.webp',
+      mainImageThumbnail: 'data:image/webp;base64,AAAA',
+      description: { type: 'doc', content: [] },
+      quantity: 1,
+      price: 5_000_000,
+      discountPercentage: 0,
+      inEnable: true,
+      slug: 'max',
+      images: [],
+      petType: { id: 'dog', title: 'سگ' },
+      breed: { id: 'golden', title: 'گلدن رتریور' },
+    },
+  ],
+  pagination: {
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 1,
+    itemsPerPage: 10,
+    hasNextPage: false,
+    hasPrevPage: false,
+    nextPage: null,
+    prevPage: null,
+  },
+  filters: [
+    {
+      key: 'petType',
+      label: 'نوع حیوان',
+      order: 1,
+      type: 'select',
+      options: [{ value: 'dog', label: 'سگ', count: 1 }],
+    },
+  ],
+  sort: { current: 'createdAt', options: [{ value: 'createdAt', label: 'جدیدترین' }] },
+};
 
 afterEach(cleanup);
 
 describe(routePaths.petsList, () => {
-  it('renders the RTL pet listing and desktop filter composition', () => {
-    render(<PetListPage />);
-    expect(screen.getByRole('heading', { level: 1, name: 'حیوانات دوست‌داشتنی' })).toBeTruthy();
-    expect(screen.getByRole('navigation', { name: 'مسیر صفحه' })).toBeTruthy();
+  it('renders live pet data inside the shared pagination composition', () => {
+    render(<PetListRenderer data={data} query={{}} />);
+
     expect(screen.getByRole('complementary', { name: 'فیلتر حیوانات' })).toBeTruthy();
-    expect(screen.getAllByRole('heading', { level: 3 }).length).toBeGreaterThan(6);
     expect(screen.getByTestId('pets-grid').className).toContain('tw:md:grid-cols-3');
-    expect(screen.getAllByText('واگذار شده')).toHaveLength(2);
-    const maxDetailLink = screen.getAllByText('مشاهده جزئیات')[0].closest('a');
-    expect(maxDetailLink).not.toBeNull();
-    expect(maxDetailLink?.getAttribute('href')).toBe(routePaths.petDetail('max'));
+    expect(screen.getByRole('heading', { name: 'مکس' })).toBeTruthy();
+    expect(screen.getByText('گلدن رتریور')).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'مشاهده جزئیات' }).getAttribute('href')).toBe(
+      routePaths.petDetail('max'),
+    );
   });
 
   it('exposes mobile and tablet filters and sorting as dialog actions', () => {
-    render(<PetListPage />);
+    render(<PetListRenderer data={data} query={{}} />);
     expect(screen.getByRole('button', { name: 'فیلترها' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'مرتب‌سازی' })).toBeTruthy();
   });

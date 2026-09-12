@@ -1,4 +1,5 @@
 import type { PaginateDataDTO } from '@/entities/pagination/pagination.dto';
+import type { FilterDTO, SortDTO } from '@/entities/pagination/pagination.types';
 import type { RichTextFormValue } from '@/lib/rich-text';
 import type {
   CustomerProductQueryInput,
@@ -50,7 +51,10 @@ export type CustomerProductListItemDTO = Pick<
   | 'isEnable'
   | 'slug'
 > & { category: string; brand: string; subCategory: string | null };
-export type CustomerProductDetailDTO = CustomerProductListItemDTO & {
+export type CustomerProductDetailDTO = Omit<
+  CustomerProductListItemDTO,
+  'category' | 'brand' | 'subCategory'
+> & {
   images: string[];
   category: ProductRelationDTO;
   brand: ProductRelationDTO;
@@ -68,7 +72,11 @@ export type ProductBaseInfoDTO = Pick<
 >;
 export type ManagementProductListItemDTO = ManagementProductDTO & { salesVolume: number };
 export type ManagementProductsPageDTO = PaginateDataDTO<ManagementProductListItemDTO>;
-export type CustomerProductsPageDTO = PaginateDataDTO<CustomerProductListItemDTO>;
+export type CustomerProductsPageDTO = PaginateDataDTO<
+  CustomerProductListItemDTO,
+  FilterDTO,
+  SortDTO
+>;
 export type CreateProductDTO = ProductInput;
 export type UpdateProductBaseInfoDTO = UpdateProductBaseInfoInput;
 export type UpdateProductImagesDTO = UpdateProductImagesInput;

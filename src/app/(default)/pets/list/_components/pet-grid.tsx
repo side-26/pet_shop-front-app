@@ -1,32 +1,83 @@
-import { Button } from '@/components/ui/button';
-import { ListingSortToolbar } from '@/components/common/listing-sort-toolbar';
+import { PawPrint } from 'lucide-react';
 
-import { PetCard } from './pet-card';
-import { petListItems } from './pet-list-data';
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
+import type { CustomerPetDetailDTO } from '@/entities/pets/pets.dto';
+import { cn } from '@/lib/utils';
 
-const sortOptions = ['پیشنهاد ویژه', 'جدیدترین', 'کم‌سن‌ترین', 'ارزان‌ترین'] as const;
+import { PetCard, type PetCardViewModel } from './pet-card';
 
-export function PetGrid() {
+type PetGridProps = Readonly<{ isSkeleton?: boolean; pets: readonly PetCardViewModel[] }>;
+
+export function PetGrid({ isSkeleton = false, pets }: PetGridProps) {
+  if (!isSkeleton && pets.length === 0) {
+    return (
+      <Empty className="tw:border">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <PawPrint aria-hidden="true" />
+          </EmptyMedia>
+          <EmptyTitle>حیوانی پیدا نشد</EmptyTitle>
+          <EmptyDescription>
+            فیلترها یا مرتب‌سازی را تغییر دهید و دوباره تلاش کنید.
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    );
+  }
+
   return (
-    <section
-      aria-labelledby="pets-grid-heading"
-      className="tw:flex tw:min-w-0 tw:flex-col tw:gap-5"
+    <div
+      data-testid="pets-grid"
+      aria-busy={isSkeleton || undefined}
+      className={cn(
+        'tw:grid tw:grid-cols-1 tw:gap-4 tw:md:grid-cols-3 tw:xl:grid-cols-4 tw:xl:gap-5',
+        isSkeleton && 'skeleton tw:pointer-events-none tw:select-none',
+      )}
     >
-      <ListingSortToolbar options={sortOptions} />
-      <h2 id="pets-grid-heading" className="tw:sr-only">
-        فهرست حیوانات
-      </h2>
-      <div
-        data-testid="pets-grid"
-        className="tw:grid tw:grid-cols-1 tw:gap-4 tw:md:grid-cols-3 tw:xl:grid-cols-4 tw:xl:gap-5"
-      >
-        {petListItems.map((pet, index) => (
-          <PetCard key={pet.id} pet={pet} eager={index === 0} />
-        ))}
-      </div>
-      <Button size="lg" variant="outlined" className="tw:self-center tw:px-10">
-        مشاهده حیوانات بیشتر
-      </Button>
-    </section>
+      {pets.map((pet, index) => (
+        <PetCard key={pet.id} pet={pet} eager={index === 0} isSkeleton={isSkeleton} />
+      ))}
+    </div>
   );
 }
+
+function relationTitle(relation: CustomerPetDetailDTO['petType']) {
+  return typeof relation === 'string' ? relation : relation.title;
+}
+
+export function toPetCardViewModel(pet: CustomerPetDetailDTO): PetCardViewModel {
+  return {
+    available: pet.inEnable && pet.quantity > 0,
+    breed: relationTitle(pet.breed),
+    discountPercentage: pet.discountPercentage,
+    id: pet.id,
+    image: pet.mainImage,
+    imageThumbnail: pet.mainImageThumbnail,
+    petType: relationTitle(pet.petType),
+    price: pet.price,
+    slug: pet.slug,
+    title: pet.title,
+  };
+}
+
+export const petGridSkeletonData: readonly PetCardViewModel[] = Array.from(
+  { length: 8 },
+  (_, index) => ({
+    available: true,
+    breed: 'نژاد نمونه',
+    discountPercentage: 0,
+    id: `pet-skeleton-${index}`,
+    image: '',
+    imageThumbnail: '',
+    petType: 'نوع حیوان',
+    price: 100_000,
+    slug: 'pet-skeleton',
+    title: 'عنوان نمونه حیوان',
+  }),
+);

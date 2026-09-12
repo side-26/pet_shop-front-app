@@ -1,9 +1,18 @@
-import { MobilePetTools } from './mobile-pet-tools';
-import { PetFilters } from './pet-filters';
-import { PetGrid } from './pet-grid';
-import { PetListBreadcrumb } from './pet-list-breadcrumb';
+import { Suspense } from 'react';
 
-export function PetListContent() {
+import {
+  normalizePaginationSearchParams,
+  type PaginationSearchParams,
+} from '@/entities/pagination/pagination.helpers';
+import { getCustomerPetsPage } from '@/entities/pets/pets.service';
+
+import { PetListBreadcrumb } from './pet-list-breadcrumb';
+import { PetListContainer } from './pet-list-container';
+import { PetListRenderer } from './pet-list-renderer';
+
+type PetListContentProps = Readonly<{ searchParams: Promise<PaginationSearchParams> }>;
+
+export function PetListContent({ searchParams }: PetListContentProps) {
   return (
     <main className="tw:mx-auto tw:flex tw:w-full tw:max-w-7xl tw:flex-col tw:gap-5 tw:px-3 tw:py-5 tw:sm:px-5 tw:md:gap-6 tw:md:px-6 tw:md:py-8 tw:lg:px-8 tw:lg:py-10">
       <PetListBreadcrumb />
@@ -13,13 +22,21 @@ export function PetListContent() {
           همراه تازه خانواده‌تان را از میان حیوانات سالم و آماده واگذاری پیدا کنید.
         </p>
       </header>
-      <MobilePetTools />
-      <div className="tw:grid tw:items-start tw:gap-6 tw:lg:grid-cols-[16rem_minmax(0,1fr)]">
-        <aside className="tw:sticky tw:top-28 tw:hidden tw:lg:block" aria-label="فیلتر حیوانات">
-          <PetFilters />
-        </aside>
-        <PetGrid />
-      </div>
+      <Suspense fallback={<PetListRenderer query={{}} isSkeleton />}>
+        <PetListQueryContent searchParams={searchParams} />
+      </Suspense>
     </main>
+  );
+}
+
+async function PetListQueryContent({ searchParams }: PetListContentProps) {
+  const query = normalizePaginationSearchParams(await searchParams);
+  const petsPromise = getCustomerPetsPage(query);
+  const suspenseKey = new URLSearchParams(query).toString();
+
+  return (
+    <Suspense key={suspenseKey} fallback={<PetListRenderer query={query} isSkeleton />}>
+      <PetListContainer petsPromise={petsPromise} query={query} />
+    </Suspense>
   );
 }
