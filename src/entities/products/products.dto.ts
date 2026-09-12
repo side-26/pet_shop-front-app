@@ -1,4 +1,4 @@
-import type { PaginateDataDTO } from '@/lib/api/pagination.dto';
+import type { PaginateDataDTO } from '@/entities/pagination/pagination.dto';
 import type { RichTextFormValue } from '@/lib/rich-text';
 import type {
   CustomerProductQueryInput,

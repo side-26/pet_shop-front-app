@@ -1,5 +1,5 @@
-import type { PaginateDataDTO, PaginateResponseDTO } from '@/lib/api/pagination.dto';
 import type { OrderDTO } from '@/entities/orders/orders.dto';
+import type { PaginateDataDTO, PaginateResponseDTO } from '@/entities/pagination/pagination.dto';
 import type { UserRole } from '@/configs/user-role';
 
 import type {
