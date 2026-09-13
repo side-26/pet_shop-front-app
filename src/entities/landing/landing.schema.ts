@@ -3,6 +3,7 @@ import { boolean, mixed, number, object, string, type InferType } from 'yup';
 import '@/configs/yup.config';
 
 export const DEFAULT_LANDING_PRODUCT_LIST_PAGE_SIZE = 20;
+export const DEFAULT_LANDING_PET_LIST_PAGE_SIZE = 20;
 
 export const landingSlugSchema = object({
   slug: string()
@@ -50,7 +51,29 @@ export const landingProductListQuerySchema = landingProductListRequestSchema.sha
     .required(),
 });
 
+export const landingPetListRequestSchema = object({
+  petType: objectIdList.optional(),
+  breed: objectIdList.optional(),
+  priceFrom: number().min(0).optional(),
+  priceTo: number().min(0).optional(),
+  isEnable: boolean().optional(),
+  sort: mixed<'most-valued' | 'less-valued' | 'most-sales' | 'less-sales'>()
+    .oneOf(['most-valued', 'less-valued', 'most-sales', 'less-sales'])
+    .default('most-sales')
+    .required(),
+  page: number().integer().min(1).default(1).required(),
+}).test('ordered-price-range', 'حداقل قیمت نمی‌تواند بیشتر از حداکثر قیمت باشد.', (value) => {
+  if (value?.priceFrom === undefined || value.priceTo === undefined) return true;
+  return value.priceFrom <= value.priceTo;
+});
+
+export const landingPetListQuerySchema = landingPetListRequestSchema.shape({
+  limit: number().integer().min(1).max(100).default(DEFAULT_LANDING_PET_LIST_PAGE_SIZE).required(),
+});
+
 export type LandingSlugInput = InferType<typeof landingSlugSchema>;
 export type LandingDiscountLimitInput = InferType<typeof landingDiscountLimitSchema>;
 export type LandingProductListRequestInput = InferType<typeof landingProductListRequestSchema>;
 export type LandingProductListQueryInput = InferType<typeof landingProductListQuerySchema>;
+export type LandingPetListRequestInput = InferType<typeof landingPetListRequestSchema>;
+export type LandingPetListQueryInput = InferType<typeof landingPetListQuerySchema>;

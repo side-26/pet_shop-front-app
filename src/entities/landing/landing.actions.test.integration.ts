@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   getLandingProductListAction,
+  getLandingPetListAction,
   retryAllLandingPetTypesAction,
   retryLandingFeaturedProductsAction,
   retryLandingHomeOffersAction,
@@ -14,6 +15,7 @@ import {
 } from './landing.actions';
 import {
   getLandingProductList,
+  getLandingPetList,
   invalidateAllLandingPetTypes,
   invalidateLandingFeaturedProducts,
   invalidateLandingHomeOffers,
@@ -28,6 +30,7 @@ const { refreshMock } = vi.hoisted(() => ({ refreshMock: vi.fn() }));
 vi.mock('next/cache', () => ({ refresh: refreshMock }));
 vi.mock('./landing.service', () => ({
   getLandingProductList: vi.fn(),
+  getLandingPetList: vi.fn(),
   invalidateAllLandingPetTypes: vi.fn(),
   invalidateLandingFeaturedProducts: vi.fn(),
   invalidateLandingHomeOffers: vi.fn(),
@@ -61,6 +64,24 @@ describe('retryAllLandingPetTypesAction', () => {
       priceFrom: 100,
       priceTo: 300,
       sort: 'less-valued',
+    });
+  });
+
+  it('validates backend pet-list filters before calling its landing service', async () => {
+    await getLandingPetListAction({
+      petType: ['507f1f77bcf86cd799439011', '507f1f77bcf86cd799439012'],
+      breed: '507f1f77bcf86cd799439013',
+      isEnable: 'true',
+      page: '2',
+      sort: 'less-sales',
+    });
+
+    expect(getLandingPetList).toHaveBeenCalledWith({
+      breed: '507f1f77bcf86cd799439013',
+      isEnable: true,
+      page: 2,
+      petType: '507f1f77bcf86cd799439011,507f1f77bcf86cd799439012',
+      sort: 'less-sales',
     });
   });
 

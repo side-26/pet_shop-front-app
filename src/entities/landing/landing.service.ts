@@ -7,6 +7,8 @@ import type {
   LandingDiscountLimitDTO,
   LandingFeaturedProductDTO,
   LandingPetDTO,
+  LandingPetListPageDTO,
+  LandingPetListRequestDTO,
   LandingPetDetailDTO,
   LandingPetTypeDTO,
   LandingPopularBrandDTO,
@@ -21,6 +23,8 @@ import {
   landingDiscountLimitSchema,
   landingProductListQuerySchema,
   DEFAULT_LANDING_PRODUCT_LIST_PAGE_SIZE,
+  DEFAULT_LANDING_PET_LIST_PAGE_SIZE,
+  landingPetListQuerySchema,
   landingSlugSchema,
 } from './landing.schema';
 
@@ -35,6 +39,12 @@ const popularPetsCacheKey = 'pets:popular';
 const recentPetsCacheKey = 'pets:recent';
 const landingProductListCacheKey = (query: LandingProductListRequestDTO & { limit: number }) =>
   `products:list:v3:${new URLSearchParams(
+    Object.entries(query)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, value]) => [key, String(value)]),
+  ).toString()}`;
+const landingPetListCacheKey = (query: LandingPetListRequestDTO & { limit: number }) =>
+  `pets:list:v1:${new URLSearchParams(
     Object.entries(query)
       .sort(([left], [right]) => left.localeCompare(right))
       .map(([key, value]) => [key, String(value)]),
@@ -141,6 +151,19 @@ export async function getLandingProductList(input: Partial<LandingProductListReq
   );
   const key = landingProductListCacheKey(query);
   return fetchLandingList<LandingProductListPageDTO>('/landing/products', key, query, 'no-store');
+}
+
+export async function getLandingPetList(input: Partial<LandingPetListRequestDTO> = {}) {
+  const query = await landingPetListQuerySchema.validate(
+    { ...input, limit: DEFAULT_LANDING_PET_LIST_PAGE_SIZE },
+    { stripUnknown: true },
+  );
+  return fetchLandingList<LandingPetListPageDTO>(
+    '/landing/pets-paginate',
+    landingPetListCacheKey(query),
+    query,
+    'no-store',
+  );
 }
 
 export function getPopularLandingPets() {

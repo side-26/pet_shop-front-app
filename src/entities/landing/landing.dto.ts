@@ -1,10 +1,12 @@
-import type { CustomerPetDetailDTO } from '@/entities/pets/pets.dto';
+import type { CustomerPetDetailDTO, CustomerPetListItemDTO } from '@/entities/pets/pets.dto';
 import type { PaginateDataDTO } from '@/entities/pagination/pagination.dto';
 import type { FilterDTO, SortDTO } from '@/entities/pagination/pagination.types';
 import type { CustomerProductDetailDTO } from '@/entities/products/products.dto';
 
 import type {
   LandingDiscountLimitInput,
+  LandingPetListQueryInput,
+  LandingPetListRequestInput,
   LandingProductListQueryInput,
   LandingProductListRequestInput,
   LandingSlugInput,
@@ -28,6 +30,7 @@ export type LandingPetDTO = {
   breed: string;
   price: number;
 };
+export type LandingPetListPageDTO = PaginateDataDTO<CustomerPetListItemDTO, FilterDTO, SortDTO>;
 
 export type LandingProductDTO = {
   id: string;
@@ -81,4 +84,6 @@ export type LandingProductDetailDTO = CustomerProductDetailDTO;
 export type LandingDiscountLimitDTO = LandingDiscountLimitInput;
 export type LandingProductListQueryDTO = LandingProductListQueryInput;
 export type LandingProductListRequestDTO = LandingProductListRequestInput;
+export type LandingPetListQueryDTO = LandingPetListQueryInput;
+export type LandingPetListRequestDTO = LandingPetListRequestInput;
 export type LandingSlugDTO = LandingSlugInput;

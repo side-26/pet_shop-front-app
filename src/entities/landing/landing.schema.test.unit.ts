@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   landingDiscountLimitSchema,
+  landingPetListRequestSchema,
   landingProductListRequestSchema,
   landingSlugSchema,
 } from './landing.schema';
@@ -37,6 +38,30 @@ describe('landing schemas', () => {
       isEnable: false,
       page: 1,
       sort: 'most-sales',
+    });
+  });
+
+  it('normalizes the backend landing pet-list query', async () => {
+    await expect(
+      landingPetListRequestSchema.validate(
+        {
+          petType: ['507f1f77bcf86cd799439011', '507f1f77bcf86cd799439012'],
+          breed: '507f1f77bcf86cd799439013',
+          isEnable: 'false',
+          priceFrom: '100',
+          priceTo: '300',
+          sort: 'less-sales',
+        },
+        { stripUnknown: true },
+      ),
+    ).resolves.toEqual({
+      breed: '507f1f77bcf86cd799439013',
+      isEnable: false,
+      page: 1,
+      petType: '507f1f77bcf86cd799439011,507f1f77bcf86cd799439012',
+      priceFrom: 100,
+      priceTo: 300,
+      sort: 'less-sales',
     });
   });
 });

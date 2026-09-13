@@ -7,6 +7,7 @@ import type {
   LandingPopularBrandDTO,
   LandingPopularProductDTO,
   LandingProductListPageDTO,
+  LandingPetListPageDTO,
   LandingProductDTO,
 } from './landing.dto';
 import {
@@ -18,6 +19,7 @@ import {
   invalidateLandingFeaturedProducts,
   getLandingPetBySlug,
   getLandingProductList,
+  getLandingPetList,
   getLandingProductBySlug,
   getPopularLandingPets,
   getPopularLandingBrands,
@@ -106,6 +108,37 @@ const productList: LandingProductListPageDTO = {
   },
 };
 
+const petList: LandingPetListPageDTO = {
+  result: [
+    {
+      id: 'pet-1',
+      title: 'گربه پرشین',
+      slug: 'persian-cat',
+      mainImage: 'https://cdn.example.com/persian-cat.webp',
+      mainImageThumbnail: 'data:image/webp;base64,AAAA',
+      petType: 'گربه',
+      breed: 'پرشین',
+      description: { type: 'doc', content: [] },
+      quantity: 1,
+      price: 2_000_000,
+      discountPercentage: 0,
+      inEnable: true,
+    },
+  ],
+  filters: [],
+  pagination: {
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 1,
+    itemsPerPage: 20,
+    hasNextPage: false,
+    hasPrevPage: false,
+    nextPage: null,
+    prevPage: null,
+  },
+  sort: { current: 'most-sales', options: [] },
+};
+
 describe('landing service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -123,6 +156,12 @@ describe('landing service', () => {
       priceFrom: 100,
       priceTo: 300,
       sort: 'less-valued',
+    });
+    await getLandingPetList({
+      petType: '507f1f77bcf86cd799439012',
+      breed: '507f1f77bcf86cd799439013',
+      isEnable: true,
+      sort: 'less-sales',
     });
     await getPopularLandingProducts();
     await getPopularLandingBrands();
@@ -168,6 +207,19 @@ describe('landing service', () => {
           cache: 'no-store',
         }),
         expect.objectContaining({
+          url: '/landing/pets-paginate',
+          query: expect.objectContaining({
+            petType: '507f1f77bcf86cd799439012',
+            breed: '507f1f77bcf86cd799439013',
+            isEnable: true,
+            sort: 'less-sales',
+            page: 1,
+            limit: 20,
+          }),
+          auth: false,
+          cache: 'no-store',
+        }),
+        expect.objectContaining({
           url: '/landing/brands/popular',
           auth: false,
           cache: 'force-cache',
@@ -184,7 +236,7 @@ describe('landing service', () => {
         }),
       ]),
     );
-    expect(mocks.registerList).toHaveBeenCalledTimes(9);
+    expect(mocks.registerList).toHaveBeenCalledTimes(10);
     expect(fetcher).toHaveBeenCalledWith(
       expect.objectContaining({
         url: '/landing/pet-types/all',
@@ -243,6 +295,15 @@ describe('landing service', () => {
       getLandingProductList({ priceFrom: 100, priceTo: 300, sort: 'most-sales' }),
     ).resolves.toEqual({ isSuccess: true, message: null, data: productList });
     await expect(getLandingProductList({ priceFrom: 301, priceTo: 300 })).rejects.toBeDefined();
+  });
+
+  it('validates and requests the filtered public landing pet catalogue', async () => {
+    fetcher.mockResolvedValue({ isSuccess: true, message: null, data: petList });
+
+    await expect(
+      getLandingPetList({ priceFrom: 100, priceTo: 300, sort: 'most-sales' }),
+    ).resolves.toEqual({ isSuccess: true, message: null, data: petList });
+    await expect(getLandingPetList({ priceFrom: 301, priceTo: 300 })).rejects.toBeDefined();
   });
 
   it('exposes enabled brands with their enabled-product counts', async () => {
