@@ -47,7 +47,7 @@ function ProductPetTypeCard({
   petType,
   isSkeleton,
 }: Readonly<{ petType: LandingPetTypeDTO; isSkeleton: boolean }>) {
-  const href = routePaths.productsListByPetType(petType.id);
+  const href = routePaths.productsList;
 
   return (
     <Card size="sm" className="tw:group/card tw:h-full tw:overflow-hidden tw:pt-0">

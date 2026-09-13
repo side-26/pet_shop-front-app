@@ -24,6 +24,8 @@ import { Separator } from '@/components/ui/separator';
 import { createPaginationHref } from '@/entities/pagination/pagination.helpers';
 import type { FilterDTO, FilterOptionDTO } from '@/entities/pagination/pagination.types';
 
+export type RangeQueryKeys = Readonly<{ min: string; max: string }>;
+
 type PaginationFiltersProps = Readonly<{
   basePath: string;
   disabled?: boolean;
@@ -31,6 +33,7 @@ type PaginationFiltersProps = Readonly<{
   idPrefix: string;
   label: string;
   query: Readonly<Record<string, string>>;
+  rangeQueryKeys?: Readonly<Record<string, RangeQueryKeys>>;
   resetPageOnChange?: boolean;
   variant?: 'filled' | 'outlined';
 }>;
@@ -46,9 +49,18 @@ function optionLabel(option: FilterOptionDTO) {
 function createFilterValues(
   filters: readonly FilterDTO[],
   query: Readonly<Record<string, string>>,
+  rangeQueryKeys: Readonly<Record<string, RangeQueryKeys>>,
 ) {
   return Object.fromEntries(
-    filters.flatMap((filter) => (query[filter.key] ? [[filter.key, query[filter.key]]] : [])),
+    filters.flatMap((filter) => {
+      const keys = filter.type === 'range' ? rangeQueryKeys[filter.key] : undefined;
+      if (keys) {
+        const minimum = query[keys.min];
+        const maximum = query[keys.max];
+        return minimum || maximum ? [[filter.key, `${minimum ?? ''}-${maximum ?? ''}`]] : [];
+      }
+      return query[filter.key] ? [[filter.key, query[filter.key]]] : [];
+    }),
   );
 }
 
@@ -59,6 +71,7 @@ export function PaginationFilters({
   idPrefix,
   label,
   query,
+  rangeQueryKeys = {},
   resetPageOnChange = true,
   variant = 'outlined',
 }: PaginationFiltersProps) {
@@ -68,7 +81,7 @@ export function PaginationFilters({
     [filters],
   );
   const [values, setValues] = useState<Record<string, string>>(() =>
-    createFilterValues(filters, query),
+    createFilterValues(filters, query, rangeQueryKeys),
   );
 
   function setValue(key: string, value?: string) {
@@ -82,13 +95,30 @@ export function PaginationFilters({
 
   function applyFilters() {
     const changes: Record<string, string | null | number> = resetPageOnChange ? { page: 1 } : {};
-    for (const filter of filters) changes[filter.key] = values[filter.key] || null;
+    for (const filter of filters) {
+      const keys = filter.type === 'range' ? rangeQueryKeys[filter.key] : undefined;
+      if (keys) {
+        const [minimum, maximum] = values[filter.key]?.split('-') ?? [];
+        changes[filter.key] = null;
+        changes[keys.min] = minimum || null;
+        changes[keys.max] = maximum || null;
+      } else {
+        changes[filter.key] = values[filter.key] || null;
+      }
+    }
     router.push(createPaginationHref(basePath, query, changes), { scroll: false });
   }
 
   function clearFilters() {
     const changes: Record<string, null | number> = resetPageOnChange ? { page: 1 } : {};
-    for (const filter of filters) changes[filter.key] = null;
+    for (const filter of filters) {
+      const keys = filter.type === 'range' ? rangeQueryKeys[filter.key] : undefined;
+      changes[filter.key] = null;
+      if (keys) {
+        changes[keys.min] = null;
+        changes[keys.max] = null;
+      }
+    }
     setValues({});
     router.push(createPaginationHref(basePath, query, changes), { scroll: false });
   }
@@ -263,7 +293,9 @@ function FilterControl({
     <Field className="tw:flex-row tw:items-center tw:justify-between tw:px-3">
       <FieldLabel htmlFor={id}>
         {filter.label}
-        {filter.count === undefined ? null : ` (${filter.count})`}
+        {(filter.options?.[0]?.count ?? filter.count) === undefined
+          ? null
+          : ` (${filter.options?.[0]?.count ?? filter.count})`}
       </FieldLabel>
       <Switch
         id={id}

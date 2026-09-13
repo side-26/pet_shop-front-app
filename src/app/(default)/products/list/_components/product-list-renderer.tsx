@@ -24,6 +24,7 @@ export function ProductListRenderer({ data, isSkeleton = false, query }: Product
       filters={isSkeleton ? paginationLayoutSkeletonFilters : data?.filters}
       isSkeleton={isSkeleton}
       query={query}
+      rangeQueryKeys={{ price: { min: 'priceFrom', max: 'priceTo' } }}
       resetPageOnChange={false}
       sort={isSkeleton ? paginationLayoutSkeletonSort : data?.sort}
     >

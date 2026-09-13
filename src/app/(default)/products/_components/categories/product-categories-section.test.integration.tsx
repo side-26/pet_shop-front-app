@@ -87,9 +87,7 @@ describe('ProductCategoriesSection', () => {
     expect(
       screen
         .getAllByRole('link', { name: `مشاهده محصولات ${petType.title}` })
-        .every(
-          (link) => link.getAttribute('href') === routePaths.productsListByPetType(petType.id),
-        ),
+        .every((link) => link.getAttribute('href') === routePaths.productsList),
     ).toBe(true);
     expect(screen.queryByText('انتخاب‌های پیشنهادی')).toBeNull();
   });

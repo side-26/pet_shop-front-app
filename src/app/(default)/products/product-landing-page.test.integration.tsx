@@ -172,7 +172,7 @@ describe('Product landing page', () => {
     );
 
     expect(screen.getByRole('link', { name: 'محصولات برند رویال کنین' }).getAttribute('href')).toBe(
-      routePaths.productsListByBrand('Royal Canin'),
+      routePaths.productsListByBrand('brand-1'),
     );
   });
 

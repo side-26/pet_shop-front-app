@@ -58,6 +58,35 @@ const data: LandingProductListPageDTO = {
   },
 };
 
+const filteredData: LandingProductListPageDTO = {
+  ...data,
+  filters: [
+    {
+      key: 'price',
+      label: 'قیمت',
+      order: 1,
+      type: 'range',
+      min: 100,
+      max: 200,
+      unit: 'تومان',
+    },
+    {
+      key: 'available',
+      label: 'فقط کالاهای موجود',
+      order: 2,
+      type: 'boolean',
+      options: [{ value: true, label: 'فقط کالاهای موجود', count: 1 }],
+    },
+  ],
+  sort: {
+    current: 'most-sales',
+    options: [
+      { value: 'most-sales', label: 'پرفروش‌ترین' },
+      { value: 'most-valued', label: 'گران‌ترین' },
+    ],
+  },
+};
+
 afterEach(() => {
   cleanup();
   push.mockClear();
@@ -85,6 +114,19 @@ describe(routePaths.productsList, () => {
       true,
     );
     expect(screen.getByRole('button', { name: 'پاک کردن' }).hasAttribute('disabled')).toBe(true);
+  });
+
+  it('maps backend price facets to priceFrom and priceTo without adding URL pagination', () => {
+    render(
+      <ProductListRenderer data={filteredData} query={{ priceFrom: '100', priceTo: '200' }} />,
+    );
+
+    fireEvent.change(screen.getByLabelText('از تومان'), { target: { value: '120' } });
+    fireEvent.click(screen.getByRole('button', { name: 'اعمال فیلترها' }));
+
+    expect(push).toHaveBeenCalledWith('/products/list?priceFrom=120&priceTo=200', {
+      scroll: false,
+    });
   });
 
   it('loads the next page through the Server Action without adding page or limit to its query', async () => {

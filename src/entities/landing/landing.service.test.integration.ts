@@ -105,7 +105,13 @@ describe('landing service', () => {
     await getAllLandingPetTypes();
     await getDiscountedLandingProducts({ limit: 2 });
     await getFeaturedLandingProducts();
-    await getLandingProductList({ brand: '507f1f77bcf86cd799439012', sort: 'less-valued' });
+    await getLandingProductList({
+      available: true,
+      brand: '507f1f77bcf86cd799439012,507f1f77bcf86cd799439013',
+      priceFrom: 100,
+      priceTo: 300,
+      sort: 'less-valued',
+    });
     await getPopularLandingProducts();
     await getPopularLandingBrands();
     await getPopularLandingPets();
@@ -138,7 +144,10 @@ describe('landing service', () => {
         expect.objectContaining({
           url: '/landing/products',
           query: expect.objectContaining({
-            brand: '507f1f77bcf86cd799439012',
+            available: true,
+            brand: '507f1f77bcf86cd799439012,507f1f77bcf86cd799439013',
+            priceFrom: 100,
+            priceTo: 300,
             sort: 'less-valued',
             page: 1,
             limit: 20,

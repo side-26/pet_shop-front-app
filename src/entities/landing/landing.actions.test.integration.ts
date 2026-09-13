@@ -42,15 +42,26 @@ beforeEach(() => {
 });
 
 describe('retryAllLandingPetTypesAction', () => {
-  it('validates product pagination server-side and keeps its page size out of the action input', async () => {
+  it('validates the backend product-list filters and keeps its page size out of the action input', async () => {
     await getLandingProductListAction({
-      page: 2,
+      available: 'true',
+      brand: '507f1f77bcf86cd799439011,507f1f77bcf86cd799439012',
       limit: 100,
+      page: '2',
+      priceFrom: '100',
+      priceTo: '300',
       sort: 'less-valued',
       unknown: 'removed',
     });
 
-    expect(getLandingProductList).toHaveBeenCalledWith({ page: 2, sort: 'less-valued' });
+    expect(getLandingProductList).toHaveBeenCalledWith({
+      available: true,
+      brand: '507f1f77bcf86cd799439011,507f1f77bcf86cd799439012',
+      page: 2,
+      priceFrom: 100,
+      priceTo: 300,
+      sort: 'less-valued',
+    });
   });
 
   it('expires only the landing pet-type cache before refreshing the client router', async () => {

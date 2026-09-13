@@ -12,7 +12,7 @@ export interface PaginationDTO {
 export interface PaginateDataDTO<TData, TFilter = never, TSort = never> {
   result: TData[];
   pagination: PaginationDTO;
-  filters?: TFilter extends never ? never : TFilter[];
+  filters?: [TFilter] extends [never] ? never : TFilter[];
   sort?: TSort extends never ? never : TSort;
 }
 

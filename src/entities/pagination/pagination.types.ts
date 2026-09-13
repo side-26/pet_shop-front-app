@@ -33,6 +33,7 @@ export interface RangeFilterDTO extends BaseFilterDTO {
 export interface BooleanFilterDTO extends BaseFilterDTO {
   type: 'boolean';
   count?: number;
+  options?: Array<{ value: boolean; label: string; count?: number }>;
 }
 
 export type FilterDTO = SelectFilterDTO | MultiSelectFilterDTO | RangeFilterDTO | BooleanFilterDTO;

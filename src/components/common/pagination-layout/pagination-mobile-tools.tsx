@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import type { FilterDTO, SortDTO } from '@/entities/pagination/pagination.types';
 
-import { PaginationFilters } from './pagination-filters';
+import { PaginationFilters, type RangeQueryKeys } from './pagination-filters';
 import { PaginationSort } from './pagination-sort';
 
 type PaginationMobileToolsProps = Readonly<{
@@ -21,6 +21,7 @@ type PaginationMobileToolsProps = Readonly<{
   filterLabel: string;
   filters: readonly FilterDTO[];
   query: Readonly<Record<string, string>>;
+  rangeQueryKeys?: Readonly<Record<string, RangeQueryKeys>>;
   resetPageOnChange?: boolean;
   sort?: SortDTO;
 }>;
@@ -31,6 +32,7 @@ export function PaginationMobileTools({
   filterLabel,
   filters,
   query,
+  rangeQueryKeys,
   resetPageOnChange = true,
   sort,
 }: PaginationMobileToolsProps) {
@@ -53,6 +55,7 @@ export function PaginationMobileTools({
             idPrefix="mobile"
             label={filterLabel}
             query={query}
+            rangeQueryKeys={rangeQueryKeys}
             resetPageOnChange={resetPageOnChange}
             variant="filled"
           />

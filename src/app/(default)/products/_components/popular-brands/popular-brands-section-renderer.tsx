@@ -25,7 +25,7 @@ export function PopularBrandsSectionRenderer({
       {brands.map((brand) => (
         <Link
           key={brand.id}
-          href={routePaths.productsListByBrand(brand.title)}
+          href={routePaths.productsListByBrand(brand.id)}
           prefetch
           aria-label={isSkeleton ? undefined : `محصولات برند ${brand.title_fa ?? brand.title}`}
           aria-disabled={isSkeleton || undefined}

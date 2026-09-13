@@ -1,5 +1,6 @@
 import type { CustomerPetDetailDTO } from '@/entities/pets/pets.dto';
 import type { PaginateDataDTO } from '@/entities/pagination/pagination.dto';
+import type { FilterDTO, SortDTO } from '@/entities/pagination/pagination.types';
 import type { CustomerProductDetailDTO } from '@/entities/products/products.dto';
 
 import type {
@@ -50,7 +51,11 @@ export type LandingPopularProductDTO = LandingProductDTO & {
 
 /** Product card returned by the filtered public landing catalogue. */
 export type LandingProductListItemDTO = LandingPopularProductDTO;
-export type LandingProductListPageDTO = PaginateDataDTO<LandingProductListItemDTO>;
+export type LandingProductListPageDTO = PaginateDataDTO<
+  LandingProductListItemDTO,
+  FilterDTO,
+  SortDTO
+>;
 
 /** Enabled brand summary ranked by its enabled-product count. */
 export type LandingPopularBrandDTO = {

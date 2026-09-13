@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import type { FilterDTO, SortDTO } from '@/entities/pagination/pagination.types';
 import { cn } from '@/lib/utils';
 
-import { PaginationFilters } from './pagination-filters';
+import { PaginationFilters, type RangeQueryKeys } from './pagination-filters';
 import { PaginationSort } from './pagination-sort';
 import { PaginationMobileTools } from './pagination-mobile-tools';
 
@@ -14,6 +14,7 @@ type PaginationLayoutProps = Readonly<{
   filters?: readonly FilterDTO[];
   isSkeleton?: boolean;
   query: Readonly<Record<string, string>>;
+  rangeQueryKeys?: Readonly<Record<string, RangeQueryKeys>>;
   resetPageOnChange?: boolean;
   sort?: SortDTO;
 }>;
@@ -25,6 +26,7 @@ export function PaginationLayout({
   filters = [],
   isSkeleton = false,
   query,
+  rangeQueryKeys,
   resetPageOnChange = true,
   sort,
 }: PaginationLayoutProps) {
@@ -45,6 +47,7 @@ export function PaginationLayout({
         filterLabel={filterLabel}
         filters={filters}
         query={query}
+        rangeQueryKeys={rangeQueryKeys}
         resetPageOnChange={resetPageOnChange}
         sort={sort}
       />
@@ -59,6 +62,7 @@ export function PaginationLayout({
             idPrefix="desktop"
             label={filterLabel}
             query={query}
+            rangeQueryKeys={rangeQueryKeys}
             resetPageOnChange={resetPageOnChange}
           />
         </aside>

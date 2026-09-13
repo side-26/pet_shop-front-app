@@ -1,4 +1,4 @@
-import { mixed, number, object, string, type InferType } from 'yup';
+import { boolean, mixed, number, object, string, type InferType } from 'yup';
 
 import '@/configs/yup.config';
 
@@ -17,16 +17,17 @@ export const landingDiscountLimitSchema = object({
   limit: number().integer().min(1).max(100).default(4).required(),
 });
 
-const objectId = string()
+const objectIdList = string()
   .trim()
-  .matches(/^[a-f\d]{24}$/i);
+  .matches(/^[a-f\d]{24}(?:,[a-f\d]{24})*$/i);
 
 export const landingProductListRequestSchema = object({
-  category: objectId.optional(),
-  subCategory: objectId.optional(),
-  brand: objectId.optional(),
+  category: objectIdList.optional(),
+  subCategory: objectIdList.optional(),
+  brand: objectIdList.optional(),
   priceFrom: number().min(0).optional(),
   priceTo: number().min(0).optional(),
+  available: boolean().optional(),
   sort: mixed<'most-valued' | 'less-valued' | 'most-sales' | 'less-sales'>()
     .oneOf(['most-valued', 'less-valued', 'most-sales', 'less-sales'])
     .default('most-sales')
