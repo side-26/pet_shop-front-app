@@ -13,6 +13,7 @@ type PaginationLayoutProps = Readonly<{
   filterLabel: string;
   filters?: readonly FilterDTO[];
   isSkeleton?: boolean;
+  mobileTools?: ReactNode;
   query: Readonly<Record<string, string>>;
   rangeQueryKeys?: Readonly<Record<string, RangeQueryKeys>>;
   resetPageOnChange?: boolean;
@@ -25,6 +26,7 @@ export function PaginationLayout({
   filterLabel,
   filters = [],
   isSkeleton = false,
+  mobileTools,
   query,
   rangeQueryKeys,
   resetPageOnChange = true,
@@ -40,17 +42,19 @@ export function PaginationLayout({
         isSkeleton && 'skeleton tw:pointer-events-none tw:select-none',
       )}
     >
-      <PaginationMobileTools
-        key={`mobile-${controlsKey}`}
-        basePath={basePath}
-        disabled={isSkeleton}
-        filterLabel={filterLabel}
-        filters={filters}
-        query={query}
-        rangeQueryKeys={rangeQueryKeys}
-        resetPageOnChange={resetPageOnChange}
-        sort={sort}
-      />
+      {mobileTools ?? (
+        <PaginationMobileTools
+          key={`mobile-${controlsKey}`}
+          basePath={basePath}
+          disabled={isSkeleton}
+          filterLabel={filterLabel}
+          filters={filters}
+          query={query}
+          rangeQueryKeys={rangeQueryKeys}
+          resetPageOnChange={resetPageOnChange}
+          sort={sort}
+        />
+      )}
 
       <div className="tw:grid tw:items-start tw:gap-6 tw:lg:grid-cols-[16rem_minmax(0,1fr)] tw:xl:grid-cols-[300px_minmax(0,1fr)]">
         <aside className="tw:sticky tw:top-28 tw:hidden tw:lg:block" aria-label={filterLabel}>

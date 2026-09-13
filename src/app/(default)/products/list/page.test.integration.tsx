@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
@@ -152,6 +152,23 @@ describe(routePaths.productsList, () => {
     fireEvent.click(screen.getByRole('button', { name: 'اعمال فیلترها' }));
 
     expect(push).toHaveBeenCalledWith('/products/list?isEnable=false', { scroll: false });
+  });
+
+  it('lazy-loads the mobile filter and sort dialog bodies after opening each dialog', async () => {
+    render(<ProductListRenderer data={filteredData} query={{}} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'فیلترها' }));
+
+    const filterDialog = await screen.findByRole('dialog', { name: 'فیلتر محصولات' });
+    expect(within(filterDialog).getByRole('group', { busy: true })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'قیمت' })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'انصراف' }));
+    fireEvent.click(screen.getByRole('button', { name: 'مرتب‌سازی' }));
+
+    const sortDialog = await screen.findByRole('dialog', { name: 'مرتب‌سازی' });
+    expect(within(sortDialog).getByLabelText('در حال بارگذاری مرتب‌سازی')).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'پرفروش‌ترین' })).toBeTruthy();
   });
 
   it('loads the next page through the Server Action without adding page or limit to its query', async () => {

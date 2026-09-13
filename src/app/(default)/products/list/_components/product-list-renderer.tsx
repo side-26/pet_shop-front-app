@@ -8,6 +8,7 @@ import type { LandingProductListPageDTO } from '@/entities/landing/landing.dto';
 import type { FilterDTO } from '@/entities/pagination/pagination.types';
 
 import { ProductInfiniteList } from './product-infinite-list';
+import { ProductListMobileTools } from './product-list-mobile-tools';
 
 function getProductFilters(filters: readonly FilterDTO[] | undefined): FilterDTO[] {
   return filters?.filter((filter) => filter.key !== 'available') ?? [];
@@ -29,6 +30,17 @@ export function ProductListRenderer({ data, isSkeleton = false, query }: Product
       filterLabel="فیلتر محصولات"
       filters={isSkeleton ? paginationLayoutSkeletonFilters : filters}
       isSkeleton={isSkeleton}
+      mobileTools={
+        <ProductListMobileTools
+          basePath={routePaths.productsList}
+          disabled={isSkeleton}
+          filters={isSkeleton ? paginationLayoutSkeletonFilters : filters}
+          query={query}
+          rangeQueryKeys={{ price: { min: 'priceFrom', max: 'priceTo' } }}
+          resetPageOnChange={false}
+          sort={isSkeleton ? paginationLayoutSkeletonSort : data?.sort}
+        />
+      }
       query={query}
       rangeQueryKeys={{ price: { min: 'priceFrom', max: 'priceTo' } }}
       resetPageOnChange={false}

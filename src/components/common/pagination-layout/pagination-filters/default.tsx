@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react';
 import { ChevronDown, ListFilter } from 'lucide-react';
 import { useRouter } from 'nextjs-toploader/app';
 
@@ -18,6 +18,7 @@ import { RangePaginationFilter } from './range';
 import { SelectPaginationFilter } from './select';
 
 export type RangeQueryKeys = Readonly<{ min: string; max: string }>;
+export type PaginationFiltersHandle = { apply: () => void };
 
 type PaginationFiltersProps = Readonly<{
   basePath: string;
@@ -25,10 +26,13 @@ type PaginationFiltersProps = Readonly<{
   filters: readonly FilterDTO[];
   idPrefix: string;
   label: string;
+  onApplied?: () => void;
   query: Readonly<Record<string, string>>;
   rangeQueryKeys?: Readonly<Record<string, RangeQueryKeys>>;
   resetPageOnChange?: boolean;
   scrollable?: boolean;
+  showActions?: boolean;
+  surface?: 'card' | 'plain';
   variant?: 'filled' | 'outlined';
 }>;
 
@@ -50,103 +54,93 @@ function createFilterValues(
   );
 }
 
-export function PaginationFilters({
-  basePath,
-  disabled = false,
-  filters,
-  idPrefix,
-  label,
-  query,
-  rangeQueryKeys = {},
-  resetPageOnChange = true,
-  scrollable = false,
-  variant = 'outlined',
-}: PaginationFiltersProps) {
-  const router = useRouter();
-  const orderedFilters = useMemo(
-    () => [...filters].sort((left, right) => left.order - right.order),
-    [filters],
-  );
-  const [values, setValues] = useState<Record<string, string>>(() =>
-    createFilterValues(filters, query, rangeQueryKeys),
-  );
-  const hasActiveFilters = Object.values(values).some(Boolean);
+export const PaginationFilters = forwardRef<PaginationFiltersHandle, PaginationFiltersProps>(
+  function PaginationFilters(
+    {
+      basePath,
+      disabled = false,
+      filters,
+      idPrefix,
+      label,
+      onApplied,
+      query,
+      rangeQueryKeys = {},
+      resetPageOnChange = true,
+      scrollable = false,
+      showActions = true,
+      surface = 'card',
+      variant = 'outlined',
+    },
+    ref,
+  ) {
+    const router = useRouter();
+    const orderedFilters = useMemo(
+      () => [...filters].sort((left, right) => left.order - right.order),
+      [filters],
+    );
+    const [values, setValues] = useState<Record<string, string>>(() =>
+      createFilterValues(filters, query, rangeQueryKeys),
+    );
+    const hasActiveFilters = Object.values(values).some(Boolean);
 
-  function setValue(key: string, value?: string) {
-    setValues((current) => {
-      const next = { ...current };
-      if (value) next[key] = value;
-      else delete next[key];
-      return next;
-    });
-  }
-
-  function applyFilters() {
-    const changes: Record<string, string | null | number> = resetPageOnChange ? { page: 1 } : {};
-    for (const filter of filters) {
-      const keys = filter.type === 'range' ? rangeQueryKeys[filter.key] : undefined;
-      if (keys) {
-        const [minimum, maximum] = values[filter.key]?.split('-') ?? [];
-        changes[filter.key] = null;
-        changes[keys.min] = minimum || null;
-        changes[keys.max] = maximum || null;
-      } else {
-        changes[filter.key] = values[filter.key] || null;
-      }
+    function setValue(key: string, value?: string) {
+      setValues((current) => {
+        const next = { ...current };
+        if (value) next[key] = value;
+        else delete next[key];
+        return next;
+      });
     }
-    router.push(createPaginationHref(basePath, query, changes), { scroll: false });
-  }
 
-  function clearFilters() {
-    const changes: Record<string, null | number> = resetPageOnChange ? { page: 1 } : {};
-    for (const filter of filters) {
+    const applyFilters = useCallback(() => {
+      const changes: Record<string, string | null | number> = resetPageOnChange ? { page: 1 } : {};
+      for (const filter of filters) {
+        const keys = filter.type === 'range' ? rangeQueryKeys[filter.key] : undefined;
+        if (keys) {
+          const [minimum, maximum] = values[filter.key]?.split('-') ?? [];
+          changes[filter.key] = null;
+          changes[keys.min] = minimum || null;
+          changes[keys.max] = maximum || null;
+        } else {
+          changes[filter.key] = values[filter.key] || null;
+        }
+      }
+      router.push(createPaginationHref(basePath, query, changes), { scroll: false });
+      onApplied?.();
+    }, [basePath, filters, onApplied, query, rangeQueryKeys, resetPageOnChange, router, values]);
+
+    function clearFilters() {
+      const changes: Record<string, null | number> = resetPageOnChange ? { page: 1 } : {};
+      for (const filter of filters) {
+        const keys = filter.type === 'range' ? rangeQueryKeys[filter.key] : undefined;
+        changes[filter.key] = null;
+        if (keys) {
+          changes[keys.min] = null;
+          changes[keys.max] = null;
+        }
+      }
+      setValues({});
+      router.push(createPaginationHref(basePath, query, changes), { scroll: false });
+    }
+
+    useImperativeHandle(ref, () => ({ apply: applyFilters }), [applyFilters]);
+
+    function deleteFilter(filter: FilterDTO) {
+      const changes: Record<string, null | number> = resetPageOnChange ? { page: 1 } : {};
       const keys = filter.type === 'range' ? rangeQueryKeys[filter.key] : undefined;
+
       changes[filter.key] = null;
       if (keys) {
         changes[keys.min] = null;
         changes[keys.max] = null;
       }
-    }
-    setValues({});
-    router.push(createPaginationHref(basePath, query, changes), { scroll: false });
-  }
 
-  function deleteFilter(filter: FilterDTO) {
-    const changes: Record<string, null | number> = resetPageOnChange ? { page: 1 } : {};
-    const keys = filter.type === 'range' ? rangeQueryKeys[filter.key] : undefined;
-
-    changes[filter.key] = null;
-    if (keys) {
-      changes[keys.min] = null;
-      changes[keys.max] = null;
+      setValue(filter.key);
+      router.push(createPaginationHref(basePath, query, changes), { scroll: false });
     }
 
-    setValue(filter.key);
-    router.push(createPaginationHref(basePath, query, changes), { scroll: false });
-  }
-
-  return (
-    <Card
-      data-scrollable={scrollable || undefined}
-      variant={variant}
-      size="sm"
-      className={cn(
-        scrollable &&
-          'tw:h-fit tw:min-h-0 tw:max-h-[calc(100dvh-var(--pagination-sidebar-offset))]',
-      )}
-    >
-      <CardHeader>
-        <CardTitle className="tw:flex tw:items-center tw:gap-2">
-          <ListFilter aria-hidden="true" className="tw:text-primary" />
-          {label}
-        </CardTitle>
-      </CardHeader>
-      <CardContent
-        className={cn(
-          'tw:flex tw:flex-col tw:gap-5',
-          scrollable && 'tw:min-h-0 tw:flex-1 tw:overflow-y-auto tw:overscroll-contain',
-        )}
-      >
+    const filtersContent = (
+      <>
         {orderedFilters.length === 0 ? (
           <p className="tw:text-body-s tw:text-muted-foreground">
             فیلتری برای این فهرست در دسترس نیست.
@@ -185,30 +179,63 @@ export function PaginationFilters({
             </Collapsible>
           ))
         )}
-        <div className="tw:grid tw:grid-cols-2 tw:gap-2">
-          <Button
-            block
-            size="sm"
-            disabled={disabled || filters.length === 0}
-            onClick={applyFilters}
-          >
-            اعمال فیلترها
-          </Button>
-          <Button
-            block
-            size="sm"
-            color="secondary"
-            variant="outlined"
-            disabled={disabled || !hasActiveFilters}
-            onClick={clearFilters}
-          >
-            پاک کردن
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+        {showActions ? (
+          <div className="tw:grid tw:grid-cols-2 tw:gap-2">
+            <Button
+              block
+              size="sm"
+              disabled={disabled || filters.length === 0}
+              onClick={applyFilters}
+            >
+              اعمال فیلترها
+            </Button>
+            <Button
+              block
+              size="sm"
+              color="secondary"
+              variant="outlined"
+              disabled={disabled || !hasActiveFilters}
+              onClick={clearFilters}
+            >
+              پاک کردن
+            </Button>
+          </div>
+        ) : null}
+      </>
+    );
+
+    if (surface === 'plain') {
+      return <div className="tw:flex tw:flex-col tw:gap-5">{filtersContent}</div>;
+    }
+
+    return (
+      <Card
+        data-scrollable={scrollable || undefined}
+        variant={variant}
+        size="sm"
+        className={cn(
+          scrollable &&
+            'tw:h-fit tw:min-h-0 tw:max-h-[calc(100dvh-var(--pagination-sidebar-offset))]',
+        )}
+      >
+        <CardHeader>
+          <CardTitle className="tw:flex tw:items-center tw:gap-2">
+            <ListFilter aria-hidden="true" className="tw:text-primary" />
+            {label}
+          </CardTitle>
+        </CardHeader>
+        <CardContent
+          className={cn(
+            'tw:flex tw:flex-col tw:gap-5',
+            scrollable && 'tw:min-h-0 tw:flex-1 tw:overflow-y-auto tw:overscroll-contain',
+          )}
+        >
+          {filtersContent}
+        </CardContent>
+      </Card>
+    );
+  },
+);
 
 function FilterControl({
   disabled,

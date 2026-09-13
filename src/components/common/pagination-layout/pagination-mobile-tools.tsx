@@ -12,7 +12,8 @@ import {
 } from '@/components/ui/dialog';
 import type { FilterDTO, SortDTO } from '@/entities/pagination/pagination.types';
 
-import { PaginationFilters, type RangeQueryKeys } from './pagination-filters/default';
+import type { RangeQueryKeys } from './pagination-filters/default';
+import { PaginationFilters } from './pagination-filters/default';
 import { PaginationSort } from './pagination-sort';
 
 type PaginationMobileToolsProps = Readonly<{
