@@ -10,7 +10,7 @@ export function PetHeroSection() {
   return (
     <section
       aria-labelledby="pet-hero-title"
-      className="tw:mx-auto tw:w-full tw:max-w-7xl tw:px-4 tw:py-8 tw:sm:px-6 tw:md:px-8 tw:md:py-12"
+      className="tw:default-layout-container tw:py-8 tw:md:py-12"
     >
       <div className="tw:group/hero tw:relative tw:h-[530px] tw:overflow-hidden tw:rounded-3xl tw:shadow-lg tw:md:h-[600px]">
         <Image

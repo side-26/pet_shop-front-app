@@ -19,9 +19,9 @@ export function ProductCategoriesSection() {
     <section
       id="pet-categories"
       aria-labelledby="pet-categories-title"
-      className="tw:bg-surface tw:px-4 tw:py-16 tw:sm:px-6 tw:md:px-8 tw:lg:py-24"
+      className="tw:bg-surface tw:py-16 tw:lg:py-24"
     >
-      <div className="tw:mx-auto tw:flex tw:w-full tw:max-w-7xl tw:flex-col tw:gap-8">
+      <div className="tw:default-layout-container tw:flex tw:flex-col tw:gap-8">
         <div className="tw:flex tw:items-center tw:justify-between tw:gap-4">
           <h2
             id="pet-categories-title"

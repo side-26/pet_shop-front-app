@@ -12,12 +12,12 @@ import { ShaderBackground } from './shader-background';
 
 export function HeroSection() {
   return (
-    <section className="tw:relative tw:isolate tw:overflow-hidden tw:px-4 tw:py-8 tw:sm:px-6 tw:sm:py-12 tw:md:px-8 tw:lg:py-16">
+    <section className="tw:relative tw:isolate tw:overflow-hidden tw:py-8 tw:sm:py-12 tw:lg:py-16">
       <div className="tw:absolute tw:inset-0 tw:-z-20 tw:bg-linear-to-bl tw:from-primary-muted/70 tw:via-background tw:to-secondary-muted/65" />
       <ShaderBackground />
       <div className="tw:absolute tw:inset-0 tw:-z-10 tw:bg-background/35 tw:supports-backdrop-filter:backdrop-blur-[2px]" />
 
-      <HeroSequence className="tw:relative tw:mx-auto tw:grid tw:min-h-[calc(100svh-140px)] tw:w-full tw:max-w-7xl tw:items-center tw:gap-8 tw:lg:min-h-[640px] tw:lg:grid-cols-12 tw:lg:gap-10">
+      <HeroSequence className="tw:default-layout-container tw:relative tw:grid tw:min-h-[calc(100svh-140px)] tw:items-center tw:gap-8 tw:lg:min-h-[640px] tw:lg:grid-cols-12 tw:lg:gap-10">
         <div className="tw:flex tw:flex-col tw:items-start tw:gap-5 tw:lg:col-span-5">
           <RevealItem>
             <Badge variant="transparent" color="primary" size="lg">

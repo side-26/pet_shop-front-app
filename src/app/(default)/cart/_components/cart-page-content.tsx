@@ -11,7 +11,7 @@ export function CartPageContent() {
         aria-hidden="true"
         className="tw:pointer-events-none tw:absolute tw:inset-x-0 tw:top-0 tw:-z-10 tw:h-72 tw:bg-[radial-gradient(circle_at_top_right,var(--primary-muted),transparent_62%)] tw:opacity-70"
       />
-      <div className="tw:mx-auto tw:flex tw:w-full tw:max-w-7xl tw:flex-col tw:gap-6 tw:px-4 tw:sm:px-6 tw:lg:h-full tw:lg:min-h-0 tw:lg:gap-4 tw:lg:px-8">
+      <div className="tw:default-layout-container tw:flex tw:flex-col tw:gap-6 tw:lg:h-full tw:lg:min-h-0 tw:lg:gap-4">
         <header>
           <h1 className="tw:text-heading-2 tw:text-foreground">سبد خرید</h1>
         </header>

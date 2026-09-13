@@ -23,10 +23,10 @@ export function FeaturedProductsSection() {
       id="featured-products"
       labelledBy="featured-products-title"
       cacheSection="featured-products"
-      className="tw:relative tw:overflow-hidden tw:px-4 tw:py-16 tw:sm:px-6 tw:md:px-8 tw:lg:py-24"
+      className="tw:relative tw:overflow-hidden tw:py-16 tw:lg:py-24"
     >
       <div className="tw:absolute tw:end-0 tw:top-0 tw:-z-10 tw:size-80 tw:translate-x-1/3 tw:-translate-y-1/3 tw:rounded-full tw:bg-secondary/15 tw:blur-3xl" />
-      <div className="tw:mx-auto tw:flex tw:w-full tw:max-w-7xl tw:flex-col tw:gap-8">
+      <div className="tw:default-layout-container tw:flex tw:flex-col tw:gap-8">
         <MotionItem className="tw:flex tw:items-center tw:justify-between tw:gap-4 tw:sm:items-end">
           <div className="tw:flex tw:items-center tw:gap-3">
             <span className="tw:hidden tw:size-12 tw:items-center tw:justify-center tw:rounded-2xl tw:bg-secondary-muted tw:text-secondary-muted-foreground tw:sm:flex">

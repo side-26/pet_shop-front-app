@@ -23,9 +23,9 @@ export function CareGuideRenderer() {
       id="care-guide"
       labelledBy="care-guide-title"
       cacheSection="care-guide"
-      className="tw:bg-surface tw:px-4 tw:py-16 tw:sm:px-6 tw:md:px-8 tw:lg:py-24"
+      className="tw:bg-surface tw:py-16 tw:lg:py-24"
     >
-      <div className="tw:mx-auto tw:grid tw:w-full tw:max-w-7xl tw:items-center tw:gap-10 tw:lg:grid-cols-2 tw:lg:gap-16">
+      <div className="tw:default-layout-container tw:grid tw:items-center tw:gap-10 tw:lg:grid-cols-2 tw:lg:gap-16">
         <ParallaxProductMedia className="tw:hidden tw:relative tw:mx-auto tw:w-full tw:max-w-xl tw:sm:block">
           <div className="tw:absolute tw:-inset-3 tw:rounded-[2.5rem] tw:bg-secondary-muted tw:-rotate-3" />
           <div className="tw:relative tw:aspect-[4/3] tw:overflow-hidden tw:rounded-[2.25rem] tw:border tw:border-border/70 tw:shadow-xl">

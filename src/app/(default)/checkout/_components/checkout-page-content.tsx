@@ -30,7 +30,7 @@ export function CheckoutPageContent() {
         aria-hidden="true"
         className="tw:pointer-events-none tw:absolute tw:inset-x-0 tw:top-0 tw:-z-10 tw:h-72 tw:bg-[radial-gradient(circle_at_top_right,var(--primary-muted),transparent_62%)] tw:opacity-70"
       />
-      <div className="tw:mx-auto tw:flex tw:w-full tw:max-w-7xl tw:flex-col tw:gap-6 tw:px-4 tw:sm:gap-8 tw:sm:px-6 tw:lg:px-8">
+      <div className="tw:default-layout-container tw:flex tw:flex-col tw:gap-6 tw:sm:gap-8">
         <header className="tw:flex tw:flex-col tw:gap-5">
           <div className="tw:flex tw:items-center tw:gap-3">
             <span className="tw:flex tw:size-10 tw:items-center tw:justify-center tw:rounded-2xl tw:bg-primary-muted tw:text-primary">

@@ -20,11 +20,11 @@ export function ProductHeroRenderer() {
     <section
       aria-labelledby="product-hero-title"
       data-cache-section="hero"
-      className="tw:relative tw:isolate tw:overflow-hidden tw:bg-background tw:px-4 tw:py-10 tw:sm:px-6 tw:sm:py-14 tw:md:px-8 tw:lg:py-20"
+      className="tw:relative tw:isolate tw:overflow-hidden tw:bg-background tw:py-10 tw:sm:py-14 tw:lg:py-20"
     >
       <div className="tw:absolute tw:inset-x-0 tw:top-0 tw:-z-10 tw:h-2/3 tw:bg-linear-to-b tw:from-primary-muted/75 tw:to-transparent" />
       <div className="tw:absolute tw:start-[8%] tw:top-16 tw:-z-10 tw:size-44 tw:rounded-full tw:bg-secondary/15 tw:blur-3xl" />
-      <div className="tw:mx-auto tw:grid tw:w-full tw:max-w-7xl tw:items-center tw:gap-12 tw:lg:grid-cols-[0.9fr_1.1fr] tw:lg:gap-16">
+      <div className="tw:default-layout-container tw:grid tw:items-center tw:gap-12 tw:lg:grid-cols-[0.9fr_1.1fr] tw:lg:gap-16">
         <div className="tw:flex tw:flex-col tw:items-start tw:gap-6">
           <div>
             <Badge variant="tonal" color="primary" size="lg">

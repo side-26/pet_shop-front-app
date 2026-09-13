@@ -12,7 +12,7 @@ export function DeliverySection() {
   return (
     <RevealSection
       labelledBy="delivery-title"
-      className="tw:mx-auto tw:grid tw:w-full tw:max-w-7xl tw:items-center tw:gap-10 tw:px-4 tw:py-16 tw:sm:px-6 tw:md:px-8 tw:lg:grid-cols-2 tw:lg:gap-16 tw:lg:py-24"
+      className="tw:default-layout-container tw:grid tw:items-center tw:gap-10 tw:py-16 tw:lg:grid-cols-2 tw:lg:gap-16 tw:lg:py-24"
     >
       <RevealItem className="tw:relative">
         <div className="tw:absolute tw:inset-0 tw:rotate-3 tw:rounded-[2rem] tw:bg-primary-muted" />

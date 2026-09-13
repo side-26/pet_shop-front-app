@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy, Suspense, useLayoutEffect, useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useState } from 'react';
 import { useRouter } from 'nextjs-toploader/app';
 
 import {
@@ -8,14 +8,9 @@ import {
   type AdminHeaderActions,
 } from '@/contexts/admin/layout/admin-layout-context';
 
+import { CreateUserDialog } from './create-user-dialog';
 import { UsersAllPaginateFilter } from './users-all-paginate-filter';
 import type { UsersAllPaginateFilterValues } from './users-filter.helpers';
-
-const LazyCreateUserDialog = lazy(async () => {
-  const dialog = await import('./create-user-dialog');
-
-  return { default: dialog.CreateUserDialog };
-});
 
 type UsersHeaderActionsProps = {
   initialValues?: Partial<UsersAllPaginateFilterValues>;
@@ -45,16 +40,14 @@ function UsersHeaderActions({ initialValues }: UsersHeaderActionsProps) {
   return (
     <>
       {createUserOpen ? (
-        <Suspense fallback={null}>
-          <LazyCreateUserDialog
-            open={createUserOpen}
-            onOpenChange={setCreateUserOpen}
-            onCreated={() => {
-              setCreateUserOpen(false);
-              router.refresh();
-            }}
-          />
-        </Suspense>
+        <CreateUserDialog
+          open={createUserOpen}
+          onOpenChange={setCreateUserOpen}
+          onCreated={() => {
+            setCreateUserOpen(false);
+            router.refresh();
+          }}
+        />
       ) : null}
       <UsersAllPaginateFilter
         initialValues={initialValues}

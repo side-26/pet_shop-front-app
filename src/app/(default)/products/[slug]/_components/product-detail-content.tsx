@@ -24,8 +24,8 @@ type ProductDetailContentProps = Readonly<{ product: ProductDetail }>;
 
 export function ProductDetailContent({ product }: ProductDetailContentProps) {
   return (
-    <article className="tw:mx-auto tw:w-full tw:max-w-7xl tw:pb-24 tw:lg:pb-12">
-      <div className="tw:px-4 tw:py-4 tw:sm:px-6 tw:lg:px-8 tw:lg:py-6">
+    <article className="tw:default-layout-container tw:pb-24 tw:lg:pb-12">
+      <div className="tw:py-4 tw:lg:py-6">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -48,7 +48,7 @@ export function ProductDetailContent({ product }: ProductDetailContentProps) {
       <Card
         size="sm"
         variant="elevated"
-        className="tw:rounded-none tw:border-x-0 tw:py-0 tw:lg:mx-8 tw:lg:grid tw:lg:grid-cols-2 tw:lg:gap-8 tw:lg:rounded-3xl tw:lg:border tw:lg:p-6"
+        className="tw:rounded-none tw:border-x-0 tw:py-0 tw:lg:grid tw:lg:grid-cols-2 tw:lg:gap-8 tw:lg:rounded-3xl tw:lg:border tw:lg:p-6"
       >
         <ProductGallery images={product.images} discount={product.discount} />
 

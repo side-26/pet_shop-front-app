@@ -13,7 +13,7 @@ export function RehomingSection() {
   return (
     <section
       aria-labelledby="rehoming-title"
-      className="tw:mx-auto tw:w-full tw:max-w-7xl tw:px-4 tw:py-8 tw:sm:px-6 tw:md:px-8 tw:md:py-12"
+      className="tw:default-layout-container tw:py-8 tw:md:py-12"
     >
       <h2 id="rehoming-title" className="tw:mb-6 tw:text-title-l tw:md:mb-8 tw:md:text-heading-2">
         حیوانات آماده واگذاری

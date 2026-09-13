@@ -9,7 +9,7 @@ export function BenefitsSection() {
     <RevealSection
       id="benefits"
       labelledBy="benefits-title"
-      className="tw:mx-auto tw:flex tw:w-full tw:max-w-7xl tw:flex-col tw:gap-10 tw:px-4 tw:py-16 tw:sm:px-6 tw:md:px-8 tw:lg:py-24"
+      className="tw:default-layout-container tw:flex tw:flex-col tw:gap-10 tw:py-16 tw:lg:py-24"
     >
       <RevealItem className="tw:mx-auto tw:flex tw:max-w-2xl tw:flex-col tw:items-center tw:gap-3 tw:text-center">
         <span className="tw:text-label-m tw:font-bold tw:text-primary">

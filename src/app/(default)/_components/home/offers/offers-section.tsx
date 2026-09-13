@@ -18,7 +18,7 @@ export function OffersSection() {
       className="tw:relative tw:overflow-hidden tw:bg-surface tw:py-16 tw:lg:py-24"
     >
       <div className="tw:absolute tw:start-0 tw:top-0 tw:size-64 tw:-translate-y-1/2 tw:rounded-full tw:bg-primary/10 tw:blur-3xl" />
-      <div className="tw:relative tw:mx-auto tw:flex tw:w-full tw:max-w-7xl tw:flex-col tw:gap-8 tw:px-4 tw:sm:px-6 tw:md:px-8">
+      <div className="tw:default-layout-container tw:relative tw:flex tw:flex-col tw:gap-8">
         <RevealItem className="tw:flex tw:items-center tw:gap-3">
           <span className="tw:flex tw:size-11 tw:items-center tw:justify-center tw:rounded-2xl tw:bg-error-muted tw:text-error-muted-foreground">
             <Flame aria-hidden="true" className="tw:size-6" />

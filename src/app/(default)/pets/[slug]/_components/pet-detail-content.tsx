@@ -52,11 +52,11 @@ export function PetDetailContent({ pet, isSkeleton = false }: PetDetailContentPr
     <article
       aria-busy={isSkeleton || undefined}
       className={cn(
-        'tw:mx-auto tw:w-full tw:max-w-7xl tw:pb-32 tw:lg:pb-14',
+        'tw:default-layout-container tw:pb-32 tw:lg:pb-14',
         isSkeleton && 'skeleton tw:pointer-events-none tw:select-none',
       )}
     >
-      <div className="tw:px-4 tw:py-4 tw:sm:px-6 tw:lg:px-8 tw:lg:py-6">
+      <div className="tw:py-4 tw:lg:py-6">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -74,10 +74,10 @@ export function PetDetailContent({ pet, isSkeleton = false }: PetDetailContentPr
         </Breadcrumb>
       </div>
 
-      <div className="tw:grid tw:gap-6 tw:lg:grid-cols-[minmax(0,1.05fr)_minmax(0,.95fr)] tw:lg:px-8">
+      <div className="tw:grid tw:gap-6 tw:lg:grid-cols-[minmax(0,1.05fr)_minmax(0,.95fr)]">
         <PetGallery images={pet.images} />
 
-        <div className="tw:flex tw:min-w-0 tw:flex-col tw:gap-5 tw:px-4 tw:sm:px-6 tw:lg:px-0">
+        <div className="tw:flex tw:min-w-0 tw:flex-col tw:gap-5">
           <div className="tw:flex tw:items-start tw:justify-between tw:gap-4">
             <div className="tw:min-w-0">
               <Badge color="success" variant="tonal" size="sm" className="tw:mb-3">

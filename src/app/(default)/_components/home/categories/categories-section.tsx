@@ -21,7 +21,7 @@ export function CategoriesSection() {
       labelledBy="categories-title"
       className="tw:overflow-hidden tw:bg-surface tw:py-16 tw:lg:py-24"
     >
-      <div className="tw:mx-auto tw:flex tw:w-full tw:max-w-7xl tw:flex-col tw:gap-8 tw:px-4 tw:sm:px-6 tw:md:px-8">
+      <div className="tw:default-layout-container tw:flex tw:flex-col tw:gap-8">
         <RevealItem className="tw:flex tw:items-end tw:justify-between tw:gap-4">
           <div className="tw:flex tw:flex-col tw:gap-2">
             <h2 id="categories-title" className="tw:text-heading-2 tw:lg:text-heading-1">

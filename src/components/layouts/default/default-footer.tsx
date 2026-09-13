@@ -7,7 +7,7 @@ const usefulLinks = ['درباره ما', 'تماس با ما', 'سؤالات م
 export function DefaultFooter() {
   return (
     <footer className="tw:mt-12 tw:rounded-t-3xl tw:bg-muted tw:text-foreground tw:md:mt-16">
-      <div className="tw:mx-auto tw:grid tw:w-full tw:max-w-7xl tw:grid-cols-1 tw:gap-10 tw:px-4 tw:py-10 tw:text-center tw:sm:px-6 tw:md:px-8 tw:md:py-12 tw:lg:grid-cols-[1.2fr_1fr] tw:lg:gap-12 tw:lg:text-start">
+      <div className="tw:default-layout-container tw:grid tw:grid-cols-1 tw:gap-10 tw:py-10 tw:text-center tw:md:py-12 tw:lg:grid-cols-[1.2fr_1fr] tw:lg:gap-12 tw:lg:text-start">
         <div className="tw:flex tw:flex-col tw:items-center tw:gap-5 tw:lg:items-start">
           <Brand />
           <p className="tw:max-w-md tw:text-body-s tw:text-muted-foreground tw:sm:text-body-m">
@@ -72,8 +72,8 @@ export function DefaultFooter() {
         </div>
       </div>
 
-      <div className="tw:border-t tw:border-border/70 tw:px-4 tw:py-4 tw:text-center tw:text-caption tw:text-muted-foreground">
-        تمامی حقوق برای پت شاپ پرشین محفوظ است.
+      <div className="tw:border-t tw:border-border/70 tw:py-4 tw:text-center tw:text-caption tw:text-muted-foreground">
+        <div className="tw:default-layout-container">تمامی حقوق برای پت شاپ پرشین محفوظ است.</div>
       </div>
     </footer>
   );

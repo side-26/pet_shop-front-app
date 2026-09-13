@@ -11,7 +11,7 @@ export function ProfilePageContent() {
         aria-hidden="true"
         className="tw:pointer-events-none tw:absolute tw:inset-x-0 tw:top-0 tw:-z-10 tw:h-80 tw:bg-[radial-gradient(circle_at_top_right,var(--primary-muted),transparent_58%)] tw:opacity-75"
       />
-      <div className="tw:mx-auto tw:flex tw:w-full tw:max-w-7xl tw:flex-col tw:gap-6 tw:px-4 tw:sm:gap-8 tw:sm:px-6 tw:lg:px-8">
+      <div className="tw:default-layout-container tw:flex tw:flex-col tw:gap-6 tw:sm:gap-8">
         <Card variant="glass" size="lg">
           <CardContent className="tw:grid tw:items-center tw:gap-6 tw:md:grid-cols-[minmax(0,1fr)_auto] tw:lg:gap-10">
             <div className="tw:flex tw:min-w-0 tw:flex-col tw:items-center tw:gap-4 tw:text-center tw:sm:flex-row tw:sm:text-start">
