@@ -11,8 +11,9 @@ import { cn } from '@/lib/utils';
 
 export type ProductCardViewModel = {
   available: boolean;
-  brand: string;
-  category: string;
+  brand?: string;
+  category?: string;
+  discountPrice?: number;
   discountPercentage: number;
   id: string;
   image: string;
@@ -29,7 +30,8 @@ type ProductCardProps = Readonly<{
 
 export function ProductCard({ isSkeleton = false, product }: ProductCardProps) {
   const hasDiscount = product.discountPercentage > 0;
-  const discountedPrice = product.price * (1 - product.discountPercentage / 100);
+  const discountedPrice =
+    product.discountPrice ?? product.price * (1 - product.discountPercentage / 100);
 
   return (
     <Card
@@ -75,14 +77,25 @@ export function ProductCard({ isSkeleton = false, product }: ProductCardProps) {
       </div>
 
       <CardHeader className="tw:gap-2">
-        <div className="tw:flex tw:min-w-0 tw:gap-1">
-          <Badge size="xs" variant="tonal" color="secondary">
-            {product.brand}
-          </Badge>
-          <Badge size="xs" variant="flat" color="neutral" className="tw:hidden tw:sm:inline-flex">
-            {product.category}
-          </Badge>
-        </div>
+        {product.brand || product.category ? (
+          <div className="tw:flex tw:min-w-0 tw:gap-1">
+            {product.brand ? (
+              <Badge size="xs" variant="tonal" color="secondary">
+                {product.brand}
+              </Badge>
+            ) : null}
+            {product.category ? (
+              <Badge
+                size="xs"
+                variant="flat"
+                color="neutral"
+                className="tw:hidden tw:sm:inline-flex"
+              >
+                {product.category}
+              </Badge>
+            ) : null}
+          </div>
+        ) : null}
         <CardTitle className="tw:line-clamp-2 tw:min-h-10 tw:text-label-s tw:leading-5 tw:sm:min-h-12 tw:sm:text-title-s">
           {product.title}
         </CardTitle>

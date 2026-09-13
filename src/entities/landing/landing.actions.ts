@@ -10,7 +10,14 @@ import {
   invalidateLandingPopularBrands,
   invalidateLandingPopularPets,
   invalidateLandingRecentPets,
+  getLandingProductList,
 } from './landing.service';
+import { landingProductListRequestSchema } from './landing.schema';
+
+export async function getLandingProductListAction(input: unknown = {}) {
+  const query = await landingProductListRequestSchema.validate(input, { stripUnknown: true });
+  return getLandingProductList(query);
+}
 
 /** Expires only the home pet-type collection, then requests updated route data. */
 export async function retryAllLandingPetTypesAction() {

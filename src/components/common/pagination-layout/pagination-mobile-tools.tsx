@@ -21,6 +21,7 @@ type PaginationMobileToolsProps = Readonly<{
   filterLabel: string;
   filters: readonly FilterDTO[];
   query: Readonly<Record<string, string>>;
+  resetPageOnChange?: boolean;
   sort?: SortDTO;
 }>;
 
@@ -30,6 +31,7 @@ export function PaginationMobileTools({
   filterLabel,
   filters,
   query,
+  resetPageOnChange = true,
   sort,
 }: PaginationMobileToolsProps) {
   return (
@@ -51,6 +53,7 @@ export function PaginationMobileTools({
             idPrefix="mobile"
             label={filterLabel}
             query={query}
+            resetPageOnChange={resetPageOnChange}
             variant="filled"
           />
         </DialogContent>
@@ -63,7 +66,13 @@ export function PaginationMobileTools({
         <DialogContent size="sm">
           <DialogTitle>مرتب‌سازی</DialogTitle>
           <DialogDescription>ترتیب نمایش نتیجه‌ها را انتخاب کنید.</DialogDescription>
-          <PaginationSort basePath={basePath} compact query={query} sort={sort} />
+          <PaginationSort
+            basePath={basePath}
+            compact
+            query={query}
+            resetPageOnChange={resetPageOnChange}
+            sort={sort}
+          />
         </DialogContent>
       </Dialog>
     </div>

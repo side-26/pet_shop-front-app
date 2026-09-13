@@ -3,6 +3,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  getLandingProductListAction,
   retryAllLandingPetTypesAction,
   retryLandingFeaturedProductsAction,
   retryLandingHomeOffersAction,
@@ -12,6 +13,7 @@ import {
   retryLandingRecentPetsAction,
 } from './landing.actions';
 import {
+  getLandingProductList,
   invalidateAllLandingPetTypes,
   invalidateLandingFeaturedProducts,
   invalidateLandingHomeOffers,
@@ -25,6 +27,7 @@ const { refreshMock } = vi.hoisted(() => ({ refreshMock: vi.fn() }));
 
 vi.mock('next/cache', () => ({ refresh: refreshMock }));
 vi.mock('./landing.service', () => ({
+  getLandingProductList: vi.fn(),
   invalidateAllLandingPetTypes: vi.fn(),
   invalidateLandingFeaturedProducts: vi.fn(),
   invalidateLandingHomeOffers: vi.fn(),
@@ -39,6 +42,17 @@ beforeEach(() => {
 });
 
 describe('retryAllLandingPetTypesAction', () => {
+  it('validates product pagination server-side and keeps its page size out of the action input', async () => {
+    await getLandingProductListAction({
+      page: 2,
+      limit: 100,
+      sort: 'less-valued',
+      unknown: 'removed',
+    });
+
+    expect(getLandingProductList).toHaveBeenCalledWith({ page: 2, sort: 'less-valued' });
+  });
+
   it('expires only the landing pet-type cache before refreshing the client router', async () => {
     await retryAllLandingPetTypesAction();
 

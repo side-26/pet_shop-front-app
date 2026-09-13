@@ -4,7 +4,7 @@ import {
   normalizePaginationSearchParams,
   type PaginationSearchParams,
 } from '@/entities/pagination/pagination.helpers';
-import { getCustomerProducts } from '@/entities/products/products.service';
+import { getLandingProductList } from '@/entities/landing/landing.service';
 
 import { ProductListBreadcrumb } from './product-list-breadcrumb';
 import { ProductListContainer } from './product-list-container';
@@ -29,8 +29,12 @@ export function ProductListContent({ searchParams }: ProductListContentProps) {
 }
 
 async function ProductListQueryContent({ searchParams }: ProductListContentProps) {
-  const query = normalizePaginationSearchParams(await searchParams);
-  const productsPromise = getCustomerProducts(query);
+  const {
+    limit: _limit,
+    page: _page,
+    ...query
+  } = normalizePaginationSearchParams(await searchParams);
+  const productsPromise = getLandingProductList(query);
   const suspenseKey = new URLSearchParams(query).toString();
 
   return (

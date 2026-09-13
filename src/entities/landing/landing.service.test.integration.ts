@@ -6,6 +6,7 @@ import type {
   LandingFeaturedProductDTO,
   LandingPopularBrandDTO,
   LandingPopularProductDTO,
+  LandingProductListPageDTO,
   LandingProductDTO,
 } from './landing.dto';
 import {
@@ -16,6 +17,7 @@ import {
   invalidateAllLandingPetTypes,
   invalidateLandingFeaturedProducts,
   getLandingPetBySlug,
+  getLandingProductList,
   getLandingProductBySlug,
   getPopularLandingPets,
   getPopularLandingBrands,
@@ -23,11 +25,13 @@ import {
   getRecentLandingPets,
   invalidateLandingRecentPets,
   invalidateLandingPopularBrands,
+  invalidateLandingProductLists,
 } from './landing.service';
 
 const mocks = vi.hoisted(() => ({
   cacheLife: vi.fn(),
   detail: vi.fn((id: string) => `landing:detail:${id}`),
+  invalidateList: vi.fn(),
   invalidateQuery: vi.fn(),
   list: 'landing:list',
   query: vi.fn((key: string) => `landing:query:${key}`),
@@ -76,6 +80,20 @@ const popularBrand: LandingPopularBrandDTO = {
   productCount: 12,
 };
 
+const productList: LandingProductListPageDTO = {
+  result: [popularProduct],
+  pagination: {
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 1,
+    itemsPerPage: 20,
+    hasNextPage: false,
+    hasPrevPage: false,
+    nextPage: null,
+    prevPage: null,
+  },
+};
+
 describe('landing service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -87,6 +105,7 @@ describe('landing service', () => {
     await getAllLandingPetTypes();
     await getDiscountedLandingProducts({ limit: 2 });
     await getFeaturedLandingProducts();
+    await getLandingProductList({ brand: '507f1f77bcf86cd799439012', sort: 'less-valued' });
     await getPopularLandingProducts();
     await getPopularLandingBrands();
     await getPopularLandingPets();
@@ -117,6 +136,17 @@ describe('landing service', () => {
           cache: 'force-cache',
         }),
         expect.objectContaining({
+          url: '/landing/products',
+          query: expect.objectContaining({
+            brand: '507f1f77bcf86cd799439012',
+            sort: 'less-valued',
+            page: 1,
+            limit: 20,
+          }),
+          auth: false,
+          cache: 'force-cache',
+        }),
+        expect.objectContaining({
           url: '/landing/brands/popular',
           auth: false,
           cache: 'force-cache',
@@ -133,7 +163,7 @@ describe('landing service', () => {
         }),
       ]),
     );
-    expect(mocks.registerList).toHaveBeenCalledTimes(8);
+    expect(mocks.registerList).toHaveBeenCalledTimes(9);
     expect(fetcher).toHaveBeenCalledWith(
       expect.objectContaining({
         url: '/landing/pet-types/all',
@@ -147,11 +177,13 @@ describe('landing service', () => {
     invalidateLandingFeaturedProducts();
     invalidateLandingPopularBrands();
     invalidateLandingRecentPets();
+    invalidateLandingProductLists();
 
     expect(mocks.invalidateQuery).toHaveBeenCalledWith('pet-types:all');
     expect(mocks.invalidateQuery).toHaveBeenCalledWith('products:featured');
     expect(mocks.invalidateQuery).toHaveBeenCalledWith('brands:popular');
     expect(mocks.invalidateQuery).toHaveBeenCalledWith('pets:recent');
+    expect(mocks.invalidateList).toHaveBeenCalledOnce();
   });
 
   it('exposes the backend selection tag with every featured product', async () => {
@@ -181,6 +213,15 @@ describe('landing service', () => {
       message: null,
       data: [popularProduct],
     });
+  });
+
+  it('validates and requests the filtered public landing catalogue', async () => {
+    fetcher.mockResolvedValue({ isSuccess: true, message: null, data: productList });
+
+    await expect(
+      getLandingProductList({ priceFrom: 100, priceTo: 300, sort: 'most-sales' }),
+    ).resolves.toEqual({ isSuccess: true, message: null, data: productList });
+    await expect(getLandingProductList({ priceFrom: 301, priceTo: 300 })).rejects.toBeDefined();
   });
 
   it('exposes enabled brands with their enabled-product counts', async () => {

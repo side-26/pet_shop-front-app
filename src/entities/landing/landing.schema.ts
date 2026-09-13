@@ -1,6 +1,8 @@
-import { number, object, string, type InferType } from 'yup';
+import { mixed, number, object, string, type InferType } from 'yup';
 
 import '@/configs/yup.config';
+
+export const DEFAULT_LANDING_PRODUCT_LIST_PAGE_SIZE = 20;
 
 export const landingSlugSchema = object({
   slug: string()
@@ -15,5 +17,36 @@ export const landingDiscountLimitSchema = object({
   limit: number().integer().min(1).max(100).default(4).required(),
 });
 
+const objectId = string()
+  .trim()
+  .matches(/^[a-f\d]{24}$/i);
+
+export const landingProductListRequestSchema = object({
+  category: objectId.optional(),
+  subCategory: objectId.optional(),
+  brand: objectId.optional(),
+  priceFrom: number().min(0).optional(),
+  priceTo: number().min(0).optional(),
+  sort: mixed<'most-valued' | 'less-valued' | 'most-sales' | 'less-sales'>()
+    .oneOf(['most-valued', 'less-valued', 'most-sales', 'less-sales'])
+    .default('most-sales')
+    .required(),
+  page: number().integer().min(1).default(1).required(),
+}).test('ordered-price-range', 'حداقل قیمت نمی‌تواند بیشتر از حداکثر قیمت باشد.', (value) => {
+  if (value?.priceFrom === undefined || value.priceTo === undefined) return true;
+  return value.priceFrom <= value.priceTo;
+});
+
+export const landingProductListQuerySchema = landingProductListRequestSchema.shape({
+  limit: number()
+    .integer()
+    .min(1)
+    .max(100)
+    .default(DEFAULT_LANDING_PRODUCT_LIST_PAGE_SIZE)
+    .required(),
+});
+
 export type LandingSlugInput = InferType<typeof landingSlugSchema>;
 export type LandingDiscountLimitInput = InferType<typeof landingDiscountLimitSchema>;
+export type LandingProductListRequestInput = InferType<typeof landingProductListRequestSchema>;
+export type LandingProductListQueryInput = InferType<typeof landingProductListQuerySchema>;

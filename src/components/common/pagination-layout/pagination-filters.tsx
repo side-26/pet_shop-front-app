@@ -31,6 +31,7 @@ type PaginationFiltersProps = Readonly<{
   idPrefix: string;
   label: string;
   query: Readonly<Record<string, string>>;
+  resetPageOnChange?: boolean;
   variant?: 'filled' | 'outlined';
 }>;
 
@@ -58,6 +59,7 @@ export function PaginationFilters({
   idPrefix,
   label,
   query,
+  resetPageOnChange = true,
   variant = 'outlined',
 }: PaginationFiltersProps) {
   const router = useRouter();
@@ -79,13 +81,13 @@ export function PaginationFilters({
   }
 
   function applyFilters() {
-    const changes: Record<string, string | null | number> = { page: 1 };
+    const changes: Record<string, string | null | number> = resetPageOnChange ? { page: 1 } : {};
     for (const filter of filters) changes[filter.key] = values[filter.key] || null;
     router.push(createPaginationHref(basePath, query, changes), { scroll: false });
   }
 
   function clearFilters() {
-    const changes: Record<string, null | number> = { page: 1 };
+    const changes: Record<string, null | number> = resetPageOnChange ? { page: 1 } : {};
     for (const filter of filters) changes[filter.key] = null;
     setValues({});
     router.push(createPaginationHref(basePath, query, changes), { scroll: false });

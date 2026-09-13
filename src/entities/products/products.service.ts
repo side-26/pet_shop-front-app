@@ -6,6 +6,7 @@ import {
   invalidateLandingHomeOffers,
   invalidateLandingPopularBrands,
   invalidateLandingPopularProducts,
+  invalidateLandingProductLists,
 } from '@/entities/landing/landing.service';
 import { EntityTag } from '@/utils/entityCache';
 import type {
@@ -128,6 +129,7 @@ function invalidate(id?: string) {
   invalidateLandingFeaturedProducts();
   invalidateLandingPopularProducts();
   invalidateLandingPopularBrands();
+  invalidateLandingProductLists();
 }
 export async function createProduct(input: CreateProductDTO) {
   const result = await customFetcher<ManagementProductDTO, unknown, FormData>({

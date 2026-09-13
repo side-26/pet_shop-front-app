@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { customFetcher } from '@/lib/api/customFetcher';
+import { customFetcher, type QueryParams } from '@/lib/api/customFetcher';
 import { EntityTag } from '@/utils/entityCache';
 
 import type {
@@ -11,11 +11,18 @@ import type {
   LandingPetTypeDTO,
   LandingPopularBrandDTO,
   LandingPopularProductDTO,
+  LandingProductListPageDTO,
+  LandingProductListRequestDTO,
   LandingProductDetailDTO,
   LandingProductDTO,
   LandingSlugDTO,
 } from './landing.dto';
-import { landingDiscountLimitSchema, landingSlugSchema } from './landing.schema';
+import {
+  landingDiscountLimitSchema,
+  landingProductListQuerySchema,
+  DEFAULT_LANDING_PRODUCT_LIST_PAGE_SIZE,
+  landingSlugSchema,
+} from './landing.schema';
 
 const landingCache = new EntityTag('landing');
 const featuredPetTypesCacheKey = 'pet-types:featured';
@@ -26,8 +33,14 @@ const popularProductsCacheKey = 'products:popular';
 const popularBrandsCacheKey = 'brands:popular';
 const popularPetsCacheKey = 'pets:popular';
 const recentPetsCacheKey = 'pets:recent';
+const landingProductListCacheKey = (query: LandingProductListRequestDTO & { limit: number }) =>
+  `products:list:${new URLSearchParams(
+    Object.entries(query)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, value]) => [key, String(value)]),
+  ).toString()}`;
 
-async function fetchLandingList<T>(path: string, key: string, query?: Record<string, number>) {
+async function fetchLandingList<T>(path: string, key: string, query?: QueryParams) {
   'use cache';
 
   landingCache.cacheLife({ stale: 600 });
@@ -105,6 +118,15 @@ export function getFeaturedLandingProducts() {
   );
 }
 
+export async function getLandingProductList(input: Partial<LandingProductListRequestDTO> = {}) {
+  const query = await landingProductListQuerySchema.validate(
+    { ...input, limit: DEFAULT_LANDING_PRODUCT_LIST_PAGE_SIZE },
+    { stripUnknown: true },
+  );
+  const key = landingProductListCacheKey(query);
+  return fetchLandingList<LandingProductListPageDTO>('/landing/products', key, query);
+}
+
 export function getPopularLandingPets() {
   return fetchLandingList<LandingPetDTO[]>('/landing/pets/popular', popularPetsCacheKey);
 }
@@ -127,6 +149,11 @@ export function invalidateLandingPopularBrands() {
 
 export function invalidateLandingFeaturedProducts() {
   landingCache.invalidateQuery(featuredProductsCacheKey);
+}
+
+/** Product catalogue queries share the landing list tag, so one product mutation expires every variant. */
+export function invalidateLandingProductLists() {
+  landingCache.invalidateList();
 }
 
 export function invalidateLandingPopularPets() {

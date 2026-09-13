@@ -1,11 +1,9 @@
 import type { ReactNode } from 'react';
 
-import type { PaginationDTO } from '@/entities/pagination/pagination.dto';
 import type { FilterDTO, SortDTO } from '@/entities/pagination/pagination.types';
 import { cn } from '@/lib/utils';
 
 import { PaginationFilters } from './pagination-filters';
-import { PaginationNavigation } from './pagination-navigation';
 import { PaginationSort } from './pagination-sort';
 import { PaginationMobileTools } from './pagination-mobile-tools';
 
@@ -15,10 +13,8 @@ type PaginationLayoutProps = Readonly<{
   filterLabel: string;
   filters?: readonly FilterDTO[];
   isSkeleton?: boolean;
-  itemCount: number;
-  itemLabel: string;
-  pagination: PaginationDTO;
   query: Readonly<Record<string, string>>;
+  resetPageOnChange?: boolean;
   sort?: SortDTO;
 }>;
 
@@ -28,10 +24,8 @@ export function PaginationLayout({
   filterLabel,
   filters = [],
   isSkeleton = false,
-  itemCount,
-  itemLabel,
-  pagination,
   query,
+  resetPageOnChange = true,
   sort,
 }: PaginationLayoutProps) {
   const controlsKey = new URLSearchParams(query).toString();
@@ -51,6 +45,7 @@ export function PaginationLayout({
         filterLabel={filterLabel}
         filters={filters}
         query={query}
+        resetPageOnChange={resetPageOnChange}
         sort={sort}
       />
 
@@ -64,20 +59,19 @@ export function PaginationLayout({
             idPrefix="desktop"
             label={filterLabel}
             query={query}
+            resetPageOnChange={resetPageOnChange}
           />
         </aside>
 
         <section className="tw:flex tw:min-w-0 tw:flex-col tw:gap-5">
-          <PaginationSort basePath={basePath} disabled={isSkeleton} query={query} sort={sort} />
-          {children}
-          <PaginationNavigation
+          <PaginationSort
             basePath={basePath}
             disabled={isSkeleton}
-            itemCount={itemCount}
-            itemLabel={itemLabel}
-            pagination={pagination}
             query={query}
+            resetPageOnChange={resetPageOnChange}
+            sort={sort}
           />
+          {children}
         </section>
       </div>
     </div>

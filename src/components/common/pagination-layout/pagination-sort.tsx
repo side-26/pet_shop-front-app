@@ -12,6 +12,7 @@ type PaginationSortProps = Readonly<{
   compact?: boolean;
   disabled?: boolean;
   query: Readonly<Record<string, string>>;
+  resetPageOnChange?: boolean;
   sort?: SortDTO;
 }>;
 
@@ -20,6 +21,7 @@ export function PaginationSort({
   compact = false,
   disabled = false,
   query,
+  resetPageOnChange = true,
   sort,
 }: PaginationSortProps) {
   const router = useRouter();
@@ -65,7 +67,11 @@ export function PaginationSort({
               disabled={disabled}
               onClick={() =>
                 router.push(
-                  createPaginationHref(basePath, query, { page: 1, sort: option.value }),
+                  createPaginationHref(
+                    basePath,
+                    query,
+                    resetPageOnChange ? { page: 1, sort: option.value } : { sort: option.value },
+                  ),
                   { scroll: false },
                 )
               }

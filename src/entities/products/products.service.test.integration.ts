@@ -25,11 +25,13 @@ const {
   invalidateLandingHomeOffersMock,
   invalidateLandingPopularBrandsMock,
   invalidateLandingPopularProductsMock,
+  invalidateLandingProductListsMock,
 } = vi.hoisted(() => ({
   invalidateLandingFeaturedProductsMock: vi.fn(),
   invalidateLandingHomeOffersMock: vi.fn(),
   invalidateLandingPopularBrandsMock: vi.fn(),
   invalidateLandingPopularProductsMock: vi.fn(),
+  invalidateLandingProductListsMock: vi.fn(),
 }));
 vi.mock('@/lib/api/customFetcher', () => ({ customFetcher: vi.fn() }));
 vi.mock('@/utils/entityCache', () => ({
@@ -45,6 +47,7 @@ vi.mock('@/entities/landing/landing.service', () => ({
   invalidateLandingHomeOffers: invalidateLandingHomeOffersMock,
   invalidateLandingPopularBrands: invalidateLandingPopularBrandsMock,
   invalidateLandingPopularProducts: invalidateLandingPopularProductsMock,
+  invalidateLandingProductLists: invalidateLandingProductListsMock,
 }));
 const fetcher = vi.mocked(customFetcher);
 const id = '507f1f77bcf86cd799439010';
@@ -133,6 +136,7 @@ describe('product service', () => {
     expect(invalidateLandingFeaturedProductsMock).toHaveBeenCalledTimes(4);
     expect(invalidateLandingPopularProductsMock).toHaveBeenCalledTimes(4);
     expect(invalidateLandingPopularBrandsMock).toHaveBeenCalledTimes(4);
+    expect(invalidateLandingProductListsMock).toHaveBeenCalledTimes(4);
   });
   it('does not invalidate failed status or delete mutations', async () => {
     fetcher.mockResolvedValue({
@@ -151,5 +155,6 @@ describe('product service', () => {
     expect(invalidateLandingFeaturedProductsMock).not.toHaveBeenCalled();
     expect(invalidateLandingPopularProductsMock).not.toHaveBeenCalled();
     expect(invalidateLandingPopularBrandsMock).not.toHaveBeenCalled();
+    expect(invalidateLandingProductListsMock).not.toHaveBeenCalled();
   });
 });

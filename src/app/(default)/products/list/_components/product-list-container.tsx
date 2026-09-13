@@ -1,11 +1,11 @@
-import type { CustomerProductsPageDTO } from '@/entities/products/products.dto';
+import type { LandingProductListPageDTO } from '@/entities/landing/landing.dto';
 import type { FetcherResult } from '@/lib/api/customFetcher';
 
 import { ProductListFetchError } from './product-list-fetch-error';
 import { ProductListRenderer } from './product-list-renderer';
 
 type ProductListContainerProps = Readonly<{
-  productsPromise: Promise<FetcherResult<CustomerProductsPageDTO>>;
+  productsPromise: Promise<FetcherResult<LandingProductListPageDTO>>;
   query: Readonly<Record<string, string>>;
 }>;
 

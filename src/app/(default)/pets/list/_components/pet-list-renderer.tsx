@@ -1,4 +1,5 @@
 import { PaginationLayout } from '@/components/common/pagination-layout/pagination-layout';
+import { PaginationNavigation } from '@/components/common/pagination-layout/pagination-navigation';
 import {
   paginationLayoutSkeletonFilters,
   paginationLayoutSkeletonPagination,
@@ -24,18 +25,23 @@ export function PetListRenderer({ data, isSkeleton = false, query }: PetListRend
       filterLabel="فیلتر حیوانات"
       filters={isSkeleton ? paginationLayoutSkeletonFilters : data?.filters}
       isSkeleton={isSkeleton}
-      itemCount={pets.length}
-      itemLabel="حیوان"
-      pagination={
-        isSkeleton
-          ? paginationLayoutSkeletonPagination
-          : (data?.pagination ?? paginationLayoutSkeletonPagination)
-      }
       query={query}
       sort={isSkeleton ? paginationLayoutSkeletonSort : data?.sort}
     >
       <h2 className="tw:sr-only">فهرست حیوانات</h2>
       <PetGrid pets={pets} isSkeleton={isSkeleton} />
+      <PaginationNavigation
+        basePath={routePaths.petsList}
+        disabled={isSkeleton}
+        itemCount={pets.length}
+        itemLabel="حیوان"
+        pagination={
+          isSkeleton
+            ? paginationLayoutSkeletonPagination
+            : (data?.pagination ?? paginationLayoutSkeletonPagination)
+        }
+        query={query}
+      />
     </PaginationLayout>
   );
 }

@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   description: 'خرید محصولات منتخب تغذیه، بازی و مراقبت سگ و گربه.',
 };
 
+export const prefetch = 'partial';
+
 type ProductListPageProps = Readonly<{ searchParams?: Promise<PaginationSearchParams> }>;
 
 export default function ProductListPage({
