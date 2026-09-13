@@ -77,6 +77,16 @@ const filteredData: LandingProductListPageDTO = {
       type: 'boolean',
       options: [{ value: true, label: 'فقط کالاهای موجود', count: 1 }],
     },
+    {
+      key: 'isEnable',
+      label: 'فقط کالاهای موجود',
+      order: 3,
+      type: 'boolean',
+      options: [
+        { value: true, label: 'فعال', count: 1 },
+        { value: false, label: 'غیرفعال', count: 0 },
+      ],
+    },
   ],
   sort: {
     current: 'most-sales',
@@ -121,12 +131,27 @@ describe(routePaths.productsList, () => {
       <ProductListRenderer data={filteredData} query={{ priceFrom: '100', priceTo: '200' }} />,
     );
 
+    fireEvent.click(screen.getByRole('button', { name: 'قیمت' }));
+    expect(screen.queryByRole('progressbar', { name: 'بازه قیمت انتخاب‌شده' })).toBeNull();
+
     fireEvent.change(screen.getByLabelText('از تومان'), { target: { value: '120' } });
     fireEvent.click(screen.getByRole('button', { name: 'اعمال فیلترها' }));
 
     expect(push).toHaveBeenCalledWith('/products/list?priceFrom=120&priceTo=200', {
       scroll: false,
     });
+  });
+
+  it('renders the API-provided isEnable filter label and applies its value', () => {
+    render(<ProductListRenderer data={filteredData} query={{ isEnable: 'true' }} />);
+
+    expect(screen.getByRole('button', { name: 'فقط کالاهای موجود' })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'فقط کالاهای موجود' }));
+    fireEvent.click(screen.getByLabelText('فقط کالاهای موجود: فعال'));
+    fireEvent.click(screen.getByRole('button', { name: 'اعمال فیلترها' }));
+
+    expect(push).toHaveBeenCalledWith('/products/list?isEnable=false', { scroll: false });
   });
 
   it('loads the next page through the Server Action without adding page or limit to its query', async () => {

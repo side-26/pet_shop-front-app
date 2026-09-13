@@ -44,8 +44,8 @@ beforeEach(() => {
 describe('retryAllLandingPetTypesAction', () => {
   it('validates the backend product-list filters and keeps its page size out of the action input', async () => {
     await getLandingProductListAction({
-      available: 'true',
       brand: '507f1f77bcf86cd799439011,507f1f77bcf86cd799439012',
+      isEnable: 'false',
       limit: 100,
       page: '2',
       priceFrom: '100',
@@ -55,8 +55,8 @@ describe('retryAllLandingPetTypesAction', () => {
     });
 
     expect(getLandingProductList).toHaveBeenCalledWith({
-      available: true,
       brand: '507f1f77bcf86cd799439011,507f1f77bcf86cd799439012',
+      isEnable: false,
       page: 2,
       priceFrom: 100,
       priceTo: 300,

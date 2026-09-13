@@ -14,7 +14,7 @@ type PetListContentProps = Readonly<{ searchParams: Promise<PaginationSearchPara
 
 export function PetListContent({ searchParams }: PetListContentProps) {
   return (
-    <main className="tw:default-layout-container tw:flex tw:flex-col tw:gap-5 tw:py-5 tw:md:gap-6 tw:md:py-8 tw:lg:py-10">
+    <main className="tw:default-layout-container tw:flex tw:flex-col tw:gap-5 tw:py-3.5 tw:md:gap-6 tw:lg:[--pagination-sidebar-offset:15.6625rem]">
       <PetListBreadcrumb />
       <header className="tw:flex tw:flex-col tw:gap-2">
         <h1 className="tw:text-heading-2 tw:lg:text-heading-1">حیوانات دوست‌داشتنی</h1>

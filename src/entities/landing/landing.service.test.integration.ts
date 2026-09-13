@@ -82,6 +82,18 @@ const popularBrand: LandingPopularBrandDTO = {
 
 const productList: LandingProductListPageDTO = {
   result: [popularProduct],
+  filters: [
+    {
+      key: 'isEnable',
+      label: 'فقط کالاهای موجود',
+      order: 6,
+      type: 'boolean',
+      options: [
+        { value: true, label: 'فعال', count: 1 },
+        { value: false, label: 'غیرفعال', count: 0 },
+      ],
+    },
+  ],
   pagination: {
     currentPage: 1,
     totalPages: 1,
@@ -106,8 +118,8 @@ describe('landing service', () => {
     await getDiscountedLandingProducts({ limit: 2 });
     await getFeaturedLandingProducts();
     await getLandingProductList({
-      available: true,
       brand: '507f1f77bcf86cd799439012,507f1f77bcf86cd799439013',
+      isEnable: false,
       priceFrom: 100,
       priceTo: 300,
       sort: 'less-valued',
@@ -144,8 +156,8 @@ describe('landing service', () => {
         expect.objectContaining({
           url: '/landing/products',
           query: expect.objectContaining({
-            available: true,
             brand: '507f1f77bcf86cd799439012,507f1f77bcf86cd799439013',
+            isEnable: false,
             priceFrom: 100,
             priceTo: 300,
             sort: 'less-valued',
@@ -153,7 +165,7 @@ describe('landing service', () => {
             limit: 20,
           }),
           auth: false,
-          cache: 'force-cache',
+          cache: 'no-store',
         }),
         expect.objectContaining({
           url: '/landing/brands/popular',

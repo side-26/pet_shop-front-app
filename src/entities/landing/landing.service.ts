@@ -34,17 +34,33 @@ const popularBrandsCacheKey = 'brands:popular';
 const popularPetsCacheKey = 'pets:popular';
 const recentPetsCacheKey = 'pets:recent';
 const landingProductListCacheKey = (query: LandingProductListRequestDTO & { limit: number }) =>
-  `products:list:${new URLSearchParams(
+  `products:list:v3:${new URLSearchParams(
     Object.entries(query)
       .sort(([left], [right]) => left.localeCompare(right))
       .map(([key, value]) => [key, String(value)]),
   ).toString()}`;
 
-async function fetchLandingList<T>(path: string, key: string, query?: QueryParams) {
+async function fetchLandingList<T>(
+  path: string,
+  key: string,
+  query?: QueryParams,
+  fetchCache: 'force-cache' | 'no-store' = 'force-cache',
+) {
   'use cache';
 
   landingCache.cacheLife({ stale: 600 });
   landingCache.registerList(key);
+
+  if (fetchCache === 'no-store') {
+    return customFetcher<T>({
+      url: path,
+      method: 'GET',
+      query,
+      auth: false,
+      cache: 'no-store',
+    });
+  }
+
   return customFetcher<T>({
     url: path,
     method: 'GET',
@@ -124,7 +140,7 @@ export async function getLandingProductList(input: Partial<LandingProductListReq
     { stripUnknown: true },
   );
   const key = landingProductListCacheKey(query);
-  return fetchLandingList<LandingProductListPageDTO>('/landing/products', key, query);
+  return fetchLandingList<LandingProductListPageDTO>('/landing/products', key, query, 'no-store');
 }
 
 export function getPopularLandingPets() {

@@ -13,6 +13,7 @@ import type {
 import { globalErrorHandler } from '@/utils/helpers';
 
 import { ProductGrid, productGridSkeletonData, toProductCardViewModel } from './product-grid';
+import { ProductListDescription } from './product-list-description';
 
 type ProductInfiniteListProps = Readonly<{
   data?: LandingProductListPageDTO;
@@ -63,13 +64,7 @@ export function ProductInfiniteList({ data, isSkeleton = false, query }: Product
   return (
     <InfiniteScroll
       dataLength={products.length}
-      endMessage={
-        products.length > 0 ? (
-          <p className="tw:py-2 tw:text-center tw:text-body-s tw:text-muted-foreground">
-            همه محصولات نمایش داده شدند.
-          </p>
-        ) : null
-      }
+      endMessage={products.length > 0 ? <ProductListDescription /> : null}
       hasMore={hasMore}
       loader={
         <div

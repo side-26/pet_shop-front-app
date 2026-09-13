@@ -7,22 +7,15 @@ import { useRouter } from 'nextjs-toploader/app';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Field } from '@/components/ui/field/default';
-import { FieldLabel } from '@/components/ui/field/label';
-import { Checkbox } from '@/components/ui/fields/checkbox';
-import { Input } from '@/components/ui/fields/input';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/fields/select';
-import { Switch } from '@/components/ui/fields/switch';
 import { Separator } from '@/components/ui/separator';
 import { createPaginationHref } from '@/entities/pagination/pagination.helpers';
-import type { FilterDTO, FilterOptionDTO } from '@/entities/pagination/pagination.types';
+import type { FilterDTO } from '@/entities/pagination/pagination.types';
+import { cn } from '@/lib/utils';
+
+import { BooleanPaginationFilter } from './boolean';
+import { MultiSelectPaginationFilter } from './multi-select';
+import { RangePaginationFilter } from './range';
+import { SelectPaginationFilter } from './select';
 
 export type RangeQueryKeys = Readonly<{ min: string; max: string }>;
 
@@ -35,16 +28,9 @@ type PaginationFiltersProps = Readonly<{
   query: Readonly<Record<string, string>>;
   rangeQueryKeys?: Readonly<Record<string, RangeQueryKeys>>;
   resetPageOnChange?: boolean;
+  scrollable?: boolean;
   variant?: 'filled' | 'outlined';
 }>;
-
-function selectedValues(value?: string) {
-  return value?.split(',').filter(Boolean) ?? [];
-}
-
-function optionLabel(option: FilterOptionDTO) {
-  return option.count === undefined ? option.label : `${option.label} (${option.count})`;
-}
 
 function createFilterValues(
   filters: readonly FilterDTO[],
@@ -73,6 +59,7 @@ export function PaginationFilters({
   query,
   rangeQueryKeys = {},
   resetPageOnChange = true,
+  scrollable = false,
   variant = 'outlined',
 }: PaginationFiltersProps) {
   const router = useRouter();
@@ -83,6 +70,7 @@ export function PaginationFilters({
   const [values, setValues] = useState<Record<string, string>>(() =>
     createFilterValues(filters, query, rangeQueryKeys),
   );
+  const hasActiveFilters = Object.values(values).some(Boolean);
 
   function setValue(key: string, value?: string) {
     setValues((current) => {
@@ -123,27 +111,59 @@ export function PaginationFilters({
     router.push(createPaginationHref(basePath, query, changes), { scroll: false });
   }
 
+  function deleteFilter(filter: FilterDTO) {
+    const changes: Record<string, null | number> = resetPageOnChange ? { page: 1 } : {};
+    const keys = filter.type === 'range' ? rangeQueryKeys[filter.key] : undefined;
+
+    changes[filter.key] = null;
+    if (keys) {
+      changes[keys.min] = null;
+      changes[keys.max] = null;
+    }
+
+    setValue(filter.key);
+    router.push(createPaginationHref(basePath, query, changes), { scroll: false });
+  }
+
   return (
-    <Card variant={variant} size="sm">
+    <Card
+      data-scrollable={scrollable || undefined}
+      variant={variant}
+      size="sm"
+      className={cn(
+        scrollable &&
+          'tw:h-fit tw:min-h-0 tw:max-h-[calc(100dvh-var(--pagination-sidebar-offset))]',
+      )}
+    >
       <CardHeader>
         <CardTitle className="tw:flex tw:items-center tw:gap-2">
           <ListFilter aria-hidden="true" className="tw:text-primary" />
           {label}
         </CardTitle>
       </CardHeader>
-      <CardContent className="tw:flex tw:flex-col tw:gap-5">
+      <CardContent
+        className={cn(
+          'tw:flex tw:flex-col tw:gap-5',
+          scrollable && 'tw:min-h-0 tw:flex-1 tw:overflow-y-auto tw:overscroll-contain',
+        )}
+      >
         {orderedFilters.length === 0 ? (
           <p className="tw:text-body-s tw:text-muted-foreground">
             فیلتری برای این فهرست در دسترس نیست.
           </p>
         ) : (
           orderedFilters.map((filter, index) => (
-            <Collapsible key={filter.key} defaultOpen className="tw:flex tw:flex-col tw:gap-3">
+            <Collapsible key={filter.key} className="tw:flex tw:flex-col tw:gap-3">
               {index > 0 ? <Separator /> : null}
               <CollapsibleTrigger
                 disabled={disabled}
                 render={
-                  <Button block color="secondary" variant="flat" className="tw:justify-between" />
+                  <Button
+                    block
+                    color="secondary"
+                    variant="flat"
+                    className="tw:justify-between tw:text-foreground"
+                  />
                 }
               >
                 <span>{filter.label}</span>
@@ -158,6 +178,7 @@ export function PaginationFilters({
                   filter={filter}
                   idPrefix={idPrefix}
                   onChange={(value) => setValue(filter.key, value)}
+                  onDelete={() => deleteFilter(filter)}
                   value={values[filter.key]}
                 />
               </CollapsibleContent>
@@ -178,7 +199,7 @@ export function PaginationFilters({
             size="sm"
             color="secondary"
             variant="outlined"
-            disabled={disabled || filters.length === 0}
+            disabled={disabled || !hasActiveFilters}
             onClick={clearFilters}
           >
             پاک کردن
@@ -194,116 +215,63 @@ function FilterControl({
   filter,
   idPrefix,
   onChange,
+  onDelete,
   value,
 }: Readonly<{
   disabled: boolean;
   filter: FilterDTO;
   idPrefix: string;
   onChange: (value?: string) => void;
+  onDelete: () => void;
   value?: string;
 }>) {
   if (filter.type === 'select') {
     return (
-      <Select
-        items={filter.options}
-        value={value ?? null}
-        onValueChange={(nextValue) => onChange(nextValue ?? undefined)}
+      <SelectPaginationFilter
         disabled={disabled}
-      >
-        <SelectTrigger aria-label={filter.label}>
-          <SelectValue placeholder="انتخاب کنید" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            {filter.options.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {optionLabel(option)}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+        filter={filter}
+        idPrefix={idPrefix}
+        onChange={onChange}
+        onDelete={onDelete}
+        value={value}
+      />
     );
   }
 
   if (filter.type === 'multi-select') {
-    const selected = new Set(selectedValues(value));
     return (
-      <div className="tw:flex tw:flex-col tw:gap-3 tw:px-3">
-        {filter.options.map((option, index) => {
-          const id = `${idPrefix}-${filter.key}-${index}`;
-          return (
-            <Field key={option.value} className="tw:flex-row tw:items-center">
-              <Checkbox
-                id={id}
-                size="sm"
-                checked={selected.has(option.value)}
-                disabled={disabled}
-                onCheckedChange={(checked) => {
-                  const next = new Set(selected);
-                  if (checked) next.add(option.value);
-                  else next.delete(option.value);
-                  onChange([...next].join(','));
-                }}
-              />
-              <FieldLabel htmlFor={id}>{optionLabel(option)}</FieldLabel>
-            </Field>
-          );
-        })}
-      </div>
-    );
-  }
-
-  if (filter.type === 'range') {
-    const [minimum = '', maximum = ''] = value?.split('-') ?? [];
-    return (
-      <div className="tw:grid tw:grid-cols-2 tw:gap-2 tw:px-3">
-        <Field>
-          <FieldLabel htmlFor={`${idPrefix}-${filter.key}-minimum`}>از {filter.unit}</FieldLabel>
-          <Input
-            id={`${idPrefix}-${filter.key}-minimum`}
-            type="number"
-            min={filter.min}
-            max={filter.max}
-            step={filter.step}
-            value={minimum}
-            disabled={disabled}
-            onChange={(event) => onChange(`${event.target.value}-${maximum || filter.max}`)}
-          />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor={`${idPrefix}-${filter.key}-maximum`}>تا {filter.unit}</FieldLabel>
-          <Input
-            id={`${idPrefix}-${filter.key}-maximum`}
-            type="number"
-            min={filter.min}
-            max={filter.max}
-            step={filter.step}
-            value={maximum}
-            disabled={disabled}
-            onChange={(event) => onChange(`${minimum || filter.min}-${event.target.value}`)}
-          />
-        </Field>
-      </div>
-    );
-  }
-
-  const id = `${idPrefix}-${filter.key}`;
-  return (
-    <Field className="tw:flex-row tw:items-center tw:justify-between tw:px-3">
-      <FieldLabel htmlFor={id}>
-        {filter.label}
-        {(filter.options?.[0]?.count ?? filter.count) === undefined
-          ? null
-          : ` (${filter.options?.[0]?.count ?? filter.count})`}
-      </FieldLabel>
-      <Switch
-        id={id}
-        size="sm"
-        checked={value === 'true'}
+      <MultiSelectPaginationFilter
         disabled={disabled}
-        onCheckedChange={(checked) => onChange(checked ? 'true' : undefined)}
+        filter={filter}
+        idPrefix={idPrefix}
+        onChange={onChange}
+        onDelete={onDelete}
+        value={value}
       />
-    </Field>
+    );
+  }
+
+  if (filter.type === 'boolean') {
+    return (
+      <BooleanPaginationFilter
+        disabled={disabled}
+        filter={filter}
+        idPrefix={idPrefix}
+        onChange={onChange}
+        onDelete={onDelete}
+        value={value}
+      />
+    );
+  }
+
+  return (
+    <RangePaginationFilter
+      disabled={disabled}
+      filter={filter}
+      idPrefix={idPrefix}
+      onChange={onChange}
+      onDelete={onDelete}
+      value={value}
+    />
   );
 }

@@ -16,7 +16,7 @@ type ProductListContentProps = Readonly<{
 
 export function ProductListContent({ searchParams }: ProductListContentProps) {
   return (
-    <main className="tw:default-layout-container tw:flex tw:flex-col tw:gap-5 tw:py-5 tw:md:gap-6 tw:md:py-8 tw:lg:py-10">
+    <main className="tw:default-layout-container tw:flex tw:flex-col tw:gap-5 tw:py-3.5 tw:md:gap-6">
       <ProductListBreadcrumb />
       <header>
         <h1 className="tw:text-heading-2 tw:lg:text-heading-1">محصولات حیوانات خانگی</h1>

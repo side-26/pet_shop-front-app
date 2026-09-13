@@ -18,6 +18,9 @@ export const landingDiscountLimitSchema = object({
 });
 
 const objectIdList = string()
+  .transform((value, originalValue) =>
+    Array.isArray(originalValue) ? originalValue.join(',') : value,
+  )
   .trim()
   .matches(/^[a-f\d]{24}(?:,[a-f\d]{24})*$/i);
 
@@ -27,7 +30,7 @@ export const landingProductListRequestSchema = object({
   brand: objectIdList.optional(),
   priceFrom: number().min(0).optional(),
   priceTo: number().min(0).optional(),
-  available: boolean().optional(),
+  isEnable: boolean().optional(),
   sort: mixed<'most-valued' | 'less-valued' | 'most-sales' | 'less-sales'>()
     .oneOf(['most-valued', 'less-valued', 'most-sales', 'less-sales'])
     .default('most-sales')

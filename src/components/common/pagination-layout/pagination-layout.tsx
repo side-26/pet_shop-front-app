@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import type { FilterDTO, SortDTO } from '@/entities/pagination/pagination.types';
 import { cn } from '@/lib/utils';
 
-import { PaginationFilters, type RangeQueryKeys } from './pagination-filters';
+import { PaginationFilters, type RangeQueryKeys } from './pagination-filters/default';
 import { PaginationSort } from './pagination-sort';
 import { PaginationMobileTools } from './pagination-mobile-tools';
 
@@ -52,7 +52,7 @@ export function PaginationLayout({
         sort={sort}
       />
 
-      <div className="tw:grid tw:items-start tw:gap-6 tw:lg:grid-cols-[16rem_minmax(0,1fr)]">
+      <div className="tw:grid tw:items-start tw:gap-6 tw:lg:grid-cols-[16rem_minmax(0,1fr)] tw:xl:grid-cols-[300px_minmax(0,1fr)]">
         <aside className="tw:sticky tw:top-28 tw:hidden tw:lg:block" aria-label={filterLabel}>
           <PaginationFilters
             key={`desktop-${controlsKey}`}
