@@ -1,11 +1,11 @@
-import type { CustomerPetDetailsPageDTO } from '@/entities/pets/pets.dto';
+import type { LandingPetListPageDTO } from '@/entities/landing/landing.dto';
 import type { FetcherResult } from '@/lib/api/customFetcher';
 
 import { PetListFetchError } from './pet-list-fetch-error';
 import { PetListRenderer } from './pet-list-renderer';
 
 type PetListContainerProps = Readonly<{
-  petsPromise: Promise<FetcherResult<CustomerPetDetailsPageDTO>>;
+  petsPromise: Promise<FetcherResult<LandingPetListPageDTO>>;
   query: Readonly<Record<string, string>>;
 }>;
 

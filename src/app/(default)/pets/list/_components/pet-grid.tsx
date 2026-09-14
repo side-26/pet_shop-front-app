@@ -7,12 +7,19 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
-import type { CustomerPetDetailDTO } from '@/entities/pets/pets.dto';
+import type { CustomerPetDetailDTO, CustomerPetListItemDTO } from '@/entities/pets/pets.dto';
+import type { LandingPetListItemDTO } from '@/entities/landing/landing.dto';
 import { cn } from '@/lib/utils';
 
 import { PetCard, type PetCardViewModel } from './pet-card';
 
-type PetGridProps = Readonly<{ isSkeleton?: boolean; pets: readonly PetCardViewModel[] }>;
+type PetGridProps = Readonly<{
+  isSkeleton?: boolean;
+  pets: readonly PetCardViewModel[];
+}>;
+
+export const petGridClassName =
+  'tw:grid tw:grid-cols-1 tw:gap-4 tw:md:grid-cols-3 tw:xl:grid-cols-4 tw:xl:gap-5';
 
 export function PetGrid({ isSkeleton = false, pets }: PetGridProps) {
   if (!isSkeleton && pets.length === 0) {
@@ -36,7 +43,7 @@ export function PetGrid({ isSkeleton = false, pets }: PetGridProps) {
       data-testid="pets-grid"
       aria-busy={isSkeleton || undefined}
       className={cn(
-        'tw:grid tw:grid-cols-1 tw:gap-4 tw:md:grid-cols-3 tw:xl:grid-cols-4 tw:xl:gap-5',
+        petGridClassName,
         isSkeleton && 'skeleton tw:pointer-events-none tw:select-none',
       )}
     >
@@ -47,11 +54,19 @@ export function PetGrid({ isSkeleton = false, pets }: PetGridProps) {
   );
 }
 
-function relationTitle(relation: CustomerPetDetailDTO['petType']) {
+function relationTitle(
+  relation:
+    | CustomerPetDetailDTO['petType']
+    | CustomerPetListItemDTO['petType']
+    | LandingPetListItemDTO['petType'],
+) {
+  if (!relation) return '—';
   return typeof relation === 'string' ? relation : relation.title;
 }
 
-export function toPetCardViewModel(pet: CustomerPetDetailDTO): PetCardViewModel {
+export function toPetCardViewModel(
+  pet: CustomerPetDetailDTO | CustomerPetListItemDTO | LandingPetListItemDTO,
+): PetCardViewModel {
   return {
     available: pet.inEnable && pet.quantity > 0,
     breed: relationTitle(pet.breed),

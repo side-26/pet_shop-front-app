@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   description: 'مشاهده و انتخاب حیوانات خانگی سالم و دوست‌داشتنی برای پیوستن به خانواده شما.',
 };
 
+export const prefetch = 'partial';
+
 type PetListPageProps = Readonly<{ searchParams?: Promise<PaginationSearchParams> }>;
 
 export default function PetListPage({ searchParams = Promise.resolve({}) }: PetListPageProps = {}) {

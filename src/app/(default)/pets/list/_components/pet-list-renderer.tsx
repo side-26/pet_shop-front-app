@@ -1,23 +1,23 @@
 import { PaginationLayout } from '@/components/common/pagination-layout/pagination-layout';
-import { PaginationNavigation } from '@/components/common/pagination-layout/pagination-navigation';
 import {
   paginationLayoutSkeletonFilters,
-  paginationLayoutSkeletonPagination,
   paginationLayoutSkeletonSort,
 } from '@/components/common/pagination-layout/pagination-layout-skeleton-data';
 import { routePaths } from '@/configs/route.path';
-import type { CustomerPetDetailsPageDTO } from '@/entities/pets/pets.dto';
+import type { LandingPetListPageDTO } from '@/entities/landing/landing.dto';
 
-import { PetGrid, petGridSkeletonData, toPetCardViewModel } from './pet-grid';
+import { PetInfiniteList } from './pet-infinite-list';
+import { PetListDescription } from './pet-list-description';
+import { PetListMobileTools } from './pet-list-mobile-tools';
 
 type PetListRendererProps = Readonly<{
-  data?: CustomerPetDetailsPageDTO;
+  data?: LandingPetListPageDTO;
   isSkeleton?: boolean;
   query: Readonly<Record<string, string>>;
 }>;
 
 export function PetListRenderer({ data, isSkeleton = false, query }: PetListRendererProps) {
-  const pets = isSkeleton ? petGridSkeletonData : (data?.result ?? []).map(toPetCardViewModel);
+  const listKey = new URLSearchParams(query).toString();
 
   return (
     <PaginationLayout
@@ -25,21 +25,28 @@ export function PetListRenderer({ data, isSkeleton = false, query }: PetListRend
       filterLabel="فیلتر حیوانات"
       filters={isSkeleton ? paginationLayoutSkeletonFilters : data?.filters}
       isSkeleton={isSkeleton}
+      mobileTools={
+        <PetListMobileTools
+          basePath={routePaths.petsList}
+          disabled={isSkeleton}
+          filters={isSkeleton ? paginationLayoutSkeletonFilters : (data?.filters ?? [])}
+          query={query}
+          rangeQueryKeys={{ price: { min: 'priceFrom', max: 'priceTo' } }}
+          resetPageOnChange={false}
+          sort={isSkeleton ? paginationLayoutSkeletonSort : data?.sort}
+        />
+      }
       query={query}
+      rangeQueryKeys={{ price: { min: 'priceFrom', max: 'priceTo' } }}
+      resetPageOnChange={false}
       sort={isSkeleton ? paginationLayoutSkeletonSort : data?.sort}
     >
       <h2 className="tw:sr-only">فهرست حیوانات</h2>
-      <PetGrid pets={pets} isSkeleton={isSkeleton} />
-      <PaginationNavigation
-        basePath={routePaths.petsList}
-        disabled={isSkeleton}
-        itemCount={pets.length}
-        itemLabel="حیوان"
-        pagination={
-          isSkeleton
-            ? paginationLayoutSkeletonPagination
-            : (data?.pagination ?? paginationLayoutSkeletonPagination)
-        }
+      <PetInfiniteList
+        key={listKey}
+        data={data}
+        endMessage={<PetListDescription />}
+        isSkeleton={isSkeleton}
         query={query}
       />
     </PaginationLayout>

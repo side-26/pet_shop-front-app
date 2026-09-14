@@ -4,7 +4,7 @@ import {
   normalizePaginationSearchParams,
   type PaginationSearchParams,
 } from '@/entities/pagination/pagination.helpers';
-import { getCustomerPetsPage } from '@/entities/pets/pets.service';
+import { getLandingPetList } from '@/entities/landing/landing.service';
 
 import { PetListBreadcrumb } from './pet-list-breadcrumb';
 import { PetListContainer } from './pet-list-container';
@@ -17,10 +17,7 @@ export function PetListContent({ searchParams }: PetListContentProps) {
     <main className="tw:default-layout-container tw:flex tw:flex-col tw:gap-5 tw:py-3.5 tw:md:gap-6 tw:lg:[--pagination-sidebar-offset:15.6625rem]">
       <PetListBreadcrumb />
       <header className="tw:flex tw:flex-col tw:gap-2">
-        <h1 className="tw:text-heading-2 tw:lg:text-heading-1">حیوانات دوست‌داشتنی</h1>
-        <p className="tw:max-w-2xl tw:text-body-m tw:text-muted-foreground">
-          همراه تازه خانواده‌تان را از میان حیوانات سالم و آماده واگذاری پیدا کنید.
-        </p>
+        <h1 className="tw:text-heading-2 tw:lg:text-heading-1">لیست حیوانات</h1>
       </header>
       <Suspense fallback={<PetListRenderer query={{}} isSkeleton />}>
         <PetListQueryContent searchParams={searchParams} />
@@ -30,8 +27,12 @@ export function PetListContent({ searchParams }: PetListContentProps) {
 }
 
 async function PetListQueryContent({ searchParams }: PetListContentProps) {
-  const query = normalizePaginationSearchParams(await searchParams);
-  const petsPromise = getCustomerPetsPage(query);
+  const {
+    limit: _limit,
+    page: _page,
+    ...query
+  } = normalizePaginationSearchParams(await searchParams);
+  const petsPromise = getLandingPetList(query);
   const suspenseKey = new URLSearchParams(query).toString();
 
   return (

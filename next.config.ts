@@ -33,6 +33,7 @@ function excludeDateFnsFromNextSwcLoader(rules: unknown[]): void {
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  partialPrefetching: true,
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'flagpedia.net', pathname: '/data/flags/**' },
@@ -47,6 +48,8 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '50mb',
     },
+    cssChunking: true,
+    optimizeCss: true,
   },
   ...(process.env.PETSHOP_CYPRESS_COMPONENT_TEST === 'true'
     ? {

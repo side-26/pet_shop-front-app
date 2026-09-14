@@ -30,7 +30,12 @@ export type LandingPetDTO = {
   breed: string;
   price: number;
 };
-export type LandingPetListPageDTO = PaginateDataDTO<CustomerPetListItemDTO, FilterDTO, SortDTO>;
+/** The landing pet-list formatter only emits populated taxonomy titles when the model supplies them. */
+export type LandingPetListItemDTO = Omit<CustomerPetListItemDTO, 'petType' | 'breed'> & {
+  breed?: string;
+  petType?: string;
+};
+export type LandingPetListPageDTO = PaginateDataDTO<LandingPetListItemDTO, FilterDTO, SortDTO>;
 
 export type LandingProductDTO = {
   id: string;

@@ -13,16 +13,14 @@ import { cn } from '@/lib/utils';
 import { ProductCard, type ProductCardViewModel } from './product-card';
 
 type ProductGridProps = Readonly<{
-  isAppending?: boolean;
   isSkeleton?: boolean;
   products: readonly ProductCardViewModel[];
 }>;
 
-export function ProductGrid({
-  isAppending = false,
-  isSkeleton = false,
-  products,
-}: ProductGridProps) {
+export const productGridClassName =
+  'tw:grid tw:grid-cols-1 tw:gap-3 tw:min-[360px]:grid-cols-2 tw:md:grid-cols-3 tw:md:gap-4 tw:xl:grid-cols-4 tw:xl:gap-5';
+
+export function ProductGrid({ isSkeleton = false, products }: ProductGridProps) {
   if (!isSkeleton && products.length === 0) {
     return (
       <Empty className="tw:border">
@@ -41,22 +39,15 @@ export function ProductGrid({
 
   return (
     <div
-      aria-busy={isSkeleton || isAppending || undefined}
+      aria-busy={isSkeleton || undefined}
       className={cn(
-        'tw:grid tw:grid-cols-1 tw:gap-3 tw:min-[360px]:grid-cols-2 tw:md:grid-cols-3 tw:md:gap-4 tw:xl:grid-cols-4 tw:xl:gap-5',
+        productGridClassName,
         isSkeleton && 'skeleton tw:pointer-events-none tw:select-none',
       )}
     >
       {products.map((product) => (
         <ProductCard key={product.id} product={product} isSkeleton={isSkeleton} />
       ))}
-      {isAppending
-        ? productGridSkeletonData
-            .slice(0, 4)
-            .map((product) => (
-              <ProductCard key={`appending-${product.id}`} product={product} isSkeleton />
-            ))
-        : null}
     </div>
   );
 }

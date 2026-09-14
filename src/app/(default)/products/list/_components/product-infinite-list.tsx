@@ -3,8 +3,6 @@
 import { useCallback, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
 import { getLandingProductListAction } from '@/entities/landing/landing.actions';
 import type {
   LandingProductListItemDTO,
@@ -13,6 +11,8 @@ import type {
 import { globalErrorHandler } from '@/utils/helpers';
 
 import { ProductGrid, productGridSkeletonData, toProductCardViewModel } from './product-grid';
+import { ProductInfiniteListLoadError } from './product-infinite-list-load-error';
+import { ProductInfiniteListLoader } from './product-infinite-list-loader';
 import { ProductListDescription } from './product-list-description';
 
 type ProductInfiniteListProps = Readonly<{
@@ -66,34 +66,16 @@ export function ProductInfiniteList({ data, isSkeleton = false, query }: Product
       dataLength={products.length}
       endMessage={products.length > 0 ? <ProductListDescription /> : null}
       hasMore={hasMore}
-      loader={
-        <div
-          className="tw:flex tw:items-center tw:justify-center tw:gap-2 tw:py-4"
-          aria-live="polite"
-        >
-          <Spinner aria-hidden="true" />
-          <span className="tw:text-body-s tw:text-muted-foreground">
-            در حال دریافت محصولات بیشتر
-          </span>
-        </div>
-      }
+      loader={<ProductInfiniteListLoader />}
       next={() => void loadNextPage()}
     >
-      <ProductGrid isAppending={isLoading} products={productCards} />
+      <ProductGrid products={productCards} />
       {loadError ? (
-        <div className="tw:flex tw:flex-col tw:items-center tw:gap-3 tw:py-4" role="alert">
-          <p className="tw:text-body-s tw:text-error">{loadError}</p>
-          <Button
-            color="secondary"
-            size="sm"
-            variant="outlined"
-            isLoading={isLoading}
-            loadingText="در حال تلاش دوباره"
-            onClick={() => void loadNextPage(true)}
-          >
-            تلاش دوباره
-          </Button>
-        </div>
+        <ProductInfiniteListLoadError
+          description={loadError}
+          isLoading={isLoading}
+          onRetry={() => void loadNextPage(true)}
+        />
       ) : null}
     </InfiniteScroll>
   );
