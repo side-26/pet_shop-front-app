@@ -462,6 +462,14 @@ and `size="xs|sm|md|lg|xl"`. It defaults to six numeric slots, keeps slots LTR
 inside RTL forms, exposes `focusOnMount`, persistent hint/error messaging,
 `onFinished(value)`, and optional `submitOnFinished` through the owning `Form`.
 Slot geometry and typography scale together from 28px/12px to 48px/16px.
+`RateField` is the label-free React Hook Form five-star input. It accepts typed
+`name`, optional `hint`, validation `rules`, `size="xs|sm|md|lg|xl"`, and an
+accessible `aria-label`. It stores an integer from 1 to 5; clicking the current
+rating toggles it to 0. Stars remain outline-warning by default, selected stars
+fill warning, and a pointer preview fills the prospective stars at 40% warning
+opacity. Its persistent hint/error region uses `FieldErrorHint`; maintain the
+group's `aria-describedby`, invalid alert, native button activation, and arrow-key
+rating changes.
 `Checkbox`, `Switch`, and `RadioGroupItem` support `fill|outlined|tonal` through
 `variant`, plus independent `checkedColor` and `uncheckedColor` semantic colors.
 Checked/on/ticked and unchecked/off/unticked states must resolve their own

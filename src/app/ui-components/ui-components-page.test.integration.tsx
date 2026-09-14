@@ -99,6 +99,7 @@ describe(routePaths.uiComponents, () => {
         'FileField',
         'MultipleImageUploaderField',
         'Input OTP Field',
+        'Rate Field',
         'Countdown',
         'Counter',
         'Empty',

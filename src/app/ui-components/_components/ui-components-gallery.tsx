@@ -45,6 +45,7 @@ import { TimeSelectorShowcase } from './time-selector-showcase';
 import { ComboboxShowcase } from './combobox-showcase';
 import { VirtualSelectShowcase } from './virtual-select-showcase';
 import { FetchErrorSectionBoundaryShowcase } from './fetch-error-section-boundary-showcase';
+import { RateFieldShowcase } from './rate-field-showcase';
 
 const navigation = [
   ['#avatars', 'Avatar'],
@@ -88,6 +89,7 @@ const navigation = [
   ['#multiple-image-uploader-fields', 'Multiple Image Uploader Field'],
   ['#rich-text', 'Rich Text'],
   ['#input-otp-fields', 'Input OTP Field'],
+  ['#rate-fields', 'Rate Field'],
   ['#countdowns', 'Countdown'],
   ['#counters', 'Counter'],
   ['#empty-states', 'Empty'],
@@ -171,6 +173,7 @@ export function UiComponentsGallery() {
         <MultipleImageUploaderFieldShowcase />
         <RichTextShowcase />
         <InputOtpShowcase />
+        <RateFieldShowcase />
         <CountdownShowcase />
         <CounterShowcase />
         <EmptyShowcase />
