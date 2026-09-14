@@ -9,6 +9,7 @@ import { USER_ROLES } from '@/configs/user-role';
 import { iranianPhoneNumberSchema } from '@/entities/auth/auth.schema';
 
 export const USER_SORT_ORDERS = ['asc', 'dsc'] as const;
+export const USER_ITEM_TYPES = ['product', 'pet'] as const;
 
 export const userGetDetailByIdSchema = object({
   id: string()
@@ -92,3 +93,68 @@ export const changeCurrentUserPasswordSchema = object({
 });
 
 export type ChangeCurrentUserPasswordInput = InferType<typeof changeCurrentUserPasswordSchema>;
+
+const objectIdSchema = string()
+  .trim()
+  .required()
+  .matches(/^[a-f\d]{24}$/i);
+const addressReceiverSchema = object({
+  firstName: string()
+    .trim()
+    .min(2)
+    .when('receiverIsMe', { is: false, then: (schema) => schema.required() }),
+  lastName: string()
+    .trim()
+    .min(2)
+    .when('receiverIsMe', { is: false, then: (schema) => schema.required() }),
+  nationalCode: string()
+    .matches(/^\d{10}$/)
+    .when('receiverIsMe', { is: false, then: (schema) => schema.required() }),
+  phoneNumber: iranianPhoneNumberSchema.when('receiverIsMe', {
+    is: false,
+    then: (schema) => schema.required(),
+  }),
+});
+
+export const createUserAddressSchema = object({
+  province: string().trim().min(2).required(),
+  city: string().trim().min(2).required(),
+  detailAddress: string().trim().min(5).required(),
+  plate: string().trim().min(1).required(),
+  unit: string().trim().nullable().optional(),
+  postalCode: string()
+    .matches(/^\d{10}$/)
+    .required(),
+  receiverIsMe: boolean().default(false).required(),
+}).concat(addressReceiverSchema);
+export type CreateUserAddressInput = InferType<typeof createUserAddressSchema>;
+
+export const updateUserAddressSchema = createUserAddressSchema.partial().concat(
+  object({
+    receiverIsMe: boolean().optional(),
+  }),
+);
+export type UpdateUserAddressInput = InferType<typeof updateUserAddressSchema>;
+export const userAddressIdSchema = object({ addressId: objectIdSchema });
+export type UserAddressIdInput = InferType<typeof userAddressIdSchema>;
+
+export const addCartItemSchema = object({
+  itemId: objectIdSchema,
+  itemType: mixed<(typeof USER_ITEM_TYPES)[number]>().oneOf(USER_ITEM_TYPES).required(),
+  quantity: number().integer().min(1).required(),
+  weightId: objectIdSchema.optional(),
+}).test(
+  'product-weight',
+  'وزن محصول الزامی است.',
+  (value) => !value || (value.itemType === 'product' ? Boolean(value.weightId) : !value.weightId),
+);
+export type AddCartItemInput = InferType<typeof addCartItemSchema>;
+export const cartEntryIdSchema = object({ id: objectIdSchema });
+export type CartEntryIdInput = InferType<typeof cartEntryIdSchema>;
+export const addWishlistItemSchema = object({
+  itemId: objectIdSchema,
+  itemType: mixed<(typeof USER_ITEM_TYPES)[number]>().oneOf(USER_ITEM_TYPES).required(),
+});
+export type AddWishlistItemInput = InferType<typeof addWishlistItemSchema>;
+export const wishlistEntryIdSchema = cartEntryIdSchema;
+export type WishlistEntryIdInput = InferType<typeof wishlistEntryIdSchema>;

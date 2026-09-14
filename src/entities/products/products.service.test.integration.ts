@@ -9,6 +9,7 @@ import {
   getManagementProduct,
   getManagementProducts,
   getProductMainInfo,
+  updateProductUserRate,
   updateProductBaseInfo,
   updateProductImages,
   updateProductPrice,
@@ -155,6 +156,33 @@ describe('product service', () => {
     expect(invalidateLandingFeaturedProductsMock).not.toHaveBeenCalled();
     expect(invalidateLandingPopularProductsMock).not.toHaveBeenCalled();
     expect(invalidateLandingPopularBrandsMock).not.toHaveBeenCalled();
+    expect(invalidateLandingProductListsMock).not.toHaveBeenCalled();
+  });
+  it('updates the authenticated customer rating and invalidates affected product reads after success', async () => {
+    await updateProductUserRate({ id, userRate: 4.3 });
+    expect(fetcher).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: `/products/${id}/user-rate`,
+        method: 'PATCH',
+        body: { userRate: 4.3 },
+        auth: true,
+        cache: 'no-store',
+      }),
+    );
+    expect(mocks.invalidateDetail).toHaveBeenCalledWith(id);
+    expect(mocks.invalidateList).toHaveBeenCalled();
+  });
+  it('does not invalidate product reads when a rating update fails', async () => {
+    fetcher.mockResolvedValue({
+      isSuccess: false,
+      message: 'failed',
+      data: { messages: {}, details: {} },
+    });
+
+    await updateProductUserRate({ id, userRate: 4.3 });
+
+    expect(mocks.invalidateDetail).not.toHaveBeenCalled();
+    expect(mocks.invalidateList).not.toHaveBeenCalled();
     expect(invalidateLandingProductListsMock).not.toHaveBeenCalled();
   });
 });

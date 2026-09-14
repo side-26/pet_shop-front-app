@@ -13,6 +13,7 @@ import {
   getProductFormOptionsAction,
   getProductMainInfoAction,
   updateProductPriceAction,
+  updateProductUserRateAction,
 } from './products.actions';
 import * as service from './products.service';
 import { deleteImage } from '@/entities/images/images.service';
@@ -31,6 +32,7 @@ vi.mock('./products.service', () => ({
   getCustomerProducts: vi.fn(),
   getManagementProducts: vi.fn(),
   updateProductPrice: vi.fn(),
+  updateProductUserRate: vi.fn(),
   getCustomerProduct: vi.fn(),
   getManagementProduct: vi.fn(),
   getProductImages: vi.fn(),
@@ -143,6 +145,24 @@ describe('product actions', () => {
     await expect(getManagementProductsAction()).resolves.toMatchObject({ isSuccess: false });
     await expect(deleteProductAction({ id })).resolves.toMatchObject({ isSuccess: false });
     expect(service.getManagementProducts).not.toHaveBeenCalled();
+  });
+  it('allows only customers to submit a validated product rating', async () => {
+    session.mockResolvedValue({ role: USER_ROLES.CUSTOMER } as never);
+    vi.mocked(service.updateProductUserRate).mockResolvedValue(ok);
+
+    await expect(updateProductUserRateAction({ id, userRate: 4.3 })).resolves.toBe(ok);
+    expect(service.updateProductUserRate).toHaveBeenCalledWith({ id, userRate: 4.3 });
+
+    await expect(updateProductUserRateAction({ id, userRate: 4.25 })).resolves.toMatchObject({
+      isSuccess: false,
+    });
+    expect(service.updateProductUserRate).toHaveBeenCalledTimes(1);
+
+    session.mockResolvedValue({ role: USER_ROLES.SELLER } as never);
+    await expect(updateProductUserRateAction({ id, userRate: 4.3 })).resolves.toMatchObject({
+      isSuccess: false,
+    });
+    expect(service.updateProductUserRate).toHaveBeenCalledTimes(1);
   });
   it('removes persisted rich-text images after the product is deleted', async () => {
     const imageUrl = 'https://cdn.example.test/products/description.webp';

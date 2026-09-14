@@ -17,6 +17,13 @@ import type {
   UserDetailDTO,
   UserGetDetailByIdDTO,
   UserDTO,
+  AddCartItemDTO,
+  AddWishlistItemDTO,
+  CreateUserAddressDTO,
+  UpdateUserAddressDTO,
+  AddressDTO,
+  CartDTO,
+  WishlistItemDTO,
 } from './users.dto';
 import { createUsersListCacheKey, omitNullQueryValues } from './users.helpers';
 import { getAllPaginatedUsersSchema } from './users.schema';
@@ -72,6 +79,18 @@ async function fetchAllPaginatedUsers(query: GetAllPaginatedUsersQueryDTO) {
 export async function getAllPaginatedUsers(params: GetAllPaginatedUsersParams = {}) {
   const query = await getAllPaginatedUsersSchema.validate(params, { stripUnknown: true });
   return fetchAllPaginatedUsers(query);
+}
+
+export async function getAllUsers() {
+  'use cache: private';
+  usersCache.cacheLife({ stale: 600 });
+  usersCache.registerList('all');
+  return customFetcher<UserDTO[]>({
+    url: '/users/all',
+    method: 'GET',
+    auth: true,
+    cache: 'no-store',
+  });
 }
 
 export async function createUser(input: CreateUserDTO) {
@@ -160,4 +179,110 @@ export function enableUserById(id: UpdateUserStatusByIdDTO['id']) {
 
 export function disableUserById(id: UpdateUserStatusByIdDTO['id']) {
   return updateUserStatus(id, 'disable');
+}
+
+export async function getUserAddresses(userId: string) {
+  'use cache: private';
+  usersCache.cacheLife({ stale: 360 });
+  usersCache.registerDetail(userId);
+  return customFetcher<AddressDTO[]>({ url: '/users/addresses', auth: true, cache: 'no-store' });
+}
+
+export async function addUserAddress(userId: string, input: CreateUserAddressDTO) {
+  const result = await customFetcher<AddressDTO, unknown, CreateUserAddressDTO>({
+    url: '/users/addresses',
+    method: 'POST',
+    body: input,
+    auth: true,
+    cache: 'no-store',
+  });
+  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  return result;
+}
+
+export async function updateUserAddress(
+  userId: string,
+  addressId: string,
+  input: UpdateUserAddressDTO,
+) {
+  const result = await customFetcher<AddressDTO, unknown, UpdateUserAddressDTO>({
+    url: `/users/addresses/${addressId}`,
+    method: 'PATCH',
+    body: input,
+    auth: true,
+    cache: 'no-store',
+  });
+  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  return result;
+}
+
+export async function getCart(userId: string) {
+  'use cache: private';
+  usersCache.cacheLife({ stale: 120 });
+  usersCache.registerDetail(userId);
+  return customFetcher<CartDTO>({ url: '/cart/all', auth: true, cache: 'no-store' });
+}
+
+export async function addCartItem(userId: string, input: AddCartItemDTO) {
+  const result = await customFetcher<CartDTO, unknown, AddCartItemDTO>({
+    url: '/cart/add',
+    method: 'POST',
+    body: input,
+    auth: true,
+    cache: 'no-store',
+  });
+  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  return result;
+}
+
+export async function deleteCartItem(userId: string, id: string) {
+  const result = await customFetcher<CartDTO>({
+    url: `/cart/delete/${id}`,
+    method: 'DELETE',
+    auth: true,
+    cache: 'no-store',
+  });
+  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  return result;
+}
+
+export async function emptyCart(userId: string) {
+  const result = await customFetcher<CartDTO>({
+    url: '/cart/empty',
+    method: 'DELETE',
+    auth: true,
+    cache: 'no-store',
+  });
+  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  return result;
+}
+
+export async function getWishlist(userId: string) {
+  'use cache: private';
+  usersCache.cacheLife({ stale: 360 });
+  usersCache.registerDetail(userId);
+  return customFetcher<WishlistItemDTO[]>({ url: '/wishlist/all', auth: true, cache: 'no-store' });
+}
+
+export async function addWishlistItem(userId: string, input: AddWishlistItemDTO) {
+  const result = await customFetcher<WishlistItemDTO, unknown, AddWishlistItemDTO>({
+    url: '/wishlist/add',
+    method: 'POST',
+    body: input,
+    auth: true,
+    cache: 'no-store',
+  });
+  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  return result;
+}
+
+export async function deleteWishlistItem(userId: string, id: string) {
+  const result = await customFetcher<WishlistItemDTO[]>({
+    url: `/wishlist/delete/${id}`,
+    method: 'DELETE',
+    auth: true,
+    cache: 'no-store',
+  });
+  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  return result;
 }

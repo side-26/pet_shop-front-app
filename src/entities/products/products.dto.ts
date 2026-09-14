@@ -8,6 +8,7 @@ import type {
   UpdateProductBaseInfoInput,
   UpdateProductImagesInput,
   UpdateProductPriceInput,
+  UpdateProductUserRateInput,
 } from './products.schema';
 
 export type ProductRelationDTO = {
@@ -28,6 +29,8 @@ export type ManagementProductDTO = {
   brand: ProductRelationDTO | string;
   subCategory: ProductRelationDTO | string | null;
   quantity: number;
+  userRate?: number;
+  userRateCount?: number;
   price: number;
   discountPercentage: number;
   isEnable: boolean;
@@ -66,6 +69,7 @@ export type ProductImagesDTO = {
   imagesList: string[];
 };
 export type ProductPriceDTO = { price: number; discountPercentage: number };
+export type ProductUserRateDTO = { userRate: number; userRateCount: number };
 export type ProductBaseInfoDTO = Pick<
   ManagementProductDTO,
   'title' | 'summary' | 'description' | 'category' | 'brand' | 'subCategory' | 'quantity'
@@ -81,6 +85,7 @@ export type CreateProductDTO = ProductInput;
 export type UpdateProductBaseInfoDTO = UpdateProductBaseInfoInput;
 export type UpdateProductImagesDTO = UpdateProductImagesInput;
 export type UpdateProductPriceDTO = UpdateProductPriceInput;
+export type UpdateProductUserRateDTO = UpdateProductUserRateInput;
 export type CustomerProductQueryDTO = CustomerProductQueryInput;
 export type ManagementProductQueryDTO = ManagementProductQueryInput;
 export type DeleteProductResultDTO = { id: string };

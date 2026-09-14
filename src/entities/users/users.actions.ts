@@ -15,6 +15,13 @@ import {
   updateUserStatusByIdSchema,
   updateCurrentUserProfileSchema,
   userGetDetailByIdSchema,
+  addCartItemSchema,
+  addWishlistItemSchema,
+  cartEntryIdSchema,
+  createUserAddressSchema,
+  updateUserAddressSchema,
+  userAddressIdSchema,
+  wishlistEntryIdSchema,
 } from './users.schema';
 import {
   createUser,
@@ -24,11 +31,22 @@ import {
   enableUserById,
   getCurrentUser,
   getAllPaginatedUsers,
+  getAllUsers,
   userGetDetailById,
   updateCurrentUserProfile,
+  addCartItem,
+  addUserAddress,
+  addWishlistItem,
+  deleteCartItem,
+  deleteWishlistItem,
+  emptyCart,
+  getCart,
+  getUserAddresses,
+  getWishlist,
+  updateUserAddress,
 } from './users.service';
 
-const ALLOWED_ADMIN_ROLES = new Set<UserRole>([USER_ROLES.ADMIN, USER_ROLES.SELLER]);
+const ALLOWED_ADMIN_ROLES = new Set<UserRole>([USER_ROLES.ADMIN]);
 
 function accessError(message: string): FetcherError {
   return {
@@ -133,6 +151,14 @@ export async function getAllPaginatedUsersAction(input: unknown = {}) {
   }
 }
 
+export async function getAllUsersAction() {
+  const session = await getSession();
+  if (!session) return accessError('برای مشاهده کاربران وارد حساب مدیریتی شوید.');
+  if (!ALLOWED_ADMIN_ROLES.has(session.role))
+    return accessError('شما اجازه مشاهده کاربران را ندارید.');
+  return getAllUsers();
+}
+
 export async function createUserAction(input: unknown) {
   const session = await getSession();
 
@@ -221,4 +247,117 @@ export async function disableUserByIdAction(input: unknown) {
     unauthenticated: 'برای غیرفعال‌سازی کاربر وارد حساب مدیریتی شوید.',
     unauthorized: 'شما اجازه غیرفعال‌سازی این کاربر را ندارید.',
   });
+}
+
+async function validateAuthenticatedInput<T>(
+  input: unknown,
+  schema: { validate: (value: unknown, options: object) => Promise<T> },
+  message: string,
+) {
+  const session = await getSession();
+  if (!session) return { error: accessError(message) } as const;
+  try {
+    return {
+      session,
+      value: await schema.validate(input, { abortEarly: false, stripUnknown: true }),
+    } as const;
+  } catch (error: unknown) {
+    if (error instanceof ValidationError)
+      return { error: validationErrorToFetcherError(error) } as const;
+    throw error;
+  }
+}
+
+export async function getUserAddressesAction() {
+  const session = await getSession();
+  return session
+    ? getUserAddresses(session.userId)
+    : accessError('برای مشاهده نشانی‌ها وارد حساب کاربری شوید.');
+}
+
+export async function addUserAddressAction(input: unknown) {
+  const result = await validateAuthenticatedInput(
+    input,
+    createUserAddressSchema,
+    'برای ثبت نشانی وارد حساب کاربری شوید.',
+  );
+  return 'error' in result ? result.error : addUserAddress(result.session.userId, result.value);
+}
+
+export async function updateUserAddressAction(input: unknown) {
+  const result = await validateAuthenticatedInput(
+    input,
+    userAddressIdSchema,
+    'برای ویرایش نشانی وارد حساب کاربری شوید.',
+  );
+  if ('error' in result) return result.error;
+  try {
+    const value = await updateUserAddressSchema.validate(input, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+    return updateUserAddress(result.session.userId, result.value.addressId, value);
+  } catch (error: unknown) {
+    if (error instanceof ValidationError) return validationErrorToFetcherError(error);
+    throw error;
+  }
+}
+
+export async function getCartAction() {
+  const session = await getSession();
+  return session
+    ? getCart(session.userId)
+    : accessError('برای مشاهده سبد خرید وارد حساب کاربری شوید.');
+}
+
+export async function addCartItemAction(input: unknown) {
+  const result = await validateAuthenticatedInput(
+    input,
+    addCartItemSchema,
+    'برای افزودن به سبد خرید وارد حساب کاربری شوید.',
+  );
+  return 'error' in result ? result.error : addCartItem(result.session.userId, result.value);
+}
+
+export async function deleteCartItemAction(input: unknown) {
+  const result = await validateAuthenticatedInput(
+    input,
+    cartEntryIdSchema,
+    'برای ویرایش سبد خرید وارد حساب کاربری شوید.',
+  );
+  return 'error' in result ? result.error : deleteCartItem(result.session.userId, result.value.id);
+}
+
+export async function emptyCartAction() {
+  const session = await getSession();
+  return session
+    ? emptyCart(session.userId)
+    : accessError('برای ویرایش سبد خرید وارد حساب کاربری شوید.');
+}
+
+export async function getWishlistAction() {
+  const session = await getSession();
+  return session
+    ? getWishlist(session.userId)
+    : accessError('برای مشاهده علاقه‌مندی‌ها وارد حساب کاربری شوید.');
+}
+
+export async function addWishlistItemAction(input: unknown) {
+  const result = await validateAuthenticatedInput(
+    input,
+    addWishlistItemSchema,
+    'برای افزودن به علاقه‌مندی‌ها وارد حساب کاربری شوید.',
+  );
+  return 'error' in result ? result.error : addWishlistItem(result.session.userId, result.value);
+}
+
+export async function deleteWishlistItemAction(input: unknown) {
+  const result = await validateAuthenticatedInput(
+    input,
+    wishlistEntryIdSchema,
+    'برای ویرایش علاقه‌مندی‌ها وارد حساب کاربری شوید.',
+  );
+  return 'error' in result
+    ? result.error
+    : deleteWishlistItem(result.session.userId, result.value.id);
 }

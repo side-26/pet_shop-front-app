@@ -97,11 +97,25 @@ export const managementProductQuerySchema = object({
   ...queryFields,
   includeDisabled: boolean().default(false).required(),
 });
+export const updateProductUserRateSchema = object({
+  id: objectId,
+  userRate: number()
+    .min(0)
+    .max(5)
+    .test(
+      'one-decimal-place',
+      'امتیاز باید با گام ۰٫۱ انتخاب شود.',
+      (value) =>
+        value === undefined || Math.abs(value * 10 - Math.round(value * 10)) < Number.EPSILON,
+    )
+    .required(),
+});
 
 export type ProductIdInput = InferType<typeof productIdSchema>;
 export type ProductInput = InferType<typeof productSchema>;
 export type UpdateProductBaseInfoInput = InferType<typeof updateProductBaseInfoSchema>;
 export type UpdateProductImagesInput = InferType<typeof updateProductImagesSchema>;
 export type UpdateProductPriceInput = InferType<typeof updateProductPriceSchema>;
+export type UpdateProductUserRateInput = InferType<typeof updateProductUserRateSchema>;
 export type CustomerProductQueryInput = InferType<typeof customerProductQuerySchema>;
 export type ManagementProductQueryInput = InferType<typeof managementProductQuerySchema>;

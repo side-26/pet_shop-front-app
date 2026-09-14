@@ -22,6 +22,7 @@ import {
   enableUserById,
   getCurrentUser,
   getAllPaginatedUsers,
+  getAllUsers,
   userGetDetailById,
   updateCurrentUserProfile,
 } from './users.service';
@@ -35,12 +36,14 @@ vi.mock('./users.service', () => ({
   enableUserById: vi.fn(),
   getCurrentUser: vi.fn(),
   getAllPaginatedUsers: vi.fn(),
+  getAllUsers: vi.fn(),
   userGetDetailById: vi.fn(),
   updateCurrentUserProfile: vi.fn(),
 }));
 
 const getSessionMock = vi.mocked(getSession);
 const getAllPaginatedUsersMock = vi.mocked(getAllPaginatedUsers);
+const getAllUsersMock = vi.mocked(getAllUsers);
 const createUserMock = vi.mocked(createUser);
 const deleteUserByIdMock = vi.mocked(deleteUserById);
 const disableUserByIdMock = vi.mocked(disableUserById);
@@ -130,6 +133,15 @@ describe('users actions', () => {
     expect(getCurrentUserMock).toHaveBeenCalledOnce();
   });
 
+  it('gets the non-paginated management list for an admin only', async () => {
+    const response = { isSuccess: true as const, message: null, data: [] };
+    getSessionMock.mockResolvedValue(session(USER_ROLES.ADMIN));
+    getAllUsersMock.mockResolvedValue(response);
+    const { getAllUsersAction } = await import('./users.actions');
+    await expect(getAllUsersAction()).resolves.toBe(response);
+    expect(getAllUsersMock).toHaveBeenCalledOnce();
+  });
+
   it('rejects a current-user request without a frontend session', async () => {
     getSessionMock.mockResolvedValue(null);
 
@@ -190,7 +202,7 @@ describe('users actions', () => {
     });
   });
 
-  it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(
+  it.each([USER_ROLES.ADMIN])(
     'validates a user id and gets its detail for the %s role',
     async (role) => {
       const response = { isSuccess: true as const, message: null, data: userDetail };
@@ -232,38 +244,35 @@ describe('users actions', () => {
     expect(userGetDetailByIdMock).not.toHaveBeenCalled();
   });
 
-  it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(
-    'validates and creates a user for the %s role',
-    async (role) => {
-      const input = {
-        phoneNumber: '09123456789',
-        password: 'password123',
-        confirmPassword: 'password123',
-        role: USER_ROLES.CUSTOMER,
-      };
-      const createdUser: UserDTO = {
-        _id: 'user-1',
-        firstName: '',
-        lastName: '',
-        nationalCode: '',
-        cart: [],
-        isEnable: true,
-        phoneNumber: input.phoneNumber,
-        email: '',
-        role: input.role,
-        orders: [],
-        wishlist: [],
-        age: 0,
-        addresses: [],
-      };
-      const response = { isSuccess: true as const, message: 'created', data: createdUser };
-      getSessionMock.mockResolvedValue(session(role));
-      createUserMock.mockResolvedValue(response);
+  it.each([USER_ROLES.ADMIN])('validates and creates a user for the %s role', async (role) => {
+    const input = {
+      phoneNumber: '09123456789',
+      password: 'password123',
+      confirmPassword: 'password123',
+      role: USER_ROLES.CUSTOMER,
+    };
+    const createdUser: UserDTO = {
+      _id: 'user-1',
+      firstName: '',
+      lastName: '',
+      nationalCode: '',
+      cart: [],
+      isEnable: true,
+      phoneNumber: input.phoneNumber,
+      email: '',
+      role: input.role,
+      orders: [],
+      wishlist: [],
+      age: 0,
+      addresses: [],
+    };
+    const response = { isSuccess: true as const, message: 'created', data: createdUser };
+    getSessionMock.mockResolvedValue(session(role));
+    createUserMock.mockResolvedValue(response);
 
-      await expect(createUserAction({ ...input, unknown: 'removed' })).resolves.toBe(response);
-      expect(createUserMock).toHaveBeenCalledWith(input);
-    },
-  );
+    await expect(createUserAction({ ...input, unknown: 'removed' })).resolves.toBe(response);
+    expect(createUserMock).toHaveBeenCalledWith(input);
+  });
 
   it('returns all create-user validation errors without calling the service', async () => {
     getSessionMock.mockResolvedValue(session(USER_ROLES.ADMIN));
@@ -297,19 +306,16 @@ describe('users actions', () => {
     expect(createUserMock).not.toHaveBeenCalled();
   });
 
-  it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(
-    'validates and deletes a user for the %s role',
-    async (role) => {
-      const response = { isSuccess: true as const, message: 'deleted', data: undefined };
-      getSessionMock.mockResolvedValue(session(role));
-      deleteUserByIdMock.mockResolvedValue(response);
+  it.each([USER_ROLES.ADMIN])('validates and deletes a user for the %s role', async (role) => {
+    const response = { isSuccess: true as const, message: 'deleted', data: undefined };
+    getSessionMock.mockResolvedValue(session(role));
+    deleteUserByIdMock.mockResolvedValue(response);
 
-      await expect(
-        deleteUserByIdAction({ id: '  507f1f77bcf86cd799439011  ', unknown: 'removed' }),
-      ).resolves.toBe(response);
-      expect(deleteUserByIdMock).toHaveBeenCalledWith('507f1f77bcf86cd799439011');
-    },
-  );
+    await expect(
+      deleteUserByIdAction({ id: '  507f1f77bcf86cd799439011  ', unknown: 'removed' }),
+    ).resolves.toBe(response);
+    expect(deleteUserByIdMock).toHaveBeenCalledWith('507f1f77bcf86cd799439011');
+  });
 
   it('rejects an invalid delete-user id without calling the service', async () => {
     getSessionMock.mockResolvedValue(session(USER_ROLES.ADMIN));
@@ -384,7 +390,7 @@ describe('users actions', () => {
     },
   );
 
-  it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(
+  it.each([USER_ROLES.ADMIN])(
     'validates the query and calls the users service for the %s role',
     async (role) => {
       getSessionMock.mockResolvedValue(session(role));

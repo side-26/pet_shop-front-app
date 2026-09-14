@@ -21,9 +21,11 @@ import type {
   ProductBaseInfoDTO,
   ProductImagesDTO,
   ProductPriceDTO,
+  ProductUserRateDTO,
   UpdateProductBaseInfoDTO,
   UpdateProductImagesDTO,
   UpdateProductPriceDTO,
+  UpdateProductUserRateDTO,
 } from './products.dto';
 import { customerProductQuerySchema, managementProductQuerySchema } from './products.schema';
 
@@ -173,6 +175,21 @@ export async function updateProductPrice(id: string, input: UpdateProductPriceDT
     cache: 'no-store',
   });
   if (result.isSuccess) invalidate(id);
+  return result;
+}
+export async function updateProductUserRate(input: UpdateProductUserRateDTO) {
+  const result = await customFetcher<
+    ProductUserRateDTO,
+    unknown,
+    Pick<UpdateProductUserRateDTO, 'userRate'>
+  >({
+    url: `/products/${input.id}/user-rate`,
+    method: 'PATCH',
+    body: { userRate: input.userRate },
+    auth: true,
+    cache: 'no-store',
+  });
+  if (result.isSuccess) invalidate(input.id);
   return result;
 }
 async function updateStatus(id: string, status: 'enable' | 'disable') {

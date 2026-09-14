@@ -5,6 +5,7 @@ import {
   managementProductQuerySchema,
   productSchema,
   updateProductBaseInfoSchema,
+  updateProductUserRateSchema,
 } from './products.schema';
 
 const category = '507f1f77bcf86cd799439011';
@@ -71,5 +72,19 @@ describe('product schemas', () => {
       limit: 10,
       sort: 'createdAt',
     });
+  });
+  it('accepts the backend rating range in one-decimal increments', async () => {
+    await expect(
+      updateProductUserRateSchema.validate({ id: category, userRate: 4.3 }),
+    ).resolves.toEqual({
+      id: category,
+      userRate: 4.3,
+    });
+    await expect(
+      updateProductUserRateSchema.validate({ id: category, userRate: 4.25 }),
+    ).rejects.toThrow('گام ۰٫۱');
+    await expect(
+      updateProductUserRateSchema.validate({ id: category, userRate: 5.1 }),
+    ).rejects.toBeDefined();
   });
 });

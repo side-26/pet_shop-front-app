@@ -10,6 +10,10 @@ import type {
   UpdateUserStatusByIdInput,
   UpdateCurrentUserProfileInput,
   UserGetDetailByIdInput,
+  AddCartItemInput,
+  AddWishlistItemInput,
+  CreateUserAddressInput,
+  UpdateUserAddressInput,
 } from './users.schema';
 
 export type GetAllPaginatedUsersQueryDTO = GetAllPaginatedUsersInput;
@@ -20,8 +24,13 @@ export type UpdateUserStatusByIdDTO = UpdateUserStatusByIdInput;
 export type UserGetDetailByIdDTO = UserGetDetailByIdInput;
 export type UpdateCurrentUserProfileDTO = UpdateCurrentUserProfileInput;
 export type ChangeCurrentUserPasswordDTO = ChangeCurrentUserPasswordInput;
+export type AddCartItemDTO = AddCartItemInput;
+export type AddWishlistItemDTO = AddWishlistItemInput;
+export type CreateUserAddressDTO = CreateUserAddressInput;
+export type UpdateUserAddressDTO = UpdateUserAddressInput;
 
 export interface AddressDTO {
+  _id?: string;
   province: string;
   city: string;
   detailAddress: string;
@@ -36,9 +45,11 @@ export interface AddressDTO {
 }
 
 export interface CartItemDTO {
+  _id?: string;
   item: unknown;
   itemType: string;
   quantity: number;
+  weight?: string | null;
 }
 
 export interface ShippingInfoDTO {
@@ -75,7 +86,11 @@ export interface UserDTO {
   addresses: AddressDTO[];
 }
 
-export type WishlistItemDTO = Record<string, unknown>;
+export interface WishlistItemDTO {
+  _id: string;
+  item?: unknown;
+  itemType?: string;
+}
 
 export interface UserDetailDTO {
   _id: string;

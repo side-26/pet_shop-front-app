@@ -21,6 +21,7 @@ import {
   updateProductBaseInfoSchema,
   updateProductImagesSchema,
   updateProductPriceSchema,
+  updateProductUserRateSchema,
 } from './products.schema';
 import * as service from './products.service';
 
@@ -39,6 +40,11 @@ async function authorizeAdmin() {
   return (await getSession())?.role === USER_ROLES.ADMIN
     ? null
     : denied('شما اجازه حذف محصولات را ندارید.');
+}
+async function authorizeCustomer() {
+  return (await getSession())?.role === USER_ROLES.CUSTOMER
+    ? null
+    : denied('برای ثبت امتیاز محصول وارد حساب مشتری شوید.');
 }
 async function validate<T>(
   schema: { validate(input: unknown, options: object): Promise<T> },
@@ -151,6 +157,12 @@ export async function updateProductImagesAction(input: unknown) {
 }
 export async function updateProductPriceAction(input: unknown) {
   return update(input, updateProductPriceSchema, service.updateProductPrice);
+}
+export async function updateProductUserRateAction(input: unknown) {
+  const error = await authorizeCustomer();
+  if (error) return error;
+  const value = await validate(updateProductUserRateSchema, input);
+  return 'isSuccess' in value ? value : service.updateProductUserRate(value);
 }
 export async function enableProductAction(input: unknown) {
   return managementSection(input, service.enableProduct);
