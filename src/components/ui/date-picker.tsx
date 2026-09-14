@@ -17,6 +17,7 @@ import { tv, type VariantProps } from 'tailwind-variants';
 import { Button } from '@/components/ui/button';
 import { Calendar, CalendarFooter } from '@/components/ui/calendar';
 import { Field } from '@/components/ui/field/default';
+import { FieldErrorHint } from '@/components/ui/field/field-error-hint';
 import { FieldLabel } from '@/components/ui/field/label';
 import { inputVariants } from '@/components/ui/fields/input';
 import { textFieldColorClasses, textFieldVariants } from '@/components/ui/fields/text-field';
@@ -185,7 +186,6 @@ function DatePicker<
     () => (currentDate && committedDate ? formatJalaliDateTime(committedDate) : ''),
     [committedDate, currentDate],
   );
-  const message = fieldState.error?.message ?? hint;
   const styles = textFieldVariants({ color, size });
 
   useEffect(() => {
@@ -384,15 +384,14 @@ function DatePicker<
           </PopoverContent>
         ) : null}
       </Popover>
-      <span
+      <FieldErrorHint
         id={descriptionId}
-        role={fieldState.invalid ? 'alert' : undefined}
+        error={fieldState.error?.message}
+        hint={hint}
+        invalid={fieldState.invalid}
         className={styles.description()}
-      >
-        <span className={fieldState.invalid ? 'tw:text-error' : 'tw:text-muted-foreground'}>
-          {message}
-        </span>
-      </span>
+        textClassName="tw:text-muted-foreground"
+      />
     </Field>
   );
 }

@@ -11,6 +11,7 @@ import {
 import { tv, type VariantProps } from 'tailwind-variants';
 
 import { Field } from '@/components/ui/field/default';
+import { FieldErrorHint } from '@/components/ui/field/field-error-hint';
 import { FieldLabel } from '@/components/ui/field/label';
 import { Textarea, type TextareaProps } from '@/components/ui/fields/textarea';
 import { cn } from '@/lib/utils';
@@ -138,7 +139,6 @@ function TextareaField<
   const counterId = `${id}-counter`;
   const { field, fieldState } = useController({ control, disabled, name, rules, shouldUnregister });
   const value = typeof field.value === 'string' ? field.value : '';
-  const message = fieldState.error?.message ?? hint;
   const styles = textareaFieldVariants({ color, size });
 
   return (
@@ -183,15 +183,14 @@ function TextareaField<
           </span>
         )}
       </div>
-      <span
+      <FieldErrorHint
         id={descriptionId}
-        role={fieldState.invalid ? 'alert' : undefined}
+        error={fieldState.error?.message}
+        hint={hint}
+        invalid={fieldState.invalid}
         className={styles.description()}
-      >
-        <span className={fieldState.invalid ? 'tw:text-error' : 'tw:text-muted-foreground'}>
-          {message}
-        </span>
-      </span>
+        textClassName="tw:text-muted-foreground"
+      />
     </Field>
   );
 }

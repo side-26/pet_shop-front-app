@@ -10,6 +10,7 @@ import {
 } from 'react-hook-form';
 
 import { Field } from '@/components/ui/field/default';
+import { FieldErrorHint } from '@/components/ui/field/field-error-hint';
 import { Input, type InputProps } from '@/components/ui/fields/input';
 import { cn } from '@/lib/utils';
 
@@ -73,7 +74,6 @@ function FileField<
   const { value: _value, ...fileInputField } = field;
   const value = field.value as unknown;
   const file = typeof File !== 'undefined' && value instanceof File ? value : null;
-  const message = fieldState.error?.message ?? hint;
   const accept = toAcceptAttribute(acceptTypes);
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
@@ -107,13 +107,13 @@ function FileField<
         />
         {children(file)}
       </label>
-      <span
+      <FieldErrorHint
         id={descriptionId}
-        role={fieldState.invalid ? 'alert' : undefined}
+        error={fieldState.error?.message}
+        hint={hint}
+        invalid={fieldState.invalid}
         className="tw:block tw:min-h-[1lh] tw:text-xs tw:text-muted-foreground"
-      >
-        <span className={fieldState.invalid ? 'tw:text-error' : undefined}>{message}</span>
-      </span>
+      />
     </Field>
   );
 }

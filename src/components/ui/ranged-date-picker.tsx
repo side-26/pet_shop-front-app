@@ -17,6 +17,7 @@ import { tv, type VariantProps } from 'tailwind-variants';
 import { Button } from '@/components/ui/button';
 import { Calendar, CalendarFooter } from '@/components/ui/calendar';
 import { Field } from '@/components/ui/field/default';
+import { FieldErrorHint } from '@/components/ui/field/field-error-hint';
 import { FieldLabel } from '@/components/ui/field/label';
 import { inputVariants } from '@/components/ui/fields/input';
 import { textFieldColorClasses, textFieldVariants } from '@/components/ui/fields/text-field';
@@ -182,7 +183,6 @@ function RangedDatePicker<
   );
   const styles = textFieldVariants({ color, size });
   const isInvalid = fromFieldState.invalid || toFieldState.invalid;
-  const message = fromFieldState.error?.message ?? toFieldState.error?.message ?? hint;
   const displayValue =
     currentRange?.from && currentRange.to
       ? `${formatJalaliDateTime(currentRange.from)} — ${formatJalaliDateTime(currentRange.to)}`
@@ -352,13 +352,14 @@ function RangedDatePicker<
           </PopoverContent>
         ) : null}
       </Popover>
-      <span
+      <FieldErrorHint
         id={descriptionId}
-        role={isInvalid ? 'alert' : undefined}
+        error={fromFieldState.error?.message ?? toFieldState.error?.message}
+        hint={hint}
+        invalid={isInvalid}
         className={styles.description()}
-      >
-        <span className={isInvalid ? 'tw:text-error' : 'tw:text-muted-foreground'}>{message}</span>
-      </span>
+        textClassName="tw:text-muted-foreground"
+      />
     </Field>
   );
 }

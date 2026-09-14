@@ -12,6 +12,7 @@ import {
 import { tv, type VariantProps } from 'tailwind-variants';
 
 import { Field } from '@/components/ui/field/default';
+import { FieldErrorHint } from '@/components/ui/field/field-error-hint';
 import { FieldLabel } from '@/components/ui/field/label';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { cn } from '@/lib/utils';
@@ -141,7 +142,6 @@ function InputOtpField<
     rules,
     shouldUnregister,
   });
-  const message = fieldState.error?.message ?? hint;
   const styles = inputOtpFieldVariants({ size });
 
   const setInputRef = useCallback(
@@ -207,15 +207,14 @@ function InputOtpField<
           ))}
         </InputOTPGroup>
       </InputOTP>
-      <span
+      <FieldErrorHint
         id={descriptionId}
-        role={fieldState.invalid ? 'alert' : undefined}
+        error={fieldState.error?.message}
+        hint={hint}
+        invalid={fieldState.invalid}
         className={styles.description()}
-      >
-        <span className={fieldState.invalid ? 'tw:text-error' : 'tw:text-muted-foreground'}>
-          {message}
-        </span>
-      </span>
+        textClassName="tw:text-muted-foreground"
+      />
     </Field>
   );
 }

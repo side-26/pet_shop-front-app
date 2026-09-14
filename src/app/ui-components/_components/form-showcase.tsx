@@ -8,9 +8,11 @@ import '@/configs/yup.config';
 
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field/default';
+import { FieldErrorHint } from '@/components/ui/field/field-error-hint';
 import { FieldLabel } from '@/components/ui/field/label';
 import { Checkbox } from '@/components/ui/fields/checkbox';
 import { CheckboxField } from '@/components/ui/fields/checkbox-field';
+import { Input } from '@/components/ui/fields/input';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/fields/input-group';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/fields/radio-group';
 import { RadioGroupField } from '@/components/ui/fields/radio-group-field';
@@ -218,37 +220,54 @@ export function FormShowcase() {
         </Form>
       </div>
 
-      <div className="tw:grid tw:gap-6 tw:md:grid-cols-2">
-        <Field>
-          <FieldLabel htmlFor="form-search">جست‌وجوی پرونده</FieldLabel>
-          <InputGroup>
-            <InputGroupAddon>
-              <SearchIcon aria-hidden="true" />
-            </InputGroupAddon>
-            <InputGroupInput id="form-search" placeholder="نام یا کد پرونده" />
-          </InputGroup>
-        </Field>
-        <Form<Record<string, string>>
-          handleSubmit={() => undefined}
-          options={{ defaultValues: { petType: 'pet-type-1' } }}
-        >
-          <SelectField
-            name="petType"
-            label="نوع حیوان در فرم"
-            hint="انتخاب شما در React Hook Form ذخیره می‌شود."
-            size="lg"
-            rules={{ required: 'انتخاب نوع حیوان الزامی است.' }}
-            options={[...petTypeOptions, ...longPetTypeOptions]}
-            triggerClassName="tw:max-w-64"
-          />
-          <SelectField
-            name="empty-pet-type"
-            label="نوع حیوان بدون گزینه"
-            options={[]}
-            emptyText="نوع حیوانی برای انتخاب وجود ندارد."
-          />
-          <Button type="submit">بررسی انتخاب</Button>
-        </Form>
+      <div className="tw:flex tw:flex-col tw:gap-4">
+        <h4 className="tw:text-heading-4">Field Error Hint</h4>
+        <div className="tw:grid tw:gap-6 tw:md:grid-cols-2">
+          <Field>
+            <FieldLabel htmlFor="field-error-hint-example">راهنمای فیلد</FieldLabel>
+            <Input
+              id="field-error-hint-example"
+              className="tw:sr-only"
+              aria-describedby="field-error-hint"
+            />
+            <FieldErrorHint
+              id="field-error-hint"
+              hint="متن راهنمای فیلد یا خطای اعتبارسنجی در همین ناحیه نمایش داده می‌شود."
+              className="tw:text-xs"
+              textClassName="tw:text-muted-foreground"
+            />
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="form-search">جست‌وجوی پرونده</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon>
+                <SearchIcon aria-hidden="true" />
+              </InputGroupAddon>
+              <InputGroupInput id="form-search" placeholder="نام یا کد پرونده" />
+            </InputGroup>
+          </Field>
+          <Form<Record<string, string>>
+            handleSubmit={() => undefined}
+            options={{ defaultValues: { petType: 'pet-type-1' } }}
+          >
+            <SelectField
+              name="petType"
+              label="نوع حیوان در فرم"
+              hint="انتخاب شما در React Hook Form ذخیره می‌شود."
+              size="lg"
+              rules={{ required: 'انتخاب نوع حیوان الزامی است.' }}
+              options={[...petTypeOptions, ...longPetTypeOptions]}
+              triggerClassName="tw:max-w-64"
+            />
+            <SelectField
+              name="empty-pet-type"
+              label="نوع حیوان بدون گزینه"
+              options={[]}
+              emptyText="نوع حیوانی برای انتخاب وجود ندارد."
+            />
+            <Button type="submit">بررسی انتخاب</Button>
+          </Form>
+        </div>
       </div>
 
       <div className="tw:grid tw:gap-6 tw:md:grid-cols-3">

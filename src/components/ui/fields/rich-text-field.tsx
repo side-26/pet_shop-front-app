@@ -5,6 +5,7 @@ import { useController, type FieldPath, type FieldValues } from 'react-hook-form
 import type { JSONContent } from '@tiptap/core';
 
 import { Field } from '@/components/ui/field/default';
+import { FieldErrorHint } from '@/components/ui/field/field-error-hint';
 import { FieldLabel } from '@/components/ui/field/label';
 import { Progress } from '@/components/ui/progress';
 import { RichText, RichTextFullHeaderActions } from '@/components/ui/rich-text';
@@ -158,13 +159,13 @@ export default function RichTextField<T extends FieldValues>({
           </div>
         ) : null}
       </div>
-      <span
+      <FieldErrorHint
         id={`${id}-description`}
-        role={fieldState.invalid ? 'alert' : undefined}
+        error={fieldState.error?.message}
+        hint={hint}
+        invalid={fieldState.invalid}
         className="tw:text-xs"
-      >
-        {fieldState.error?.message ?? hint}
-      </span>
+      />
     </Field>
   );
 }

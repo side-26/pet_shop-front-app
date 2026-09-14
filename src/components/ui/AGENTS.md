@@ -376,9 +376,13 @@ non-modal by default. Labels and checkbox items belong inside `MenubarGroup`;
 radio items belong inside `MenubarRadioGroup`. Preserve RTL arrow-key movement,
 submenus, disabled items, shortcuts, and destructive semantic styling.
 
-`Field` and `FieldLabel` live in `ui/field/default.tsx` and `ui/field/label.tsx`.
-Set `data-invalid` or `data-disabled` on `Field`, associate `FieldLabel` with its
-control through `htmlFor`, and mirror invalid or disabled state on the control.
+`Field`, `FieldLabel`, and `FieldErrorHint` live in `ui/field/default.tsx`,
+`ui/field/label.tsx`, and `ui/field/field-error-hint.tsx`. `FieldErrorHint` is
+the persistent, ID-addressable hint/error region: pass `hint`, validation `error`,
+and `invalid`; it prioritizes the validation error, keeps the element mounted, and
+sets `role="alert"` only when invalid. Set `data-invalid` or `data-disabled` on
+`Field`, associate `FieldLabel` with its control through `htmlFor`, and mirror
+invalid or disabled state on the control.
 
 Form controls live under `ui/fields`: `Input`, `InputGroup`, `Select`, `Switch`,
 `Checkbox`, and `RadioGroup`. Compose `InputGroup` only with `InputGroupInput`

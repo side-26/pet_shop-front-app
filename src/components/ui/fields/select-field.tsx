@@ -11,6 +11,7 @@ import {
 import { tv, type VariantProps } from 'tailwind-variants';
 
 import { Field } from '@/components/ui/field/default';
+import { FieldErrorHint } from '@/components/ui/field/field-error-hint';
 import { FieldLabel } from '@/components/ui/field/label';
 import { cn } from '@/lib/utils';
 import {
@@ -111,7 +112,6 @@ function SelectField<
   const id = providedId ?? generatedId;
   const descriptionId = `${id}-description`;
   const { field, fieldState } = useController({ name, control, rules, shouldUnregister, disabled });
-  const message = fieldState.error?.message ?? hint;
   const styles = selectFieldVariants({ size });
 
   return (
@@ -169,13 +169,13 @@ function SelectField<
           )}
         </SelectContent>
       </Select>
-      <span
+      <FieldErrorHint
         id={descriptionId}
-        role={fieldState.invalid ? 'alert' : undefined}
+        error={fieldState.error?.message}
+        hint={hint}
+        invalid={fieldState.invalid}
         className={styles.description()}
-      >
-        <span className={fieldState.invalid ? 'tw:text-error' : undefined}>{message}</span>
-      </span>
+      />
     </Field>
   );
 }

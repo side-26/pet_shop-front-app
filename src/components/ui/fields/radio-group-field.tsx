@@ -10,6 +10,7 @@ import {
 } from 'react-hook-form';
 
 import { Field } from '@/components/ui/field/default';
+import { FieldErrorHint } from '@/components/ui/field/field-error-hint';
 import { FieldLabel } from '@/components/ui/field/label';
 import { RadioGroup, RadioGroupItem } from './radio-group';
 import type { SelectionColor, SelectionSize, SelectionVariant } from './selection-control.styles';
@@ -62,7 +63,6 @@ function RadioGroupField<
   const labelId = `${id}-label`;
   const { field, fieldState } = useController({ name, control, rules, shouldUnregister, disabled });
   const styles = selectionFieldVariants({ size });
-  const message = fieldState.error?.message ?? hint;
   return (
     <Field
       data-invalid={fieldState.invalid || undefined}
@@ -105,15 +105,14 @@ function RadioGroupField<
           );
         })}
       </RadioGroup>
-      <span
+      <FieldErrorHint
         id={descriptionId}
-        role={fieldState.invalid ? 'alert' : undefined}
+        error={fieldState.error?.message}
+        hint={hint}
+        invalid={fieldState.invalid}
         className={styles.description()}
-      >
-        <span className={fieldState.invalid ? 'tw:text-error' : 'tw:text-muted-foreground'}>
-          {message}
-        </span>
-      </span>
+        textClassName="tw:text-muted-foreground"
+      />
     </Field>
   );
 }

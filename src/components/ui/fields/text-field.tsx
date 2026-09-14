@@ -12,6 +12,7 @@ import {
 import { tv, type VariantProps } from 'tailwind-variants';
 
 import { Field } from '@/components/ui/field/default';
+import { FieldErrorHint } from '@/components/ui/field/field-error-hint';
 import { FieldLabel } from '@/components/ui/field/label';
 import { Input, type InputProps } from '@/components/ui/fields/input';
 import { cn } from '@/lib/utils';
@@ -147,7 +148,6 @@ function TextField<
   const [passwordVisible, setPasswordVisible] = useState(false);
   const { field, fieldState } = useController({ control, disabled, name, rules, shouldUnregister });
   const isPassword = type === 'password';
-  const message = fieldState.error?.message ?? hint;
   const styles = textFieldVariants({ color, size });
 
   return (
@@ -201,15 +201,14 @@ function TextField<
           </button>
         )}
       </div>
-      <span
+      <FieldErrorHint
         id={descriptionId}
-        role={fieldState.invalid ? 'alert' : undefined}
+        error={fieldState.error?.message}
+        hint={hint}
+        invalid={fieldState.invalid}
         className={styles.description()}
-      >
-        <span className={fieldState.invalid ? 'tw:text-error' : 'tw:text-muted-foreground'}>
-          {message}
-        </span>
-      </span>
+        textClassName="tw:text-muted-foreground"
+      />
     </Field>
   );
 }

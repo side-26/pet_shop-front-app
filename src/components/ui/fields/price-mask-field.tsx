@@ -10,6 +10,7 @@ import {
 } from 'react-hook-form';
 
 import { Field } from '@/components/ui/field/default';
+import { FieldErrorHint } from '@/components/ui/field/field-error-hint';
 import { FieldLabel } from '@/components/ui/field/label';
 import { PriceMask, type PriceMaskProps } from '@/components/ui/fields/price-mask';
 import { textFieldVariants } from '@/components/ui/fields/text-field';
@@ -62,7 +63,6 @@ function PriceMaskField<
     ref: fieldRef,
     value: fieldValue,
   } = controllerField;
-  const message = fieldState.error?.message ?? hint;
   const styles = textFieldVariants({ color, size });
 
   return (
@@ -90,15 +90,14 @@ function PriceMaskField<
         onBlur={handleBlur}
         onValueChange={handleValueChange}
       />
-      <span
+      <FieldErrorHint
         id={descriptionId}
-        role={fieldState.invalid ? 'alert' : undefined}
+        error={fieldState.error?.message}
+        hint={hint}
+        invalid={fieldState.invalid}
         className={styles.description()}
-      >
-        <span className={fieldState.invalid ? 'tw:text-error' : 'tw:text-muted-foreground'}>
-          {message}
-        </span>
-      </span>
+        textClassName="tw:text-muted-foreground"
+      />
     </Field>
   );
 }
