@@ -341,7 +341,16 @@ previous/next arrows. Links accept the shared `variant` and `color` axes; when
 radio items must be placed inside `DropdownMenuRadioGroup`, as required by Base UI.
 
 `DataTable` composes TanStack Table v8 with the shared `Table` renderer and owns
-sorting, pagination, empty state, and stable row IDs. `Carousel` fills its containing width by
+sorting, pagination, empty state, and stable row IDs.
+
+`DataGrid` is the static compound definition-list primitive for label/value specifications. Compose
+`DataGrid.Root`, `DataGrid.Item`, `DataGrid.Label`, and `DataGrid.Value` in that order. Root owns
+the shared divider, border-color, density, and surface treatment: `borderColor` is
+`neutral|primary|secondary` (neutral uses Tailwind gray), `variant` is `line|outlined|filled`, and
+`size` is `xs|sm|md|lg|xl`. It defaults to `neutral`, `line`, and `md`; do not use `DataTable` for
+static product specifications.
+
+`Carousel` fills its containing width by
 default and uses Embla with
 `direction="rtl"` by default; in RTL, previous uses a right chevron, next uses a
 left chevron, ArrowRight moves previous, and ArrowLeft moves next. `ButtonGroup`

@@ -19,6 +19,7 @@ import { PaginationShowcase } from './pagination-showcase';
 import { ButtonGroupShowcase } from './button-group-showcase';
 import { CarouselShowcase } from './carousel-showcase';
 import { DataTableShowcase } from './data-table-showcase';
+import { DataGridShowcase } from './data-grid-showcase';
 import { MenubarShowcase } from './menubar-showcase';
 import { FormShowcase } from './form-showcase';
 import { InputOtpShowcase } from './input-otp-showcase';
@@ -79,6 +80,7 @@ const navigation = [
   ['#dropdown-menus', 'Dropdown Menu'],
   ['#paginations', 'Pagination'],
   ['#data-tables', 'Data Table'],
+  ['#data-grids', 'Data Grid'],
   ['#carousels', 'Carousel'],
   ['#button-groups', 'Button Group'],
   ['#toggle-groups', 'Toggle Group'],
@@ -163,6 +165,7 @@ export function UiComponentsGallery() {
         <DropdownMenuShowcase />
         <PaginationShowcase />
         <DataTableShowcase />
+        <DataGridShowcase />
         <CarouselShowcase />
         <ButtonGroupShowcase />
         <ToggleGroupShowcase />
