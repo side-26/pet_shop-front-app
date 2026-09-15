@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   getLandingProductListAction,
   getLandingPetListAction,
+  getLandingSearchAction,
   retryAllLandingPetTypesAction,
   retryLandingFeaturedProductsAction,
   retryLandingHomeOffersAction,
@@ -16,6 +17,7 @@ import {
 import {
   getLandingProductList,
   getLandingPetList,
+  getLandingSearch,
   invalidateAllLandingPetTypes,
   invalidateLandingFeaturedProducts,
   invalidateLandingHomeOffers,
@@ -31,6 +33,7 @@ vi.mock('next/cache', () => ({ refresh: refreshMock }));
 vi.mock('./landing.service', () => ({
   getLandingProductList: vi.fn(),
   getLandingPetList: vi.fn(),
+  getLandingSearch: vi.fn(),
   invalidateAllLandingPetTypes: vi.fn(),
   invalidateLandingFeaturedProducts: vi.fn(),
   invalidateLandingHomeOffers: vi.fn(),
@@ -83,6 +86,12 @@ describe('retryAllLandingPetTypesAction', () => {
       petType: '507f1f77bcf86cd799439011,507f1f77bcf86cd799439012',
       sort: 'less-sales',
     });
+  });
+
+  it('normalizes a catalogue search query before requesting results', async () => {
+    await getLandingSearchAction({ search: '  غذای گربه  ', unknown: 'removed' });
+
+    expect(getLandingSearch).toHaveBeenCalledWith({ search: 'غذای گربه' });
   });
 
   it('expires only the landing pet-type cache before refreshing the client router', async () => {

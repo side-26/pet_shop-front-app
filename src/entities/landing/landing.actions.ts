@@ -12,8 +12,13 @@ import {
   invalidateLandingRecentPets,
   getLandingProductList,
   getLandingPetList,
+  getLandingSearch,
 } from './landing.service';
-import { landingPetListRequestSchema, landingProductListRequestSchema } from './landing.schema';
+import {
+  landingPetListRequestSchema,
+  landingProductListRequestSchema,
+  landingSearchQuerySchema,
+} from './landing.schema';
 
 export async function getLandingProductListAction(input: unknown = {}) {
   const query = await landingProductListRequestSchema.validate(input, { stripUnknown: true });
@@ -23,6 +28,11 @@ export async function getLandingProductListAction(input: unknown = {}) {
 export async function getLandingPetListAction(input: unknown = {}) {
   const query = await landingPetListRequestSchema.validate(input, { stripUnknown: true });
   return getLandingPetList(query);
+}
+
+export async function getLandingSearchAction(input: unknown) {
+  const query = await landingSearchQuerySchema.validate(input, { stripUnknown: true });
+  return getLandingSearch(query);
 }
 
 /** Expires only the home pet-type collection, then requests updated route data. */

@@ -1,7 +1,11 @@
 import type { CustomerPetDetailDTO, CustomerPetListItemDTO } from '@/entities/pets/pets.dto';
 import type { PaginateDataDTO } from '@/entities/pagination/pagination.dto';
 import type { FilterDTO, SortDTO } from '@/entities/pagination/pagination.types';
-import type { CustomerProductDetailDTO } from '@/entities/products/products.dto';
+import type {
+  CustomerProductDetailDTO,
+  ProductRelationDTO,
+} from '@/entities/products/products.dto';
+import type { PetTypePropertyDefinitionDTO } from '@/entities/pet-types/pet-types.dto';
 
 import type {
   LandingDiscountLimitInput,
@@ -10,6 +14,7 @@ import type {
   LandingProductListQueryInput,
   LandingProductListRequestInput,
   LandingSlugInput,
+  LandingSearchQueryInput,
 } from './landing.schema';
 
 export type LandingPetTypeDTO = {
@@ -85,10 +90,34 @@ export type LandingFeaturedProductDTO = {
 };
 
 export type LandingPetDetailDTO = CustomerPetDetailDTO;
-export type LandingProductDetailDTO = CustomerProductDetailDTO;
+export type LandingProductPetTypeDTO = {
+  id: string;
+  title: string;
+  displayName: string;
+  propertyDefinitions: PetTypePropertyDefinitionDTO[];
+};
+export type LandingProductWeightDTO = {
+  metric: string;
+  quantity: number;
+  value: number;
+};
+export type LandingProductDetailDTO = Omit<CustomerProductDetailDTO, 'category'> & {
+  category: ProductRelationDTO & { petType: LandingProductPetTypeDTO | null };
+  weights: LandingProductWeightDTO[];
+  userRate: number;
+  userRateCount: number;
+  canVote: boolean;
+  hasRated: boolean;
+};
+export type LandingSearchResultDTO = {
+  title: string;
+  mainImage: string;
+  thumbnailImage: string;
+};
 export type LandingDiscountLimitDTO = LandingDiscountLimitInput;
 export type LandingProductListQueryDTO = LandingProductListQueryInput;
 export type LandingProductListRequestDTO = LandingProductListRequestInput;
 export type LandingPetListQueryDTO = LandingPetListQueryInput;
 export type LandingPetListRequestDTO = LandingPetListRequestInput;
 export type LandingSlugDTO = LandingSlugInput;
+export type LandingSearchQueryDTO = LandingSearchQueryInput;

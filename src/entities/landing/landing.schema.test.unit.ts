@@ -5,6 +5,7 @@ import {
   landingPetListRequestSchema,
   landingProductListRequestSchema,
   landingSlugSchema,
+  landingSearchQuerySchema,
 } from './landing.schema';
 
 describe('landing schemas', () => {
@@ -64,4 +65,14 @@ describe('landing schemas', () => {
       sort: 'less-sales',
     });
   });
+});
+
+it('normalizes the bounded catalog-search query', async () => {
+  await expect(landingSearchQuerySchema.validate({ search: '  غذای گربه  ' })).resolves.toEqual({
+    search: 'غذای گربه',
+  });
+  await expect(landingSearchQuerySchema.validate({ search: '' })).rejects.toBeDefined();
+  await expect(
+    landingSearchQuerySchema.validate({ search: 'a'.repeat(101) }),
+  ).rejects.toBeDefined();
 });

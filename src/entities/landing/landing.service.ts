@@ -2,6 +2,7 @@ import 'server-only';
 
 import { customFetcher, type QueryParams } from '@/lib/api/customFetcher';
 import { EntityTag } from '@/utils/entityCache';
+import { getSession } from '@/utils/session';
 
 import type {
   LandingDiscountLimitDTO,
@@ -18,6 +19,8 @@ import type {
   LandingProductDetailDTO,
   LandingProductDTO,
   LandingSlugDTO,
+  LandingSearchQueryDTO,
+  LandingSearchResultDTO,
 } from './landing.dto';
 import {
   landingDiscountLimitSchema,
@@ -26,6 +29,7 @@ import {
   DEFAULT_LANDING_PET_LIST_PAGE_SIZE,
   landingPetListQuerySchema,
   landingSlugSchema,
+  landingSearchQuerySchema,
 } from './landing.schema';
 
 const landingCache = new EntityTag('landing');
@@ -37,6 +41,7 @@ const popularProductsCacheKey = 'products:popular';
 const popularBrandsCacheKey = 'brands:popular';
 const popularPetsCacheKey = 'pets:popular';
 const recentPetsCacheKey = 'pets:recent';
+const landingSearchCacheKey = (search: string) => `search:${search}`;
 const landingProductListCacheKey = (query: LandingProductListRequestDTO & { limit: number }) =>
   `products:list:v3:${new URLSearchParams(
     Object.entries(query)
@@ -95,6 +100,19 @@ async function fetchLandingDetail<T>(path: string, slug: string) {
   });
 }
 
+async function fetchAuthenticatedLandingProductDetail(slug: string) {
+  'use cache: private';
+
+  landingCache.cacheLife({ stale: 360 });
+  landingCache.registerDetail(slug);
+  return customFetcher<LandingProductDetailDTO>({
+    url: `/landing/products/${slug}`,
+    method: 'GET',
+    auth: true,
+    cache: 'no-store',
+  });
+}
+
 export function getFeaturedLandingPetTypes() {
   return fetchLandingList<LandingPetTypeDTO[]>('/landing/pet-types', featuredPetTypesCacheKey);
 }
@@ -141,6 +159,15 @@ export function getFeaturedLandingProducts() {
   return fetchLandingList<LandingFeaturedProductDTO[]>(
     '/landing/products/featured',
     featuredProductsCacheKey,
+  );
+}
+
+export async function getLandingSearch(input: LandingSearchQueryDTO) {
+  const { search } = await landingSearchQuerySchema.validate(input, { stripUnknown: true });
+  return fetchLandingList<LandingSearchResultDTO[]>(
+    '/landing/search',
+    landingSearchCacheKey(search),
+    { search },
   );
 }
 
@@ -210,5 +237,7 @@ export async function getLandingPetBySlug(input: LandingSlugDTO['slug']) {
 
 export async function getLandingProductBySlug(input: LandingSlugDTO['slug']) {
   const { slug } = await landingSlugSchema.validate({ slug: input }, { stripUnknown: true });
+  const session = await getSession();
+  if (session) return fetchAuthenticatedLandingProductDetail(slug);
   return fetchLandingDetail<LandingProductDetailDTO>(`/landing/products/${slug}`, slug);
 }

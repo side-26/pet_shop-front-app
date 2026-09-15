@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { customFetcher } from '@/lib/api/customFetcher';
+import { getSession } from '@/utils/session';
 
 import type {
   LandingFeaturedProductDTO,
@@ -21,6 +22,7 @@ import {
   getLandingProductList,
   getLandingPetList,
   getLandingProductBySlug,
+  getLandingSearch,
   getPopularLandingPets,
   getPopularLandingBrands,
   getPopularLandingProducts,
@@ -42,6 +44,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('@/lib/api/customFetcher', () => ({ customFetcher: vi.fn() }));
+vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
 vi.mock('@/utils/entityCache', () => ({
   EntityTag: vi.fn(function Mock(this: Record<string, unknown>) {
     Object.assign(this, mocks);
@@ -49,6 +52,7 @@ vi.mock('@/utils/entityCache', () => ({
 }));
 
 const fetcher = vi.mocked(customFetcher);
+const getSessionMock = vi.mocked(getSession);
 
 const landingProduct: LandingProductDTO = {
   id: 'product-1',
@@ -142,6 +146,7 @@ const petList: LandingPetListPageDTO = {
 describe('landing service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    getSessionMock.mockResolvedValue(null);
     fetcher.mockResolvedValue({ isSuccess: true, message: null, data: [landingProduct] as never });
   });
 
@@ -313,6 +318,27 @@ describe('landing service', () => {
       isSuccess: true,
       message: null,
       data: [popularBrand],
+    });
+  });
+
+  it('caches public searches and keeps signed-in product details private', async () => {
+    await getLandingSearch({ search: '  غذای گربه  ' });
+    getSessionMock.mockResolvedValue({ userId: 'user-1' } as never);
+    await getLandingProductBySlug('cat-food');
+
+    expect(fetcher).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: '/landing/search',
+        query: { search: 'غذای گربه' },
+        auth: false,
+        cache: 'force-cache',
+      }),
+    );
+    expect(fetcher).toHaveBeenCalledWith({
+      url: '/landing/products/cat-food',
+      method: 'GET',
+      auth: true,
+      cache: 'no-store',
     });
   });
 

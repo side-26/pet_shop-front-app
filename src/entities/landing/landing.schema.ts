@@ -18,6 +18,10 @@ export const landingDiscountLimitSchema = object({
   limit: number().integer().min(1).max(100).default(4).required(),
 });
 
+export const landingSearchQuerySchema = object({
+  search: string().trim().min(1).max(100).required(),
+});
+
 const objectIdList = string()
   .transform((value, originalValue) =>
     Array.isArray(originalValue) ? originalValue.join(',') : value,
@@ -73,6 +77,7 @@ export const landingPetListQuerySchema = landingPetListRequestSchema.shape({
 
 export type LandingSlugInput = InferType<typeof landingSlugSchema>;
 export type LandingDiscountLimitInput = InferType<typeof landingDiscountLimitSchema>;
+export type LandingSearchQueryInput = InferType<typeof landingSearchQuerySchema>;
 export type LandingProductListRequestInput = InferType<typeof landingProductListRequestSchema>;
 export type LandingProductListQueryInput = InferType<typeof landingProductListQuerySchema>;
 export type LandingPetListRequestInput = InferType<typeof landingPetListRequestSchema>;
