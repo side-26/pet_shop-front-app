@@ -8,26 +8,21 @@ import { MultipleImageUploaderField } from '@/components/common/multiple-image-u
 import { TextareaField } from '@/components/ui/fields/textarea-field';
 import RichTextField from '@/components/ui/fields/rich-text-field';
 import { TextField } from '@/components/ui/fields/text-field';
-import { PriceMaskField } from '@/components/ui/fields/price-mask-field';
 import { Form } from '@/components/ui/form';
 import {
   useUpdateProductBaseInfo,
   useUpdateProductImages,
-  useUpdateProductPrice,
 } from '@/entities/products/products.client';
 import type {
   ProductBaseInfoDTO,
   ProductImagesDTO,
-  ProductPriceDTO,
   ProductRelationDTO,
 } from '@/entities/products/products.dto';
 import {
   updateProductBaseInfoSchema,
   updateProductImagesSchema,
-  updateProductPriceSchema,
   type UpdateProductBaseInfoInput,
   type UpdateProductImagesInput,
-  type UpdateProductPriceInput,
 } from '@/entities/products/products.schema';
 import { cn } from '@/lib/utils';
 
@@ -51,11 +46,10 @@ const emptyProductFormOptions: ProductFormOptions = {
 type Common = {
   section: ProductSection;
   isSkeleton?: boolean;
-  data?: ProductBaseInfoDTO | ProductImagesDTO | ProductPriceDTO;
+  data?: ProductBaseInfoDTO | ProductImagesDTO;
   options?: ProductFormOptions;
   base: ReturnType<typeof useUpdateProductBaseInfo>;
   images: ReturnType<typeof useUpdateProductImages>;
-  price: ReturnType<typeof useUpdateProductPrice>;
 };
 
 function SectionForm({
@@ -65,40 +59,8 @@ function SectionForm({
   options,
   base: { formRef: baseFormRef, handleSubmit: baseSubmit },
   images: { formRef: imagesFormRef, handleSubmit: imagesSubmit },
-  price: { formRef: priceFormRef, handleSubmit: priceSubmit },
 }: Common) {
   const className = cn(isSkeleton && 'skeleton tw:pointer-events-none tw:select-none');
-  if (section === 'price') {
-    const value = data as ProductPriceDTO | undefined;
-    return (
-      <Form<UpdateProductPriceInput>
-        ref={priceFormRef}
-        id={formId(section)}
-        validationSchema={updateProductPriceSchema}
-        options={{
-          defaultValues: { price: value?.price, discountPercentage: value?.discountPercentage },
-        }}
-        handleSubmit={priceSubmit}
-        aria-label="فرم قیمت محصول"
-        aria-busy={isSkeleton || undefined}
-        className={className}
-      >
-        <fieldset
-          disabled={isSkeleton}
-          className="tw:grid tw:w-full tw:min-w-0 tw:gap-4 tw:sm:grid-cols-2"
-        >
-          <PriceMaskField<UpdateProductPriceInput> name="price" label="قیمت" min={0} />
-          <TextField<UpdateProductPriceInput>
-            name="discountPercentage"
-            label="درصد تخفیف"
-            type="number"
-            min={0}
-            max={100}
-          />
-        </fieldset>
-      </Form>
-    );
-  }
   if (section === 'images') {
     const value = data as ProductImagesDTO | undefined;
     return (
@@ -143,7 +105,6 @@ function SectionForm({
           category: value ? relationId(value.category) : '',
           brand: value ? relationId(value.brand) : '',
           subCategory: value?.subCategory ? relationId(value.subCategory) : null,
-          quantity: value?.quantity,
         },
       }}
       handleSubmit={baseSubmit}
@@ -160,20 +121,12 @@ function SectionForm({
             disabled={isSkeleton}
           />
         </div>
-        <div className="tw:grid tw:gap-4 tw:sm:grid-cols-5">
+        <div className="tw:grid tw:gap-4">
           <ProductRelationFields<UpdateProductBaseInfoInput>
             categoryName="category"
             subCategoryName="subCategory"
             options={relationOptions}
             disabled={isSkeleton}
-            categoryClassName="tw:sm:col-span-2"
-            subCategoryClassName="tw:sm:col-span-2"
-          />
-          <TextField<UpdateProductBaseInfoInput>
-            name="quantity"
-            label="موجودی"
-            type="number"
-            min={0}
           />
         </div>
         <TextareaField<UpdateProductBaseInfoInput>
@@ -190,7 +143,6 @@ function SectionForm({
 
 const titles: Record<ProductSection, string> = {
   'main-info': 'اطلاعات اصلی',
-  price: 'قیمت',
   images: 'تصاویر',
 };
 type Props = {
@@ -214,14 +166,13 @@ export function ProductSectionDialogContentWrapper({
 }: Props) {
   const base = useUpdateProductBaseInfo(productId, onUpdated);
   const images = useUpdateProductImages(productId, onUpdated);
-  const price = useUpdateProductPrice(productId, onUpdated);
   const pending =
     section === 'main-info'
       ? base.isPending
       : section === 'images'
         ? images.isPending
-        : price.isPending;
-  const formProps = { base, images, price };
+        : images.isPending;
+  const formProps = { base, images };
   return (
     <FormDialogContent
       formId={formId(section)}

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'nextjs-toploader/app';
-import { CircleDollarSign, Images, Info, MoreHorizontal, Trash2 } from 'lucide-react';
+import { Images, Info, MoreHorizontal, Scale, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -16,7 +16,7 @@ import {
   getProductFormOptionsAction,
   getProductImagesAction,
   getProductMainInfoAction,
-  getProductPriceAction,
+  getProductWeightsAction,
 } from '@/entities/products/products.actions';
 import { submitDeleteProduct } from '@/entities/products/products.client';
 import { useCommonStore } from '@/stores/common.store';
@@ -27,6 +27,7 @@ import type {
   ProductSectionRequest,
 } from './product-section-dialog.types';
 import { ProductSectionDialog } from './product-section-dialog';
+import { ProductWeightsDialog } from './product-weights-dialog';
 type DialogState = {
   section: ProductSection;
   request: ProductSectionRequest;
@@ -38,19 +39,24 @@ export function ProductRowActions({ productId, productTitle, disabled = false }:
   const router = useRouter();
   const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
   const [dialog, setDialog] = useState<DialogState>(null);
+  const [weightsRequest, setWeightsRequest] = useState<ReturnType<
+    typeof getProductWeightsAction
+  > | null>(null);
   function open(section: ProductSection) {
     if (disabled) return;
     const request =
       section === 'main-info'
         ? getProductMainInfoAction({ id: productId })
-        : section === 'price'
-          ? getProductPriceAction({ id: productId })
-          : getProductImagesAction({ id: productId });
+        : getProductImagesAction({ id: productId });
     setDialog({
       section,
       request: request as ProductSectionRequest,
       optionsRequest: getProductFormOptionsAction(),
     });
+  }
+  function openWeights() {
+    if (disabled) return;
+    setWeightsRequest(getProductWeightsAction({ id: productId }));
   }
   function remove() {
     if (disabled) return;
@@ -88,9 +94,9 @@ export function ProductRowActions({ productId, productTitle, disabled = false }:
               <Info aria-hidden="true" />
               مشاهده و ویرایش اطلاعات اصلی
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => open('price')}>
-              <CircleDollarSign aria-hidden="true" />
-              مشاهده و ویرایش قیمت
+            <DropdownMenuItem onClick={openWeights}>
+              <Scale aria-hidden="true" />
+              ویرایش وزن‌ها و قیمت‌ها
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => open('images')}>
               <Images aria-hidden="true" />
@@ -113,6 +119,18 @@ export function ProductRowActions({ productId, productTitle, disabled = false }:
           onClose={() => setDialog(null)}
           onUpdated={() => {
             setDialog(null);
+            router.refresh();
+          }}
+        />
+      ) : null}
+      {weightsRequest ? (
+        <ProductWeightsDialog
+          productId={productId}
+          productTitle={productTitle}
+          request={weightsRequest}
+          onClose={() => setWeightsRequest(null)}
+          onUpdated={() => {
+            setWeightsRequest(null);
             router.refresh();
           }}
         />

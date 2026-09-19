@@ -20,7 +20,6 @@ import {
   productSchema,
   updateProductBaseInfoSchema,
   updateProductImagesSchema,
-  updateProductPriceSchema,
   updateProductUserRateSchema,
   replaceProductWeightsSchema,
   replaceProductPropertyDefinitionsSchema,
@@ -127,9 +126,6 @@ async function managementSection<T>(input: unknown, action: (id: string) => Prom
 export async function getProductImagesAction(input: unknown) {
   return managementSection(input, service.getProductImages);
 }
-export async function getProductPriceAction(input: unknown) {
-  return managementSection(input, service.getProductPrice);
-}
 export async function getProductWeightsAction(input: unknown) {
   return managementSection(input, service.getProductWeights);
 }
@@ -163,9 +159,6 @@ export async function updateProductBaseInfoAction(input: unknown) {
 }
 export async function updateProductImagesAction(input: unknown) {
   return update(input, updateProductImagesSchema, service.updateProductImages);
-}
-export async function updateProductPriceAction(input: unknown) {
-  return update(input, updateProductPriceSchema, service.updateProductPrice);
 }
 export async function replaceProductWeightsAction(input: unknown) {
   const error = await authorizeManagement();

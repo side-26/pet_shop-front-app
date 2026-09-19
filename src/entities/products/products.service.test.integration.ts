@@ -129,7 +129,6 @@ describe('product service', () => {
       description,
       category,
       brand,
-      quantity: 2,
       images: { images: [image], mainImageIndex: 0 },
     };
     await createProduct(input);
@@ -142,7 +141,6 @@ describe('product service', () => {
     const body = fetcher.mock.calls[0]?.[0].body as FormData;
     expect(body.get('description')).toBe(JSON.stringify(description));
     expect(body.get('mainImage')).toBe(image);
-    expect(body.has('quantity')).toBe(false);
     expect(body.get('brand')).toBe(brand);
     expect(fetcher.mock.calls[1]?.[0]).toMatchObject({
       url: `/products/${id}/main-info`,

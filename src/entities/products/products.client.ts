@@ -20,13 +20,13 @@ import {
   enableProductAction,
   updateProductBaseInfoAction,
   updateProductImagesAction,
-  updateProductPriceAction,
+  replaceProductWeightsAction,
 } from './products.actions';
 import type {
   ProductInput,
   UpdateProductBaseInfoInput,
   UpdateProductImagesInput,
-  UpdateProductPriceInput,
+  ReplaceProductWeightsInput,
 } from './products.schema';
 
 async function submit<T extends FieldValues>(
@@ -81,11 +81,11 @@ export const submitUpdateProductImages = (
   input: UpdateProductImagesInput,
   setError: UseFormSetError<UpdateProductImagesInput>,
 ) => submit({ id, ...input }, setError, updateProductImagesAction);
-export const submitUpdateProductPrice = (
+export const submitReplaceProductWeights = (
   id: string,
-  input: UpdateProductPriceInput,
-  setError: UseFormSetError<UpdateProductPriceInput>,
-) => submit({ id, ...input }, setError, updateProductPriceAction);
+  input: Pick<ReplaceProductWeightsInput, 'weights'>,
+  setError: UseFormSetError<Pick<ReplaceProductWeightsInput, 'weights'>>,
+) => submit({ id, ...input }, setError, replaceProductWeightsAction);
 export async function submitProductEnabledUpdate(id: string, enabled: boolean) {
   const result = await (enabled ? enableProductAction : disableProductAction)({ id });
   if (!result.isSuccess) {
@@ -161,15 +161,15 @@ export function useUpdateProductImages(id: string, onSuccess: () => void) {
   );
   return { formRef, handleSubmit, isPending } as const;
 }
-export function useUpdateProductPrice(id: string, onSuccess: () => void) {
-  const formRef = useRef<FormHandle<UpdateProductPriceInput>>(null);
+export function useReplaceProductWeights(id: string, onSuccess: () => void) {
+  const formRef = useRef<FormHandle<Pick<ReplaceProductWeightsInput, 'weights'>>>(null);
   const [isPending, startTransition] = useTransition();
   const handleSubmit = useCallback(
-    (input: UpdateProductPriceInput) => {
+    (input: Pick<ReplaceProductWeightsInput, 'weights'>) => {
       const form = formRef.current;
       if (!form || isPending) return;
       startTransition(async () => {
-        if (await submitUpdateProductPrice(id, input, form.setError)) onSuccess();
+        if (await submitReplaceProductWeights(id, input, form.setError)) onSuccess();
       });
     },
     [id, isPending, onSuccess],

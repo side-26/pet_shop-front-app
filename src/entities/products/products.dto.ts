@@ -7,7 +7,6 @@ import type {
   ProductInput,
   UpdateProductBaseInfoInput,
   UpdateProductImagesInput,
-  UpdateProductPriceInput,
   UpdateProductUserRateInput,
   ReplaceProductWeightsInput,
   ReplaceProductPropertyDefinitionsInput,
@@ -91,8 +90,6 @@ export type ProductImagesDTO = {
   mainImageThumbnail: string;
   imagesList: string[];
 };
-/** @deprecated Product pricing is configured through product weights. */
-export type ProductPriceDTO = { price: number; discountPercentage: number };
 export type ProductWeightsDTO = ProductWeightDTO[];
 export type ReplaceProductWeightsResultDTO = { id: string; weights: ProductWeightDTO[] };
 export type ProductPropertyDefinitionsDTO = ProductPropertyDefinitionDTO[];
@@ -122,7 +119,6 @@ export type CustomerProductsPageDTO = PaginateDataDTO<
 export type CreateProductDTO = ProductInput;
 export type UpdateProductBaseInfoDTO = UpdateProductBaseInfoInput;
 export type UpdateProductImagesDTO = UpdateProductImagesInput;
-export type UpdateProductPriceDTO = UpdateProductPriceInput;
 export type ReplaceProductWeightsDTO = ReplaceProductWeightsInput;
 export type ReplaceProductPropertyDefinitionsDTO = ReplaceProductPropertyDefinitionsInput;
 export type UpdateProductUserRateDTO = UpdateProductUserRateInput;

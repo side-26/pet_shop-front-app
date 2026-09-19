@@ -37,7 +37,6 @@ vi.mock('./products.service', () => ({
   getManagementProduct: vi.fn(),
   getProductImages: vi.fn(),
   getProductMainInfo: vi.fn(),
-  getProductPrice: vi.fn(),
   getProductWeights: vi.fn(),
   getProductPropertyDefinitions: vi.fn(),
   replaceProductPropertyDefinitions: vi.fn(),
@@ -83,9 +82,7 @@ describe('product actions', () => {
       id,
       weights: [{ quantity: 2, value: 1, price: 10, discountPercentage: 0 }],
     });
-    expect(service.createProduct).toHaveBeenCalledWith(
-      expect.objectContaining({ title: 'غذا', quantity: 0 }),
-    );
+    expect(service.createProduct).toHaveBeenCalledWith(expect.objectContaining({ title: 'غذا' }));
     expect(service.replaceProductWeights).toHaveBeenCalledWith({
       id,
       weights: [{ metric: 'KG', quantity: 2, value: 1, price: 10, discountPercentage: 0 }],

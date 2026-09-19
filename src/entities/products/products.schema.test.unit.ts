@@ -19,7 +19,7 @@ const images = {
 };
 
 describe('product schemas', () => {
-  it('normalizes creation input while inventory remains a legacy UI-only value', async () => {
+  it('normalizes creation input without a product-level inventory value', async () => {
     await expect(
       productSchema.validate({ title: '  غذای خشک  ', description, category, brand, images }),
     ).resolves.toMatchObject({
@@ -28,7 +28,6 @@ describe('product schemas', () => {
       category,
       brand,
       images,
-      quantity: 0,
     });
   });
   it('validates per-weight inventory and pricing replacements', async () => {

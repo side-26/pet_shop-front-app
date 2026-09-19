@@ -47,7 +47,6 @@ export function CreateProductDialog({ open, options, onOpenChange, onCreated }: 
               category: '',
               brand: '',
               subCategory: null,
-              quantity: 0,
               images: { images: [], mainImageIndex: 0 },
             },
           }}
@@ -59,23 +58,14 @@ export function CreateProductDialog({ open, options, onOpenChange, onCreated }: 
               <TextField<ProductInput> name="title" label="عنوان" required />
               {options ? <ProductBrandField<ProductInput> name="brand" options={options} /> : null}
             </div>
-            <div className="tw:grid tw:gap-4 tw:sm:grid-cols-5">
+            <div className="tw:grid tw:gap-4 tw:sm:grid-cols-2">
               {options ? (
                 <ProductRelationFields<ProductInput>
                   categoryName="category"
                   subCategoryName="subCategory"
                   options={options}
-                  categoryClassName="tw:sm:col-span-2"
-                  subCategoryClassName="tw:sm:col-span-2"
                 />
               ) : null}
-              <TextField<ProductInput>
-                name="quantity"
-                label="موجودی"
-                type="number"
-                min={0}
-                required
-              />
             </div>
             <TextareaField<ProductInput> name="summary" label="خلاصه" maxLength={500} counter />
             <RichTextField<ProductInput> name="description" label="توضیحات" required />

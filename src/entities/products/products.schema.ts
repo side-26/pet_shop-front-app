@@ -47,8 +47,6 @@ const productFields = {
   category: objectId,
   brand: objectId,
   subCategory: objectId.nullable().optional(),
-  /** Legacy UI-only field; inventory is derived from weight variants by the backend. */
-  quantity: number().integer().min(0).default(0).optional(),
 };
 
 export const productIdSchema = object({ id: objectId });
@@ -66,18 +64,10 @@ export const updateProductBaseInfoSchema = object({
   category: objectId.optional(),
   brand: objectId,
   subCategory: objectId.nullable().optional(),
-  /** Legacy UI-only field; inventory is derived from weight variants by the backend. */
-  quantity: number().integer().min(0).optional(),
 }).test('has-update', 'حداقل یک مقدار برای ویرایش لازم است.', (value) =>
   Boolean(value && Object.values(value).some((item) => item !== undefined)),
 );
 export const updateProductImagesSchema = object({ images: productImagesUpload.required() });
-export const updateProductPriceSchema = object({
-  price: number().min(0).optional(),
-  discountPercentage: number().min(0).max(100).optional(),
-}).test('has-update', 'حداقل یک مقدار برای ویرایش لازم است.', (value) =>
-  Boolean(value && Object.values(value).some((item) => item !== undefined)),
-);
 
 const queryFields = {
   title: string().trim().max(150).optional(),
@@ -161,7 +151,6 @@ export type ProductIdInput = InferType<typeof productIdSchema>;
 export type ProductInput = InferType<typeof productSchema>;
 export type UpdateProductBaseInfoInput = InferType<typeof updateProductBaseInfoSchema>;
 export type UpdateProductImagesInput = InferType<typeof updateProductImagesSchema>;
-export type UpdateProductPriceInput = InferType<typeof updateProductPriceSchema>;
 export type ReplaceProductWeightsInput = InferType<typeof replaceProductWeightsSchema>;
 export type ReplaceProductPropertyDefinitionsInput = InferType<
   typeof replaceProductPropertyDefinitionsSchema
