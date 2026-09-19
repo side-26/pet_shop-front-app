@@ -51,6 +51,10 @@ export type LandingProductDTO = {
   discountPercentage: number;
   /** Discount amount calculated by discounted and featured landing endpoints. */
   discountPrice: number;
+  /** Cheapest payable price among the product's configured weights. */
+  minimumFinalPrice?: number;
+  /** Lowest inventory count among configured weights; zero when no weight exists. */
+  minimumQuantity?: number;
 };
 
 /**
@@ -104,6 +108,8 @@ export type LandingProductWeightDTO = {
   metric: string;
   quantity: number;
   value: number;
+  price?: number;
+  discountPercentage?: number;
 };
 export type LandingProductDetailDTO = Omit<CustomerProductDetailDTO, 'category'> & {
   category: ProductRelationDTO & { petType: LandingProductPetTypeDTO | null };

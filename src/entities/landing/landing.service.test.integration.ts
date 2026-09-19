@@ -66,6 +66,8 @@ const landingProduct: LandingProductDTO = {
   price: 200_000,
   discountPercentage: 20,
   discountPrice: 40_000,
+  minimumFinalPrice: 160_000,
+  minimumQuantity: 3,
 };
 
 const featuredProduct: LandingFeaturedProductDTO = {
@@ -283,6 +285,8 @@ describe('landing service', () => {
     expect(result).toEqual({ isSuccess: true, message: null, data: [landingProduct] });
     if (!result.isSuccess) throw new Error('Expected the mocked landing request to succeed.');
     expect(result.data[0]?.discountPrice).toBe(40_000);
+    expect(result.data[0]?.minimumFinalPrice).toBe(160_000);
+    expect(result.data[0]?.minimumQuantity).toBe(3);
     expect(result.data[0]?.mainImageThumbnail).toBe('data:image/webp;base64,AAAA');
   });
 

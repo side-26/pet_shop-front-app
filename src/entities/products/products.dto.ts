@@ -9,6 +9,8 @@ import type {
   UpdateProductImagesInput,
   UpdateProductPriceInput,
   UpdateProductUserRateInput,
+  ReplaceProductWeightsInput,
+  ReplaceProductPropertyDefinitionsInput,
 } from './products.schema';
 
 export type ProductRelationDTO = {
@@ -16,6 +18,26 @@ export type ProductRelationDTO = {
   title: string;
   title_fa?: string;
   [key: string]: unknown;
+};
+export type ProductWeightDTO = {
+  /** Section responses use `id`; full product responses retain Mongoose's `_id`. */
+  id?: string;
+  _id?: string;
+  metric: string;
+  quantity: number;
+  value: number;
+  price: number;
+  discountPercentage: number;
+};
+export type ProductPropertyDefinitionDTO = {
+  key: string;
+  label: string;
+  valueType: 'string' | 'number' | 'boolean' | 'date' | 'enum';
+  required: boolean;
+  options?: string[];
+  min?: number;
+  max?: number;
+  defaultValue?: unknown;
 };
 export type ManagementProductDTO = {
   id: string;
@@ -29,6 +51,7 @@ export type ManagementProductDTO = {
   brand: ProductRelationDTO | string;
   subCategory: ProductRelationDTO | string | null;
   quantity: number;
+  weights?: ProductWeightDTO[];
   userRate?: number;
   userRateCount?: number;
   price: number;
@@ -68,11 +91,26 @@ export type ProductImagesDTO = {
   mainImageThumbnail: string;
   imagesList: string[];
 };
+/** @deprecated Product pricing is configured through product weights. */
 export type ProductPriceDTO = { price: number; discountPercentage: number };
+export type ProductWeightsDTO = ProductWeightDTO[];
+export type ReplaceProductWeightsResultDTO = { id: string; weights: ProductWeightDTO[] };
+export type ProductPropertyDefinitionsDTO = ProductPropertyDefinitionDTO[];
+export type ReplaceProductPropertyDefinitionsResultDTO = {
+  id: string;
+  propertyDefinitions: ProductPropertyDefinitionDTO[];
+};
 export type ProductUserRateDTO = { userRate: number; userRateCount: number };
 export type ProductBaseInfoDTO = Pick<
   ManagementProductDTO,
-  'title' | 'summary' | 'description' | 'category' | 'brand' | 'subCategory' | 'quantity'
+  | 'title'
+  | 'summary'
+  | 'description'
+  | 'category'
+  | 'brand'
+  | 'subCategory'
+  | 'quantity'
+  | 'weights'
 >;
 export type ManagementProductListItemDTO = ManagementProductDTO & { salesVolume: number };
 export type ManagementProductsPageDTO = PaginateDataDTO<ManagementProductListItemDTO>;
@@ -85,6 +123,8 @@ export type CreateProductDTO = ProductInput;
 export type UpdateProductBaseInfoDTO = UpdateProductBaseInfoInput;
 export type UpdateProductImagesDTO = UpdateProductImagesInput;
 export type UpdateProductPriceDTO = UpdateProductPriceInput;
+export type ReplaceProductWeightsDTO = ReplaceProductWeightsInput;
+export type ReplaceProductPropertyDefinitionsDTO = ReplaceProductPropertyDefinitionsInput;
 export type UpdateProductUserRateDTO = UpdateProductUserRateInput;
 export type CustomerProductQueryDTO = CustomerProductQueryInput;
 export type ManagementProductQueryDTO = ManagementProductQueryInput;

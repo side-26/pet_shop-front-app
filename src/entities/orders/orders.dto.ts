@@ -1,5 +1,5 @@
 import type { PaginateDataDTO } from '@/entities/pagination/pagination.dto';
-import type { AddressDTO, ShippingInfoDTO } from '@/entities/users/users.dto';
+import type { AddressDTO, DeliveryWindowDTO, ShippingInfoDTO } from '@/entities/users/users.dto';
 
 import type {
   CreateOrderInput,
@@ -46,6 +46,7 @@ export interface OrderDTO {
   items: OrderItemDTO[];
   discountPrice: number;
   userAddress: AddressDTO & { sourceId: string };
+  deliveryWindow: DeliveryWindowDTO;
   deliveringDateToShipping: string;
   shippingPrice: number;
   shippingInfo: ShippingInfoDTO;

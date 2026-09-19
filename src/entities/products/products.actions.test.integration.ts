@@ -12,7 +12,7 @@ import {
   getManagementProductsAction,
   getProductFormOptionsAction,
   getProductMainInfoAction,
-  updateProductPriceAction,
+  replaceProductWeightsAction,
   updateProductUserRateAction,
 } from './products.actions';
 import * as service from './products.service';
@@ -31,13 +31,16 @@ vi.mock('./products.service', () => ({
   deleteProduct: vi.fn(),
   getCustomerProducts: vi.fn(),
   getManagementProducts: vi.fn(),
-  updateProductPrice: vi.fn(),
+  replaceProductWeights: vi.fn(),
   updateProductUserRate: vi.fn(),
   getCustomerProduct: vi.fn(),
   getManagementProduct: vi.fn(),
   getProductImages: vi.fn(),
   getProductMainInfo: vi.fn(),
   getProductPrice: vi.fn(),
+  getProductWeights: vi.fn(),
+  getProductPropertyDefinitions: vi.fn(),
+  replaceProductPropertyDefinitions: vi.fn(),
   updateProductBaseInfo: vi.fn(),
   updateProductImages: vi.fn(),
   enableProduct: vi.fn(),
@@ -66,9 +69,9 @@ describe('product actions', () => {
       sort: 'createdAt',
     });
   });
-  it('validates management creation and price updates before invoking services', async () => {
+  it('validates management creation and weight replacement before invoking services', async () => {
     vi.mocked(service.createProduct).mockResolvedValue(ok);
-    vi.mocked(service.updateProductPrice).mockResolvedValue(ok);
+    vi.mocked(service.replaceProductWeights).mockResolvedValue(ok);
     await createProductAction({
       title: ' غذا ',
       description,
@@ -76,11 +79,17 @@ describe('product actions', () => {
       brand,
       images: { images: [image], mainImageIndex: 0 },
     });
-    await updateProductPriceAction({ id, price: 10 });
+    await replaceProductWeightsAction({
+      id,
+      weights: [{ quantity: 2, value: 1, price: 10, discountPercentage: 0 }],
+    });
     expect(service.createProduct).toHaveBeenCalledWith(
       expect.objectContaining({ title: 'غذا', quantity: 0 }),
     );
-    expect(service.updateProductPrice).toHaveBeenCalledWith(id, { price: 10 });
+    expect(service.replaceProductWeights).toHaveBeenCalledWith({
+      id,
+      weights: [{ metric: 'KG', quantity: 2, value: 1, price: 10, discountPercentage: 0 }],
+    });
   });
   it('authorizes and validates main-information section reads', async () => {
     vi.mocked(service.getProductMainInfo).mockResolvedValue(ok);

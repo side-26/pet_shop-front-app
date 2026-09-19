@@ -22,6 +22,8 @@ import {
   updateUserAddressSchema,
   userAddressIdSchema,
   wishlistEntryIdSchema,
+  createDeliveryQuoteSchema,
+  selectDeliveryWindowSchema,
 } from './users.schema';
 import {
   createUser,
@@ -44,6 +46,8 @@ import {
   getUserAddresses,
   getWishlist,
   updateUserAddress,
+  createDeliveryQuote,
+  selectDeliveryWindow,
 } from './users.service';
 
 const ALLOWED_ADMIN_ROLES = new Set<UserRole>([USER_ROLES.ADMIN]);
@@ -333,6 +337,28 @@ export async function emptyCartAction() {
   return session
     ? emptyCart(session.userId)
     : accessError('برای ویرایش سبد خرید وارد حساب کاربری شوید.');
+}
+
+export async function createDeliveryQuoteAction(input: unknown) {
+  const result = await validateAuthenticatedInput(
+    input,
+    createDeliveryQuoteSchema,
+    'برای دریافت زمان ارسال وارد حساب کاربری شوید.',
+  );
+  return 'error' in result
+    ? result.error
+    : createDeliveryQuote(result.session.userId, result.value);
+}
+
+export async function selectDeliveryWindowAction(input: unknown) {
+  const result = await validateAuthenticatedInput(
+    input,
+    selectDeliveryWindowSchema,
+    'برای انتخاب زمان ارسال وارد حساب کاربری شوید.',
+  );
+  return 'error' in result
+    ? result.error
+    : selectDeliveryWindow(result.session.userId, result.value);
 }
 
 export async function getWishlistAction() {

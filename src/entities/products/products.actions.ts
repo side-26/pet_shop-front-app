@@ -22,6 +22,8 @@ import {
   updateProductImagesSchema,
   updateProductPriceSchema,
   updateProductUserRateSchema,
+  replaceProductWeightsSchema,
+  replaceProductPropertyDefinitionsSchema,
 } from './products.schema';
 import * as service from './products.service';
 
@@ -128,6 +130,13 @@ export async function getProductImagesAction(input: unknown) {
 export async function getProductPriceAction(input: unknown) {
   return managementSection(input, service.getProductPrice);
 }
+export async function getProductWeightsAction(input: unknown) {
+  return managementSection(input, service.getProductWeights);
+}
+export async function getProductPropertyDefinitionsAction(input: unknown) {
+  const value = await validate(productIdSchema, input);
+  return 'isSuccess' in value ? value : service.getProductPropertyDefinitions(value.id);
+}
 export async function getProductMainInfoAction(input: unknown) {
   return managementSection(input, service.getProductMainInfo);
 }
@@ -157,6 +166,18 @@ export async function updateProductImagesAction(input: unknown) {
 }
 export async function updateProductPriceAction(input: unknown) {
   return update(input, updateProductPriceSchema, service.updateProductPrice);
+}
+export async function replaceProductWeightsAction(input: unknown) {
+  const error = await authorizeManagement();
+  if (error) return error;
+  const value = await validate(replaceProductWeightsSchema, input);
+  return 'isSuccess' in value ? value : service.replaceProductWeights(value);
+}
+export async function replaceProductPropertyDefinitionsAction(input: unknown) {
+  const error = await authorizeManagement();
+  if (error) return error;
+  const value = await validate(replaceProductPropertyDefinitionsSchema, input);
+  return 'isSuccess' in value ? value : service.replaceProductPropertyDefinitions(value);
 }
 export async function updateProductUserRateAction(input: unknown) {
   const error = await authorizeCustomer();

@@ -47,7 +47,8 @@ const productFields = {
   category: objectId,
   brand: objectId,
   subCategory: objectId.nullable().optional(),
-  quantity: number().integer().min(0).default(0).required(),
+  /** Legacy UI-only field; inventory is derived from weight variants by the backend. */
+  quantity: number().integer().min(0).default(0).optional(),
 };
 
 export const productIdSchema = object({ id: objectId });
@@ -65,6 +66,7 @@ export const updateProductBaseInfoSchema = object({
   category: objectId.optional(),
   brand: objectId,
   subCategory: objectId.nullable().optional(),
+  /** Legacy UI-only field; inventory is derived from weight variants by the backend. */
   quantity: number().integer().min(0).optional(),
 }).test('has-update', 'حداقل یک مقدار برای ویرایش لازم است.', (value) =>
   Boolean(value && Object.values(value).some((item) => item !== undefined)),
@@ -97,6 +99,50 @@ export const managementProductQuerySchema = object({
   ...queryFields,
   includeDisabled: boolean().default(false).required(),
 });
+
+const productWeightSchema = object({
+  metric: string().trim().min(1).max(20).default('KG').required(),
+  quantity: number().integer().min(0).required(),
+  value: number().positive().required(),
+  price: number().min(0).required(),
+  discountPercentage: number().min(0).max(100).required(),
+});
+
+export const replaceProductWeightsSchema = object({
+  id: objectId,
+  weights: array(productWeightSchema).max(50).required(),
+});
+
+const productPropertyDefinitionSchema = object({
+  key: string()
+    .trim()
+    .matches(/^[a-z][a-zA-Z0-9]*$/)
+    .required(),
+  label: string().trim().min(1).max(80).required(),
+  valueType: mixed<'string' | 'number' | 'boolean' | 'date' | 'enum'>()
+    .oneOf(['string', 'number', 'boolean', 'date', 'enum'])
+    .required(),
+  required: boolean().default(false).required(),
+  options: array(string().trim().min(1)).min(1).optional(),
+  min: number().optional(),
+  max: number().optional(),
+  defaultValue: mixed().optional(),
+}).test('property-definition-rules', 'تعریف ویژگی محصول معتبر نیست.', (value) => {
+  if (!value) return false;
+  if (value.valueType === 'enum' && !value.options?.length) return false;
+  return value.min === undefined || value.max === undefined || value.min <= value.max;
+});
+
+export const replaceProductPropertyDefinitionsSchema = object({
+  id: objectId,
+  propertyDefinitions: array(productPropertyDefinitionSchema)
+    .max(50)
+    .test('unique-keys', 'کلید ویژگی‌ها باید یکتا باشد.', (definitions) => {
+      if (!definitions) return false;
+      return new Set(definitions.map(({ key }) => key)).size === definitions.length;
+    })
+    .required(),
+});
 export const updateProductUserRateSchema = object({
   id: objectId,
   userRate: number()
@@ -116,6 +162,10 @@ export type ProductInput = InferType<typeof productSchema>;
 export type UpdateProductBaseInfoInput = InferType<typeof updateProductBaseInfoSchema>;
 export type UpdateProductImagesInput = InferType<typeof updateProductImagesSchema>;
 export type UpdateProductPriceInput = InferType<typeof updateProductPriceSchema>;
+export type ReplaceProductWeightsInput = InferType<typeof replaceProductWeightsSchema>;
+export type ReplaceProductPropertyDefinitionsInput = InferType<
+  typeof replaceProductPropertyDefinitionsSchema
+>;
 export type UpdateProductUserRateInput = InferType<typeof updateProductUserRateSchema>;
 export type CustomerProductQueryInput = InferType<typeof customerProductQuerySchema>;
 export type ManagementProductQueryInput = InferType<typeof managementProductQuerySchema>;

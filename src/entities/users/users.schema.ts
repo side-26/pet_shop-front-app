@@ -1,5 +1,6 @@
 import { boolean, mixed, number, object, ref, string, type InferType } from 'yup';
 
+import '@/configs/yup.config';
 import { yupMessage } from '@/configs/yup.config';
 import {
   MAIN_IMAGE_UPLOAD_MAX_SIZE_BYTES,
@@ -158,3 +159,12 @@ export const addWishlistItemSchema = object({
 export type AddWishlistItemInput = InferType<typeof addWishlistItemSchema>;
 export const wishlistEntryIdSchema = cartEntryIdSchema;
 export type WishlistEntryIdInput = InferType<typeof wishlistEntryIdSchema>;
+
+export const createDeliveryQuoteSchema = object({ addressId: objectIdSchema });
+export type CreateDeliveryQuoteInput = InferType<typeof createDeliveryQuoteSchema>;
+
+export const selectDeliveryWindowSchema = object({
+  quoteId: string().trim().min(1).max(100).required(),
+  deliveryWindowId: string().trim().min(1).max(100).required(),
+});
+export type SelectDeliveryWindowInput = InferType<typeof selectDeliveryWindowSchema>;

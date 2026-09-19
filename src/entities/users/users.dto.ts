@@ -14,6 +14,8 @@ import type {
   AddWishlistItemInput,
   CreateUserAddressInput,
   UpdateUserAddressInput,
+  CreateDeliveryQuoteInput,
+  SelectDeliveryWindowInput,
 } from './users.schema';
 
 export type GetAllPaginatedUsersQueryDTO = GetAllPaginatedUsersInput;
@@ -28,6 +30,8 @@ export type AddCartItemDTO = AddCartItemInput;
 export type AddWishlistItemDTO = AddWishlistItemInput;
 export type CreateUserAddressDTO = CreateUserAddressInput;
 export type UpdateUserAddressDTO = UpdateUserAddressInput;
+export type CreateDeliveryQuoteDTO = CreateDeliveryQuoteInput;
+export type SelectDeliveryWindowDTO = SelectDeliveryWindowInput;
 
 export interface AddressDTO {
   _id?: string;
@@ -58,11 +62,32 @@ export interface ShippingInfoDTO {
   estimateDeliveryDate: string | null;
 }
 
+export interface DeliveryWindowDTO {
+  id: string;
+  provider: string;
+  countryCode: 'IR';
+  timezone: 'Asia/Tehran';
+  startsAt: string;
+  endsAt: string;
+  shippingPrice: number;
+}
+
+export interface DeliveryQuoteDTO {
+  id: string;
+  addressId: string;
+  countryCode: 'IR';
+  timezone: 'Asia/Tehran';
+  expiresAt: string;
+  options: DeliveryWindowDTO[];
+}
+
 export interface CartDTO {
   totalPrice: number;
   items: CartItemDTO[];
   discountPrice: number;
   userAddress: string | null;
+  deliveryQuote?: DeliveryQuoteDTO | null;
+  deliveryWindow?: DeliveryWindowDTO | null;
   deliveringDateToShipping: string | null;
   shippingPrice: number;
   shippingInfo: ShippingInfoDTO;
@@ -75,7 +100,7 @@ export interface UserDTO {
   firstName: string;
   lastName: string;
   nationalCode: string;
-  cart: CartDTO[];
+  cart: CartDTO | CartDTO[];
   isEnable: boolean;
   phoneNumber: string;
   email: string;

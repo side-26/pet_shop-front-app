@@ -24,6 +24,9 @@ import type {
   AddressDTO,
   CartDTO,
   WishlistItemDTO,
+  CreateDeliveryQuoteDTO,
+  DeliveryQuoteDTO,
+  SelectDeliveryWindowDTO,
 } from './users.dto';
 import { createUsersListCacheKey, omitNullQueryValues } from './users.helpers';
 import { getAllPaginatedUsersSchema } from './users.schema';
@@ -250,6 +253,30 @@ export async function emptyCart(userId: string) {
   const result = await customFetcher<CartDTO>({
     url: '/cart/empty',
     method: 'DELETE',
+    auth: true,
+    cache: 'no-store',
+  });
+  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  return result;
+}
+
+export async function createDeliveryQuote(userId: string, input: CreateDeliveryQuoteDTO) {
+  const result = await customFetcher<DeliveryQuoteDTO, unknown, CreateDeliveryQuoteDTO>({
+    url: '/cart/delivery-windows',
+    method: 'POST',
+    body: input,
+    auth: true,
+    cache: 'no-store',
+  });
+  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  return result;
+}
+
+export async function selectDeliveryWindow(userId: string, input: SelectDeliveryWindowDTO) {
+  const result = await customFetcher<CartDTO, unknown, SelectDeliveryWindowDTO>({
+    url: '/cart/delivery-window',
+    method: 'PATCH',
+    body: input,
     auth: true,
     cache: 'no-store',
   });

@@ -9,10 +9,13 @@ import {
   getManagementProduct,
   getManagementProducts,
   getProductMainInfo,
+  getProductPropertyDefinitions,
+  getProductWeights,
+  replaceProductPropertyDefinitions,
+  replaceProductWeights,
   updateProductUserRate,
   updateProductBaseInfo,
   updateProductImages,
-  updateProductPrice,
 } from './products.service';
 const mocks = vi.hoisted(() => ({
   cacheLife: vi.fn(),
@@ -74,6 +77,8 @@ describe('product service', () => {
     });
     await getManagementProduct(id);
     await getProductMainInfo(id);
+    await getProductWeights(id);
+    await getProductPropertyDefinitions(id);
     expect(fetcher.mock.calls.map(([o]) => o)).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ url: '/products', auth: false, cache: 'force-cache' }),
@@ -104,6 +109,16 @@ describe('product service', () => {
           auth: true,
           cache: 'no-store',
         }),
+        expect.objectContaining({
+          url: `/products/weights/${id}`,
+          auth: true,
+          cache: 'no-store',
+        }),
+        expect.objectContaining({
+          url: `/products/property-definitions/${id}`,
+          auth: false,
+          cache: 'force-cache',
+        }),
       ]),
     );
     expect(mocks.registerList).toHaveBeenCalled();
@@ -120,11 +135,14 @@ describe('product service', () => {
     await createProduct(input);
     await updateProductBaseInfo(id, { title: 'جدید', brand });
     await updateProductImages(id, { images: input.images });
-    await updateProductPrice(id, { price: 20 });
+    await replaceProductWeights({
+      id,
+      weights: [{ metric: 'KG', quantity: 2, value: 1, price: 20, discountPercentage: 10 }],
+    });
     const body = fetcher.mock.calls[0]?.[0].body as FormData;
     expect(body.get('description')).toBe(JSON.stringify(description));
     expect(body.get('mainImage')).toBe(image);
-    expect(body.get('quantity')).toBe('2');
+    expect(body.has('quantity')).toBe(false);
     expect(body.get('brand')).toBe(brand);
     expect(fetcher.mock.calls[1]?.[0]).toMatchObject({
       url: `/products/${id}/main-info`,
@@ -133,6 +151,14 @@ describe('product service', () => {
     });
     expect(mocks.invalidateList).toHaveBeenCalled();
     expect(mocks.invalidateDetail).toHaveBeenCalledWith(id);
+    expect(fetcher.mock.calls[3]?.[0]).toMatchObject({
+      url: '/products/range',
+      method: 'PUT',
+      body: {
+        id,
+        weights: [{ metric: 'KG', quantity: 2, value: 1, price: 20, discountPercentage: 10 }],
+      },
+    });
     expect(invalidateLandingHomeOffersMock).toHaveBeenCalledTimes(4);
     expect(invalidateLandingFeaturedProductsMock).toHaveBeenCalledTimes(4);
     expect(invalidateLandingPopularProductsMock).toHaveBeenCalledTimes(4);
@@ -157,6 +183,24 @@ describe('product service', () => {
     expect(invalidateLandingPopularProductsMock).not.toHaveBeenCalled();
     expect(invalidateLandingPopularBrandsMock).not.toHaveBeenCalled();
     expect(invalidateLandingProductListsMock).not.toHaveBeenCalled();
+  });
+  it('replaces management property definitions through their dedicated endpoint', async () => {
+    await replaceProductPropertyDefinitions({
+      id,
+      propertyDefinitions: [
+        { key: 'flavor', label: 'طعم', valueType: 'enum', required: false, options: ['مرغ'] },
+      ],
+    });
+
+    expect(fetcher).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: '/products/property-definitions',
+        method: 'PUT',
+        auth: true,
+        cache: 'no-store',
+      }),
+    );
+    expect(mocks.invalidateDetail).toHaveBeenCalledWith(id);
   });
   it('updates the authenticated customer rating and invalidates affected product reads after success', async () => {
     await updateProductUserRate({ id, userRate: 4.3 });

@@ -4,6 +4,8 @@ import {
   customerProductQuerySchema,
   managementProductQuerySchema,
   productSchema,
+  replaceProductPropertyDefinitionsSchema,
+  replaceProductWeightsSchema,
   updateProductBaseInfoSchema,
   updateProductUserRateSchema,
 } from './products.schema';
@@ -17,7 +19,7 @@ const images = {
 };
 
 describe('product schemas', () => {
-  it('normalizes creation input and applies backend quantity defaults', async () => {
+  it('normalizes creation input while inventory remains a legacy UI-only value', async () => {
     await expect(
       productSchema.validate({ title: '  غذای خشک  ', description, category, brand, images }),
     ).resolves.toMatchObject({
@@ -28,6 +30,40 @@ describe('product schemas', () => {
       images,
       quantity: 0,
     });
+  });
+  it('validates per-weight inventory and pricing replacements', async () => {
+    await expect(
+      replaceProductWeightsSchema.validate({
+        id: category,
+        weights: [{ quantity: 3, value: 1, price: 250000, discountPercentage: 15 }],
+      }),
+    ).resolves.toEqual({
+      id: category,
+      weights: [{ metric: 'KG', quantity: 3, value: 1, price: 250000, discountPercentage: 15 }],
+    });
+    await expect(
+      replaceProductWeightsSchema.validate({
+        id: category,
+        weights: [{ quantity: -1, value: 0, price: -1, discountPercentage: 101 }],
+      }),
+    ).rejects.toThrow();
+  });
+  it('requires valid, unique property-definition keys', async () => {
+    await expect(
+      replaceProductPropertyDefinitionsSchema.validate({
+        id: category,
+        propertyDefinitions: [{ key: 'flavor', label: 'طعم', valueType: 'enum', options: ['مرغ'] }],
+      }),
+    ).resolves.toMatchObject({ id: category });
+    await expect(
+      replaceProductPropertyDefinitionsSchema.validate({
+        id: category,
+        propertyDefinitions: [
+          { key: 'flavor', label: 'طعم', valueType: 'enum' },
+          { key: 'flavor', label: 'طعم دوم', valueType: 'string' },
+        ],
+      }),
+    ).rejects.toThrow();
   });
   it('rejects invalid image selection and empty updates', async () => {
     await expect(

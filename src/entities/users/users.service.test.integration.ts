@@ -12,6 +12,8 @@ import {
   getAllPaginatedUsers,
   userGetDetailById,
   updateCurrentUserProfile,
+  createDeliveryQuote,
+  selectDeliveryWindow,
 } from './users.service';
 
 const {
@@ -269,6 +271,35 @@ describe('current-user mutations', () => {
       auth: true,
       cache: 'no-store',
     });
+  });
+});
+
+describe('cart delivery service', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('creates and selects authenticated delivery windows using the updated cart endpoints', async () => {
+    customFetcherMock.mockResolvedValue({ isSuccess: true, message: null, data: {} } as never);
+
+    await createDeliveryQuote('user-1', { addressId: '507f1f77bcf86cd799439011' });
+    await selectDeliveryWindow('user-1', { quoteId: 'quote-1', deliveryWindowId: 'window-1' });
+
+    expect(customFetcherMock).toHaveBeenNthCalledWith(1, {
+      url: '/cart/delivery-windows',
+      method: 'POST',
+      body: { addressId: '507f1f77bcf86cd799439011' },
+      auth: true,
+      cache: 'no-store',
+    });
+    expect(customFetcherMock).toHaveBeenNthCalledWith(2, {
+      url: '/cart/delivery-window',
+      method: 'PATCH',
+      body: { quoteId: 'quote-1', deliveryWindowId: 'window-1' },
+      auth: true,
+      cache: 'no-store',
+    });
+    expect(invalidateDetailMock).toHaveBeenCalledWith('user-1');
   });
 });
 

@@ -25,6 +25,8 @@ import {
   getAllUsers,
   userGetDetailById,
   updateCurrentUserProfile,
+  createDeliveryQuote,
+  selectDeliveryWindow,
 } from './users.service';
 
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
@@ -39,6 +41,8 @@ vi.mock('./users.service', () => ({
   getAllUsers: vi.fn(),
   userGetDetailById: vi.fn(),
   updateCurrentUserProfile: vi.fn(),
+  createDeliveryQuote: vi.fn(),
+  selectDeliveryWindow: vi.fn(),
 }));
 
 const getSessionMock = vi.mocked(getSession);
@@ -52,6 +56,8 @@ const getCurrentUserMock = vi.mocked(getCurrentUser);
 const updateCurrentUserProfileMock = vi.mocked(updateCurrentUserProfile);
 const changeCurrentUserPasswordMock = vi.mocked(changeCurrentUserPassword);
 const userGetDetailByIdMock = vi.mocked(userGetDetailById);
+const createDeliveryQuoteMock = vi.mocked(createDeliveryQuote);
+const selectDeliveryWindowMock = vi.mocked(selectDeliveryWindow);
 
 const successResponse = {
   isSuccess: true as const,
@@ -114,6 +120,31 @@ function session(role: AuthSessionModel['role']): AuthSessionModel {
 describe('users actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it('validates delivery quoting and selection for the authenticated customer', async () => {
+    const { createDeliveryQuoteAction, selectDeliveryWindowAction } =
+      await import('./users.actions');
+    const quote = { isSuccess: true as const, message: null, data: { id: 'quote-1' } };
+    const cart = { isSuccess: true as const, message: null, data: {} };
+    getSessionMock.mockResolvedValue(session(USER_ROLES.CUSTOMER));
+    createDeliveryQuoteMock.mockResolvedValue(quote as never);
+    selectDeliveryWindowMock.mockResolvedValue(cart as never);
+
+    await expect(
+      createDeliveryQuoteAction({ addressId: '507f1f77bcf86cd799439011' }),
+    ).resolves.toBe(quote);
+    await expect(
+      selectDeliveryWindowAction({ quoteId: 'quote-1', deliveryWindowId: 'window-1' }),
+    ).resolves.toBe(cart);
+
+    expect(createDeliveryQuoteMock).toHaveBeenCalledWith('user-1', {
+      addressId: '507f1f77bcf86cd799439011',
+    });
+    expect(selectDeliveryWindowMock).toHaveBeenCalledWith('user-1', {
+      quoteId: 'quote-1',
+      deliveryWindowId: 'window-1',
+    });
   });
 
   it('gets the current user for an authenticated session', async () => {
