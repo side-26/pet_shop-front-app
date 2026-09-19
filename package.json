@@ -14,6 +14,7 @@
     "test:component": "cypress run --component --browser electron",
     "test:e2e": "node scripts/run-cypress.mjs",
     "test:core-web-vitals": "pnpm run build && playwright test --config=playwright.core-web-vitals.config.ts",
+    "test:instant-navigation": "playwright test --config=playwright.instant-navigation.config.ts",
     "test:core-web-vitals:routes": "node --test scripts/core-web-vitals/discover-routes.test.mjs",
     "core-web-vitals:install": "playwright install chromium",
     "prepare": "husky",
@@ -58,6 +59,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@next/playwright": "16.3.0",
     "@playwright/test": "1.62.1",
     "@tailwindcss/postcss": "^4",
     "@testing-library/dom": "^10.4.1",

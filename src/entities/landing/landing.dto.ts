@@ -5,7 +5,6 @@ import type {
   CustomerProductDetailDTO,
   ProductRelationDTO,
 } from '@/entities/products/products.dto';
-import type { PetTypePropertyDefinitionDTO } from '@/entities/pet-types/pet-types.dto';
 
 import type {
   LandingDiscountLimitInput,
@@ -94,9 +93,14 @@ export type LandingProductPetTypeDTO = {
   id: string;
   title: string;
   displayName: string;
-  propertyDefinitions: PetTypePropertyDefinitionDTO[];
+  propertyDefinitions: Array<{
+    label: string;
+    required?: boolean;
+    value: unknown;
+  }>;
 };
 export type LandingProductWeightDTO = {
+  _id?: string;
   metric: string;
   quantity: number;
   value: number;

@@ -13,6 +13,7 @@ import {
   retryLandingPopularBrandsAction,
   retryLandingPopularPetsAction,
   retryLandingRecentPetsAction,
+  retryLandingProductDetailAction,
 } from './landing.actions';
 import {
   getLandingProductList,
@@ -25,6 +26,7 @@ import {
   invalidateLandingPopularBrands,
   invalidateLandingPopularPets,
   invalidateLandingRecentPets,
+  invalidateLandingProductDetail,
 } from './landing.service';
 
 const { refreshMock } = vi.hoisted(() => ({ refreshMock: vi.fn() }));
@@ -41,6 +43,7 @@ vi.mock('./landing.service', () => ({
   invalidateLandingPopularBrands: vi.fn(),
   invalidateLandingPopularPets: vi.fn(),
   invalidateLandingRecentPets: vi.fn(),
+  invalidateLandingProductDetail: vi.fn(),
 }));
 
 beforeEach(() => {
@@ -98,6 +101,13 @@ describe('retryAllLandingPetTypesAction', () => {
     await retryAllLandingPetTypesAction();
 
     expect(invalidateAllLandingPetTypes).toHaveBeenCalledOnce();
+    expect(refreshMock).toHaveBeenCalledOnce();
+  });
+
+  it('validates and expires one product detail before refreshing it', async () => {
+    await retryLandingProductDetailAction('product-0de16436');
+
+    expect(invalidateLandingProductDetail).toHaveBeenCalledWith('product-0de16436');
     expect(refreshMock).toHaveBeenCalledOnce();
   });
 

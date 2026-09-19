@@ -6,9 +6,9 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
 
-type ProductHeaderActionsProps = Readonly<{ title: string }>;
+type ProductHeaderActionsProps = Readonly<{ disabled?: boolean; title: string }>;
 
-export function ProductHeaderActions({ title }: ProductHeaderActionsProps) {
+export function ProductHeaderActions({ disabled, title }: ProductHeaderActionsProps) {
   const [shareStatus, setShareStatus] = useState('');
 
   const shareProduct = async () => {
@@ -27,7 +27,14 @@ export function ProductHeaderActions({ title }: ProductHeaderActionsProps) {
 
   return (
     <div className="tw:flex tw:items-center tw:gap-1">
-      <Toggle iconOnly size="md" variant="flat" color="error" aria-label="افزودن به علاقه‌مندی‌ها">
+      <Toggle
+        disabled={disabled}
+        iconOnly
+        size="md"
+        variant="flat"
+        color="error"
+        aria-label="افزودن به علاقه‌مندی‌ها"
+      >
         <Heart aria-hidden="true" />
       </Toggle>
       <Button
@@ -36,6 +43,7 @@ export function ProductHeaderActions({ title }: ProductHeaderActionsProps) {
         variant="flat"
         color="secondary"
         aria-label="اشتراک‌گذاری محصول"
+        disabled={disabled}
         onClick={() => void shareProduct()}
       >
         <Share2 aria-hidden="true" />

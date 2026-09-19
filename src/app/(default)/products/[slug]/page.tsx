@@ -1,38 +1,32 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 
-import { ProductDetailContent } from './_components/product-detail-content';
-import { getProductDetail, getProductDetailSlugs } from './_components/product-detail-data';
+import { getPublicLandingProductBySlug } from '@/entities/landing/landing.service';
+import { richTextToPlainText } from '@/lib/rich-text';
+
+import { ProductDetailSection } from './_components/product-detail-section';
 
 type ProductDetailPageProps = Readonly<{
   params: Promise<{ slug: string }>;
 }>;
 
-export function generateStaticParams() {
-  return getProductDetailSlugs().map((slug) => ({ slug }));
-}
-
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductDetail(slug);
+  const result = await getPublicLandingProductBySlug(slug);
 
-  if (!product) {
-    return { title: 'محصول پیدا نشد | پت شاپ پرشین' };
+  if (!result.isSuccess) {
+    return { title: 'محصول پیدا نشد | پت شاپ پرشین', robots: { index: false, follow: false } };
   }
 
+  const product = result.data;
+  const description = richTextToPlainText(product.description).trim() || product.summary?.trim();
   return {
     title: `${product.title} | پت شاپ پرشین`,
-    description: product.description,
+    description,
+    alternates: { canonical: `/products/${encodeURIComponent(product.slug)}` },
+    openGraph: { title: product.title, description, images: [product.mainImage] },
   };
 }
 
-export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const { slug } = await params;
-  const product = getProductDetail(slug);
-
-  if (!product) {
-    notFound();
-  }
-
-  return <ProductDetailContent product={product} />;
+export default function ProductDetailPage({ params }: ProductDetailPageProps) {
+  return <ProductDetailSection params={params} />;
 }

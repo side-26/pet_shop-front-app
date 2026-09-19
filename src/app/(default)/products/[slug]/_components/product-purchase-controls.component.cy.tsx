@@ -3,8 +3,13 @@ import { ProductPurchaseControls } from './product-purchase-controls';
 function PurchaseControlsFixture() {
   return (
     <>
-      <ProductPurchaseControls mode="desktop" price={2975000} previousPrice={3500000} stock={3} />
-      <ProductPurchaseControls mode="mobile" price={2975000} previousPrice={3500000} stock={3} />
+      <ProductPurchaseControls
+        mode="desktop"
+        price={2975000}
+        previousPrice={3500000}
+        quantity={3}
+      />
+      <ProductPurchaseControls mode="mobile" price={2975000} previousPrice={3500000} quantity={3} />
     </>
   );
 }
@@ -18,8 +23,8 @@ describe('ProductPurchaseControls', () => {
     cy.get('[data-testid="desktop-purchase-controls"]').should('not.be.visible');
     cy.get('button[aria-label="کاهش تعداد"]:visible').should('be.disabled');
 
-    cy.get('button[aria-label="افزایش تعداد"]:visible').click().click();
-    cy.get('[data-testid="mobile-purchase-controls"] output').should('have.text', '۳');
+    cy.get('button[aria-label="افزایش تعداد"]:visible').click();
+    cy.get('[data-testid="mobile-purchase-controls"] output').should('have.text', '۲');
     cy.get('button[aria-label="افزایش تعداد"]:visible').should('be.disabled');
     cy.get('[data-testid="mobile-purchase-controls"]').then(($controls) => {
       cy.wrap($controls)
@@ -40,6 +45,6 @@ describe('ProductPurchaseControls', () => {
 
     cy.get('[data-testid="desktop-purchase-controls"]').should('be.visible');
     cy.get('[data-testid="mobile-purchase-controls"]').should('not.be.visible');
-    cy.contains('تنها ۳ عدد باقیست!').should('be.visible');
+    cy.contains('تنها ۳ عدد از این محصول باقی مانده است.').should('be.visible');
   });
 });

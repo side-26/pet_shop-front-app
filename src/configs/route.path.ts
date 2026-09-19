@@ -38,6 +38,12 @@ export const routePaths = {
   petDetail: (slug: string) => `${PATHS.PETS}/${encodeURIComponent(slug)}`,
   products: PATHS.PRODUCTS,
   productsList: PATHS.PRODUCTS_LIST,
+  productsListByPetType: (petTypeId: string) =>
+    `${PATHS.PRODUCTS_LIST}?petType=${encodeURIComponent(petTypeId)}`,
+  productsListByCategory: (categoryId: string) =>
+    `${PATHS.PRODUCTS_LIST}?category=${encodeURIComponent(categoryId)}`,
+  productsListBySubCategory: (subCategoryId: string) =>
+    `${PATHS.PRODUCTS_LIST}?subCategory=${encodeURIComponent(subCategoryId)}`,
   productsListByBrand: (brandId: string) =>
     `${PATHS.PRODUCTS_LIST}?brand=${encodeURIComponent(brandId)}`,
   productDetail: (slug: string) => `${PATHS.PRODUCTS}/${encodeURIComponent(slug)}`,

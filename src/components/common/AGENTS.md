@@ -351,6 +351,10 @@ icon and title, and labels both recovery actions in Persian. Its retry is disabl
 client-side cooldown (default `retryCooldownMs={3000}`) to prevent accidental repeat requests; this
 is UI protection, not a substitute for server-side abuse controls.
 
+`PageErrorState` is the full-page recovery composition for expected 400-class failures and
+unexpected 500-class failures. It renders a status, icon, title, error message, and one retry action
+through the shared Card and Button primitives; callers own the retry behavior.
+
 `FormDialogContent` composes `DialogContent` with a filled `Card`, a `CardHeader` containing the
 required `DialogTitle`, a customizable `CardContent`, and a `CardFooter` action row. The submit
 button is `fill + primary`, supports an optional external `formId`, owns Button loading through

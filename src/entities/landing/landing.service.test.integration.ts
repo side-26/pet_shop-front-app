@@ -22,6 +22,7 @@ import {
   getLandingProductList,
   getLandingPetList,
   getLandingProductBySlug,
+  getPublicLandingProductBySlug,
   getLandingSearch,
   getPopularLandingPets,
   getPopularLandingBrands,
@@ -30,12 +31,14 @@ import {
   invalidateLandingRecentPets,
   invalidateLandingPopularBrands,
   invalidateLandingProductLists,
+  invalidateLandingProductDetail,
 } from './landing.service';
 
 const mocks = vi.hoisted(() => ({
   cacheLife: vi.fn(),
   detail: vi.fn((id: string) => `landing:detail:${id}`),
   invalidateList: vi.fn(),
+  invalidateDetail: vi.fn(),
   invalidateQuery: vi.fn(),
   list: 'landing:list',
   query: vi.fn((key: string) => `landing:query:${key}`),
@@ -353,5 +356,19 @@ describe('landing service', () => {
     expect(mocks.registerDetail).toHaveBeenNthCalledWith(1, 'persian-cat');
     expect(mocks.registerDetail).toHaveBeenNthCalledWith(2, 'cat-food');
     await expect(getLandingPetBySlug('invalid_slug')).rejects.toBeDefined();
+  });
+
+  it('keeps metadata reads public and invalidates a requested slug detail', async () => {
+    await getPublicLandingProductBySlug('cat-food');
+    invalidateLandingProductDetail('cat-food');
+
+    expect(fetcher).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: '/landing/products/cat-food',
+        auth: false,
+        cache: 'force-cache',
+      }),
+    );
+    expect(mocks.invalidateDetail).toHaveBeenCalledWith('cat-food');
   });
 });

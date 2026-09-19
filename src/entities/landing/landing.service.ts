@@ -230,6 +230,10 @@ export function invalidateLandingRecentPets() {
   landingCache.invalidateQuery(recentPetsCacheKey);
 }
 
+export function invalidateLandingProductDetail(slug: string) {
+  landingCache.invalidateDetail(slug);
+}
+
 export async function getLandingPetBySlug(input: LandingSlugDTO['slug']) {
   const { slug } = await landingSlugSchema.validate({ slug: input }, { stripUnknown: true });
   return fetchLandingDetail<LandingPetDetailDTO>(`/landing/pets/${slug}`, slug);
@@ -239,5 +243,10 @@ export async function getLandingProductBySlug(input: LandingSlugDTO['slug']) {
   const { slug } = await landingSlugSchema.validate({ slug: input }, { stripUnknown: true });
   const session = await getSession();
   if (session) return fetchAuthenticatedLandingProductDetail(slug);
+  return fetchLandingDetail<LandingProductDetailDTO>(`/landing/products/${slug}`, slug);
+}
+
+export async function getPublicLandingProductBySlug(input: LandingSlugDTO['slug']) {
+  const { slug } = await landingSlugSchema.validate({ slug: input }, { stripUnknown: true });
   return fetchLandingDetail<LandingProductDetailDTO>(`/landing/products/${slug}`, slug);
 }
