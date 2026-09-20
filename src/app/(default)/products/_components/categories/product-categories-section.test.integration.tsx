@@ -15,10 +15,8 @@ const { getAllLandingPetTypesMock, retryAllLandingPetTypesActionMock } = vi.hois
 }));
 
 vi.mock('@/entities/landing/landing.actions', () => ({
+  getAllLandingPetTypesAction: getAllLandingPetTypesMock,
   retryAllLandingPetTypesAction: retryAllLandingPetTypesActionMock,
-}));
-vi.mock('@/entities/landing/landing.service', () => ({
-  getAllLandingPetTypes: getAllLandingPetTypesMock,
 }));
 
 const petType: LandingPetTypeDTO = {

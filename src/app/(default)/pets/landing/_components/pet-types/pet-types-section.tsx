@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import { getAllLandingPetTypes } from '@/entities/landing/landing.service';
+import { getAllLandingPetTypesAction } from '@/entities/landing/landing.actions';
 
 import { PetTypesSectionContainer } from './pet-types-section-container';
 import { PetTypesSectionErrorBoundary } from './pet-types-section-error-boundary';
@@ -8,7 +8,7 @@ import { PetTypesSectionRenderer } from './pet-types-section-renderer';
 import { petTypesSectionSkeletonData } from './pet-types-section-skeleton-data';
 
 export function PetTypesSection() {
-  const petTypesPromise = getAllLandingPetTypes();
+  const petTypesPromise = getAllLandingPetTypesAction();
 
   return (
     <section

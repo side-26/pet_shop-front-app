@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 
 import { buttonVariants } from '@/components/ui/button';
 import { routePaths } from '@/configs/route.path';
-import { getPopularLandingPets } from '@/entities/landing/landing.service';
+import { getPopularLandingPetsAction } from '@/entities/landing/landing.actions';
 
 import { PopularPetsSectionContainer } from './popular-pets-section-container';
 import { PopularPetsSectionErrorBoundary } from './popular-pets-section-error-boundary';
@@ -12,7 +12,7 @@ import { PopularPetsSectionRenderer } from './popular-pets-section-renderer';
 import { popularPetsSectionSkeletonData } from './popular-pets-section-skeleton-data';
 
 export function PopularPetsSection() {
-  const petsPromise = getPopularLandingPets();
+  const petsPromise = getPopularLandingPetsAction();
 
   return (
     <section

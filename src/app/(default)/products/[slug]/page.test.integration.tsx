@@ -5,17 +5,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { LandingProductDetailDTO } from '@/entities/landing/landing.dto';
 import { routePaths } from '@/configs/route.path';
 import {
-  getLandingProductBySlug,
-  getPublicLandingProductBySlug,
-} from '@/entities/landing/landing.service';
+  getLandingProductBySlugAction,
+  getPublicLandingProductBySlugAction,
+} from '@/entities/landing/landing.actions';
 
 import { ProductDetailContainer } from './_components/product-detail-container';
 import { ProductPurchaseControls } from './_components/product-purchase-controls';
 import { generateMetadata } from './page';
 
-vi.mock('@/entities/landing/landing.service', () => ({
-  getLandingProductBySlug: vi.fn(),
-  getPublicLandingProductBySlug: vi.fn(),
+vi.mock('@/entities/landing/landing.actions', () => ({
+  getLandingProductBySlugAction: vi.fn(),
+  getPublicLandingProductBySlugAction: vi.fn(),
 }));
 vi.mock('@/components/ui/carousel', () => ({
   Carousel: ({ children, ...props }: { children: ReactNode }) => <div {...props}>{children}</div>,
@@ -62,12 +62,12 @@ const product = {
 } satisfies LandingProductDetailDTO;
 
 beforeEach(() => {
-  vi.mocked(getLandingProductBySlug).mockResolvedValue({
+  vi.mocked(getLandingProductBySlugAction).mockResolvedValue({
     isSuccess: true,
     message: null,
     data: product,
   });
-  vi.mocked(getPublicLandingProductBySlug).mockResolvedValue({
+  vi.mocked(getPublicLandingProductBySlugAction).mockResolvedValue({
     isSuccess: true,
     message: null,
     data: product,

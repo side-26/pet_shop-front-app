@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import { getRecentLandingPets } from '@/entities/landing/landing.service';
+import { getRecentLandingPetsAction } from '@/entities/landing/landing.actions';
 
 import { RehomingSectionContainer } from './rehoming-section-container';
 import { RehomingSectionErrorBoundary } from './rehoming-section-error-boundary';
@@ -8,7 +8,7 @@ import { RehomingSectionRenderer } from './rehoming-section-renderer';
 import { rehomingSectionSkeletonData } from './rehoming-section-skeleton-data';
 
 export function RehomingSection() {
-  const petsPromise = getRecentLandingPets();
+  const petsPromise = getRecentLandingPetsAction();
 
   return (
     <section

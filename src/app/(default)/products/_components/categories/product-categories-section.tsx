@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 
 import { buttonVariants } from '@/components/ui/button';
 import { routePaths } from '@/configs/route.path';
-import { getAllLandingPetTypes } from '@/entities/landing/landing.service';
+import { getAllLandingPetTypesAction } from '@/entities/landing/landing.actions';
 import { cn } from '@/lib/utils';
 
 import { ProductCategoriesSectionContainer } from './product-categories-section-container';
@@ -13,7 +13,7 @@ import { ProductCategoriesSectionRenderer } from './product-categories-section-r
 import { productCategoriesSectionSkeletonData } from './product-categories-section-skeleton-data';
 
 export function ProductCategoriesSection() {
-  const petTypesPromise = getAllLandingPetTypes();
+  const petTypesPromise = getAllLandingPetTypesAction();
 
   return (
     <section

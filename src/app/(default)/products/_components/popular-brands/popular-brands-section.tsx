@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import { getPopularLandingBrands } from '@/entities/landing/landing.service';
+import { getPopularLandingBrandsAction } from '@/entities/landing/landing.actions';
 
 import { PopularBrandsSectionContainer } from './popular-brands-section-container';
 import { PopularBrandsSectionErrorBoundary } from './popular-brands-section-error-boundary';
@@ -8,7 +8,7 @@ import { PopularBrandsSectionRenderer } from './popular-brands-section-renderer'
 import { popularBrandsSectionSkeletonData } from './popular-brands-section-skeleton-data';
 
 export function PopularBrandsSection() {
-  const popularBrandsPromise = getPopularLandingBrands();
+  const popularBrandsPromise = getPopularLandingBrandsAction();
 
   return (
     <section

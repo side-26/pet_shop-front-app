@@ -1,7 +1,7 @@
 import { Flame } from 'lucide-react';
 import { Suspense } from 'react';
 
-import { getDiscountedLandingProducts } from '@/entities/landing/landing.service';
+import { getDiscountedLandingProductsAction } from '@/entities/landing/landing.actions';
 
 import { OffersSectionContainer } from './offers-section-container';
 import { OffersSectionErrorBoundary } from './offers-section-error-boundary';
@@ -10,7 +10,7 @@ import { offersSectionSkeletonData } from './offers-section-skeleton-data';
 import { RevealItem, RevealSection } from '../shared/motion-primitives';
 
 export function OffersSection() {
-  const productsPromise = getDiscountedLandingProducts({ limit: 5 });
+  const productsPromise = getDiscountedLandingProductsAction({ limit: 5 });
 
   return (
     <RevealSection

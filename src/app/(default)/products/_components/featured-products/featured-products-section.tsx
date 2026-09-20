@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 
 import { buttonVariants } from '@/components/ui/button';
 import { routePaths } from '@/configs/route.path';
-import { getPopularLandingProducts } from '@/entities/landing/landing.service';
+import { getPopularLandingProductsAction } from '@/entities/landing/landing.actions';
 import { cn } from '@/lib/utils';
 
 import { FeaturedProductsSectionContainer } from './featured-products-section-container';
@@ -16,7 +16,7 @@ import { MotionItem, MotionSection } from '../shared/product-landing-motion';
 export { FeaturedProductsRenderer } from './featured-products-section-renderer';
 
 export function FeaturedProductsSection() {
-  const popularProductsPromise = getPopularLandingProducts();
+  const popularProductsPromise = getPopularLandingProductsAction();
 
   return (
     <MotionSection

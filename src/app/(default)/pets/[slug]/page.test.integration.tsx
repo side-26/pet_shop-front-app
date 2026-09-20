@@ -4,12 +4,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LandingPetDetailDTO } from '@/entities/landing/landing.dto';
 import { routePaths } from '@/configs/route.path';
-import { getLandingPetBySlug } from '@/entities/landing/landing.service';
+import { getLandingPetBySlugAction } from '@/entities/landing/landing.actions';
 
 import { PetDetailContainer } from './_components/pet-detail-container';
 import PetDetailPage, { generateMetadata } from './page';
 
-vi.mock('@/entities/landing/landing.service', () => ({ getLandingPetBySlug: vi.fn() }));
+vi.mock('@/entities/landing/landing.actions', () => ({ getLandingPetBySlugAction: vi.fn() }));
 vi.mock('@/components/ui/carousel', () => ({
   Carousel: ({ children, ...props }: { children: ReactNode }) => <div {...props}>{children}</div>,
   CarouselContent: ({ children }: { children: ReactNode }) => <div>{children}</div>,
@@ -67,10 +67,19 @@ describe(routePaths.petDetail('max'), () => {
       }),
     );
     expect(screen.getByRole('heading', { level: 1, name: pet.title })).toBeTruthy();
+    expect(screen.getByLabelText(`گالری تصاویر ${pet.title}`)).toBeTruthy();
+    expect(screen.getByRole('link', { name: pet.petType.title }).getAttribute('href')).toBe(
+      routePaths.petsListByPetType(pet.petType.id),
+    );
+    expect(screen.getByRole('link', { name: pet.breed.title }).getAttribute('href')).toBe(
+      routePaths.petsListByBreedAndPetType(pet.breed.id, pet.petType.id),
+    );
     expect(screen.getByText('گلدن رتریور')).toBeTruthy();
     expect(screen.getAllByRole('button', { name: `درخواست واگذاری ${pet.title}` })).toHaveLength(2);
-    expect(screen.getByText('خلاصه حیوان')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'نمایش خلاصه حیوان' })).toBeTruthy();
+    // Both responsive presentations stay mounted and are selected with CSS:
+    // the expandable drawer for mobile/tablet and the expandable card for desktop.
+    expect(screen.getAllByText('خلاصه حیوان')).toHaveLength(2);
+    expect(screen.getAllByRole('button', { name: 'نمایش خلاصه حیوان' })).toHaveLength(2);
     expect(screen.getByRole('tab', { name: 'مشخصات' })).toBeTruthy();
   });
 
@@ -80,7 +89,11 @@ describe(routePaths.petDetail('max'), () => {
   });
 
   it('builds metadata from the landing pet response', async () => {
-    vi.mocked(getLandingPetBySlug).mockResolvedValue({ isSuccess: true, message: null, data: pet });
+    vi.mocked(getLandingPetBySlugAction).mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: pet,
+    });
     const metadata = await generateMetadata({ params: Promise.resolve({ slug: pet.slug }) });
     expect(metadata.title).toBe(`${pet.title} | پت شاپ پرشین`);
   });

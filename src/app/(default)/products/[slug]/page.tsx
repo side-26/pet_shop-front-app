@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { getPublicLandingProductBySlug } from '@/entities/landing/landing.service';
+import { getPublicLandingProductBySlugAction } from '@/entities/landing/landing.actions';
 import { richTextToPlainText } from '@/lib/rich-text';
 
 import { ProductDetailSection } from './_components/product-detail-section';
@@ -11,7 +11,7 @@ type ProductDetailPageProps = Readonly<{
 
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const result = await getPublicLandingProductBySlug(slug);
+  const result = await getPublicLandingProductBySlugAction(slug);
 
   if (!result.isSuccess) {
     return { title: 'محصول پیدا نشد | پت شاپ پرشین', robots: { index: false, follow: false } };

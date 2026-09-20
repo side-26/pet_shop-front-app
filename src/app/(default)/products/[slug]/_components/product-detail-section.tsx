@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import { getLandingProductBySlug } from '@/entities/landing/landing.service';
+import { getLandingProductBySlugAction } from '@/entities/landing/landing.actions';
 
 import { ProductDetailContainer } from './product-detail-container';
 import { ProductDetailContent } from './product-detail-content';
@@ -12,7 +12,7 @@ type ProductDetailSectionProps = Readonly<{
 
 export function ProductDetailSection({ params }: ProductDetailSectionProps) {
   const slugPromise = params.then(({ slug }) => slug);
-  const productPromise = slugPromise.then(getLandingProductBySlug);
+  const productPromise = slugPromise.then(getLandingProductBySlugAction);
 
   return (
     <Suspense fallback={<ProductDetailContent product={productDetailSkeleton} isSkeleton />}>

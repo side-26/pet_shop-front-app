@@ -1,13 +1,15 @@
 import { notFound } from 'next/navigation';
 
 import { PageErrorState } from '@/components/common/page-error-state';
-import { retryLandingProductDetailAction } from '@/entities/landing/landing.actions';
-import type { getLandingProductBySlug } from '@/entities/landing/landing.service';
+import {
+  getLandingProductBySlugAction,
+  retryLandingProductDetailAction,
+} from '@/entities/landing/landing.actions';
 
 import { ProductDetailContent } from './product-detail-content';
 import { createProductDetailViewModel } from './product-detail-data';
 
-type ProductDetailResult = Awaited<ReturnType<typeof getLandingProductBySlug>>;
+type ProductDetailResult = Awaited<ReturnType<typeof getLandingProductBySlugAction>>;
 
 type ProductDetailContainerProps = Readonly<{
   productPromise: Promise<ProductDetailResult>;

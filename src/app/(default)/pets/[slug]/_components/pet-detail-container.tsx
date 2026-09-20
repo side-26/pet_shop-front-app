@@ -1,14 +1,16 @@
 import { notFound } from 'next/navigation';
 
 import { PageErrorState } from '@/components/common/page-error-state';
-import { retryLandingPetDetailAction } from '@/entities/landing/landing.actions';
-import type { getLandingPetBySlug } from '@/entities/landing/landing.service';
+import {
+  getLandingPetBySlugAction,
+  retryLandingPetDetailAction,
+} from '@/entities/landing/landing.actions';
 
 import { PetDetailContent } from './pet-detail-content';
 import { createPetDetailViewModel } from './pet-detail-data';
 
 type PetDetailContainerProps = Readonly<{
-  petPromise: Promise<Awaited<ReturnType<typeof getLandingPetBySlug>>>;
+  petPromise: Promise<Awaited<ReturnType<typeof getLandingPetBySlugAction>>>;
   slugPromise: Promise<string>;
 }>;
 

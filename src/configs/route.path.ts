@@ -35,6 +35,8 @@ export const routePaths = {
   petsList: PATHS.PETS_LIST,
   petsListByPetType: (petTypeId: string) =>
     `${PATHS.PETS_LIST}?petType=${encodeURIComponent(petTypeId)}`,
+  petsListByBreedAndPetType: (breedId: string, petTypeId: string) =>
+    `${PATHS.PETS_LIST}?${new URLSearchParams({ breed: breedId, petType: petTypeId }).toString()}`,
   petDetail: (slug: string) => `${PATHS.PETS}/${encodeURIComponent(slug)}`,
   products: PATHS.PRODUCTS,
   productsList: PATHS.PRODUCTS_LIST,

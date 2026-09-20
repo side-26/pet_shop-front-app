@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 import { PetTypesCarouselSection } from '@/components/common/pet-types-carousel-section';
 import { buttonVariants } from '@/components/ui/button';
 import { routePaths } from '@/configs/route.path';
-import { getAllLandingPetTypes } from '@/entities/landing/landing.service';
+import { getAllLandingPetTypesAction } from '@/entities/landing/landing.actions';
 import { cn } from '@/lib/utils';
 
 import { CategoriesSectionContainer } from './categories-section-container';
@@ -14,7 +14,7 @@ import { categoriesSectionSkeletonData } from './categories-section-skeleton-dat
 import { RevealItem, RevealSection } from '../shared/motion-primitives';
 
 export function CategoriesSection() {
-  const petTypesPromise = getAllLandingPetTypes();
+  const petTypesPromise = getAllLandingPetTypesAction();
 
   return (
     <RevealSection

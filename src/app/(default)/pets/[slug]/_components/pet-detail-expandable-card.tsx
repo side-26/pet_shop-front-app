@@ -12,7 +12,7 @@ type PetDetailExpandableCardProps = Readonly<{
   isSkeleton?: boolean;
 }>;
 
-/** Shared expandable presentation for long-form pet detail information. */
+/** Desktop detail presentation; mobile/tablet use the adjacent Drawer composition instead. */
 export function PetDetailExpandableCard({
   title,
   children,

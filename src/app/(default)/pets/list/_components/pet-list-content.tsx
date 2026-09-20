@@ -4,7 +4,7 @@ import {
   normalizePaginationSearchParams,
   type PaginationSearchParams,
 } from '@/entities/pagination/pagination.helpers';
-import { getLandingPetList } from '@/entities/landing/landing.service';
+import { getLandingPetListAction } from '@/entities/landing/landing.actions';
 
 import { PetListBreadcrumb } from './pet-list-breadcrumb';
 import { PetListContainer } from './pet-list-container';
@@ -35,7 +35,7 @@ async function PetListQueryContent({ searchParams }: PetListContentProps) {
     page: _page,
     ...query
   } = normalizePaginationSearchParams(await searchParams);
-  const petsPromise = getLandingPetList(query);
+  const petsPromise = getLandingPetListAction(query);
   const suspenseKey = new URLSearchParams(query).toString();
 
   return (

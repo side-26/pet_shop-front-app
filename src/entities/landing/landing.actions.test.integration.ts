@@ -3,8 +3,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  getAllLandingPetTypesAction,
+  getDiscountedLandingProductsAction,
+  getLandingPetBySlugAction,
+  getLandingProductBySlugAction,
   getLandingProductListAction,
   getLandingPetListAction,
+  getPopularLandingBrandsAction,
+  getPopularLandingPetsAction,
+  getPopularLandingProductsAction,
+  getPublicLandingProductBySlugAction,
+  getRecentLandingPetsAction,
   getLandingSearchAction,
   retryAllLandingPetTypesAction,
   retryLandingFeaturedProductsAction,
@@ -17,8 +26,17 @@ import {
   retryLandingPetDetailAction,
 } from './landing.actions';
 import {
+  getAllLandingPetTypes,
+  getDiscountedLandingProducts,
+  getLandingPetBySlug,
+  getLandingProductBySlug,
   getLandingProductList,
   getLandingPetList,
+  getPopularLandingBrands,
+  getPopularLandingPets,
+  getPopularLandingProducts,
+  getPublicLandingProductBySlug,
+  getRecentLandingPets,
   getLandingSearch,
   invalidateAllLandingPetTypes,
   invalidateLandingFeaturedProducts,
@@ -35,8 +53,17 @@ const { refreshMock } = vi.hoisted(() => ({ refreshMock: vi.fn() }));
 
 vi.mock('next/cache', () => ({ refresh: refreshMock }));
 vi.mock('./landing.service', () => ({
+  getAllLandingPetTypes: vi.fn(),
+  getDiscountedLandingProducts: vi.fn(),
+  getLandingPetBySlug: vi.fn(),
+  getLandingProductBySlug: vi.fn(),
   getLandingProductList: vi.fn(),
   getLandingPetList: vi.fn(),
+  getPopularLandingBrands: vi.fn(),
+  getPopularLandingPets: vi.fn(),
+  getPopularLandingProducts: vi.fn(),
+  getPublicLandingProductBySlug: vi.fn(),
+  getRecentLandingPets: vi.fn(),
   getLandingSearch: vi.fn(),
   invalidateAllLandingPetTypes: vi.fn(),
   invalidateLandingFeaturedProducts: vi.fn(),
@@ -54,6 +81,28 @@ beforeEach(() => {
 });
 
 describe('retryAllLandingPetTypesAction', () => {
+  it('validates read-action input and delegates uncached orchestration to the service cache layer', async () => {
+    await getAllLandingPetTypesAction();
+    await getDiscountedLandingProductsAction({ limit: '5', ignored: true });
+    await getPopularLandingProductsAction();
+    await getPopularLandingBrandsAction();
+    await getPopularLandingPetsAction();
+    await getRecentLandingPetsAction();
+    await getLandingPetBySlugAction('persian-cat');
+    await getLandingProductBySlugAction('product-0de16436');
+    await getPublicLandingProductBySlugAction('product-0de16436');
+
+    expect(getAllLandingPetTypes).toHaveBeenCalledOnce();
+    expect(getDiscountedLandingProducts).toHaveBeenCalledWith({ limit: 5 });
+    expect(getPopularLandingProducts).toHaveBeenCalledOnce();
+    expect(getPopularLandingBrands).toHaveBeenCalledOnce();
+    expect(getPopularLandingPets).toHaveBeenCalledOnce();
+    expect(getRecentLandingPets).toHaveBeenCalledOnce();
+    expect(getLandingPetBySlug).toHaveBeenCalledWith('persian-cat');
+    expect(getLandingProductBySlug).toHaveBeenCalledWith('product-0de16436');
+    expect(getPublicLandingProductBySlug).toHaveBeenCalledWith('product-0de16436');
+  });
+
   it('validates the backend product-list filters and keeps its page size out of the action input', async () => {
     await getLandingProductListAction({
       brand: '507f1f77bcf86cd799439011,507f1f77bcf86cd799439012',
