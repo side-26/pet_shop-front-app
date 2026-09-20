@@ -14,6 +14,7 @@ type ProductGalleryProps = Readonly<{
   className?: string;
   images: readonly ProductGalleryImage[];
   discountPercentage: number;
+  itemLabel?: string;
   isSkeleton?: boolean;
 }>;
 
@@ -40,12 +41,13 @@ export function ProductGallery({
   className,
   images,
   discountPercentage,
+  itemLabel = 'محصول',
   isSkeleton,
 }: ProductGalleryProps) {
   const [selectedImage, setSelectedImage] = useState(0);
 
   return (
-    <section aria-label="تصاویر محصول" className={className}>
+    <section aria-label={`تصاویر ${itemLabel}`} className={className}>
       <div className="tw:hidden tw:lg:block">
         <div className="tw:relative tw:aspect-square tw:overflow-hidden tw:rounded-3xl tw:bg-white">
           <GalleryImage image={images[selectedImage]} sizes="(min-width: 1024px) 44vw, 100vw" />
@@ -83,7 +85,7 @@ export function ProductGallery({
         </div>
       </div>
 
-      <Carousel className="tw:lg:hidden" opts={{ loop: false }} aria-label="گالری محصول">
+      <Carousel className="tw:lg:hidden" opts={{ loop: false }} aria-label={`گالری ${itemLabel}`}>
         <CarouselContent className="tw:ms-0">
           {images.map((image, index) => (
             <CarouselItem

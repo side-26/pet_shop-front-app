@@ -11,6 +11,7 @@ import {
   invalidateLandingPopularPets,
   invalidateLandingRecentPets,
   invalidateLandingProductDetail,
+  invalidateLandingPetDetail,
   getLandingProductList,
   getLandingPetList,
   getLandingSearch,
@@ -40,6 +41,12 @@ export async function getLandingSearchAction(input: unknown) {
 export async function retryLandingProductDetailAction(slug: string) {
   const value = await landingSlugSchema.validate({ slug }, { stripUnknown: true });
   invalidateLandingProductDetail(value.slug);
+  refresh();
+}
+
+export async function retryLandingPetDetailAction(slug: string) {
+  const value = await landingSlugSchema.validate({ slug }, { stripUnknown: true });
+  invalidateLandingPetDetail(value.slug);
   refresh();
 }
 

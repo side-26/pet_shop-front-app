@@ -14,6 +14,7 @@ import {
   retryLandingPopularPetsAction,
   retryLandingRecentPetsAction,
   retryLandingProductDetailAction,
+  retryLandingPetDetailAction,
 } from './landing.actions';
 import {
   getLandingProductList,
@@ -27,6 +28,7 @@ import {
   invalidateLandingPopularPets,
   invalidateLandingRecentPets,
   invalidateLandingProductDetail,
+  invalidateLandingPetDetail,
 } from './landing.service';
 
 const { refreshMock } = vi.hoisted(() => ({ refreshMock: vi.fn() }));
@@ -44,6 +46,7 @@ vi.mock('./landing.service', () => ({
   invalidateLandingPopularPets: vi.fn(),
   invalidateLandingRecentPets: vi.fn(),
   invalidateLandingProductDetail: vi.fn(),
+  invalidateLandingPetDetail: vi.fn(),
 }));
 
 beforeEach(() => {
@@ -108,6 +111,13 @@ describe('retryAllLandingPetTypesAction', () => {
     await retryLandingProductDetailAction('product-0de16436');
 
     expect(invalidateLandingProductDetail).toHaveBeenCalledWith('product-0de16436');
+    expect(refreshMock).toHaveBeenCalledOnce();
+  });
+
+  it('validates and expires one pet detail before refreshing it', async () => {
+    await retryLandingPetDetailAction('persian-cat');
+
+    expect(invalidateLandingPetDetail).toHaveBeenCalledWith('persian-cat');
     expect(refreshMock).toHaveBeenCalledOnce();
   });
 

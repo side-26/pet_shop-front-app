@@ -6,9 +6,17 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
 
-type ProductHeaderActionsProps = Readonly<{ disabled?: boolean; title: string }>;
+type ProductHeaderActionsProps = Readonly<{
+  disabled?: boolean;
+  itemLabel?: string;
+  title: string;
+}>;
 
-export function ProductHeaderActions({ disabled, title }: ProductHeaderActionsProps) {
+export function ProductHeaderActions({
+  disabled,
+  itemLabel = 'محصول',
+  title,
+}: ProductHeaderActionsProps) {
   const [shareStatus, setShareStatus] = useState('');
 
   const shareProduct = async () => {
@@ -19,7 +27,7 @@ export function ProductHeaderActions({ disabled, title }: ProductHeaderActionsPr
       }
 
       await navigator.clipboard?.writeText(window.location.href);
-      setShareStatus('پیوند محصول کپی شد');
+      setShareStatus(`پیوند ${itemLabel} کپی شد`);
     } catch {
       setShareStatus('اشتراک‌گذاری لغو شد');
     }
@@ -33,7 +41,7 @@ export function ProductHeaderActions({ disabled, title }: ProductHeaderActionsPr
         size="md"
         variant="flat"
         color="error"
-        aria-label="افزودن به علاقه‌مندی‌ها"
+        aria-label={`افزودن ${itemLabel} به علاقه‌مندی‌ها`}
       >
         <Heart aria-hidden="true" />
       </Toggle>
@@ -42,7 +50,7 @@ export function ProductHeaderActions({ disabled, title }: ProductHeaderActionsPr
         size="md"
         variant="flat"
         color="secondary"
-        aria-label="اشتراک‌گذاری محصول"
+        aria-label={`اشتراک‌گذاری ${itemLabel}`}
         disabled={disabled}
         onClick={() => void shareProduct()}
       >

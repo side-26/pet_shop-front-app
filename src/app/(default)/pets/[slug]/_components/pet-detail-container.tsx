@@ -1,19 +1,29 @@
 import { notFound } from 'next/navigation';
 
+import { PageErrorState } from '@/components/common/page-error-state';
+import { retryLandingPetDetailAction } from '@/entities/landing/landing.actions';
+import type { getLandingPetBySlug } from '@/entities/landing/landing.service';
+
 import { PetDetailContent } from './pet-detail-content';
-import { getPetDetail } from './pet-detail-data';
+import { createPetDetailViewModel } from './pet-detail-data';
 
 type PetDetailContainerProps = Readonly<{
-  paramsPromise: Promise<{ slug: string }>;
+  petPromise: Promise<Awaited<ReturnType<typeof getLandingPetBySlug>>>;
+  slugPromise: Promise<string>;
 }>;
 
-export async function PetDetailContainer({ paramsPromise }: PetDetailContainerProps) {
-  const { slug } = await paramsPromise;
-  const pet = getPetDetail(slug);
-
-  if (!pet) {
-    notFound();
+export async function PetDetailContainer({ petPromise, slugPromise }: PetDetailContainerProps) {
+  const [result, slug] = await Promise.all([petPromise, slugPromise]);
+  if (!result.isSuccess) {
+    if (result.message?.includes('یافت نشد')) notFound();
+    return (
+      <PageErrorState
+        statusCode={500}
+        errorMessage={result.message}
+        title="بارگذاری حیوان کامل نشد"
+        onRetry={retryLandingPetDetailAction.bind(null, slug)}
+      />
+    );
   }
-
-  return <PetDetailContent pet={pet} />;
+  return <PetDetailContent pet={createPetDetailViewModel(result.data)} />;
 }

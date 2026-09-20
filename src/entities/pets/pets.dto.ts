@@ -50,11 +50,17 @@ export type CustomerPetListItemDTO = Pick<
   | 'slug'
 > & { petType: string; breed: string };
 
-export type CustomerPetDetailDTO = Omit<CustomerPetListItemDTO, 'petType' | 'breed'> & {
-  images: string[];
-  petType: PetRelationDTO;
-  breed: PetRelationDTO;
+export type CustomerPetRatingDTO = {
+  userRate: number;
+  userRateCount: number;
 };
+
+export type CustomerPetDetailDTO = Omit<CustomerPetListItemDTO, 'petType' | 'breed'> &
+  CustomerPetRatingDTO & {
+    images: string[];
+    petType: PetRelationDTO;
+    breed: PetRelationDTO;
+  };
 
 export type ManagementPetsPageDTO = PaginateDataDTO<ManagementPetDTO>;
 export type CustomerPetsPageDTO = PaginateDataDTO<CustomerPetListItemDTO>;

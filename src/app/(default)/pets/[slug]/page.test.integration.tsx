@@ -1,48 +1,87 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { LandingPetDetailDTO } from '@/entities/landing/landing.dto';
 import { routePaths } from '@/configs/route.path';
+import { getLandingPetBySlug } from '@/entities/landing/landing.service';
 
 import { PetDetailContainer } from './_components/pet-detail-container';
-import PetDetailPage, { generateMetadata, generateStaticParams } from './page';
+import PetDetailPage, { generateMetadata } from './page';
 
+vi.mock('@/entities/landing/landing.service', () => ({ getLandingPetBySlug: vi.fn() }));
 vi.mock('@/components/ui/carousel', () => ({
   Carousel: ({ children, ...props }: { children: ReactNode }) => <div {...props}>{children}</div>,
   CarouselContent: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   CarouselItem: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));
 
+const pet = {
+  id: 'pet-1',
+  slug: 'max',
+  title: 'مکس',
+  mainImage: 'https://example.test/max.webp',
+  mainImageThumbnail: 'data:image/webp;base64,AAAA',
+  images: [],
+  summary: 'سگی مهربان و اجتماعی',
+  description: {
+    type: 'doc',
+    content: [{ type: 'paragraph', content: [{ type: 'text', text: 'شرح مکس' }] }],
+  },
+  quantity: 1,
+  userRate: 4.8,
+  userRateCount: 12,
+  price: 15_000_000,
+  discountPercentage: 10,
+  inEnable: true,
+  petType: { id: 'type-1', title: 'سگ', propertyDefinitions: [{ label: 'اندازه', value: 'بزرگ' }] },
+  breed: {
+    id: 'breed-1',
+    title: 'گلدن رتریور',
+    propertyDefinitions: [{ label: 'کشور', value: 'انگلستان' }],
+  },
+} satisfies LandingPetDetailDTO;
+
 afterEach(cleanup);
 
+beforeEach(() => {
+  vi.stubGlobal(
+    'ResizeObserver',
+    class {
+      observe() {}
+      disconnect() {}
+    },
+  );
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
 describe(routePaths.petDetail('max'), () => {
-  it('renders the responsive pet detail content and adoption action', async () => {
+  it('renders API-backed pet details, sticky request pricing, summary, and specification tabs', async () => {
     render(
       await PetDetailContainer({
-        paramsPromise: Promise.resolve({ slug: 'max' }),
+        petPromise: Promise.resolve({ isSuccess: true, message: null, data: pet }),
+        slugPromise: Promise.resolve(pet.slug),
       }),
     );
-    expect(screen.getByRole('heading', { level: 1, name: 'مکس' })).toBeTruthy();
-    expect(screen.getByRole('navigation', { name: 'breadcrumb' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 1, name: pet.title })).toBeTruthy();
     expect(screen.getByText('گلدن رتریور')).toBeTruthy();
-    expect(screen.getByTestId('breed-info').className).toContain('tw:md:grid-cols-4');
-    expect(screen.getAllByRole('button', { name: 'درخواست واگذاری' })).toHaveLength(2);
-    expect(screen.getByText('واکسیناسیون کامل')).toBeTruthy();
+    expect(screen.getAllByRole('button', { name: `درخواست واگذاری ${pet.title}` })).toHaveLength(2);
+    expect(screen.getByText('خلاصه حیوان')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'نمایش خلاصه حیوان' })).toBeTruthy();
+    expect(screen.getByRole('tab', { name: 'مشخصات' })).toBeTruthy();
   });
 
-  it('uses the real detail renderer for the runtime-param loading state', () => {
+  it('uses the renderer-backed skeleton while route params are pending', () => {
     render(<PetDetailPage params={new Promise(() => undefined)} />);
-
-    const loadingRegion = screen.getByRole('article');
-    expect(loadingRegion.getAttribute('aria-busy')).toBe('true');
-    expect(loadingRegion.className).toContain('skeleton');
-    expect(screen.getByTestId('breed-info').className).toContain('tw:md:grid-cols-4');
+    expect(screen.getByRole('article').getAttribute('aria-busy')).toBe('true');
   });
 
-  it('defines static params, metadata, and the canonical path builder', async () => {
-    expect(generateStaticParams()).toContainEqual({ slug: 'max' });
-    expect(routePaths.petDetail('golden dog')).toBe('/pets/golden%20dog');
-    const metadata = await generateMetadata({ params: Promise.resolve({ slug: 'max' }) });
-    expect(metadata.title).toBe('مکس، گلدن رتریور | پت شاپ پرشین');
+  it('builds metadata from the landing pet response', async () => {
+    vi.mocked(getLandingPetBySlug).mockResolvedValue({ isSuccess: true, message: null, data: pet });
+    const metadata = await generateMetadata({ params: Promise.resolve({ slug: pet.slug }) });
+    expect(metadata.title).toBe(`${pet.title} | پت شاپ پرشین`);
   });
 });

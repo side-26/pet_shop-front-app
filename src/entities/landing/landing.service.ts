@@ -222,6 +222,10 @@ export function invalidateLandingProductDetail(slug: string) {
   landingCache.invalidateDetail(slug);
 }
 
+export function invalidateLandingPetDetail(slug: string) {
+  landingCache.invalidateDetail(slug);
+}
+
 export async function getLandingPetBySlug(input: LandingSlugDTO['slug']) {
   const { slug } = await landingSlugSchema.validate({ slug: input }, { stripUnknown: true });
   return fetchLandingDetail<LandingPetDetailDTO>(`/landing/pets/${slug}`, slug);
