@@ -8,8 +8,13 @@ export const popularPetsSectionSkeletonData: LandingPetDTO[] = skeletonTitles.ma
     title,
     slug: `skeleton-popular-pet-${index}`,
     mainImage: '',
+    mainImageThumbnail: '',
+    description: { type: 'doc', content: [] },
     petType: 'نوع حیوان',
     breed: 'نژاد',
+    quantity: 0,
     price: 0,
+    discountPercentage: 0,
+    inEnable: false,
   }),
 );

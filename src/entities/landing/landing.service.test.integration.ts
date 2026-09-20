@@ -214,7 +214,7 @@ describe('landing service', () => {
             limit: 20,
           }),
           auth: false,
-          cache: 'no-store',
+          cache: 'force-cache',
         }),
         expect.objectContaining({
           url: '/landing/pets-paginate',
@@ -227,7 +227,7 @@ describe('landing service', () => {
             limit: 20,
           }),
           auth: false,
-          cache: 'no-store',
+          cache: 'force-cache',
         }),
         expect.objectContaining({
           url: '/landing/brands/popular',

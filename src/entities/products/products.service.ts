@@ -115,15 +115,16 @@ async function getSection<T>(id: string, section: 'images' | 'main-info' | 'weig
 export const getProductImages = (id: string) => getSection<ProductImagesDTO>(id, 'images');
 export const getProductMainInfo = (id: string) => getSection<ProductBaseInfoDTO>(id, 'main-info');
 export async function getProductWeights(id: string) {
-  'use cache: private';
+  'use cache';
 
   productsCache.cacheLife({ stale: 600 });
   productsCache.registerDetail(id);
   return customFetcher<ProductWeightsDTO>({
     url: `/products/weights/${id}`,
     method: 'GET',
-    auth: true,
-    cache: 'no-store',
+    auth: false,
+    cache: 'force-cache',
+    next: { tags: [productsCache.detail(id)] },
   });
 }
 export async function getProductPropertyDefinitions(id: string) {

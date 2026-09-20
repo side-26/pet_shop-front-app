@@ -22,9 +22,13 @@ const pet: LandingPetDTO = {
   slug: 'max',
   mainImage: 'https://cdn.example.test/max.webp',
   mainImageThumbnail: 'data:image/webp;base64,AAAA',
+  description: { type: 'doc', content: [] },
   petType: 'سگ',
   breed: 'گلدن رتریور',
+  quantity: 1,
   price: 15_000_000,
+  discountPercentage: 0,
+  inEnable: true,
 };
 
 beforeEach(() => {

@@ -53,6 +53,7 @@ export type ManagementProductDTO = {
   weights?: ProductWeightDTO[];
   userRate?: number;
   userRateCount?: number;
+  propertyDefinitions?: ProductPropertyDefinitionDTO[];
   price: number;
   discountPercentage: number;
   isEnable: boolean;
@@ -71,6 +72,9 @@ export type CustomerProductListItemDTO = Pick<
   | 'summary'
   | 'description'
   | 'quantity'
+  | 'weights'
+  | 'userRate'
+  | 'userRateCount'
   | 'price'
   | 'discountPercentage'
   | 'isEnable'

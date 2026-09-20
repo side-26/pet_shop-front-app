@@ -12,7 +12,12 @@ export const rehomingSectionSkeletonData: LandingPetDTO[] = skeletonTitles.map((
   title,
   slug: `skeleton-rehoming-pet-${index}`,
   mainImage: '',
+  mainImageThumbnail: '',
+  description: { type: 'doc', content: [] },
   petType: 'نوع حیوان',
   breed: 'نژاد',
+  quantity: 0,
   price: 0,
+  discountPercentage: 0,
+  inEnable: false,
 }));

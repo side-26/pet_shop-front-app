@@ -22,9 +22,13 @@ const pet: LandingPetDTO = {
   slug: 'nabat',
   mainImage: 'https://cdn.example.test/nabat.webp',
   mainImageThumbnail: 'data:image/webp;base64,AAAA',
+  description: { type: 'doc', content: [] },
   petType: 'گربه',
   breed: 'DSH',
+  quantity: 1,
   price: 0,
+  discountPercentage: 0,
+  inEnable: true,
 };
 
 beforeEach(() => {

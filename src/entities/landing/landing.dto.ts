@@ -24,16 +24,8 @@ export type LandingPetTypeDTO = {
   summary?: string;
 };
 
-export type LandingPetDTO = {
-  id: string;
-  title: string;
-  slug: string;
-  mainImage: string;
-  mainImageThumbnail?: string;
-  petType: string;
-  breed: string;
-  price: number;
-};
+/** Popular and recent landing pets use the customer-facing card contract. */
+export type LandingPetDTO = CustomerPetListItemDTO;
 /** The landing pet-list formatter only emits populated taxonomy titles when the model supplies them. */
 export type LandingPetListItemDTO = Omit<CustomerPetListItemDTO, 'petType' | 'breed'> & {
   breed?: string;
@@ -111,7 +103,7 @@ export type LandingProductWeightDTO = {
   price?: number;
   discountPercentage?: number;
 };
-export type LandingProductDetailDTO = Omit<CustomerProductDetailDTO, 'category'> & {
+export type LandingProductDetailDTO = Omit<CustomerProductDetailDTO, 'category' | 'weights'> & {
   category: ProductRelationDTO & { petType: LandingProductPetTypeDTO | null };
   weights: LandingProductWeightDTO[];
   userRate: number;

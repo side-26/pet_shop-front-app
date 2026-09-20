@@ -55,26 +55,11 @@ const landingPetListCacheKey = (query: LandingPetListRequestDTO & { limit: numbe
       .map(([key, value]) => [key, String(value)]),
   ).toString()}`;
 
-async function fetchLandingList<T>(
-  path: string,
-  key: string,
-  query?: QueryParams,
-  fetchCache: 'force-cache' | 'no-store' = 'force-cache',
-) {
+async function fetchLandingList<T>(path: string, key: string, query?: QueryParams) {
   'use cache';
 
   landingCache.cacheLife({ stale: 600 });
   landingCache.registerList(key);
-
-  if (fetchCache === 'no-store') {
-    return customFetcher<T>({
-      url: path,
-      method: 'GET',
-      query,
-      auth: false,
-      cache: 'no-store',
-    });
-  }
 
   return customFetcher<T>({
     url: path,
@@ -177,7 +162,7 @@ export async function getLandingProductList(input: Partial<LandingProductListReq
     { stripUnknown: true },
   );
   const key = landingProductListCacheKey(query);
-  return fetchLandingList<LandingProductListPageDTO>('/landing/products', key, query, 'no-store');
+  return fetchLandingList<LandingProductListPageDTO>('/landing/products', key, query);
 }
 
 export async function getLandingPetList(input: Partial<LandingPetListRequestDTO> = {}) {
@@ -189,7 +174,6 @@ export async function getLandingPetList(input: Partial<LandingPetListRequestDTO>
     '/landing/pets-paginate',
     landingPetListCacheKey(query),
     query,
-    'no-store',
   );
 }
 

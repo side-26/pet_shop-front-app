@@ -111,8 +111,8 @@ describe('product service', () => {
         }),
         expect.objectContaining({
           url: `/products/weights/${id}`,
-          auth: true,
-          cache: 'no-store',
+          auth: false,
+          cache: 'force-cache',
         }),
         expect.objectContaining({
           url: `/products/property-definitions/${id}`,
