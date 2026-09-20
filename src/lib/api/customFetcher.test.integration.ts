@@ -57,18 +57,16 @@ describe('customFetcher', () => {
     expect(result).toEqual({ isSuccess: true, message: null, data: undefined });
   });
 
-  it('supports explicit public caching with reusable tags', async () => {
+  it('keeps an explicit public transport request uncached', async () => {
     fetchMock.mockResolvedValueOnce(jsonResponse({ isSuccess: true, message: null, data: [1, 2] }));
 
     await customFetcher<number[]>({
       url: '/products',
-      cache: 'force-cache',
-      next: { revalidate: 300, tags: ['products'] },
+      cache: 'no-store',
     });
 
     expect(fetchMock.mock.calls[0]?.[1]).toMatchObject({
-      cache: 'force-cache',
-      next: { revalidate: 300, tags: ['products'] },
+      cache: 'no-store',
     });
   });
 

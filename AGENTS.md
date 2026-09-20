@@ -53,6 +53,13 @@ Next.js `'use cache: private'` with an explicit `cacheLife`. Keep the underlying
 `cache: 'no-store'`; cache the service result privately so bearer-token responses never enter a shared
 server cache. Register deterministic entity/query tags for targeted invalidation.
 
+### Fetch-layer cache policy
+
+`customFetcher` defaults to `cache: 'no-store'` and does not expose persistent fetch caching. Keep all
+transport requests at that default; use `'use cache'`/`'use cache: private'`, `cacheLife`, and `EntityTag`
+at the entity-service layer when caching is required. Do not add `force-cache`, `next.tags`, or fetch-level
+revalidation to service requests.
+
 ### Badge neutral color
 
 The shared `Badge` supports `color="neutral"` across every existing visual variant. Use the neutral

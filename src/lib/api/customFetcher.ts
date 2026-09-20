@@ -27,7 +27,6 @@ export type {
   ResponseParser,
 } from './fetcher.shared';
 
-type NextFetchOptions = { revalidate?: number | false; tags: [string, ...string[]] };
 type CommonOptions<TSuccess, TBackendError> = {
   url: string;
   query?: QueryParams;
@@ -37,7 +36,6 @@ type CommonOptions<TSuccess, TBackendError> = {
   parseErrorDetails?: ResponseParser<TBackendError>;
 };
 type PublicUncachedOptions = { auth?: false; cache?: 'no-store'; next?: never };
-type PublicCachedOptions = { auth?: false; cache: 'force-cache'; next: NextFetchOptions };
 type PrivateOptions = { auth: true; cache?: 'no-store'; next?: never };
 type BodylessOptions = { method?: 'GET' | 'DELETE'; body?: never };
 type BodyOptions<TBody> = { method: 'POST' | 'PUT' | 'PATCH' | 'DELETE'; body: TBody };
@@ -46,7 +44,7 @@ export type CustomFetcherOptions<TSuccess, TBackendError, TBody = never> = Commo
   TSuccess,
   TBackendError
 > &
-  (PublicUncachedOptions | PublicCachedOptions | PrivateOptions) &
+  (PublicUncachedOptions | PrivateOptions) &
   (BodylessOptions | BodyOptions<TBody>);
 
 export type CustomFetcherConfig = { customToken?: string };

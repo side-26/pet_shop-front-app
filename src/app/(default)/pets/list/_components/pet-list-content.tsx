@@ -8,6 +8,7 @@ import { getLandingPetList } from '@/entities/landing/landing.service';
 
 import { PetListBreadcrumb } from './pet-list-breadcrumb';
 import { PetListContainer } from './pet-list-container';
+import { PetListErrorBoundary } from './pet-list-error-boundary';
 import { PetListRenderer } from './pet-list-renderer';
 
 type PetListContentProps = Readonly<{ searchParams: Promise<PaginationSearchParams> }>;
@@ -20,7 +21,9 @@ export function PetListContent({ searchParams }: PetListContentProps) {
         <h1 className="tw:text-heading-2 tw:lg:text-heading-1">لیست حیوانات</h1>
       </header>
       <Suspense fallback={<PetListRenderer query={{}} isSkeleton />}>
-        <PetListQueryContent searchParams={searchParams} />
+        <PetListErrorBoundary>
+          <PetListQueryContent searchParams={searchParams} />
+        </PetListErrorBoundary>
       </Suspense>
     </main>
   );

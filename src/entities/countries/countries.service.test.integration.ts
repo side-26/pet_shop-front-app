@@ -44,8 +44,6 @@ describe('getCountries service', () => {
       url: '/countries',
       method: 'GET',
       auth: false,
-      cache: 'force-cache',
-      next: { tags: ['countries:list'] },
     });
   });
 });

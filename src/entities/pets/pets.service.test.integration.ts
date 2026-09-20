@@ -32,9 +32,8 @@ const {
   registerDetailMock: vi.fn(),
   registerListMock: vi.fn(),
 }));
-const { invalidateLandingPopularPetsMock, invalidateLandingRecentPetsMock } = vi.hoisted(() => ({
-  invalidateLandingPopularPetsMock: vi.fn(),
-  invalidateLandingRecentPetsMock: vi.fn(),
+const { invalidateLandingCatalogMock } = vi.hoisted(() => ({
+  invalidateLandingCatalogMock: vi.fn(),
 }));
 
 vi.mock('@/lib/api/customFetcher', () => ({ customFetcher: vi.fn() }));
@@ -50,8 +49,7 @@ vi.mock('@/utils/entityCache', () => ({
   }),
 }));
 vi.mock('@/entities/landing/landing.service', () => ({
-  invalidateLandingPopularPets: invalidateLandingPopularPetsMock,
-  invalidateLandingRecentPets: invalidateLandingRecentPetsMock,
+  invalidateLandingCatalog: invalidateLandingCatalogMock,
 }));
 
 const fetcher = vi.mocked(customFetcher);
@@ -68,15 +66,13 @@ describe('pet service', () => {
     fetcher.mockResolvedValue(success);
   });
 
-  it('uses public cached customer list and detail contracts', async () => {
+  it('uses public customer list and detail transport defaults', async () => {
     await getCustomerPets({ title: 'kitten', petType });
     expect(fetcher).toHaveBeenNthCalledWith(1, {
       url: '/pets',
       method: 'GET',
       query: { title: 'kitten', petType, page: 1, limit: 10, sort: 'createdAt' },
       auth: false,
-      cache: 'force-cache',
-      next: { tags: ['pets:list'] },
     });
     expect(registerListMock).toHaveBeenCalledWith(
       `customer:limit=10&page=1&petType=${petType}&sort=createdAt&title=kitten`,
@@ -87,8 +83,6 @@ describe('pet service', () => {
       url: `/pets/customer/${id}`,
       method: 'GET',
       auth: false,
-      cache: 'force-cache',
-      next: { tags: [`pets:detail:${id}`] },
     });
   });
 
@@ -177,8 +171,7 @@ describe('pet service', () => {
       body: { price: 200 },
     });
     expect(invalidateDetailMock).toHaveBeenCalledWith(id);
-    expect(invalidateLandingPopularPetsMock).toHaveBeenCalledTimes(4);
-    expect(invalidateLandingRecentPetsMock).toHaveBeenCalledTimes(4);
+    expect(invalidateLandingCatalogMock).toHaveBeenCalledTimes(4);
   });
 
   it('uses status/delete endpoints and never invalidates failed mutations', async () => {
@@ -204,7 +197,6 @@ describe('pet service', () => {
     });
     expect(invalidateListMock).not.toHaveBeenCalled();
     expect(invalidateDetailMock).not.toHaveBeenCalled();
-    expect(invalidateLandingPopularPetsMock).not.toHaveBeenCalled();
-    expect(invalidateLandingRecentPetsMock).not.toHaveBeenCalled();
+    expect(invalidateLandingCatalogMock).not.toHaveBeenCalled();
   });
 });

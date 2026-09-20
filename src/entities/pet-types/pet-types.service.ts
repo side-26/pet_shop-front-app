@@ -25,8 +25,6 @@ export async function getAllPetTypesForBreed() {
     url: '/pet-types',
     method: 'GET',
     auth: false,
-    cache: 'force-cache',
-    next: { tags: [petTypesCache.list] },
   });
 }
 

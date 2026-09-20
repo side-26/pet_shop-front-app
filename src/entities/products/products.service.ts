@@ -1,13 +1,7 @@
 import 'server-only';
 
 import { customFetcher, type FetcherResult } from '@/lib/api/customFetcher';
-import {
-  invalidateLandingFeaturedProducts,
-  invalidateLandingHomeOffers,
-  invalidateLandingPopularBrands,
-  invalidateLandingPopularProducts,
-  invalidateLandingProductLists,
-} from '@/entities/landing/landing.service';
+import { invalidateLandingCatalog } from '@/entities/landing/landing.service';
 import { EntityTag } from '@/utils/entityCache';
 import type {
   CreateProductDTO,
@@ -57,8 +51,6 @@ async function fetchCustomerProducts(query: CustomerProductQueryDTO) {
     method: 'GET',
     query,
     auth: false,
-    cache: 'force-cache',
-    next: { tags: [productsCache.list] },
   });
 }
 export async function getCustomerProduct(id: string) {
@@ -69,8 +61,6 @@ export async function getCustomerProduct(id: string) {
     url: `/products/customer/${id}`,
     method: 'GET',
     auth: false,
-    cache: 'force-cache',
-    next: { tags: [productsCache.detail(id)] },
   });
 }
 export async function getManagementProducts(input: Partial<ManagementProductQueryDTO> = {}) {
@@ -123,8 +113,6 @@ export async function getProductWeights(id: string) {
     url: `/products/weights/${id}`,
     method: 'GET',
     auth: false,
-    cache: 'force-cache',
-    next: { tags: [productsCache.detail(id)] },
   });
 }
 export async function getProductPropertyDefinitions(id: string) {
@@ -136,8 +124,6 @@ export async function getProductPropertyDefinitions(id: string) {
     url: `/products/property-definitions/${id}`,
     method: 'GET',
     auth: false,
-    cache: 'force-cache',
-    next: { tags: [productsCache.detail(id)] },
   });
 }
 function toFormData(input: CreateProductDTO | UpdateProductImagesDTO) {
@@ -158,11 +144,7 @@ function toFormData(input: CreateProductDTO | UpdateProductImagesDTO) {
 function invalidate(id?: string) {
   productsCache.invalidateList();
   if (id) productsCache.invalidateDetail(id);
-  invalidateLandingHomeOffers();
-  invalidateLandingFeaturedProducts();
-  invalidateLandingPopularProducts();
-  invalidateLandingPopularBrands();
-  invalidateLandingProductLists();
+  invalidateLandingCatalog();
 }
 export async function createProduct(input: CreateProductDTO) {
   const result = await customFetcher<ManagementProductDTO, unknown, FormData>({

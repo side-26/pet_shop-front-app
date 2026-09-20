@@ -1,10 +1,7 @@
 import 'server-only';
 
 import { customFetcher } from '@/lib/api/customFetcher';
-import {
-  invalidateLandingPopularPets,
-  invalidateLandingRecentPets,
-} from '@/entities/landing/landing.service';
+import { invalidateLandingCatalog } from '@/entities/landing/landing.service';
 import { EntityTag } from '@/utils/entityCache';
 
 import type {
@@ -60,8 +57,6 @@ async function fetchCustomerPetsPage(query: CustomerPetPaginateQueryDTO) {
     method: 'GET',
     query,
     auth: false,
-    cache: 'force-cache',
-    next: { tags: [petsCache.list] },
   });
 }
 
@@ -80,8 +75,6 @@ async function fetchCustomerPets(query: CustomerPetQueryDTO) {
     method: 'GET',
     query,
     auth: false,
-    cache: 'force-cache',
-    next: { tags: [petsCache.list] },
   });
 }
 
@@ -94,8 +87,6 @@ export async function getCustomerPet(id: string) {
     url: `/pets/customer/${id}`,
     method: 'GET',
     auth: false,
-    cache: 'force-cache',
-    next: { tags: [petsCache.detail(id)] },
   });
 }
 
@@ -151,8 +142,7 @@ function toFormData(input: CreatePetDTO | UpdatePetImagesDTO) {
 function invalidate(id?: string) {
   petsCache.invalidateList();
   if (id) petsCache.invalidateDetail(id);
-  invalidateLandingPopularPets();
-  invalidateLandingRecentPets();
+  invalidateLandingCatalog();
 }
 
 export async function createPet(input: CreatePetDTO) {

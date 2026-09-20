@@ -66,8 +66,6 @@ async function fetchLandingList<T>(path: string, key: string, query?: QueryParam
     method: 'GET',
     query,
     auth: false,
-    cache: 'force-cache',
-    next: { tags: [landingCache.list, landingCache.query(key)] },
   });
 }
 
@@ -80,8 +78,6 @@ async function fetchLandingDetail<T>(path: string, slug: string) {
     url: path,
     method: 'GET',
     auth: false,
-    cache: 'force-cache',
-    next: { tags: [landingCache.detail(slug)] },
   });
 }
 
@@ -199,6 +195,14 @@ export function invalidateLandingPopularBrands() {
 
 export function invalidateLandingFeaturedProducts() {
   landingCache.invalidateQuery(featuredProductsCacheKey);
+}
+
+/**
+ * Product and pet mutations identify records by ID while landing details are cached by slug.
+ * Expire the landing entity when a precise detail tag cannot be determined safely.
+ */
+export function invalidateLandingCatalog() {
+  landingCache.invalidateAll();
 }
 
 /** Product catalogue queries share the landing list tag, so one product mutation expires every variant. */

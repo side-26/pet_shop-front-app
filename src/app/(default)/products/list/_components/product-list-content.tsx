@@ -8,6 +8,7 @@ import { getLandingProductList } from '@/entities/landing/landing.service';
 
 import { ProductListBreadcrumb } from './product-list-breadcrumb';
 import { ProductListContainer } from './product-list-container';
+import { ProductListErrorBoundary } from './product-list-error-boundary';
 import { ProductListRenderer } from './product-list-renderer';
 
 type ProductListContentProps = Readonly<{
@@ -22,7 +23,9 @@ export function ProductListContent({ searchParams }: ProductListContentProps) {
         <h1 className="tw:text-heading-2 tw:lg:text-heading-1">محصولات حیوانات خانگی</h1>
       </header>
       <Suspense fallback={<ProductListRenderer query={{}} isSkeleton />}>
-        <ProductListQueryContent searchParams={searchParams} />
+        <ProductListErrorBoundary>
+          <ProductListQueryContent searchParams={searchParams} />
+        </ProductListErrorBoundary>
       </Suspense>
     </main>
   );

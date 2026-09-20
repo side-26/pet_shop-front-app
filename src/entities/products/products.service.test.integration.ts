@@ -24,18 +24,8 @@ const mocks = vi.hoisted(() => ({
   registerDetail: vi.fn(),
   registerList: vi.fn(),
 }));
-const {
-  invalidateLandingFeaturedProductsMock,
-  invalidateLandingHomeOffersMock,
-  invalidateLandingPopularBrandsMock,
-  invalidateLandingPopularProductsMock,
-  invalidateLandingProductListsMock,
-} = vi.hoisted(() => ({
-  invalidateLandingFeaturedProductsMock: vi.fn(),
-  invalidateLandingHomeOffersMock: vi.fn(),
-  invalidateLandingPopularBrandsMock: vi.fn(),
-  invalidateLandingPopularProductsMock: vi.fn(),
-  invalidateLandingProductListsMock: vi.fn(),
+const { invalidateLandingCatalogMock } = vi.hoisted(() => ({
+  invalidateLandingCatalogMock: vi.fn(),
 }));
 vi.mock('@/lib/api/customFetcher', () => ({ customFetcher: vi.fn() }));
 vi.mock('@/utils/entityCache', () => ({
@@ -47,11 +37,7 @@ vi.mock('@/utils/entityCache', () => ({
   }),
 }));
 vi.mock('@/entities/landing/landing.service', () => ({
-  invalidateLandingFeaturedProducts: invalidateLandingFeaturedProductsMock,
-  invalidateLandingHomeOffers: invalidateLandingHomeOffersMock,
-  invalidateLandingPopularBrands: invalidateLandingPopularBrandsMock,
-  invalidateLandingPopularProducts: invalidateLandingPopularProductsMock,
-  invalidateLandingProductLists: invalidateLandingProductListsMock,
+  invalidateLandingCatalog: invalidateLandingCatalogMock,
 }));
 const fetcher = vi.mocked(customFetcher);
 const id = '507f1f77bcf86cd799439010';
@@ -81,11 +67,10 @@ describe('product service', () => {
     await getProductPropertyDefinitions(id);
     expect(fetcher.mock.calls.map(([o]) => o)).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ url: '/products', auth: false, cache: 'force-cache' }),
+        expect.objectContaining({ url: '/products', auth: false }),
         expect.objectContaining({
           url: `/products/customer/${id}`,
           auth: false,
-          cache: 'force-cache',
         }),
         expect.objectContaining({
           url: '/products/paginate',
@@ -112,12 +97,10 @@ describe('product service', () => {
         expect.objectContaining({
           url: `/products/weights/${id}`,
           auth: false,
-          cache: 'force-cache',
         }),
         expect.objectContaining({
           url: `/products/property-definitions/${id}`,
           auth: false,
-          cache: 'force-cache',
         }),
       ]),
     );
@@ -157,11 +140,7 @@ describe('product service', () => {
         weights: [{ metric: 'KG', quantity: 2, value: 1, price: 20, discountPercentage: 10 }],
       },
     });
-    expect(invalidateLandingHomeOffersMock).toHaveBeenCalledTimes(4);
-    expect(invalidateLandingFeaturedProductsMock).toHaveBeenCalledTimes(4);
-    expect(invalidateLandingPopularProductsMock).toHaveBeenCalledTimes(4);
-    expect(invalidateLandingPopularBrandsMock).toHaveBeenCalledTimes(4);
-    expect(invalidateLandingProductListsMock).toHaveBeenCalledTimes(4);
+    expect(invalidateLandingCatalogMock).toHaveBeenCalledTimes(4);
   });
   it('does not invalidate failed status or delete mutations', async () => {
     fetcher.mockResolvedValue({
@@ -176,11 +155,7 @@ describe('product service', () => {
       `/products/${id}`,
     ]);
     expect(mocks.invalidateList).not.toHaveBeenCalled();
-    expect(invalidateLandingHomeOffersMock).not.toHaveBeenCalled();
-    expect(invalidateLandingFeaturedProductsMock).not.toHaveBeenCalled();
-    expect(invalidateLandingPopularProductsMock).not.toHaveBeenCalled();
-    expect(invalidateLandingPopularBrandsMock).not.toHaveBeenCalled();
-    expect(invalidateLandingProductListsMock).not.toHaveBeenCalled();
+    expect(invalidateLandingCatalogMock).not.toHaveBeenCalled();
   });
   it('replaces management property definitions through their dedicated endpoint', async () => {
     await replaceProductPropertyDefinitions({
@@ -225,6 +200,6 @@ describe('product service', () => {
 
     expect(mocks.invalidateDetail).not.toHaveBeenCalled();
     expect(mocks.invalidateList).not.toHaveBeenCalled();
-    expect(invalidateLandingProductListsMock).not.toHaveBeenCalled();
+    expect(invalidateLandingCatalogMock).not.toHaveBeenCalled();
   });
 });

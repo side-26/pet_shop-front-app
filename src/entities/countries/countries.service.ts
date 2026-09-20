@@ -16,7 +16,5 @@ export async function getCountries() {
     url: '/countries',
     method: 'GET',
     auth: false,
-    cache: 'force-cache',
-    next: { tags: [countriesCache.list] },
   });
 }

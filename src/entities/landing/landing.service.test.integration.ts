@@ -17,6 +17,7 @@ import {
   getFeaturedLandingProducts,
   getFeaturedLandingPetTypes,
   invalidateAllLandingPetTypes,
+  invalidateLandingCatalog,
   invalidateLandingFeaturedProducts,
   getLandingPetBySlug,
   getLandingProductList,
@@ -39,6 +40,7 @@ const mocks = vi.hoisted(() => ({
   detail: vi.fn((id: string) => `landing:detail:${id}`),
   invalidateList: vi.fn(),
   invalidateDetail: vi.fn(),
+  invalidateAll: vi.fn(),
   invalidateQuery: vi.fn(),
   list: 'landing:list',
   query: vi.fn((key: string) => `landing:query:${key}`),
@@ -155,7 +157,7 @@ describe('landing service', () => {
     fetcher.mockResolvedValue({ isSuccess: true, message: null, data: [landingProduct] as never });
   });
 
-  it('requests every public landing collection with shared caching', async () => {
+  it('requests every public landing collection through the default transport cache policy', async () => {
     await getFeaturedLandingPetTypes();
     await getAllLandingPetTypes();
     await getDiscountedLandingProducts({ limit: 2 });
@@ -180,27 +182,23 @@ describe('landing service', () => {
 
     expect(fetcher.mock.calls.map(([options]) => options)).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ url: '/landing/pet-types', auth: false, cache: 'force-cache' }),
+        expect.objectContaining({ url: '/landing/pet-types', auth: false }),
         expect.objectContaining({
           url: '/landing/pet-types/all',
           auth: false,
-          cache: 'force-cache',
         }),
         expect.objectContaining({
           url: '/landing/products/discounted',
           query: { limit: 2 },
           auth: false,
-          cache: 'force-cache',
         }),
         expect.objectContaining({
           url: '/landing/products/popular',
           auth: false,
-          cache: 'force-cache',
         }),
         expect.objectContaining({
           url: '/landing/products/featured',
           auth: false,
-          cache: 'force-cache',
         }),
         expect.objectContaining({
           url: '/landing/products',
@@ -214,7 +212,6 @@ describe('landing service', () => {
             limit: 20,
           }),
           auth: false,
-          cache: 'force-cache',
         }),
         expect.objectContaining({
           url: '/landing/pets-paginate',
@@ -227,31 +224,24 @@ describe('landing service', () => {
             limit: 20,
           }),
           auth: false,
-          cache: 'force-cache',
         }),
         expect.objectContaining({
           url: '/landing/brands/popular',
           auth: false,
-          cache: 'force-cache',
         }),
         expect.objectContaining({
           url: '/landing/pets/popular',
           auth: false,
-          cache: 'force-cache',
         }),
         expect.objectContaining({
           url: '/landing/pets/recent',
           auth: false,
-          cache: 'force-cache',
         }),
       ]),
     );
     expect(mocks.registerList).toHaveBeenCalledTimes(10);
     expect(fetcher).toHaveBeenCalledWith(
-      expect.objectContaining({
-        url: '/landing/pet-types/all',
-        next: { tags: ['landing:list', 'landing:query:pet-types:all'] },
-      }),
+      expect.objectContaining({ url: '/landing/pet-types/all', auth: false }),
     );
   });
 
@@ -261,12 +251,14 @@ describe('landing service', () => {
     invalidateLandingPopularBrands();
     invalidateLandingRecentPets();
     invalidateLandingProductLists();
+    invalidateLandingCatalog();
 
     expect(mocks.invalidateQuery).toHaveBeenCalledWith('pet-types:all');
     expect(mocks.invalidateQuery).toHaveBeenCalledWith('products:featured');
     expect(mocks.invalidateQuery).toHaveBeenCalledWith('brands:popular');
     expect(mocks.invalidateQuery).toHaveBeenCalledWith('pets:recent');
     expect(mocks.invalidateList).toHaveBeenCalledOnce();
+    expect(mocks.invalidateAll).toHaveBeenCalledOnce();
   });
 
   it('exposes the backend selection tag with every featured product', async () => {
@@ -328,7 +320,7 @@ describe('landing service', () => {
     });
   });
 
-  it('caches public searches and keeps signed-in product details private', async () => {
+  it('uses default transport caching for public searches and private product details', async () => {
     await getLandingSearch({ search: '  غذای گربه  ' });
     getSessionMock.mockResolvedValue({ userId: 'user-1' } as never);
     await getLandingProductBySlug('cat-food');
@@ -338,7 +330,6 @@ describe('landing service', () => {
         url: '/landing/search',
         query: { search: 'غذای گربه' },
         auth: false,
-        cache: 'force-cache',
       }),
     );
     expect(fetcher).toHaveBeenCalledWith({
@@ -370,7 +361,6 @@ describe('landing service', () => {
       expect.objectContaining({
         url: '/landing/products/cat-food',
         auth: false,
-        cache: 'force-cache',
       }),
     );
     expect(mocks.invalidateDetail).toHaveBeenCalledWith('cat-food');
