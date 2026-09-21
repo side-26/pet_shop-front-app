@@ -5,6 +5,7 @@ import { ValidationError } from 'yup';
 
 import { PATHS } from '@/configs/route.path';
 import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
+import { authMessages } from '@/entities/auth/auth.messages';
 import {
   loginUserSchema,
   registerUserSchema,
@@ -31,9 +32,6 @@ import {
   saveSessionToCookie,
   saveTemporaryTokenToCookie,
 } from '@/utils/session';
-
-const TEMPORARY_SESSION_EXPIRED_MESSAGE =
-  'نشست موقت شما به پایان رسیده است. لطفاً دوباره تلاش کنید.';
 
 export async function registerUserAction(input: RegisterUserInput) {
   try {
@@ -89,7 +87,7 @@ export async function logoutUserAction() {
   } catch (error: unknown) {
     return {
       isSuccess: false as const,
-      message: error instanceof Error ? error.message : 'خروج از حساب کاربری ناموفق بود.',
+      message: error instanceof Error ? error.message : authMessages.logoutFailed,
       data: { messages: {}, details: {} },
     };
   }
@@ -150,7 +148,7 @@ export async function resetPasswordAction(input: ResetPasswordInput) {
     if (!temporaryToken) {
       return {
         isSuccess: false as const,
-        message: TEMPORARY_SESSION_EXPIRED_MESSAGE,
+        message: authMessages.temporarySessionExpired,
         data: { messages: {}, details: {} },
         shouldRedirectToLogin: true as const,
       };

@@ -12,6 +12,7 @@ import type {
   UpdateBreedDTO,
 } from './breeds.dto';
 import { breedQuerySchema } from './breeds.schema';
+import { breedMessages } from './breeds.messages';
 
 const breedsCache = new EntityTag('breeds');
 function withSuccessMessage<T>(result: FetcherResult<T>, fallback: string): FetcherResult<T> {
@@ -103,7 +104,7 @@ export async function createBreed(input: CreateBreedDTO) {
       auth: true,
       cache: 'no-store',
     }),
-    'نژاد با موفقیت ایجاد شد.',
+    breedMessages.created,
   );
   if (result.isSuccess) invalidate();
   return result;
@@ -117,7 +118,7 @@ export async function updateBreed(id: string, input: UpdateBreedDTO) {
       auth: true,
       cache: 'no-store',
     }),
-    'تغییرات نژاد با موفقیت ذخیره شد.',
+    breedMessages.updated,
   );
   if (result.isSuccess) invalidate(id);
   return result;
@@ -129,7 +130,7 @@ export async function replaceBreedPropertyDefinitions(input: ReplaceBreedPropert
       unknown,
       ReplaceBreedPropertyDefinitionsDTO
     >({ url: '/breeds/range', method: 'PUT', body: input, auth: true, cache: 'no-store' }),
-    'ویژگی‌های نژاد با موفقیت ذخیره شد.',
+    breedMessages.propertyDefinitionsUpdated,
   );
   if (result.isSuccess) invalidate(input.id);
   return result;
@@ -143,7 +144,7 @@ async function status(id: string, value: 'enable' | 'disable') {
       auth: true,
       cache: 'no-store',
     }),
-    'وضعیت نژاد با موفقیت تغییر کرد.',
+    breedMessages.statusUpdated,
   );
   if (result.isSuccess) invalidate(id);
   return result;
@@ -158,7 +159,7 @@ export async function deleteBreed(id: string) {
       auth: true,
       cache: 'no-store',
     }),
-    'نژاد با موفقیت حذف شد.',
+    breedMessages.deleted,
   );
   if (result.isSuccess) invalidate(id);
   return result;

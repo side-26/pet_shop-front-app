@@ -29,7 +29,16 @@ export type QueryPrimitive = string | number | boolean;
 export type QueryValue = QueryPrimitive | readonly QueryPrimitive[] | null | undefined;
 export type QueryParams = Record<string, QueryValue>;
 
-const DEFAULT_ERROR_MESSAGE = 'The server returned an invalid response.';
+export const fetcherMessages = {
+  authenticationRequired: 'Authentication is required.',
+  requestTimedOut: 'The request timed out.',
+  serverUnavailable: 'Unable to reach the server.',
+  unexpectedError: 'An unexpected error occurred.',
+  invalidResponse: 'The server returned an invalid response.',
+  uploadCancelled: 'The upload was cancelled.',
+} as const;
+
+const DEFAULT_ERROR_MESSAGE = fetcherMessages.invalidResponse;
 
 export function buildUrl(path: string, query?: QueryParams): string {
   const configuredBaseUrl = process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? '';

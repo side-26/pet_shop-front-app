@@ -4,6 +4,7 @@ import { getSession } from '@/utils/session';
 
 import {
   buildUrl,
+  fetcherMessages,
   isExplicitErrorResponse,
   normalizeSuccessResponse,
   parseResponseError,
@@ -72,7 +73,8 @@ export async function customFetcher<TSuccess, TBackendError = unknown, TBody = n
   if (customConfig?.customToken) headers.set('Authorization', `Bearer ${customConfig.customToken}`);
   else if (auth) {
     const session = await getSession();
-    if (!session?.accessToken) return transportError<TBackendError>('Authentication is required.');
+    if (!session?.accessToken)
+      return transportError<TBackendError>(fetcherMessages.authenticationRequired);
     headers.set('Authorization', `Bearer ${session.accessToken}`);
   }
 
@@ -97,10 +99,11 @@ export async function customFetcher<TSuccess, TBackendError = unknown, TBody = n
     }
     return parseSuccess(normalizeSuccessResponse(responseBody), successParser);
   } catch (error: unknown) {
-    if (controller.signal.aborted) return transportError<TBackendError>('The request timed out.');
+    if (controller.signal.aborted)
+      return transportError<TBackendError>(fetcherMessages.requestTimedOut);
     if (error instanceof TypeError)
-      return transportError<TBackendError>('Unable to reach the server.');
-    return transportError<TBackendError>('An unexpected error occurred.');
+      return transportError<TBackendError>(fetcherMessages.serverUnavailable);
+    return transportError<TBackendError>(fetcherMessages.unexpectedError);
   } finally {
     clearTimeout(timeout);
   }

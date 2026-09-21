@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { customFetcher } from '@/lib/api/customFetcher';
 
+import { breedMessages } from './breeds.messages';
 import { getBreeds, getBreedsPage, updateBreed } from './breeds.service';
 
 const { cacheLifeMock, invalidateDetailMock, invalidateListMock, registerListMock } = vi.hoisted(
@@ -116,7 +117,7 @@ describe('breed API service', () => {
         activityLevel: 4,
         enable: true,
       }),
-    ).resolves.toMatchObject({ isSuccess: true, message: 'تغییرات نژاد با موفقیت ذخیره شد.' });
+    ).resolves.toMatchObject({ isSuccess: true, message: breedMessages.updated });
 
     const options = customFetcherMock.mock.calls[0][0];
     expect(options).toMatchObject({

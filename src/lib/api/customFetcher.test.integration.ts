@@ -4,6 +4,7 @@ import { getSession } from '@/utils/session';
 import { USER_ROLES } from '@/configs/user-role';
 
 import { customFetcher } from './customFetcher';
+import { fetcherMessages } from './fetcher.shared';
 
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
 
@@ -122,7 +123,7 @@ describe('customFetcher', () => {
 
     expect(result).toEqual({
       isSuccess: false,
-      message: 'Authentication is required.',
+      message: fetcherMessages.authenticationRequired,
       data: { messages: {}, details: {} },
     });
     expect(fetchMock).not.toHaveBeenCalled();
@@ -167,7 +168,7 @@ describe('customFetcher', () => {
 
     expect(result).toEqual({
       isSuccess: false,
-      message: 'The server returned an invalid response.',
+      message: fetcherMessages.invalidResponse,
       data: { messages: {}, details: {} },
     });
   });
@@ -215,7 +216,7 @@ describe('customFetcher', () => {
 
     expect(malformed).toEqual({
       isSuccess: false,
-      message: 'The server returned an invalid response.',
+      message: fetcherMessages.invalidResponse,
       data: { messages: {}, details: {} },
     });
     expect(parserFailure).toEqual(malformed);
@@ -235,8 +236,8 @@ describe('customFetcher', () => {
     const network = await customFetcher({ url: '/network' });
     const timeout = await customFetcher({ url: '/timeout', timeoutMs: 1 });
 
-    expect(network).toMatchObject({ isSuccess: false, message: 'Unable to reach the server.' });
-    expect(timeout).toMatchObject({ isSuccess: false, message: 'The request timed out.' });
+    expect(network).toMatchObject({ isSuccess: false, message: fetcherMessages.serverUnavailable });
+    expect(timeout).toMatchObject({ isSuccess: false, message: fetcherMessages.requestTimedOut });
   });
 
   it('supports successful empty 204 responses', async () => {

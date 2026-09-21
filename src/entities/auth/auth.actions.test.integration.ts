@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PATHS } from '@/configs/route.path';
 import { USER_ROLES } from '@/configs/user-role';
+import { authMessages } from './auth.messages';
 import {
   deleteSessionCookie,
   deleteTemporaryTokenCookie,
@@ -237,7 +238,7 @@ describe('auth actions', () => {
       resetPasswordAction({ newPassword: 'new-password', confirmPassword: 'new-password' }),
     ).resolves.toEqual({
       isSuccess: false,
-      message: 'نشست موقت شما به پایان رسیده است. لطفاً دوباره تلاش کنید.',
+      message: authMessages.temporarySessionExpired,
       data: { messages: {}, details: {} },
       shouldRedirectToLogin: true,
     });

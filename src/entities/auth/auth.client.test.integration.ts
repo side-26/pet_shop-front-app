@@ -5,6 +5,7 @@ import { routePaths } from '@/configs/route.path';
 import { USER_ROLES } from '@/configs/user-role';
 import { globalErrorHandler } from '@/utils/helpers';
 
+import { authMessages } from './auth.messages';
 import {
   loginUserAction,
   logoutUserAction,
@@ -314,7 +315,7 @@ describe('resetPassword client orchestration', () => {
   it('shows the Persian session-expired error and redirects to login', async () => {
     const error = {
       isSuccess: false as const,
-      message: 'نشست موقت شما به پایان رسیده است. لطفاً دوباره تلاش کنید.',
+      message: authMessages.temporarySessionExpired,
       data: { messages: {}, details: {} },
       shouldRedirectToLogin: true as const,
     };

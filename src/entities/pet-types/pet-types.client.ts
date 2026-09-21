@@ -4,6 +4,7 @@ import { useCallback, useRef, useTransition } from 'react';
 import type { UseFormSetError } from 'react-hook-form';
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
+import { imageOperationMessages } from '@/configs/image-operation-messages';
 import { globalErrorHandler } from '@/utils/helpers';
 import {
   hasPendingRichTextImageOperations,
@@ -56,7 +57,7 @@ export async function submitCreatePetType(
   onDescriptionUploaded?: (description: RichTextDocument) => void,
 ) {
   if (hasPendingRichTextImageOperations()) {
-    toast.add({ type: 'warning', title: 'لطفاً تکمیل بارگذاری یا حذف تصویر را منتظر بمانید.' });
+    toast.add({ type: 'warning', title: imageOperationMessages.pendingOperations });
     return false;
   }
   try {
@@ -109,7 +110,7 @@ export function useUpdatePetType(id: string, onSuccess: () => void) {
         if (hasPendingRichTextImageOperations()) {
           toast.add({
             type: 'warning',
-            title: 'لطفاً تکمیل بارگذاری یا حذف تصویر را منتظر بمانید.',
+            title: imageOperationMessages.pendingOperations,
           });
           return;
         }

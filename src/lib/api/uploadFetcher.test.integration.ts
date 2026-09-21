@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { uploadFetcher } from './uploadFetcher';
+import { fetcherMessages } from './fetcher.shared';
 
 class MockXMLHttpRequest {
   static instances: MockXMLHttpRequest[] = [];
@@ -92,7 +93,7 @@ describe('uploadFetcher', () => {
 
     await expect(pending).resolves.toEqual({
       isSuccess: false,
-      message: 'The upload was cancelled.',
+      message: fetcherMessages.uploadCancelled,
       data: { messages: {}, details: {} },
     });
   });
@@ -110,7 +111,7 @@ describe('uploadFetcher', () => {
 
     await expect(pending).resolves.toMatchObject({
       isSuccess: false,
-      message: 'The upload was cancelled.',
+      message: fetcherMessages.uploadCancelled,
     });
     expect(request.sentBody).toBeInstanceOf(FormData);
   });
@@ -131,7 +132,7 @@ describe('uploadFetcher', () => {
     });
     await expect(network).resolves.toMatchObject({
       isSuccess: false,
-      message: 'Unable to reach the server.',
+      message: fetcherMessages.serverUnavailable,
     });
   });
 });

@@ -5,6 +5,7 @@ import type { FieldValues, UseFormSetError } from 'react-hook-form';
 
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
+import { imageOperationMessages } from '@/configs/image-operation-messages';
 import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
 import { globalErrorHandler } from '@/utils/helpers';
 import {
@@ -36,7 +37,7 @@ async function submit<T extends FieldValues>(
   onDescriptionUploaded?: (description: RichTextDocument) => void,
 ) {
   if (hasPendingRichTextImageOperations()) {
-    toast.add({ type: 'warning', title: 'لطفاً تکمیل بارگذاری یا حذف تصویر را منتظر بمانید.' });
+    toast.add({ type: 'warning', title: imageOperationMessages.pendingOperations });
     return false;
   }
   try {

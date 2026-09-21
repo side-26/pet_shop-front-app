@@ -87,6 +87,14 @@ export function yupMessage(key: MessageKey): string {
   return messages[key];
 }
 
+export function yupRequiredMessage(key: LabelKey): string {
+  return `${yupLabel(key)} الزامی است.`;
+}
+
+export function yupMinimumLengthMessage(key: LabelKey, minimum: number): string {
+  return `${yupLabel(key)} باید حداقل ${toPersianNumber(minimum)} نویسه باشد.`;
+}
+
 setLocale({
   mixed: {
     default: (params) => `${localizedField(params)} معتبر نیست.`,

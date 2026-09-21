@@ -3,6 +3,7 @@ import { ValidationError } from 'yup';
 
 import { routePaths } from '@/configs/route.path';
 import { USER_ROLES } from '@/configs/user-role';
+import { yupMessage, yupMinimumLengthMessage } from '@/configs/yup.config';
 
 import { resolveLoginRedirectPath, validationErrorToFetcherError } from './auth.helpers';
 import {
@@ -23,13 +24,13 @@ describe('registerUserSchema', () => {
   it('rejects non-Iranian mobile numbers', async () => {
     await expect(
       registerUserSchema.validate({ phoneNumber: '08123456789', password: '12345678' }),
-    ).rejects.toThrow('شماره موبایل باید با ۰۹ شروع شود و ۱۱ رقم باشد.');
+    ).rejects.toThrow(yupMessage('invalidIranianPhoneNumber'));
   });
 
   it('rejects passwords shorter than eight characters', async () => {
     await expect(
       registerUserSchema.validate({ phoneNumber: '09123456789', password: '1234567' }),
-    ).rejects.toThrow('کلمه عبور باید حداقل ۸ نویسه باشد.');
+    ).rejects.toThrow(yupMinimumLengthMessage('password', 8));
   });
 });
 
@@ -55,7 +56,7 @@ describe('loginUserSchema', () => {
         password: '12345',
         rememberMe: false,
       }),
-    ).rejects.toThrow('کلمه عبور باید حداقل ۶ نویسه باشد.');
+    ).rejects.toThrow(yupMinimumLengthMessage('password', 6));
   });
 });
 
@@ -68,7 +69,7 @@ describe('sendOtpSchema', () => {
 
   it('rejects an invalid mobile number', async () => {
     await expect(sendOtpSchema.validate({ phoneNumber: '123' })).rejects.toThrow(
-      'شماره موبایل باید با ۰۹ شروع شود و ۱۱ رقم باشد.',
+      yupMessage('invalidIranianPhoneNumber'),
     );
   });
 });
@@ -95,7 +96,7 @@ describe('verifyResetPasswordOtpSchema', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: ['کد تأیید باید ۶ رقم باشد.', 'درخواست تأیید باید برای بازیابی کلمه عبور باشد.'],
+      errors: [yupMessage('invalidOtpCode'), yupMessage('resetPasswordRequestRequired')],
     });
   });
 });
@@ -115,8 +116,8 @@ describe('resetPasswordSchema', () => {
       ),
     ).rejects.toMatchObject({
       errors: [
-        'کلمه عبور باید حداقل ۸ نویسه باشد.',
-        'تکرار کلمه عبور با کلمه عبور جدید یکسان نیست.',
+        yupMinimumLengthMessage('newPassword', 8),
+        yupMessage('passwordConfirmationMismatch'),
       ],
     });
 
@@ -126,7 +127,10 @@ describe('resetPasswordSchema', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: ['کلمه عبور باید حداقل ۸ نویسه باشد.', 'تکرار کلمه عبور باید حداقل ۸ نویسه باشد.'],
+      errors: [
+        yupMinimumLengthMessage('newPassword', 8),
+        yupMinimumLengthMessage('confirmPassword', 8),
+      ],
     });
   });
 });

@@ -1,5 +1,6 @@
 import {
   buildUrl,
+  fetcherMessages,
   isExplicitErrorResponse,
   normalizeSuccessResponse,
   parseResponseError,
@@ -88,9 +89,12 @@ export function uploadFetcher<TSuccess, TBackendError = unknown, TBody = FormDat
         }
         finish(parseSuccess(normalizeSuccessResponse(response), options.parseSuccess));
       };
-      request.onerror = () => finish(transportError<TBackendError>('Unable to reach the server.'));
-      request.ontimeout = () => finish(transportError<TBackendError>('The request timed out.'));
-      request.onabort = () => finish(transportError<TBackendError>('The upload was cancelled.'));
+      request.onerror = () =>
+        finish(transportError<TBackendError>(fetcherMessages.serverUnavailable));
+      request.ontimeout = () =>
+        finish(transportError<TBackendError>(fetcherMessages.requestTimedOut));
+      request.onabort = () =>
+        finish(transportError<TBackendError>(fetcherMessages.uploadCancelled));
       if (options.signal?.aborted) {
         request.abort();
         return;
@@ -101,7 +105,7 @@ export function uploadFetcher<TSuccess, TBackendError = unknown, TBody = FormDat
       removeAbortListener = () => options.signal?.removeEventListener('abort', abort);
       request.send(body);
     } catch {
-      finish(transportError<TBackendError>('An unexpected error occurred.'));
+      finish(transportError<TBackendError>(fetcherMessages.unexpectedError));
     }
   }) as UploadFetcherPromise<TSuccess, TBackendError>;
 
