@@ -1,5 +1,6 @@
 import { DataGrid } from '@/components/ui/data-grid';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ExpandableDrawer } from '@/components/common/expandable-drawer';
 
 import type { ProductDetailViewModel } from './product-detail-data';
 import { ProductOverview } from './product-overview';
@@ -32,18 +33,36 @@ export function ProductDetailTabs({ isSkeleton, product }: ProductDetailTabsProp
 
         {hasSpecifications ? (
           <TabsContent value="specifications" className="tw:pt-5">
-            <DataGrid.Root borderColor="primary" variant="line" size="md">
-              {product.specifications.map((specification, index) => (
-                <DataGrid.Item key={`${specification.label}-${index}`}>
-                  <DataGrid.Label>{specification.label}</DataGrid.Label>
-                  <DataGrid.Value>{specification.value}</DataGrid.Value>
-                </DataGrid.Item>
-              ))}
-            </DataGrid.Root>
+            <div className="tw:lg:hidden">
+              <ExpandableDrawer
+                title="مشخصات"
+                collapsedHeight={224}
+                disabled={isSkeleton}
+                showMoreLabel="نمایش مشخصات"
+                sectionChildren={<ProductSpecifications product={product} />}
+                drawerChildren={<ProductSpecifications product={product} />}
+              />
+            </div>
+            <div className="tw:hidden tw:lg:block">
+              <ProductSpecifications product={product} />
+            </div>
           </TabsContent>
         ) : null}
       </Tabs>
       {isSkeleton ? <span className="tw:sr-only">در حال بارگذاری اطلاعات محصول</span> : null}
     </section>
+  );
+}
+
+function ProductSpecifications({ product }: Pick<ProductDetailTabsProps, 'product'>) {
+  return (
+    <DataGrid.Root borderColor="primary" variant="line" size="md">
+      {product.specifications.map((specification, index) => (
+        <DataGrid.Item key={`${specification.label}-${index}`}>
+          <DataGrid.Label>{specification.label}</DataGrid.Label>
+          <DataGrid.Value>{specification.value}</DataGrid.Value>
+        </DataGrid.Item>
+      ))}
+    </DataGrid.Root>
   );
 }

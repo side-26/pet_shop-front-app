@@ -93,23 +93,29 @@ describe('/products/product-0de16436', () => {
     render(content);
 
     expect(screen.getByRole('heading', { level: 1, name: product.title })).toBeTruthy();
-    expect(screen.getByText('سگ')).toBeTruthy();
-    expect(screen.getByText('تشویقی و اسنک')).toBeTruthy();
-    expect(screen.getByText('تشویقی آموزشی')).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'سگ' }).getAttribute('href')).toBe(
-      routePaths.productsListByPetType(product.category.petType.id),
-    );
-    expect(screen.getByRole('link', { name: 'تشویقی و اسنک' }).getAttribute('href')).toBe(
-      routePaths.productsListByCategory(product.category.id),
-    );
-    expect(screen.getByRole('link', { name: 'تشویقی آموزشی' }).getAttribute('href')).toBe(
-      routePaths.productsListBySubCategory(product.subCategory.id),
-    );
+    expect(screen.getAllByText('سگ')).toHaveLength(2);
+    expect(screen.getAllByText('تشویقی و اسنک')).toHaveLength(2);
+    expect(screen.getAllByText('تشویقی آموزشی')).toHaveLength(2);
+    for (const link of screen.getAllByRole('link', { name: 'سگ' })) {
+      expect(link.getAttribute('href')).toBe(
+        routePaths.productsListByPetType(product.category.petType.id),
+      );
+    }
+    for (const link of screen.getAllByRole('link', { name: 'تشویقی و اسنک' })) {
+      expect(link.getAttribute('href')).toBe(
+        routePaths.productsListByCategory(product.category.id),
+      );
+    }
+    for (const link of screen.getAllByRole('link', { name: 'تشویقی آموزشی' })) {
+      expect(link.getAttribute('href')).toBe(
+        routePaths.productsListBySubCategory(product.subCategory.id),
+      );
+    }
     expect(screen.getAllByText('تنها ۳ عدد از این محصول باقی مانده است.')).toHaveLength(2);
     expect(screen.getAllByRole('group', { name: 'انتخاب وزن' })).toHaveLength(2);
     expect(screen.getByRole('tab', { name: 'معرفی محصول' })).toBeTruthy();
     fireEvent.click(screen.getByRole('tab', { name: 'مشخصات' }));
-    expect(screen.getByText('رنگ')).toBeTruthy();
+    expect(screen.getAllByText('رنگ')).toHaveLength(2);
   });
 
   it('builds metadata from the public cached product response', async () => {
@@ -129,5 +135,59 @@ describe('/products/product-0de16436', () => {
     rerender(<ProductPurchaseControls mode="desktop" price={product.price} quantity={7} />);
 
     expect(screen.getByText('موجودی: ۷')).toBeTruthy();
+  });
+
+  it('keeps mobile weight selection, pricing, and inventory in the purchase dock', () => {
+    render(
+      <ProductPurchaseControls
+        mode="mobile"
+        price={500_000}
+        quantity={3}
+        weights={[
+          {
+            id: 'weight-1',
+            label: '۱ کیلوگرم',
+            price: 500_000,
+            discountPercentage: 10,
+            quantity: 3,
+          },
+          {
+            id: 'weight-2',
+            label: '۲ کیلوگرم',
+            price: 900_000,
+            discountPercentage: 20,
+            quantity: 1,
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText('۴۵۰٬۰۰۰')).toBeTruthy();
+    expect(screen.getByText('۵۰۰٬۰۰۰')).toBeTruthy();
+    expect(
+      screen
+        .getByTestId('mobile-purchase-controls')
+        .querySelector('[data-slot="mobile-price-column"]'),
+    ).toBeTruthy();
+    expect(screen.getByText('تنها ۳ عدد از این محصول باقی مانده است.')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'افزودن به سبد خرید' }));
+
+    expect(screen.getByRole('group', { name: 'تعداد محصول' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'کاهش تعداد' }).hasAttribute('disabled')).toBe(true);
+
+    fireEvent.click(screen.getByRole('button', { name: 'افزایش تعداد' }));
+
+    expect(screen.getByText('۴۵۰٬۰۰۰')).toBeTruthy();
+    expect(screen.getByText('۵۰۰٬۰۰۰')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'حذف از سبد خرید' }));
+
+    expect(screen.getByRole('button', { name: 'افزودن به سبد خرید' })).toBeTruthy();
+
+    fireEvent.click(screen.getByText('۲ کیلوگرم'));
+
+    expect(screen.getByText('۷۲۰٬۰۰۰')).toBeTruthy();
+    expect(screen.getByText('تنها ۱ عدد از این محصول باقی مانده است.')).toBeTruthy();
   });
 });

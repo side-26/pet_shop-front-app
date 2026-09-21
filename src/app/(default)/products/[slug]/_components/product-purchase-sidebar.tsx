@@ -2,7 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import type { ProductDetailViewModel } from './product-detail-data';
 import { ProductPurchaseControls } from './product-purchase-controls';
-import { ProductWeightSelector } from './product-weight-selector';
 
 type ProductPurchaseSidebarProps = Readonly<{
   isSkeleton?: boolean;
@@ -20,16 +19,12 @@ export function ProductPurchaseSidebar({ isSkeleton, product }: ProductPurchaseS
           <CardTitle>خرید محصول</CardTitle>
         </CardHeader>
         <CardContent className="tw:flex tw:flex-col tw:gap-5">
-          <ProductWeightSelector
-            idPrefix="product-weight-sidebar"
-            weights={product.weights}
-            disabled={isSkeleton}
-          />
           <ProductPurchaseControls
             mode="desktop"
             price={product.payablePrice}
             previousPrice={product.price}
             quantity={product.quantity}
+            weights={product.weights}
             isSkeleton={isSkeleton}
           />
         </CardContent>

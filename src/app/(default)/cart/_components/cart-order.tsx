@@ -110,7 +110,7 @@ export function CartOrder({ initialItems }: CartOrderProps) {
                     ) : null}
                     <Price
                       number={item.price * item.quantity}
-                      className="tw:text-price-s tw:text-primary tw:sm:text-price-m"
+                      className="tw:text-label-s tw:text-primary tw:sm:text-price-m"
                     />
                   </div>
                 </div>

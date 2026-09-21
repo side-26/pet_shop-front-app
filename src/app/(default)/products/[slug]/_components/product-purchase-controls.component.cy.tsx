@@ -39,6 +39,27 @@ describe('ProductPurchaseControls', () => {
     });
   });
 
+  it('replaces the add action with a fit-content counter on phones', () => {
+    cy.viewport(390, 844);
+    cy.mount(<PurchaseControlsFixture />);
+
+    cy.get('[data-testid="mobile-purchase-controls"]')
+      .contains('button', 'افزودن به سبد خرید')
+      .click();
+    cy.get('[data-testid="mobile-purchase-controls"] output').should('have.text', '۱');
+    cy.get('[data-testid="mobile-purchase-controls"]')
+      .contains('button', 'افزودن به سبد خرید')
+      .should('not.be.visible');
+    cy.get('[data-testid="mobile-purchase-controls"] [role="group"]').then(($counter) => {
+      const counterRect = $counter[0].getBoundingClientRect();
+      const controlsRect = $counter
+        .closest('[data-testid="mobile-purchase-controls"]')![0]
+        .getBoundingClientRect();
+
+      expect(counterRect.width).to.be.lessThan(controlsRect.width);
+    });
+  });
+
   it('switches to the inline purchase panel on desktop', () => {
     cy.viewport(1280, 900);
     cy.mount(<PurchaseControlsFixture />);

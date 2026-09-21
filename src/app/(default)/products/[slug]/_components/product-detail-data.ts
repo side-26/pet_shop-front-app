@@ -31,7 +31,13 @@ export type ProductDetailViewModel = Readonly<{
   canVote: boolean;
   hasRated: boolean;
   images: readonly ProductGalleryImage[];
-  weights: readonly Readonly<{ id: string; label: string; quantity: number }>[];
+  weights: readonly Readonly<{
+    id: string;
+    label: string;
+    price: number;
+    discountPercentage: number;
+    quantity: number;
+  }>[];
   specifications: readonly Readonly<{ label: string; value: string }>[];
 }>;
 
@@ -89,6 +95,8 @@ export function createProductDetailViewModel(
     weights: product.weights.map((weight, index) => ({
       id: weight._id ?? `${weight.metric}-${weight.value}-${index}`,
       label: `${weight.value.toLocaleString('fa-IR')} ${weight.metric}`,
+      price: weight.price ?? product.price,
+      discountPercentage: weight.discountPercentage ?? product.discountPercentage,
       quantity: weight.quantity,
     })),
     specifications: (product.category.petType?.propertyDefinitions ?? [])
@@ -121,8 +129,8 @@ export const productDetailSkeleton: ProductDetailViewModel = {
   hasRated: false,
   images: [{ src: undefined, alt: '' }],
   weights: [
-    { id: 'weight-1', label: 'وزن محصول', quantity: 1 },
-    { id: 'weight-2', label: 'وزن محصول', quantity: 1 },
+    { id: 'weight-1', label: 'وزن محصول', price: 1_000_000, discountPercentage: 10, quantity: 1 },
+    { id: 'weight-2', label: 'وزن محصول', price: 1_000_000, discountPercentage: 10, quantity: 1 },
   ],
   specifications: [
     { label: 'ویژگی محصول', value: 'مقدار ویژگی محصول' },

@@ -15,6 +15,11 @@ describe(routePaths.cart, () => {
     expect(screen.getByRole('heading', { level: 1, name: 'سبد خرید' })).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'خلاصه سفارش' })).toBeTruthy();
     expect(screen.getAllByRole('group', { name: /تعداد/ })).toHaveLength(3);
+    expect(
+      screen
+        .getByRole('group', { name: 'تعداد غذای خشک سگ مدل رویال کنین Maxi Adult' })
+        .querySelector('output')?.textContent,
+    ).toBe('۱');
     expect(screen.queryByText('کد تخفیف دارید؟')).toBeNull();
     expect(screen.queryByText('۴ کالا برای ادامه خرید آماده است.')).toBeNull();
     expect(screen.getByRole('button', { name: /ادامه خرید/ }).getAttribute('href')).toBe(

@@ -90,25 +90,27 @@ export function ProductGallery({
           {images.map((image, index) => (
             <CarouselItem
               key={image.src ?? `gallery-image-${index}`}
-              className="tw:basis-1/2 tw:ps-0"
+              className="tw:basis-full tw:ps-0 tw:md:basis-1/2"
             >
-              <div
-                className={cn(
-                  'tw:relative tw:aspect-[4/3] tw:overflow-hidden',
-                  image.fit === 'contain' ? 'tw:bg-white' : 'tw:bg-muted/35',
-                )}
-              >
-                <GalleryImage image={image} sizes="50vw" />
-                {index === 0 && discountPercentage > 0 ? (
-                  <Badge
-                    color="error"
-                    variant="fill"
-                    size="md"
-                    className="tw:absolute tw:start-4 tw:top-4"
-                  >
-                    {discountPercentage.toLocaleString('fa-IR')}٪ تخفیف
-                  </Badge>
-                ) : null}
+              <div className="tw:px-1 tw:pb-4 tw:sm:px-2 tw:md:px-3">
+                <div
+                  className={cn(
+                    'tw:relative tw:aspect-[4/3] tw:overflow-hidden tw:rounded-3xl',
+                    image.fit === 'contain' ? 'tw:bg-white' : 'tw:bg-muted/35',
+                  )}
+                >
+                  <GalleryImage image={image} sizes="(max-width: 767px) 100vw, 50vw" />
+                  {index === 0 && discountPercentage > 0 ? (
+                    <Badge
+                      color="error"
+                      variant="fill"
+                      size="md"
+                      className="tw:absolute tw:start-4 tw:top-4"
+                    >
+                      {discountPercentage.toLocaleString('fa-IR')}٪ تخفیف
+                    </Badge>
+                  ) : null}
+                </div>
               </div>
             </CarouselItem>
           ))}

@@ -28,9 +28,16 @@ export function ProductDetailContent({ isSkeleton = false, product }: ProductDet
       data-product-detail-shell
       data-product-detail-content={isSkeleton ? undefined : true}
       aria-busy={isSkeleton}
-      className={cn('tw:default-layout-container tw:pb-24 tw:lg:pb-12', isSkeleton && 'skeleton')}
+      className={cn('tw:default-layout-container tw:pb-8 tw:lg:pb-12', isSkeleton && 'skeleton')}
     >
       <ProductDetailBreadcrumb title={product.title} />
+
+      <ProductGallery
+        className="tw:lg:hidden"
+        images={product.images}
+        discountPercentage={product.discountPercentage}
+        isSkeleton={isSkeleton}
+      />
 
       <div className="tw:lg:grid tw:lg:grid-cols-[minmax(0,1fr)_minmax(18rem,22rem)] tw:lg:items-start tw:lg:gap-8">
         <div>
@@ -40,7 +47,7 @@ export function ProductDetailContent({ isSkeleton = false, product }: ProductDet
             className="tw:rounded-none tw:border-x-0 tw:py-0 tw:lg:grid tw:lg:grid-cols-5 tw:lg:gap-8 tw:lg:rounded-3xl tw:lg:border tw:lg:p-6"
           >
             <ProductGallery
-              className="tw:lg:col-span-2"
+              className="tw:hidden tw:lg:col-span-2 tw:lg:block"
               images={product.images}
               discountPercentage={product.discountPercentage}
               isSkeleton={isSkeleton}
@@ -54,7 +61,37 @@ export function ProductDetailContent({ isSkeleton = false, product }: ProductDet
                 <ProductHeaderActions title={product.title} disabled={isSkeleton} />
               </div>
 
-              <div className="tw:flex tw:flex-wrap tw:gap-2">
+              <div className="tw:flex tw:flex-wrap tw:gap-3 tw:text-label-m tw:lg:hidden">
+                {product.animal && product.animalId ? (
+                  <Link
+                    href={routePaths.productsListByPetType(product.animalId)}
+                    prefetch
+                    className="tw:text-primary tw:underline-offset-4 tw:hover:underline tw:focus-visible:rounded-sm tw:focus-visible:ring-3 tw:focus-visible:ring-primary/25"
+                  >
+                    {product.animal}
+                  </Link>
+                ) : null}
+                {product.category ? (
+                  <Link
+                    href={routePaths.productsListByCategory(product.categoryId)}
+                    prefetch
+                    className="tw:text-secondary-active tw:underline-offset-4 tw:hover:underline tw:focus-visible:rounded-sm tw:focus-visible:ring-3 tw:focus-visible:ring-secondary/25"
+                  >
+                    {product.category}
+                  </Link>
+                ) : null}
+                {product.subCategory && product.subCategoryId ? (
+                  <Link
+                    href={routePaths.productsListBySubCategory(product.subCategoryId)}
+                    prefetch
+                    className="tw:text-muted-foreground tw:underline-offset-4 tw:hover:text-foreground tw:hover:underline tw:focus-visible:rounded-sm tw:focus-visible:ring-3 tw:focus-visible:ring-primary/25"
+                  >
+                    {product.subCategory}
+                  </Link>
+                ) : null}
+              </div>
+
+              <div className="tw:hidden tw:flex-wrap tw:gap-2 tw:lg:flex">
                 {product.animal ? (
                   <Badge
                     size="sm"
@@ -119,14 +156,6 @@ export function ProductDetailContent({ isSkeleton = false, product }: ProductDet
                 {product.quantity > 0 ? 'موجود در انبار' : 'ناموجود'}
               </div>
 
-              <div className="tw:lg:hidden">
-                <ProductWeightSelector
-                  idPrefix="product-weight-mobile"
-                  weights={product.weights}
-                  disabled={isSkeleton}
-                />
-              </div>
-
               <Card size="xs" variant="filled" className="tw:rounded-2xl">
                 <CardContent className="tw:flex tw:flex-col tw:gap-3">
                   <h2 className="tw:text-title-s">امتیاز شما</h2>
@@ -157,6 +186,7 @@ export function ProductDetailContent({ isSkeleton = false, product }: ProductDet
         price={product.payablePrice}
         previousPrice={product.price}
         quantity={product.quantity}
+        weights={product.weights}
         isSkeleton={isSkeleton}
       />
     </article>
