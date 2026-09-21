@@ -6,6 +6,7 @@ import { useRouter } from 'nextjs-toploader/app';
 
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
+import { routePaths } from '@/configs/route.path';
 import {
   loginUserAction,
   logoutUserAction,
@@ -41,6 +42,7 @@ export async function logoutUser(): Promise<void> {
 export async function submitRegisterUser(
   input: RegisterUserInput,
   showErrorFields: UseFormSetError<RegisterUserInput>,
+  navigate: (href: string) => void,
 ): Promise<void> {
   const result = await registerUserAction(input);
 
@@ -51,17 +53,21 @@ export async function submitRegisterUser(
 
   toast.add({ type: 'success', title: result.message, timeout: SUCCESS_TOAST_DURATION_MS });
 
-  await redirectToLoginAction();
+  navigate(routePaths.login);
 }
 
 export function useRegisterUser() {
   const formRef = useRef<FormHandle<RegisterUserInput>>(null);
-  const handleSubmit = useCallback(async (input: RegisterUserInput) => {
-    const form = formRef.current;
-    if (!form) return;
+  const router = useRouter();
+  const handleSubmit = useCallback(
+    async (input: RegisterUserInput) => {
+      const form = formRef.current;
+      if (!form) return;
 
-    await submitRegisterUser(input, form.setError);
-  }, []);
+      await submitRegisterUser(input, form.setError, router.replace);
+    },
+    [router],
+  );
 
   return { formRef, handleSubmit } as const;
 }

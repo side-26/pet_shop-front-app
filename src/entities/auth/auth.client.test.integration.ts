@@ -55,18 +55,19 @@ describe('registerUser client orchestration', () => {
     vi.useRealTimers();
   });
 
-  it('shows the server message for three seconds, then requests the server redirect', async () => {
+  it('shows the server message for three seconds, then navigates to login', async () => {
     registerUserActionMock.mockResolvedValue({
       isSuccess: true,
       message: 'ثبت‌نام انجام شد.',
       data: null,
     });
-    redirectToLoginActionMock.mockResolvedValue(undefined as never);
     const setError = vi.fn();
+    const navigate = vi.fn();
 
     const registration = submitRegisterUser(
       { phoneNumber: '09123456789', password: '12345678' },
       setError,
+      navigate,
     );
     await vi.advanceTimersByTimeAsync(3_000);
     await registration;
@@ -76,7 +77,7 @@ describe('registerUser client orchestration', () => {
       title: 'ثبت‌نام انجام شد.',
       timeout: 3_000,
     });
-    expect(redirectToLoginActionMock).toHaveBeenCalledOnce();
+    expect(navigate).toHaveBeenCalledWith(routePaths.login);
   });
 
   it('passes backend errors to the global error handler', async () => {
@@ -88,7 +89,11 @@ describe('registerUser client orchestration', () => {
     registerUserActionMock.mockResolvedValue(error);
     const setError = vi.fn();
 
-    await submitRegisterUser({ phoneNumber: '09123456789', password: '12345678' }, setError);
+    await submitRegisterUser(
+      { phoneNumber: '09123456789', password: '12345678' },
+      setError,
+      vi.fn(),
+    );
 
     expect(globalErrorHandlerMock).toHaveBeenCalledWith(error, { showErrorFields: setError });
     expect(toastAddMock).not.toHaveBeenCalled();
