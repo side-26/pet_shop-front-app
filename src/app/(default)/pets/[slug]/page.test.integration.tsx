@@ -67,6 +67,7 @@ describe(routePaths.petDetail('max'), () => {
       }),
     );
     expect(screen.getByRole('heading', { level: 1, name: pet.title })).toBeTruthy();
+    expect(screen.getByRole('article').hasAttribute('data-pet-detail-content')).toBe(true);
     expect(screen.getByLabelText(`گالری تصاویر ${pet.title}`)).toBeTruthy();
     expect(screen.getByRole('link', { name: pet.petType.title }).getAttribute('href')).toBe(
       routePaths.petsListByPetType(pet.petType.id),

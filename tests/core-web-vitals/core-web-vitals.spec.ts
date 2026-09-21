@@ -6,7 +6,11 @@ import path from 'node:path';
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
 import { EncryptJWT } from 'jose';
 
-import { dynamicRouteFixtures, routeInteractionSelectors } from '../../core-web-vitals.routes.mjs';
+import {
+  dynamicRouteFixtures,
+  routeContentSelectors,
+  routeInteractionSelectors,
+} from '../../core-web-vitals.routes.mjs';
 import { discoverAppRoutesSync } from '../../scripts/core-web-vitals/discover-routes.mjs';
 
 type MetricName = 'CLS' | 'INP' | 'LCP';
@@ -175,6 +179,16 @@ for (const route of routes) {
       new URL(page.url()).pathname,
       `Unexpected redirect while testing ${route.pathname}`,
     ).toBe(route.pathname);
+
+    const contentSelector =
+      routeContentSelectors[route.pathname as keyof typeof routeContentSelectors] ??
+      routeContentSelectors[route.routeTemplate as keyof typeof routeContentSelectors];
+    if (contentSelector) {
+      await expect(
+        page.locator(contentSelector).first(),
+        `Expected detail content for ${route.pathname}, not the route fallback`,
+      ).toBeVisible();
+    }
 
     await page.waitForLoadState('networkidle', { timeout: 5_000 }).catch(() => undefined);
     await page.waitForTimeout(Number(process.env.CORE_WEB_VITALS_SETTLE_MS ?? 1_500));

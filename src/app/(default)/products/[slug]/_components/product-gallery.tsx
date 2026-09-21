@@ -18,7 +18,15 @@ type ProductGalleryProps = Readonly<{
   isSkeleton?: boolean;
 }>;
 
-function GalleryImage({ image, sizes }: { image: ProductGalleryImage; sizes: string }) {
+function GalleryImage({
+  image,
+  sizes,
+  preload = false,
+}: {
+  image: ProductGalleryImage;
+  sizes: string;
+  preload?: boolean;
+}) {
   if (!image.src) return <div aria-hidden="true" className="tw:absolute tw:inset-0" />;
 
   return (
@@ -27,6 +35,7 @@ function GalleryImage({ image, sizes }: { image: ProductGalleryImage; sizes: str
       alt={image.alt}
       fill
       sizes={sizes}
+      preload={preload}
       placeholder={image.placeholder ? 'blur' : 'empty'}
       blurDataURL={image.placeholder}
       className={cn(
@@ -50,7 +59,11 @@ export function ProductGallery({
     <section aria-label={`تصاویر ${itemLabel}`} className={className}>
       <div className="tw:hidden tw:lg:block">
         <div className="tw:relative tw:aspect-square tw:overflow-hidden tw:rounded-3xl tw:bg-white">
-          <GalleryImage image={images[selectedImage]} sizes="(min-width: 1024px) 44vw, 100vw" />
+          <GalleryImage
+            image={images[selectedImage]}
+            sizes="(min-width: 1024px) 44vw, 100vw"
+            preload={selectedImage === 0}
+          />
           {discountPercentage > 0 ? (
             <Badge
               color="error"
@@ -99,7 +112,11 @@ export function ProductGallery({
                     image.fit === 'contain' ? 'tw:bg-white' : 'tw:bg-muted/35',
                   )}
                 >
-                  <GalleryImage image={image} sizes="(max-width: 767px) 100vw, 50vw" />
+                  <GalleryImage
+                    image={image}
+                    sizes="(max-width: 767px) 100vw, 50vw"
+                    preload={index === 0}
+                  />
                   {index === 0 && discountPercentage > 0 ? (
                     <Badge
                       color="error"

@@ -3,8 +3,17 @@
  * Route discovery fails when a new dynamic page is missing from this map.
  */
 export const dynamicRouteFixtures = {
-  '/pets/[slug]': ['/pets/max'],
-  '/products/[slug]': ['/products/adult-dog-food'],
+  '/pets/[slug]': ['/pets/pet-1x8uo2o'],
+  '/products/[slug]': ['/products/product-0de16436'],
+};
+
+/**
+ * Confirms that each configured fixture resolves to its real detail renderer,
+ * rather than the app's successful-response 404 page.
+ */
+export const routeContentSelectors = {
+  '/pets/pet-1x8uo2o': '[data-pet-detail-content]',
+  '/products/product-0de16436': '[data-product-detail-content]',
 };
 
 /**

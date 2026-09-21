@@ -53,6 +53,7 @@ function PetRequestControls({
 export function PetDetailContent({ pet, isSkeleton = false }: Props) {
   return (
     <article
+      data-pet-detail-content={isSkeleton ? undefined : true}
       aria-busy={isSkeleton || undefined}
       className={cn(
         'tw:default-layout-container tw:pb-28 tw:pt-5 tw:sm:pb-48 tw:lg:pb-12 tw:lg:pt-8',
