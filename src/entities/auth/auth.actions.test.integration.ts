@@ -117,7 +117,7 @@ describe('auth actions', () => {
     ).resolves.toEqual({
       isSuccess: true,
       message: 'ورود موفق بود.',
-      data: {},
+      data: { role: USER_ROLES.CUSTOMER },
     });
     expect(loginUserMock).toHaveBeenCalledWith({
       phoneNumber: '09123456789',

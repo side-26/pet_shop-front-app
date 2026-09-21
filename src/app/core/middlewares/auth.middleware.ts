@@ -32,6 +32,21 @@ function createAuthenticatedRedirect(request: NextRequest): NextResponse {
   return NextResponse.redirect(new URL(routePaths.home, request.url));
 }
 
+async function handleInvalidSession(
+  request: NextRequest,
+  next: Parameters<MiddlewareHandler>[1],
+  isProtectedRoute: boolean,
+) {
+  if (isProtectedRoute) return createLoginRedirect(request, true);
+
+  const sessionCookieName = getSessionCookieName();
+  request.cookies.delete(sessionCookieName);
+  const response = await next();
+  response.cookies.delete(sessionCookieName);
+
+  return response;
+}
+
 export const authMiddleware: MiddlewareHandler = async (request, next) => {
   const pathname = request.nextUrl.pathname;
   const isAuthRoute = authRoutes.includes(pathname as (typeof authRoutes)[number]);
@@ -42,33 +57,50 @@ export const authMiddleware: MiddlewareHandler = async (request, next) => {
     return isProtectedRoute ? createLoginRedirect(request) : next();
   }
 
+  let session: AuthSessionModel;
+
   try {
-    const session = await decryptSession<AuthSessionModel>(encodedSession);
-    const now = Date.now();
+    session = await decryptSession<AuthSessionModel>(encodedSession);
+  } catch {
+    return handleInvalidSession(request, next, isProtectedRoute);
+  }
 
-    if (session.sessionExp <= now) return createLoginRedirect(request, true);
+  const now = Date.now();
 
-    if (session.accessExp <= now) {
-      const result = await refreshAccessToken({ refreshToken: session.refreshToken });
+  if (session.sessionExp <= now) {
+    return handleInvalidSession(request, next, isProtectedRoute);
+  }
 
-      if (!result.isSuccess) return createLoginRedirect(request, true);
+  if (session.accessExp <= now) {
+    let result: Awaited<ReturnType<typeof refreshAccessToken>>;
 
-      const updatedSession: AuthSessionModel = {
-        ...session,
-        accessToken: result.data.accessToken,
-        accessExp: now + ACCESS_TOKEN_TTL_MS,
-      };
-      const sessionCookie = await createSessionCookie(updatedSession);
-
-      request.cookies.set(sessionCookie.name, sessionCookie.value);
-      const response = isAuthRoute ? createAuthenticatedRedirect(request) : await next();
-      response.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.options);
-
-      return response;
+    try {
+      result = await refreshAccessToken({ refreshToken: session.refreshToken });
+    } catch {
+      return handleInvalidSession(request, next, isProtectedRoute);
     }
 
-    return isAuthRoute ? createAuthenticatedRedirect(request) : next();
-  } catch {
-    return createLoginRedirect(request, true);
+    if (!result.isSuccess) return handleInvalidSession(request, next, isProtectedRoute);
+
+    const updatedSession: AuthSessionModel = {
+      ...session,
+      accessToken: result.data.accessToken,
+      accessExp: now + ACCESS_TOKEN_TTL_MS,
+    };
+    let sessionCookie: Awaited<ReturnType<typeof createSessionCookie>>;
+
+    try {
+      sessionCookie = await createSessionCookie(updatedSession);
+    } catch {
+      return handleInvalidSession(request, next, isProtectedRoute);
+    }
+
+    request.cookies.set(sessionCookie.name, sessionCookie.value);
+    const response = isAuthRoute ? createAuthenticatedRedirect(request) : await next();
+    response.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.options);
+
+    return response;
   }
+
+  return isAuthRoute ? createAuthenticatedRedirect(request) : next();
 };

@@ -70,7 +70,7 @@ export async function loginUserAction(input: LoginUserInput) {
     return {
       isSuccess: true as const,
       message: result.message,
-      data: {},
+      data: { role: result.data.role },
     };
   } catch (error: unknown) {
     if (error instanceof ValidationError) {

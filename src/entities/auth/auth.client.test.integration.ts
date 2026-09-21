@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { toast } from '@/components/ui/toast';
+import { routePaths } from '@/configs/route.path';
+import { USER_ROLES } from '@/configs/user-role';
 import { globalErrorHandler } from '@/utils/helpers';
 
 import {
@@ -103,20 +105,42 @@ describe('loginUser client orchestration', () => {
     loginUserActionMock.mockResolvedValue({
       isSuccess: true,
       message: 'ورود موفق بود.',
-      data: {},
+      data: { role: USER_ROLES.CUSTOMER },
     });
     const setError = vi.fn();
+    const navigate = vi.fn();
 
     await submitLoginUser(
       { phoneNumber: '09123456789', password: '123456', rememberMe: false },
       setError,
+      undefined,
+      navigate,
     );
 
     expect(toastAddMock).toHaveBeenCalledWith({
       type: 'success',
       title: 'ورود موفق بود.',
     });
+    expect(navigate).toHaveBeenCalledWith(routePaths.home);
     expect(globalErrorHandlerMock).not.toHaveBeenCalled();
+  });
+
+  it('prioritizes a safe callback URL over the role-based destination', async () => {
+    loginUserActionMock.mockResolvedValue({
+      isSuccess: true,
+      message: 'ورود موفق بود.',
+      data: { role: USER_ROLES.ADMIN },
+    });
+    const navigate = vi.fn();
+
+    await submitLoginUser(
+      { phoneNumber: '09123456789', password: '123456', rememberMe: false },
+      vi.fn(),
+      '/checkout?step=payment',
+      navigate,
+    );
+
+    expect(navigate).toHaveBeenCalledWith('/checkout?step=payment');
   });
 
   it('passes login errors unchanged to the global error handler', async () => {
@@ -127,14 +151,18 @@ describe('loginUser client orchestration', () => {
     };
     loginUserActionMock.mockResolvedValue(error);
     const setError = vi.fn();
+    const navigate = vi.fn();
 
     await submitLoginUser(
       { phoneNumber: '09123456789', password: '123456', rememberMe: false },
       setError,
+      '/checkout',
+      navigate,
     );
 
     expect(globalErrorHandlerMock).toHaveBeenCalledWith(error, { showErrorFields: setError });
     expect(toastAddMock).not.toHaveBeenCalled();
+    expect(navigate).not.toHaveBeenCalled();
   });
 });
 

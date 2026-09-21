@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { ValidationError } from 'yup';
 
-import { validationErrorToFetcherError } from './auth.helpers';
+import { routePaths } from '@/configs/route.path';
+import { USER_ROLES } from '@/configs/user-role';
+
+import { resolveLoginRedirectPath, validationErrorToFetcherError } from './auth.helpers';
 import {
   loginUserSchema,
   registerUserSchema,
@@ -141,4 +144,30 @@ describe('validationErrorToFetcherError', () => {
       },
     });
   });
+});
+
+describe('resolveLoginRedirectPath', () => {
+  it('uses a safe internal callback URL before the role fallback', () => {
+    expect(resolveLoginRedirectPath('/checkout?step=payment#summary', USER_ROLES.ADMIN)).toBe(
+      '/checkout?step=payment#summary',
+    );
+  });
+
+  it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(
+    'sends the %s role to the admin route when no callback exists',
+    (role) => {
+      expect(resolveLoginRedirectPath(undefined, role)).toBe(routePaths.admin);
+    },
+  );
+
+  it('sends customers home when no callback exists', () => {
+    expect(resolveLoginRedirectPath(undefined, USER_ROLES.CUSTOMER)).toBe(routePaths.home);
+  });
+
+  it.each(['https://evil.example/path', '//evil.example/path', 'javascript:alert(1)'])(
+    'rejects the unsafe callback %s',
+    (callbackUrl) => {
+      expect(resolveLoginRedirectPath(callbackUrl, USER_ROLES.CUSTOMER)).toBe(routePaths.home);
+    },
+  );
 });

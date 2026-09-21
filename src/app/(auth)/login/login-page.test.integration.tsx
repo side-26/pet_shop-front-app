@@ -1,10 +1,14 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
 
 import LoginPage, { metadata } from './page';
+
+vi.mock('nextjs-toploader/app', () => ({
+  useRouter: () => ({ replace: vi.fn() }),
+}));
 
 afterEach(cleanup);
 

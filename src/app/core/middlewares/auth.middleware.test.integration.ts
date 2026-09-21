@@ -60,6 +60,13 @@ describe('authMiddleware', () => {
     },
   );
 
+  it('allows an unauthenticated request to the public home route', async () => {
+    const response = await authMiddleware(request('/'), next);
+
+    expect(response.headers.get('location')).toBeNull();
+    expect(next).toHaveBeenCalledOnce();
+  });
+
   it.each(['/login', '/register', '/reset-password'])(
     'redirects an authenticated user away from auth route %s',
     async (pathname) => {
@@ -111,5 +118,63 @@ describe('authMiddleware', () => {
     expect(new URL(response.headers.get('location')!).pathname).toBe('/login');
     expect(response.cookies.get('petshop-session')?.value).toBe('');
     expect(refreshAccessTokenMock).not.toHaveBeenCalled();
+  });
+
+  it('clears an expired session and continues on the public home route', async () => {
+    decryptSessionMock.mockResolvedValue({ ...session, sessionExp: Date.now() - 1 });
+
+    const response = await authMiddleware(request('/', true), next);
+
+    expect(response.headers.get('location')).toBeNull();
+    expect(response.cookies.get('petshop-session')?.value).toBe('');
+    expect(next).toHaveBeenCalledOnce();
+  });
+
+  it('clears a malformed session and continues on the public home route', async () => {
+    decryptSessionMock.mockRejectedValue(new Error('invalid session'));
+
+    const response = await authMiddleware(request('/', true), next);
+
+    expect(response.headers.get('location')).toBeNull();
+    expect(response.cookies.get('petshop-session')?.value).toBe('');
+    expect(next).toHaveBeenCalledOnce();
+  });
+
+  it('clears a refresh-failed session and continues on the public home route', async () => {
+    decryptSessionMock.mockResolvedValue({ ...session, accessExp: Date.now() - 1 });
+    refreshAccessTokenMock.mockResolvedValue({
+      isSuccess: false,
+      message: 'refresh failed',
+      data: { messages: {}, details: {} },
+    });
+
+    const response = await authMiddleware(request('/', true), next);
+
+    expect(response.headers.get('location')).toBeNull();
+    expect(response.cookies.get('petshop-session')?.value).toBe('');
+    expect(next).toHaveBeenCalledOnce();
+  });
+
+  it('does not turn a downstream failure into an authentication redirect', async () => {
+    decryptSessionMock.mockResolvedValue({ ...session, accessExp: Date.now() - 1 });
+    refreshAccessTokenMock.mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: { accessToken: 'new-access-token' },
+    });
+    createSessionCookieMock.mockResolvedValue({
+      name: 'petshop-session',
+      value: 'new-encrypted-session',
+      options: {
+        httpOnly: true,
+        secure: true,
+        maxAge: 604800,
+        sameSite: 'strict',
+        path: '/',
+      },
+    });
+    next.mockRejectedValueOnce(new Error('downstream failure'));
+
+    await expect(authMiddleware(request('/', true), next)).rejects.toThrow('downstream failure');
   });
 });

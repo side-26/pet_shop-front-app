@@ -5,6 +5,7 @@ import type {
   SendOtpInput,
   VerifyResetPasswordOtpInput,
 } from '@/entities/auth/auth.schema';
+import { USER_ROLES } from '@/configs/user-role';
 
 export async function registerUserAction(_input: RegisterUserInput) {
   return {
@@ -18,7 +19,7 @@ export async function loginUserAction(_input: LoginUserInput) {
   return {
     isSuccess: true as const,
     message: 'ورود با موفقیت انجام شد.',
-    data: {},
+    data: { role: USER_ROLES.CUSTOMER },
   };
 }
 

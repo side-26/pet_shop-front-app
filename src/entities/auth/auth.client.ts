@@ -2,6 +2,7 @@
 
 import type { UseFormSetError } from 'react-hook-form';
 import { useCallback, useRef, useState } from 'react';
+import { useRouter } from 'nextjs-toploader/app';
 
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
@@ -15,6 +16,7 @@ import {
   verifyResetPasswordOtpAction,
 } from '@/entities/auth/auth.actions';
 import type { SendOtpResponseDTO } from '@/entities/auth/auth.dto';
+import { resolveLoginRedirectPath } from '@/entities/auth/auth.helpers';
 import type {
   LoginUserInput,
   RegisterUserInput,
@@ -67,6 +69,8 @@ export function useRegisterUser() {
 export async function submitLoginUser(
   input: LoginUserInput,
   showErrorFields: UseFormSetError<LoginUserInput>,
+  callbackUrl: string | undefined,
+  navigate: (href: string) => void,
 ): Promise<void> {
   const result = await loginUserAction(input);
 
@@ -76,16 +80,23 @@ export async function submitLoginUser(
   }
 
   toast.add({ type: 'success', title: result.message });
+  navigate(resolveLoginRedirectPath(callbackUrl, result.data.role));
 }
 
 export function useLoginUser() {
   const formRef = useRef<FormHandle<LoginUserInput>>(null);
-  const handleSubmit = useCallback(async (input: LoginUserInput) => {
-    const form = formRef.current;
-    if (!form) return;
+  const router = useRouter();
+  const handleSubmit = useCallback(
+    async (input: LoginUserInput) => {
+      const form = formRef.current;
+      if (!form) return;
 
-    await submitLoginUser(input, form.setError);
-  }, []);
+      const callbackUrl =
+        new URLSearchParams(window.location.search).get('callbackUrl') ?? undefined;
+      await submitLoginUser(input, form.setError, callbackUrl, router.replace);
+    },
+    [router],
+  );
 
   return { formRef, handleSubmit } as const;
 }
