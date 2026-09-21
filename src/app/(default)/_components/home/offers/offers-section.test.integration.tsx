@@ -1,6 +1,6 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
-import { render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { cleanup, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LandingProductDTO } from '@/entities/landing/landing.dto';
 
@@ -53,6 +53,8 @@ beforeEach(() => {
     },
   );
 });
+
+afterEach(cleanup);
 
 describe('OffersSection', () => {
   it('renders a shared, busy, non-interactive card skeleton', () => {

@@ -9,6 +9,8 @@ import { Toaster } from '@/components/ui/toast';
 import { appLogo } from '@/configs/app-logo';
 import { cn } from '@/lib/utils';
 
+import { ReactQueryProvider } from './react-query-provider';
+
 import './styles/tailwind.config.css';
 
 const defaultFont = localFont({
@@ -72,7 +74,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </Script>
         <NavigationPageBar />
         <RtlLayout>
-          <Toaster>{children}</Toaster>
+          <ReactQueryProvider>
+            <Toaster>{children}</Toaster>
+          </ReactQueryProvider>
         </RtlLayout>
       </body>
     </html>
