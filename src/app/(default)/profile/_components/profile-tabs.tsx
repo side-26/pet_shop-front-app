@@ -1,22 +1,9 @@
 'use client';
 
-import {
-  CheckCircle2,
-  CircleX,
-  Clock3,
-  FileText,
-  House,
-  MapPin,
-  Package,
-  PackageCheck,
-  Phone,
-  Plus,
-  Truck,
-  UserRound,
-} from 'lucide-react';
+import { CheckCircle2, House, MapPin, Package, Phone, Plus, Truck, UserRound } from 'lucide-react';
 import { Activity, useState, type ReactNode } from 'react';
 
-import { Badge, type BadgeProps } from '@/components/ui/badge';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -40,7 +27,6 @@ import { TextField } from '@/components/ui/fields/text-field';
 import { Form } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/components/ui/toast';
-import { APP_CURRENCY } from '@/configs/currency';
 
 type AddressFormValues = {
   title: string;
@@ -49,50 +35,6 @@ type AddressFormValues = {
   postalCode: string;
   address: string;
 };
-
-type Order = {
-  id: string;
-  date: string;
-  total: string;
-  itemCount: number;
-  status: 'delivered' | 'processing' | 'cancelled';
-  statusLabel: string;
-  products: readonly string[];
-  address: string;
-};
-
-const orders: readonly Order[] = [
-  {
-    id: 'PH-1405-2841',
-    date: '۱۸ مرداد ۱۴۰۵',
-    total: `۲٬۴۸۰٬۰۰۰ ${APP_CURRENCY}`,
-    itemCount: 3,
-    status: 'delivered',
-    statusLabel: 'تحویل‌شده',
-    products: ['غذای خشک گربه رویال کنین', 'خاک گربه کربن‌دار', 'اسباب‌بازی توپ زنگوله‌ای'],
-    address: 'تهران، سعادت‌آباد، خیابان علامه شمالی، پلاک ۲۱، واحد ۸',
-  },
-  {
-    id: 'PH-1405-2716',
-    date: '۱۲ مرداد ۱۴۰۵',
-    total: `۱٬۳۲۰٬۰۰۰ ${APP_CURRENCY}`,
-    itemCount: 2,
-    status: 'processing',
-    statusLabel: 'در حال آماده‌سازی',
-    products: ['تشک طبی سگ سایز متوسط', 'شامپو پوست حساس'],
-    address: 'تهران، سعادت‌آباد، خیابان علامه شمالی، پلاک ۲۱، واحد ۸',
-  },
-  {
-    id: 'PH-1405-2559',
-    date: '۳ مرداد ۱۴۰۵',
-    total: `۸۶۵٬۰۰۰ ${APP_CURRENCY}`,
-    itemCount: 1,
-    status: 'cancelled',
-    statusLabel: 'لغوشده',
-    products: ['باکس حمل حیوان خانگی'],
-    address: 'تهران، خیابان ولیعصر، بالاتر از پارک ملت، پلاک ۱۲۳',
-  },
-];
 
 const addresses = [
   {
@@ -114,143 +56,6 @@ const addresses = [
     primary: false,
   },
 ] as const;
-
-const statusAppearance: Record<
-  Order['status'],
-  { color: NonNullable<BadgeProps['color']>; icon: typeof CheckCircle2 }
-> = {
-  delivered: { color: 'success', icon: CheckCircle2 },
-  processing: { color: 'warning', icon: Clock3 },
-  cancelled: { color: 'error', icon: CircleX },
-};
-
-function OrderStatusBadge({ order }: { order: Order }) {
-  const appearance = statusAppearance[order.status];
-  const StatusIcon = appearance.icon;
-
-  return (
-    <Badge variant="tonal" color={appearance.color} size="lg">
-      <StatusIcon aria-hidden="true" />
-      {order.statusLabel}
-    </Badge>
-  );
-}
-
-function OrderDetailDialog({ order }: { order: Order }) {
-  return (
-    <Dialog>
-      <DialogTrigger
-        render={<Button block variant="outlined" size="md" className="tw:lg:w-auto" />}
-      >
-        <FileText data-icon="inline-start" aria-hidden="true" />
-        جزئیات سفارش
-      </DialogTrigger>
-      <DialogContent size="xl" className="tw:max-h-[calc(100svh-2rem)] tw:overflow-y-auto">
-        <DialogHeader>
-          <div className="tw:flex tw:flex-wrap tw:items-center tw:gap-2 tw:pe-10">
-            <DialogTitle>جزئیات سفارش</DialogTitle>
-            <OrderStatusBadge order={order} />
-          </div>
-          <DialogDescription>
-            سفارش شماره <bdi dir="ltr">{order.id}</bdi> در تاریخ {order.date}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="tw:grid tw:gap-4 tw:sm:grid-cols-2">
-          <div className="tw:flex tw:flex-col tw:gap-1 tw:rounded-2xl tw:bg-muted tw:p-4">
-            <span className="tw:text-label-m tw:text-muted-foreground">مبلغ پرداخت‌شده</span>
-            <strong className="tw:text-title-m tw:text-foreground">{order.total}</strong>
-          </div>
-          <div className="tw:flex tw:flex-col tw:gap-1 tw:rounded-2xl tw:bg-muted tw:p-4">
-            <span className="tw:text-label-m tw:text-muted-foreground">تعداد کالا</span>
-            <strong className="tw:text-title-m tw:text-foreground">{order.itemCount} کالا</strong>
-          </div>
-        </div>
-
-        <section className="tw:flex tw:flex-col tw:gap-3" aria-labelledby={`products-${order.id}`}>
-          <h3 id={`products-${order.id}`} className="tw:text-title-s">
-            کالاهای سفارش
-          </h3>
-          <ul className="tw:flex tw:flex-col tw:gap-2">
-            {order.products.map((product) => (
-              <li
-                key={product}
-                className="tw:flex tw:items-center tw:gap-3 tw:rounded-2xl tw:border tw:border-border tw:bg-card tw:p-3"
-              >
-                <span className="tw:flex tw:size-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-xl tw:bg-primary-muted tw:text-primary-muted-foreground">
-                  <Package className="tw:size-5" aria-hidden="true" />
-                </span>
-                <span className="tw:text-body-m">{product}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="tw:flex tw:flex-col tw:gap-2" aria-labelledby={`address-${order.id}`}>
-          <h3 id={`address-${order.id}`} className="tw:text-title-s">
-            نشانی تحویل
-          </h3>
-          <p className="tw:flex tw:items-start tw:gap-2 tw:rounded-2xl tw:bg-info-muted tw:p-4 tw:text-body-m tw:text-info-muted-foreground">
-            <MapPin className="tw:mt-1 tw:size-4 tw:shrink-0" aria-hidden="true" />
-            {order.address}
-          </p>
-        </section>
-
-        <DialogFooter>
-          <Button variant="tonal" color="primary">
-            <PackageCheck data-icon="inline-start" aria-hidden="true" />
-            پیگیری سفارش
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function OrdersPanel() {
-  return (
-    <section className="tw:flex tw:flex-col tw:gap-4" aria-labelledby="orders-heading">
-      <div className="tw:flex tw:flex-col tw:gap-1">
-        <h2 id="orders-heading" className="tw:text-title-l">
-          سفارش‌های من
-        </h2>
-        <p className="tw:text-body-m tw:text-muted-foreground">
-          وضعیت سفارش‌ها را ببینید و جزئیات ارسال را بررسی کنید.
-        </p>
-      </div>
-      <div className="tw:grid tw:gap-4 tw:lg:grid-cols-2">
-        {orders.map((order) => (
-          <Card key={order.id} variant="outlined" size="md">
-            <CardHeader>
-              <CardTitle className="tw:flex tw:flex-wrap tw:items-center tw:gap-2">
-                سفارش <bdi dir="ltr">{order.id}</bdi>
-              </CardTitle>
-              <CardDescription>{order.date}</CardDescription>
-              <CardAction>
-                <OrderStatusBadge order={order} />
-              </CardAction>
-            </CardHeader>
-            <CardContent>
-              <dl className="tw:grid tw:grid-cols-2 tw:gap-3">
-                <div className="tw:flex tw:flex-col tw:gap-1">
-                  <dt className="tw:text-label-m tw:text-muted-foreground">مبلغ سفارش</dt>
-                  <dd className="tw:text-title-s">{order.total}</dd>
-                </div>
-                <div className="tw:flex tw:flex-col tw:gap-1">
-                  <dt className="tw:text-label-m tw:text-muted-foreground">تعداد کالا</dt>
-                  <dd className="tw:text-title-s">{order.itemCount} کالا</dd>
-                </div>
-              </dl>
-            </CardContent>
-            <CardFooter className="tw:justify-end tw:border-t tw:border-border/70 tw:pt-4">
-              <OrderDetailDialog order={order} />
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
-    </section>
-  );
-}
 
 function AddAddressDialog() {
   const [open, setOpen] = useState(false);
@@ -396,7 +201,13 @@ function AddressesPanel() {
   );
 }
 
-export function ProfileTabs({ personalInfo }: { personalInfo: ReactNode }) {
+export function ProfileTabs({
+  orders,
+  personalInfo,
+}: {
+  orders: ReactNode;
+  personalInfo: ReactNode;
+}) {
   const [activeTab, setActiveTab] = useState('personal');
 
   return (
@@ -418,9 +229,7 @@ export function ProfileTabs({ personalInfo }: { personalInfo: ReactNode }) {
         </TabsList>
       </div>
       <TabsContent value="orders" keepMounted>
-        <Activity mode={activeTab === 'orders' ? 'visible' : 'hidden'}>
-          <OrdersPanel />
-        </Activity>
+        <Activity mode={activeTab === 'orders' ? 'visible' : 'hidden'}>{orders}</Activity>
       </TabsContent>
       <TabsContent value="addresses" keepMounted>
         <Activity mode={activeTab === 'addresses' ? 'visible' : 'hidden'}>

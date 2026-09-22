@@ -5,6 +5,13 @@ import { routePaths } from '@/configs/route.path';
 import { useAuthStore } from '@/entities/auth/auth.store';
 
 vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('./_components/profile-orders-wrapper', () => ({
+  ProfileOrdersWrapper: () => (
+    <section aria-labelledby="orders-heading">
+      <h2 id="orders-heading">سفارش‌های من</h2>
+    </section>
+  ),
+}));
 
 import ProfilePage, { metadata } from './page';
 
@@ -50,17 +57,11 @@ describe(routePaths.profile, () => {
     );
   });
 
-  it('switches to orders and opens an accessible order detail dialog', () => {
+  it('switches to the orders tab', () => {
     render(<ProfilePage />);
 
     fireEvent.click(screen.getByRole('tab', { name: 'سفارش‌ها' }));
     expect(screen.getByRole('heading', { level: 2, name: 'سفارش‌های من' })).toBeTruthy();
-    expect(screen.getAllByText('PH-1405-2841').length).toBeGreaterThan(0);
-
-    fireEvent.click(screen.getAllByRole('button', { name: 'جزئیات سفارش' })[0]);
-    expect(screen.getByRole('dialog')).toBeTruthy();
-    expect(screen.getByRole('heading', { name: 'جزئیات سفارش' })).toBeTruthy();
-    expect(screen.getByText('غذای خشک گربه رویال کنین')).toBeTruthy();
   });
 
   it('shows responsive address cards and the add-address form', () => {
