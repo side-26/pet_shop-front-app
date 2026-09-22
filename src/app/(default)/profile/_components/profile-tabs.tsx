@@ -2,7 +2,7 @@
 
 import {
   AtSign,
-  CalendarDays,
+  CakeSlice,
   CheckCircle2,
   CircleX,
   Clock3,
@@ -39,6 +39,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { DatePicker } from '@/components/ui/date-picker';
 import { TextField } from '@/components/ui/fields/text-field';
 import { Form } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -50,6 +51,7 @@ type ProfileFormValues = {
   lastName: string;
   phone: string;
   email: string;
+  age: string;
   birthDate: string;
 };
 
@@ -140,7 +142,6 @@ function PersonalInformationPanel() {
     <Card variant="outlined" size="lg">
       <CardHeader>
         <CardTitle>اطلاعات شخصی</CardTitle>
-        <CardDescription>اطلاعات تماس و مشخصات حساب کاربری خود را ویرایش کنید.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form<ProfileFormValues>
@@ -150,7 +151,8 @@ function PersonalInformationPanel() {
               lastName: 'احمدی',
               phone: '09123456789',
               email: 'niloofar.ahmadi@example.com',
-              birthDate: '۱۳۷۴/۰۶/۱۸',
+              age: '31',
+              birthDate: '1995-09-09T00:00:00.000Z',
             },
           }}
           handleSubmit={() =>
@@ -163,7 +165,7 @@ function PersonalInformationPanel() {
         >
           {({ formState: { isSubmitting } }) => (
             <>
-              <div className="tw:grid tw:items-start tw:gap-4 tw:md:grid-cols-2">
+              <div className="tw:grid tw:items-start tw:gap-4 tw:md:grid-cols-3">
                 <TextField<ProfileFormValues>
                   name="firstName"
                   label="نام"
@@ -193,13 +195,17 @@ function PersonalInformationPanel() {
                   size="lg"
                 />
                 <TextField<ProfileFormValues>
-                  name="birthDate"
-                  label="تاریخ تولد"
-                  prefixIcon={<CalendarDays />}
-                  hint="نمونه: ۱۳۷۴/۰۶/۱۸"
+                  name="age"
+                  label="سن"
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  max={130}
+                  dir="ltr"
+                  prefixIcon={<CakeSlice />}
                   size="lg"
-                  className="tw:md:max-w-sm"
                 />
+                <DatePicker<ProfileFormValues> name="birthDate" label="تاریخ تولد" size="lg" />
               </div>
               <div className="tw:flex tw:justify-end">
                 <Button type="submit" size="lg" isLoading={isSubmitting} loadingText="در حال ذخیره">
@@ -492,28 +498,28 @@ export function ProfileTabs() {
     <Tabs defaultValue="personal" size="lg" className="tw:gap-5">
       <div className="tw:min-w-0 tw:pb-1">
         <TabsList variant="line" aria-label="بخش‌های پروفایل" className="tw:w-full">
-          <TabsTrigger value="personal" className="tw:min-w-0 tw:px-2 tw:sm:px-4">
-            <UserRound aria-hidden="true" />
-            اطلاعات شخصی
-          </TabsTrigger>
           <TabsTrigger value="orders" className="tw:min-w-0 tw:px-2 tw:sm:px-4">
-            <Package aria-hidden="true" />
+            <Package aria-hidden="true" className="tw:hidden tw:sm:block" />
             سفارش‌ها
           </TabsTrigger>
           <TabsTrigger value="addresses" className="tw:min-w-0 tw:px-2 tw:sm:px-4">
-            <MapPin aria-hidden="true" />
+            <MapPin aria-hidden="true" className="tw:hidden tw:sm:block" />
             نشانی‌ها
+          </TabsTrigger>
+          <TabsTrigger value="personal" className="tw:min-w-0 tw:px-2 tw:sm:px-4">
+            <UserRound aria-hidden="true" className="tw:hidden tw:sm:block" />
+            اطلاعات شخصی
           </TabsTrigger>
         </TabsList>
       </div>
-      <TabsContent value="personal">
-        <PersonalInformationPanel />
-      </TabsContent>
       <TabsContent value="orders">
         <OrdersPanel />
       </TabsContent>
       <TabsContent value="addresses">
         <AddressesPanel />
+      </TabsContent>
+      <TabsContent value="personal">
+        <PersonalInformationPanel />
       </TabsContent>
     </Tabs>
   );

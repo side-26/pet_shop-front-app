@@ -54,7 +54,9 @@ describe('DatePicker', () => {
     const icon = container.querySelector<HTMLElement>('[data-slot="date-picker-icon"]');
     expect(icon?.className).toContain('tw:text-warning-active');
     expect(icon?.className).toContain('tw:size-5');
-    expect(screen.getByText('زمان ارسال').className).toContain('tw:text-warning-active');
+    expect(container.querySelector<HTMLElement>('[data-slot="field-label"]')?.className).toContain(
+      'tw:text-warning-active',
+    );
     expect(screen.getByText('تاریخ و زمان تحویل را انتخاب کنید.')).toBeTruthy();
     await waitFor(() =>
       expect(screen.getByRole('button', { name: 'زمان ارسال' }).textContent).toContain(

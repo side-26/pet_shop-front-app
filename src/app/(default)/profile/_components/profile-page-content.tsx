@@ -22,13 +22,7 @@ export function ProfilePageContent() {
                 <UserRound className="tw:size-9 tw:sm:size-11" />
               </span>
               <div className="tw:flex tw:min-w-0 tw:flex-col tw:gap-1.5">
-                <div className="tw:flex tw:flex-wrap tw:items-center tw:justify-center tw:gap-2 tw:sm:justify-start">
-                  <h1 className="tw:text-heading-3 tw:text-card-foreground">نیلوفر احمدی</h1>
-                  <span className="tw:inline-flex tw:items-center tw:gap-1 tw:text-label-m tw:text-success">
-                    <CircleCheck className="tw:size-4" aria-hidden="true" />
-                    حساب تأییدشده
-                  </span>
-                </div>
+                <h1 className="tw:text-heading-3 tw:text-card-foreground">نیلوفر احمدی</h1>
                 <bdi dir="ltr" className="tw:truncate tw:text-body-m tw:text-muted-foreground">
                   niloofar.ahmadi@example.com
                 </bdi>

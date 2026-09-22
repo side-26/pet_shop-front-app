@@ -291,10 +291,14 @@ function DatePicker<
       data-size={size}
       className={styles.field()}
     >
-      <FieldLabel htmlFor={id} className={styles.label()}>
-        <span className={fieldState.invalid ? 'tw:text-error' : textFieldColorClasses[color]}>
-          {label}
-        </span>
+      <FieldLabel
+        htmlFor={id}
+        className={cn(
+          styles.label(),
+          fieldState.invalid ? 'tw:text-error' : textFieldColorClasses[color],
+        )}
+      >
+        {label}
       </FieldLabel>
       <Popover open={open} onOpenChange={handleOpenChange}>
         <PopoverTrigger

@@ -16,10 +16,20 @@ describe(routePaths.profile, () => {
     expect(
       screen.queryByText('اطلاعات شخصی، سفارش‌ها و نشانی‌های تحویل را از یک‌جا مدیریت کنید.'),
     ).toBeNull();
+    expect(screen.queryByText('حساب تأییدشده')).toBeNull();
+    expect(screen.queryByText('اطلاعات تماس و مشخصات حساب کاربری خود را ویرایش کنید.')).toBeNull();
     expect(screen.getByRole('heading', { level: 1, name: 'نیلوفر احمدی' })).toBeTruthy();
     expect(screen.getByRole('tablist', { name: 'بخش‌های پروفایل' })).toBeTruthy();
-    expect(screen.getAllByRole('tab')).toHaveLength(3);
+    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual([
+      'سفارش‌ها',
+      'نشانی‌ها',
+      'اطلاعات شخصی',
+    ]);
     expect(screen.getByRole('textbox', { name: 'نام' })).toHaveProperty('value', 'نیلوفر');
+    expect(screen.getByRole('spinbutton', { name: 'سن' })).toHaveProperty('value', '31');
+    expect(screen.getByRole('button', { name: 'تاریخ تولد' }).getAttribute('data-slot')).toBe(
+      'field-control',
+    );
   });
 
   it('switches to orders and opens an accessible order detail dialog', () => {
