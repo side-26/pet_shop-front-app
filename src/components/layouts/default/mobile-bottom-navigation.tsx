@@ -3,11 +3,22 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
 
 import { isNavigationItemActive, mobileNavigationItems } from './navigation-items';
 
-export function MobileBottomNavigationView({ pathname }: Readonly<{ pathname?: string }>) {
+type MobileBottomNavigationViewProps = Readonly<{
+  pathname?: string;
+  accountHref?: string;
+  accountLabel?: string;
+}>;
+
+export function MobileBottomNavigationView({
+  pathname,
+  accountHref = routePaths.login,
+  accountLabel = 'حساب کاربری',
+}: MobileBottomNavigationViewProps) {
   return (
     <nav
       className="tw:fixed tw:inset-x-0 tw:bottom-0 tw:z-40 tw:border-t tw:border-border/70 tw:bg-background/92 tw:px-1 tw:pb-[max(0.5rem,env(safe-area-inset-bottom))] tw:shadow-lg tw:supports-backdrop-filter:backdrop-blur-2xl tw:sm:inset-x-auto tw:sm:bottom-4 tw:sm:left-1/2 tw:sm:w-[calc(100%_-_3rem)] tw:sm:max-w-3xl tw:sm:-translate-x-1/2 tw:sm:rounded-2xl tw:sm:border tw:sm:px-3 tw:sm:pb-2 tw:lg:hidden"
@@ -15,12 +26,15 @@ export function MobileBottomNavigationView({ pathname }: Readonly<{ pathname?: s
     >
       <ul className="tw:mx-auto tw:grid tw:h-16 tw:grid-cols-5 tw:items-center tw:sm:h-[68px]">
         {mobileNavigationItems.map(({ href, label, icon: Icon }) => {
-          const isActive = pathname ? isNavigationItemActive(pathname, href) : false;
+          const isAccountLink = href === routePaths.login;
+          const resolvedHref = isAccountLink ? accountHref : href;
+          const resolvedLabel = isAccountLink ? accountLabel : label;
+          const isActive = pathname ? isNavigationItemActive(pathname, resolvedHref) : false;
 
           return (
             <li key={href}>
               <Link
-                href={href}
+                href={resolvedHref}
                 aria-current={isActive ? 'page' : undefined}
                 className="tw:group tw:relative tw:flex tw:min-h-14 tw:flex-col tw:items-center tw:justify-center tw:gap-0.5 tw:rounded-xl tw:outline-none tw:focus-visible:ring-3 tw:focus-visible:ring-primary/25"
               >
@@ -39,7 +53,7 @@ export function MobileBottomNavigationView({ pathname }: Readonly<{ pathname?: s
                     isActive && 'tw:font-bold tw:text-primary',
                   )}
                 >
-                  {label}
+                  {resolvedLabel}
                 </span>
               </Link>
             </li>
@@ -50,6 +64,15 @@ export function MobileBottomNavigationView({ pathname }: Readonly<{ pathname?: s
   );
 }
 
-export function MobileBottomNavigation() {
-  return <MobileBottomNavigationView pathname={usePathname()} />;
+export function MobileBottomNavigation({
+  accountHref,
+  accountLabel,
+}: Omit<MobileBottomNavigationViewProps, 'pathname'>) {
+  return (
+    <MobileBottomNavigationView
+      pathname={usePathname()}
+      accountHref={accountHref}
+      accountLabel={accountLabel}
+    />
+  );
 }

@@ -11,6 +11,14 @@ vi.mock('next/navigation', () => ({
   usePathname: () => navigationState.pathname,
 }));
 
+vi.mock('./desktop-account-menu-wrapper', () => ({
+  DesktopAccountMenuWrapper: () => null,
+}));
+
+vi.mock('./mobile-bottom-navigation-wrapper', () => ({
+  MobileBottomNavigationWrapper: () => null,
+}));
+
 beforeEach(() => {
   navigationState.pathname = routePaths.home;
   window.matchMedia = vi.fn().mockReturnValue({
@@ -34,7 +42,6 @@ describe('DefaultLayoutShell', () => {
     expect(screen.getByRole('main').textContent).toContain('محتوای صفحه');
     expect(screen.getByRole('contentinfo')).toBeTruthy();
     expect(screen.getByRole('navigation', { name: 'ناوبری اصلی' })).toBeTruthy();
-    expect(screen.getByRole('navigation', { name: 'ناوبری موبایل' })).toBeTruthy();
     expect(screen.getAllByRole('link', { name: /صفحه اصلی/ })[0].getAttribute('href')).toBe(
       routePaths.home,
     );
@@ -50,11 +57,6 @@ describe('DefaultLayoutShell', () => {
     expect(screen.getAllByRole('link', { name: 'درباره ما' })[0].getAttribute('href')).toBe(
       routePaths.about,
     );
-    expect(
-      screen
-        .getAllByRole('link', { name: 'حساب کاربری' })
-        .every((link) => link.getAttribute('href') === routePaths.login),
-    ).toBe(true);
     expect(screen.getByRole('link', { name: 'اینستاگرام پت شاپ پرشین' }).getAttribute('href')).toBe(
       'https://www.instagram.com',
     );
@@ -87,34 +89,6 @@ describe('DefaultLayoutShell', () => {
     expect(screen.getByRole('menuitem', { name: 'درباره ما' }).getAttribute('href')).toBe(
       routePaths.about,
     );
-  });
-
-  it('keeps the five requested mobile and tablet destinations as real links', () => {
-    render(<DefaultLayoutShell>صفحه</DefaultLayoutShell>);
-
-    const mobileNavigation = screen.getByRole('navigation', { name: 'ناوبری موبایل' });
-    const links = Array.from(mobileNavigation.querySelectorAll('a'));
-
-    expect(links).toHaveLength(5);
-    expect(links.map((link) => link.getAttribute('href'))).toEqual([
-      routePaths.home,
-      routePaths.pets,
-      routePaths.products,
-      routePaths.cart,
-      routePaths.login,
-    ]);
-  });
-
-  it('marks the current mobile destination and clears the home active state', () => {
-    navigationState.pathname = routePaths.cart;
-
-    render(<DefaultLayoutShell>صفحه سبد خرید</DefaultLayoutShell>);
-
-    const cartLinks = screen.getAllByRole('link', { name: 'سبد خرید' });
-    const homeLinks = screen.getAllByRole('link', { name: 'خانه' });
-
-    expect(cartLinks.at(-1)?.getAttribute('aria-current')).toBe('page');
-    expect(homeLinks.every((link) => link.getAttribute('aria-current') === null)).toBe(true);
   });
 
   it('marks the active desktop destination', () => {

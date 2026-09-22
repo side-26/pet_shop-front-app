@@ -1,4 +1,4 @@
-import { ShoppingCart, UserRound } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import { Suspense } from 'react';
 
@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { Brand } from './brand';
 import { DesktopNavigation, DesktopNavigationView } from './desktop-navigation';
 import { HeaderProductSearch } from './header-product-search';
+import { DesktopAccountMenuWrapper } from './desktop-account-menu-wrapper';
 import { MobileHeaderMenu } from './mobile-header-menu';
 
 export function DefaultHeader() {
@@ -40,17 +41,7 @@ export function DefaultHeader() {
           >
             <ShoppingCart aria-hidden="true" />
           </Link>
-          <Link
-            href={routePaths.login}
-            aria-label="حساب کاربری"
-            data-icon-only="true"
-            className={cn(
-              buttonVariants({ variant: 'fill', color: 'primary', size: 'lg' }),
-              'tw:hidden tw:lg:inline-flex',
-            )}
-          >
-            <UserRound aria-hidden="true" />
-          </Link>
+          <DesktopAccountMenuWrapper />
         </div>
       </div>
     </header>
