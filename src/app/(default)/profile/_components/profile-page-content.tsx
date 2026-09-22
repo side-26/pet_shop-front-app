@@ -1,7 +1,8 @@
-import { CalendarDays, CircleCheck, PackageCheck, UserRound } from 'lucide-react';
+import { CalendarDays, CircleCheck, PackageCheck } from 'lucide-react';
 
 import { Card, CardContent } from '@/components/ui/card';
 
+import { ProfileAvatarField } from './profile-avatar-field';
 import { ProfileTabs } from './profile-tabs';
 
 export function ProfilePageContent() {
@@ -15,12 +16,9 @@ export function ProfilePageContent() {
         <Card variant="glass" size="lg">
           <CardContent className="tw:grid tw:items-center tw:gap-6 tw:md:grid-cols-[minmax(0,1fr)_auto] tw:lg:gap-10">
             <div className="tw:flex tw:min-w-0 tw:flex-col tw:items-center tw:gap-4 tw:text-center tw:sm:flex-row tw:sm:text-start">
-              <span
-                aria-hidden="true"
-                className="tw:flex tw:size-20 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-3xl tw:bg-primary tw:text-primary-foreground tw:shadow-lg tw:shadow-primary/20 tw:sm:size-24"
-              >
-                <UserRound className="tw:size-9 tw:sm:size-11" />
-              </span>
+              <div className="tw:w-auto tw:shrink-0">
+                <ProfileAvatarField />
+              </div>
               <div className="tw:flex tw:min-w-0 tw:flex-col tw:gap-1.5">
                 <h1 className="tw:text-heading-3 tw:text-card-foreground">نیلوفر احمدی</h1>
                 <bdi dir="ltr" className="tw:truncate tw:text-body-m tw:text-muted-foreground">
