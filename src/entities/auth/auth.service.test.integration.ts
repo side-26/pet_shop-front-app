@@ -19,7 +19,6 @@ vi.mock('@/utils/session', () => ({ deleteSessionCookie: vi.fn() }));
 
 const customFetcherMock = vi.mocked(customFetcher);
 const deleteSessionCookieMock = vi.mocked(deleteSessionCookie);
-
 describe('logoutUser service', () => {
   beforeEach(() => {
     vi.clearAllMocks();

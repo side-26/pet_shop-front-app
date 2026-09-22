@@ -10,6 +10,7 @@ import { routePaths } from '@/configs/route.path';
 import {
   loginUserAction,
   logoutUserAction,
+  redirectToLoginAfterLogoutAction,
   redirectToLoginAction,
   registerUserAction,
   resetPasswordAction,
@@ -18,6 +19,7 @@ import {
 } from '@/entities/auth/auth.actions';
 import type { SendOtpResponseDTO } from '@/entities/auth/auth.dto';
 import { resolveLoginRedirectPath } from '@/entities/auth/auth.helpers';
+import { useAuthStore } from '@/entities/auth/auth.store';
 import type {
   LoginUserInput,
   RegisterUserInput,
@@ -28,15 +30,68 @@ import type {
 } from '@/entities/auth/auth.schema';
 import { globalErrorHandler } from '@/utils/helpers';
 import { wait } from '@/utils/wait';
+import type { CurrentUserDTO } from '@/entities/users/users.dto';
 
 const SUCCESS_TOAST_DURATION_MS = 3_000;
+const AUTH_SESSION_API_PATH = '/api/auth/session';
+const CURRENT_USER_API_PATH = '/api/users/current';
+
+type AuthSessionResponse = {
+  userId: string | null;
+};
+type CurrentUserResponse =
+  { isSuccess: true; data: CurrentUserDTO } | { isSuccess: false; data: unknown };
+
+export async function syncUserIdentity(signal?: AbortSignal): Promise<CurrentUserDTO | null> {
+  try {
+    if (signal?.aborted) return null;
+
+    const response = await fetch(AUTH_SESSION_API_PATH, {
+      method: 'GET',
+      cache: 'no-store',
+      credentials: 'same-origin',
+      signal,
+    });
+    const result = (await response.json()) as AuthSessionResponse;
+
+    if (!response.ok || !result.userId) {
+      useAuthStore.getState().deleteUserIdentity();
+      return null;
+    }
+
+    const currentUserResponse = await fetch(CURRENT_USER_API_PATH, {
+      method: 'GET',
+      cache: 'no-store',
+      credentials: 'same-origin',
+    });
+    const currentUser = (await currentUserResponse.json()) as CurrentUserResponse;
+    if (!currentUserResponse.ok || !currentUser.isSuccess) {
+      useAuthStore.getState().deleteUserIdentity();
+      return null;
+    }
+
+    const store = useAuthStore.getState();
+    if (store.userIdentity) store.updateUserIdentity(currentUser.data);
+    else store.saveUserIdentity(currentUser.data);
+
+    return currentUser.data;
+  } catch {
+    if (signal?.aborted) return null;
+    useAuthStore.getState().deleteUserIdentity();
+    return null;
+  }
+}
 
 export async function logoutUser(): Promise<void> {
   const result = await logoutUserAction();
 
   if (result && !result.isSuccess) {
     globalErrorHandler(result);
+    return;
   }
+
+  await syncUserIdentity();
+  await redirectToLoginAfterLogoutAction();
 }
 
 export async function submitRegisterUser(
@@ -86,6 +141,7 @@ export async function submitLoginUser(
   }
 
   toast.add({ type: 'success', title: result.message });
+  await syncUserIdentity();
   navigate(resolveLoginRedirectPath(callbackUrl, result.data.role));
 }
 

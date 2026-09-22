@@ -155,6 +155,10 @@ describe('users actions', () => {
       phoneNumber: '09123456789',
       role: USER_ROLES.CUSTOMER,
       avatar: '',
+      email: 'ali@example.com',
+      nationalCode: '0012345678',
+      age: 31,
+      birthDate: null,
     };
     const response = { isSuccess: true as const, message: null, data: currentUser };
     getSessionMock.mockResolvedValue(session(USER_ROLES.CUSTOMER));
@@ -194,6 +198,10 @@ describe('users actions', () => {
         phoneNumber: '09123456789',
         role: USER_ROLES.ADMIN,
         avatar: '',
+        email: 'ali@example.com',
+        nationalCode: '0012345678',
+        age: 30,
+        birthDate: null,
       },
     };
     getSessionMock.mockResolvedValue(session(USER_ROLES.ADMIN));

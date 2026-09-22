@@ -9,6 +9,7 @@ import { authMessages } from './auth.messages';
 import {
   loginUserAction,
   logoutUserAction,
+  redirectToLoginAfterLogoutAction,
   redirectToLoginAction,
   registerUserAction,
   resetPasswordAction,
@@ -22,11 +23,14 @@ import {
   submitResetPassword,
   submitSendOtp,
   submitVerifyResetPasswordOtp,
+  syncUserIdentity,
 } from './auth.client';
+import { useAuthStore } from './auth.store';
 
 vi.mock('./auth.actions', () => ({
   loginUserAction: vi.fn(),
   logoutUserAction: vi.fn(),
+  redirectToLoginAfterLogoutAction: vi.fn(),
   registerUserAction: vi.fn(),
   resetPasswordAction: vi.fn(),
   redirectToLoginAction: vi.fn(),
@@ -39,6 +43,7 @@ vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
 const registerUserActionMock = vi.mocked(registerUserAction);
 const loginUserActionMock = vi.mocked(loginUserAction);
 const logoutUserActionMock = vi.mocked(logoutUserAction);
+const redirectToLoginAfterLogoutActionMock = vi.mocked(redirectToLoginAfterLogoutAction);
 const redirectToLoginActionMock = vi.mocked(redirectToLoginAction);
 const sendOtpActionMock = vi.mocked(sendOtpAction);
 const resetPasswordActionMock = vi.mocked(resetPasswordAction);
@@ -191,12 +196,125 @@ describe('logout client orchestration', () => {
   });
 
   it('does not show a local toast before the successful server redirect', async () => {
-    logoutUserActionMock.mockResolvedValue(undefined as never);
+    logoutUserActionMock.mockResolvedValue({
+      isSuccess: true,
+      message: 'خارج شدید.',
+      data: undefined,
+    });
 
     await logoutUser();
 
     expect(globalErrorHandlerMock).not.toHaveBeenCalled();
     expect(toastAddMock).not.toHaveBeenCalled();
+    expect(redirectToLoginAfterLogoutActionMock).toHaveBeenCalledOnce();
+  });
+});
+
+describe('auth session identity synchronization', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    useAuthStore.getState().deleteUserIdentity();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('stores only the identity returned by the internal endpoint', async () => {
+    const identity = {
+      userId: 'user-1',
+      firstName: 'نیلوفر',
+      lastName: 'احمدی',
+      phoneNumber: '09121234567',
+      role: USER_ROLES.CUSTOMER,
+      avatar: '',
+      email: 'niloofar@example.com',
+      nationalCode: '0012345678',
+      age: 31,
+      birthDate: null,
+    };
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce({ ok: true, json: async () => ({ userId: identity.userId }) })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ isSuccess: true, data: identity }),
+        }),
+    );
+
+    await expect(syncUserIdentity()).resolves.toEqual(identity);
+    expect(useAuthStore.getState().userIdentity).toEqual(identity);
+  });
+
+  it('clears identity when the internal endpoint reports no session', async () => {
+    useAuthStore.getState().saveUserIdentity({
+      userId: 'user-1',
+      firstName: 'نیلوفر',
+      lastName: 'احمدی',
+      phoneNumber: '09121234567',
+      role: USER_ROLES.CUSTOMER,
+      avatar: '',
+      email: 'niloofar@example.com',
+      nationalCode: '0012345678',
+      age: 31,
+      birthDate: null,
+    });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ ok: true, json: async () => ({ userId: null }) }),
+    );
+
+    await expect(syncUserIdentity()).resolves.toBeNull();
+    expect(useAuthStore.getState().userIdentity).toBeNull();
+  });
+
+  it('does not fetch or change identity when the synchronization signal is already aborted', async () => {
+    const controller = new AbortController();
+    controller.abort();
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(syncUserIdentity(controller.signal)).resolves.toBeNull();
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(useAuthStore.getState().userIdentity).toBeNull();
+  });
+
+  it('stores a successful identity response even if effect cleanup aborts after the fetch resolves', async () => {
+    const identity = {
+      userId: 'user-1',
+      firstName: 'نیلوفر',
+      lastName: 'احمدی',
+      phoneNumber: '09121234567',
+      role: USER_ROLES.CUSTOMER,
+      avatar: '',
+      email: 'niloofar@example.com',
+      nationalCode: '0012345678',
+      age: 31,
+      birthDate: null,
+    };
+    const controller = new AbortController();
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => {
+            controller.abort();
+            return { userId: identity.userId };
+          },
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ isSuccess: true, data: identity }),
+        }),
+    );
+
+    await expect(syncUserIdentity(controller.signal)).resolves.toEqual(identity);
+    expect(useAuthStore.getState().userIdentity).toEqual(identity);
   });
 });
 

@@ -47,6 +47,16 @@ export async function getCurrentUser() {
   });
 }
 
+/** Server-only BFF read for the browser-facing current-user route. */
+export function getCurrentUserForSessionSync() {
+  return customFetcher<CurrentUserDTO>({
+    url: '/users/current',
+    method: 'GET',
+    auth: true,
+    cache: 'no-store',
+  });
+}
+
 export async function userGetDetailById(id: UserGetDetailByIdDTO['id']) {
   'use cache: private';
 

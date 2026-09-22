@@ -5,6 +5,7 @@ import type { UseFormSetError } from 'react-hook-form';
 
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
+import { useAuthStore } from '@/entities/auth/auth.store';
 import { globalErrorHandler } from '@/utils/helpers';
 
 import {
@@ -31,6 +32,7 @@ export async function submitCurrentUserProfile(
   }
 
   toast.add({ type: 'success', title: result.message });
+  useAuthStore.getState().updateUserIdentity(result.data);
   return true;
 }
 

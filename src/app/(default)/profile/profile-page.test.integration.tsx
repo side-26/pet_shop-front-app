@@ -1,24 +1,29 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
+import { useAuthStore } from '@/entities/auth/auth.store';
 
-vi.mock('./_components/profile-header-wrapper', () => ({
-  ProfileHeaderWrapper: () => <h1>نیلوفر احمدی</h1>,
-}));
-vi.mock('./_components/profile-personal-info-wrapper', () => ({
-  ProfilePersonalInfoWrapper: () => (
-    <>
-      <input aria-label="نام" defaultValue="نیلوفر" />
-      <input aria-label="سن" type="number" defaultValue="31" />
-      <button type="button" aria-label="تاریخ تولد" data-slot="field-control" />
-    </>
-  ),
-}));
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 
 import ProfilePage, { metadata } from './page';
 
 afterEach(cleanup);
+
+beforeEach(() => {
+  useAuthStore.getState().saveUserIdentity({
+    userId: 'user-1',
+    firstName: 'نیلوفر',
+    lastName: 'احمدی',
+    phoneNumber: '09121234567',
+    role: 'customer',
+    avatar: '',
+    email: 'niloofar@example.com',
+    nationalCode: '0012345678',
+    age: 31,
+    birthDate: '1995-09-09T00:00:00.000Z',
+  });
+});
 
 describe(routePaths.profile, () => {
   it('renders the customer identity and three profile sections', () => {

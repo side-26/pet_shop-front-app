@@ -13,6 +13,10 @@ const currentUser = {
   phoneNumber: '09123456789',
   role: USER_ROLES.ADMIN,
   avatar: '',
+  email: 'ali@example.com',
+  nationalCode: '0012345678',
+  age: 31,
+  birthDate: null,
 };
 
 afterEach(cleanup);

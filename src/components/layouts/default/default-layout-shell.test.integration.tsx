@@ -11,8 +11,8 @@ vi.mock('next/navigation', () => ({
   usePathname: () => navigationState.pathname,
 }));
 
-vi.mock('./desktop-account-menu-wrapper', () => ({
-  DesktopAccountMenuWrapper: () => null,
+vi.mock('./desktop-account-button', () => ({
+  DesktopAccountButton: () => null,
 }));
 
 vi.mock('./mobile-bottom-navigation-wrapper', () => ({

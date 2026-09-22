@@ -92,8 +92,10 @@ export async function logoutUserAction() {
     };
   }
 
-  if (!result.isSuccess) return result;
+  return result;
+}
 
+export async function redirectToLoginAfterLogoutAction(): Promise<never> {
   redirect(PATHS.AUTH.LOGIN_AFTER_LOGOUT);
 }
 

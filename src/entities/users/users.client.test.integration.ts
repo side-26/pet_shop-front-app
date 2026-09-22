@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { toast } from '@/components/ui/toast';
+import { useAuthStore } from '@/entities/auth/auth.store';
 import { globalErrorHandler } from '@/utils/helpers';
 
 import {
@@ -80,13 +81,25 @@ describe('create user client orchestration', () => {
 describe('current-user profile client orchestration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    useAuthStore.getState().deleteUserIdentity();
   });
 
   it('submits personal info and shows the backend success message', async () => {
     updateCurrentUserProfileActionMock.mockResolvedValue({
       isSuccess: true,
       message: 'updated',
-      data: {} as never,
+      data: {
+        userId: 'user-1',
+        firstName: 'Ali',
+        lastName: 'Rezaei',
+        phoneNumber: '09123456789',
+        role: 'customer',
+        avatar: '',
+        email: 'ali@example.com',
+        nationalCode: '0012345678',
+        age: 30,
+        birthDate: null,
+      },
     });
 
     await expect(
@@ -104,6 +117,10 @@ describe('current-user profile client orchestration', () => {
       ),
     ).resolves.toBe(true);
     expect(toastAddMock).toHaveBeenCalledWith({ type: 'success', title: 'updated' });
+    expect(useAuthStore.getState().userIdentity).toMatchObject({
+      userId: 'user-1',
+      firstName: 'Ali',
+    });
   });
 
   it('forwards password-change validation failures to the shared field-error handler', async () => {

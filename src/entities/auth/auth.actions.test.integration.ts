@@ -283,16 +283,17 @@ describe('auth actions', () => {
     expect(redirectMock).toHaveBeenCalledWith(PATHS.AUTH.LOGIN);
   });
 
-  it('redirects with the logout success marker after backend session invalidation', async () => {
+  it('returns after backend session invalidation so the client can synchronize identity', async () => {
     logoutUserMock.mockResolvedValue({ isSuccess: true, message: 'خارج شدید.', data: undefined });
-    redirectMock.mockImplementation(() => {
-      throw new Error('NEXT_REDIRECT');
+
+    await expect(logoutUserAction()).resolves.toEqual({
+      isSuccess: true,
+      message: 'خارج شدید.',
+      data: undefined,
     });
 
-    await expect(logoutUserAction()).rejects.toThrow('NEXT_REDIRECT');
-
     expect(logoutUserMock).toHaveBeenCalledOnce();
-    expect(redirectMock).toHaveBeenCalledWith(PATHS.AUTH.LOGIN_AFTER_LOGOUT);
+    expect(redirectMock).not.toHaveBeenCalled();
     expect(deleteSessionCookieMock).not.toHaveBeenCalled();
   });
 

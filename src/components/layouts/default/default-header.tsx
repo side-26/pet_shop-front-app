@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { Brand } from './brand';
 import { DesktopNavigation, DesktopNavigationView } from './desktop-navigation';
 import { HeaderProductSearch } from './header-product-search';
-import { DesktopAccountMenuWrapper } from './desktop-account-menu-wrapper';
+import { DesktopAccountButton } from './desktop-account-button';
 import { MobileHeaderMenu } from './mobile-header-menu';
 
 export function DefaultHeader() {
@@ -41,7 +41,7 @@ export function DefaultHeader() {
           >
             <ShoppingCart aria-hidden="true" />
           </Link>
-          <DesktopAccountMenuWrapper />
+          <DesktopAccountButton />
         </div>
       </div>
     </header>

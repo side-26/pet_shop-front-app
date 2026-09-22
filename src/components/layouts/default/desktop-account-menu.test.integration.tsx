@@ -16,6 +16,10 @@ const user = {
   phoneNumber: '09121234567',
   role: 'customer',
   avatar: '',
+  email: 'niloofar@example.com',
+  nationalCode: '0012345678',
+  age: 31,
+  birthDate: null,
 } as const;
 
 afterEach(cleanup);

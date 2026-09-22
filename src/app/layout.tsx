@@ -10,6 +10,7 @@ import { appLogo } from '@/configs/app-logo';
 import { cn } from '@/lib/utils';
 
 import { ReactQueryProvider } from './react-query-provider';
+import { AuthSessionInitializer } from './_components/auth-session-initializer';
 
 import './styles/tailwind.config.css';
 
@@ -75,6 +76,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <NavigationPageBar />
         <RtlLayout>
           <ReactQueryProvider>
+            <AuthSessionInitializer />
             <Toaster>{children}</Toaster>
           </ReactQueryProvider>
         </RtlLayout>

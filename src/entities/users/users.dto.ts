@@ -143,6 +143,10 @@ export interface CurrentUserDTO {
   phoneNumber: string;
   role: UserRole;
   avatar: string;
+  email: string;
+  nationalCode: string;
+  age: number | null;
+  birthDate: string | null;
 }
 
 export type AllPaginatedUsersResponseDTO = PaginateResponseDTO<UserDTO>;

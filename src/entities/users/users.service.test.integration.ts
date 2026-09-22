@@ -9,6 +9,7 @@ import {
   disableUserById,
   enableUserById,
   getCurrentUser,
+  getCurrentUserForSessionSync,
   getAllPaginatedUsers,
   userGetDetailById,
   updateCurrentUserProfile,
@@ -71,6 +72,27 @@ describe('getCurrentUser service', () => {
     });
     expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 360 });
     expect(registerDetailMock).toHaveBeenCalledWith('user-42');
+  });
+});
+
+describe('getCurrentUserForSessionSync service', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('uses the authenticated current-user endpoint without importing session data into client code', async () => {
+    const response = { isSuccess: true as const, message: null, data: { userId: 'user-42' } };
+    customFetcherMock.mockResolvedValue(response);
+
+    await expect(getCurrentUserForSessionSync()).resolves.toBe(response);
+
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/users/current',
+      method: 'GET',
+      auth: true,
+      cache: 'no-store',
+    });
+    expect(getSessionMock).not.toHaveBeenCalled();
   });
 });
 

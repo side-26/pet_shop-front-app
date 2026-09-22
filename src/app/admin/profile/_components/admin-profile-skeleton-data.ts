@@ -8,4 +8,8 @@ export const adminProfileSkeletonData: CurrentUserDTO = {
   phoneNumber: '09120000000',
   role: USER_ROLES.ADMIN,
   avatar: '',
+  email: '',
+  nationalCode: '',
+  age: null,
+  birthDate: null,
 };
