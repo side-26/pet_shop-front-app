@@ -19,6 +19,7 @@ vi.mock('./profile.service', () => ({
   getProfileAddress: vi.fn(),
   createProfileAddress: vi.fn(),
   deleteProfileAddress: vi.fn(),
+  deleteProfileAvatar: vi.fn(),
   getProfileAddresses: vi.fn(),
   getProfileOrder: vi.fn(),
   getProfileOrders: vi.fn(),

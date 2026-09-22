@@ -2,6 +2,8 @@
 
 import { PencilIcon, Save, Trash2Icon, UserRound } from 'lucide-react';
 import type { MouseEvent } from 'react';
+import { useRef, useTransition } from 'react';
+import { useRouter } from 'nextjs-toploader/app';
 
 import {
   DEFAULT_IMAGE_ACCEPT_TYPES,
@@ -11,16 +13,30 @@ import {
 import { ImageFilePreview } from '@/components/common/image-file-preview';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
-import { toast } from '@/components/ui/toast';
+import { Form, type FormHandle } from '@/components/ui/form';
+import { deleteProfileAvatarAction } from '@/entities/profile/profile.actions';
+import type { ProfileAccountDTO } from '@/entities/profile/profile.dto';
+import { submitCurrentUserProfile } from '@/entities/users/users.client';
+import {
+  updateCurrentUserProfileSchema,
+  type UpdateCurrentUserProfileInput,
+} from '@/entities/users/users.schema';
+import { globalErrorHandler } from '@/utils/helpers';
 
-type ProfileAvatarValues = { avatar: File | null };
 const profileAvatarInputId = 'profile-avatar-input';
 const profileAvatarAcceptedFormats = DEFAULT_IMAGE_ACCEPT_TYPES.map((acceptType) =>
   acceptType === 'image/webp' ? 'WebP' : acceptType.replace('image/', '').toUpperCase(),
 ).join(', ');
 
-function ProfileAvatarActions() {
+function ProfileAvatarActions({
+  hasPersistedAvatar,
+  isPending,
+  onDeletePersistedAvatar,
+}: {
+  hasPersistedAvatar: boolean;
+  isPending: boolean;
+  onDeletePersistedAvatar: () => void;
+}) {
   const { deleteImageFile, imageFile } = useImageFileField();
 
   function openFilePicker(event: MouseEvent<HTMLButtonElement>) {
@@ -48,11 +64,12 @@ function ProfileAvatarActions() {
         size="sm"
         iconOnly
         aria-label="حذف تصویر پروفایل"
-        disabled={!imageFile}
+        disabled={isPending || (!imageFile && !hasPersistedAvatar)}
         onClick={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          deleteImageFile();
+          if (imageFile) deleteImageFile();
+          else onDeletePersistedAvatar();
         }}
       >
         <Trash2Icon aria-hidden="true" />
@@ -78,20 +95,54 @@ function ProfileAvatarSubmitButton({ isSubmitting }: { isSubmitting: boolean }) 
   );
 }
 
-export function ProfileAvatarField() {
-  return (
-    <Form<ProfileAvatarValues>
-      handleSubmit={() =>
-        toast.add({
-          title: 'تصویر پروفایل ذخیره شد',
-          description: 'تصویر جدید شما با موفقیت ثبت شد.',
-          type: 'success',
-        })
+export function ProfileAvatarField({ user }: { user: ProfileAccountDTO }) {
+  const formRef = useRef<FormHandle<UpdateCurrentUserProfileInput>>(null);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  function handleSubmit(input: UpdateCurrentUserProfileInput) {
+    const form = formRef.current;
+    if (!form || isPending) return;
+
+    startTransition(async () => {
+      if (await submitCurrentUserProfile(input, form.setError)) router.refresh();
+    });
+  }
+
+  function deletePersistedAvatar() {
+    if (isPending) return;
+
+    startTransition(async () => {
+      const result = await deleteProfileAvatarAction();
+      if (!result?.isSuccess) {
+        if (!result) return;
+        globalErrorHandler(result);
+        return;
       }
-      options={{ defaultValues: { avatar: null } }}
+
+      router.refresh();
+    });
+  }
+
+  return (
+    <Form<UpdateCurrentUserProfileInput>
+      ref={formRef}
+      validationSchema={updateCurrentUserProfileSchema}
+      handleSubmit={handleSubmit}
+      options={{
+        defaultValues: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          nationalCode: user.nationalCode,
+          age: user.age ?? undefined,
+          birthDate: user.birthDate,
+          avatar: null,
+        },
+      }}
     >
       {({ formState: { isSubmitting } }) => (
-        <ImageFileField<ProfileAvatarValues>
+        <ImageFileField<UpdateCurrentUserProfileInput>
           id={profileAvatarInputId}
           name="avatar"
           aria-label="انتخاب تصویر پروفایل"
@@ -100,6 +151,7 @@ export function ProfileAvatarField() {
             <ImageFilePreview
               avatar
               alt="پیش‌نمایش تصویر پروفایل"
+              initialImageUrl={user.avatar || null}
               className="tw:size-16"
               fallback={
                 <Avatar className="tw:size-16">
@@ -109,7 +161,11 @@ export function ProfileAvatarField() {
                 </Avatar>
               }
             />
-            <ProfileAvatarActions />
+            <ProfileAvatarActions
+              hasPersistedAvatar={Boolean(user.avatar)}
+              isPending={isPending}
+              onDeletePersistedAvatar={deletePersistedAvatar}
+            />
             <bdi dir="ltr" className="tw:text-label-s tw:text-muted-foreground">
               {profileAvatarAcceptedFormats}
             </bdi>

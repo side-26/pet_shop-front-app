@@ -79,6 +79,12 @@ const optionalAvatarSchema = mixed<File>()
 export const updateCurrentUserProfileSchema = object({
   firstName: string().trim().min(2).required(),
   lastName: string().trim().min(2).required(),
+  email: string().trim().email().required(),
+  nationalCode: string()
+    .matches(/^\d{10}$/)
+    .required(),
+  age: number().integer().min(4).required(),
+  birthDate: string().nullable().optional(),
   avatar: optionalAvatarSchema,
 });
 

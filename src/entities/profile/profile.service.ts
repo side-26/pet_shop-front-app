@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { customFetcher } from '@/lib/api/customFetcher';
-import { EntityTag } from '@/utils/entityCache';
+import { usersCache } from '@/entities/users/users.cache';
 
 import type {
   CreateProfileAddressDTO,
@@ -16,8 +16,7 @@ import type {
 } from './profile.dto';
 import { createProfileOrdersCacheKey } from './profile.helpers';
 import { getProfileOrdersSchema } from './profile.schema';
-
-const profileCache = new EntityTag('profile');
+import { profileCache } from './profile.cache';
 
 export async function getProfileAccount(userId: string) {
   'use cache: private';
@@ -43,6 +42,22 @@ export async function resetProfilePassword(input: ResetProfilePasswordDTO) {
   });
 
   if (result.isSuccess) profileCache.invalidateAll();
+  return result;
+}
+
+export async function deleteProfileAvatar(userId: string) {
+  const result = await customFetcher<{ avatar: string }>({
+    url: '/profile/avatar',
+    method: 'DELETE',
+    auth: true,
+    cache: 'no-store',
+  });
+
+  if (result.isSuccess) {
+    profileCache.invalidateDetail(userId);
+    usersCache.invalidateDetail(userId);
+  }
+
   return result;
 }
 

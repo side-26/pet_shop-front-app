@@ -48,7 +48,7 @@ describe('authMiddleware', () => {
     vi.setSystemTime(Date.UTC(2026, 7, 26, 11, 0, 0));
   });
 
-  it.each(['/cart', '/checkout', '/admin', '/admin/users'])(
+  it.each(['/cart', '/checkout', '/profile', '/admin', '/admin/users'])(
     'redirects unauthenticated access to protected route %s',
     async (pathname) => {
       const response = await authMiddleware(request(pathname), next);

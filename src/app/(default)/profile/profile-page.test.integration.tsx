@@ -1,7 +1,20 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
+
+vi.mock('./_components/profile-header-wrapper', () => ({
+  ProfileHeaderWrapper: () => <h1>نیلوفر احمدی</h1>,
+}));
+vi.mock('./_components/profile-personal-info-wrapper', () => ({
+  ProfilePersonalInfoWrapper: () => (
+    <>
+      <input aria-label="نام" defaultValue="نیلوفر" />
+      <input aria-label="سن" type="number" defaultValue="31" />
+      <button type="button" aria-label="تاریخ تولد" data-slot="field-control" />
+    </>
+  ),
+}));
 
 import ProfilePage, { metadata } from './page';
 

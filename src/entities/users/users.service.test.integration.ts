@@ -217,6 +217,10 @@ describe('current-user mutations', () => {
     await updateCurrentUserProfile('user-1', {
       firstName: 'Ali',
       lastName: 'Rezaei',
+      email: 'ali@example.com',
+      nationalCode: '0012345678',
+      age: 30,
+      birthDate: '1995-09-09T00:00:00.000Z',
       avatar: null,
     });
 
@@ -230,6 +234,10 @@ describe('current-user mutations', () => {
     const body = request?.body as FormData;
     expect(body.get('firstName')).toBe('Ali');
     expect(body.get('lastName')).toBe('Rezaei');
+    expect(body.get('email')).toBe('ali@example.com');
+    expect(body.get('nationalCode')).toBe('0012345678');
+    expect(body.get('age')).toBe('30');
+    expect(body.get('birthDate')).toBe('1995-09-09');
     expect(body.has('avatar')).toBe(false);
     expect(invalidateDetailMock).toHaveBeenCalledWith('user-1');
   });
@@ -244,6 +252,10 @@ describe('current-user mutations', () => {
     await updateCurrentUserProfile('user-1', {
       firstName: 'Ali',
       lastName: 'Rezaei',
+      email: 'ali@example.com',
+      nationalCode: '0012345678',
+      age: 30,
+      birthDate: null,
       avatar: null,
     });
 

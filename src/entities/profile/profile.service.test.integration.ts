@@ -4,6 +4,7 @@ import { customFetcher } from '@/lib/api/customFetcher';
 
 import {
   createProfileAddress,
+  deleteProfileAvatar,
   getProfileAccount,
   getProfileOrders,
   resetProfilePassword,
@@ -104,5 +105,23 @@ describe('profile service', () => {
     });
 
     expect(invalidateAllMock).toHaveBeenCalledOnce();
+  });
+
+  it('deletes only the current avatar and invalidates both profile and current-user details', async () => {
+    fetcher.mockResolvedValue({
+      isSuccess: true,
+      message: 'deleted',
+      data: { avatar: '' },
+    } as never);
+
+    await deleteProfileAvatar('user-1');
+
+    expect(fetcher).toHaveBeenCalledWith({
+      url: '/profile/avatar',
+      method: 'DELETE',
+      auth: true,
+      cache: 'no-store',
+    });
+    expect(invalidateDetailMock).toHaveBeenCalledWith('user-1');
   });
 });

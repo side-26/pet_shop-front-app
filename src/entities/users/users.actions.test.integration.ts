@@ -204,12 +204,18 @@ describe('users actions', () => {
       updateCurrentUserProfileAction({
         firstName: '  Ali  ',
         lastName: '  Rezaei  ',
+        email: 'ali@example.com',
+        nationalCode: '0012345678',
+        age: 30,
         ignored: true,
       }),
     ).resolves.toBe(response);
     expect(updateCurrentUserProfileMock).toHaveBeenCalledWith('user-1', {
       firstName: 'Ali',
       lastName: 'Rezaei',
+      email: 'ali@example.com',
+      nationalCode: '0012345678',
+      age: 30,
     });
   });
 

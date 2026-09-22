@@ -90,7 +90,18 @@ describe('current-user profile client orchestration', () => {
     });
 
     await expect(
-      submitCurrentUserProfile({ firstName: 'Ali', lastName: 'Rezaei', avatar: null }, vi.fn()),
+      submitCurrentUserProfile(
+        {
+          firstName: 'Ali',
+          lastName: 'Rezaei',
+          email: 'ali@example.com',
+          nationalCode: '0012345678',
+          age: 30,
+          birthDate: null,
+          avatar: null,
+        },
+        vi.fn(),
+      ),
     ).resolves.toBe(true);
     expect(toastAddMock).toHaveBeenCalledWith({ type: 'success', title: 'updated' });
   });

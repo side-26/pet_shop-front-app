@@ -1,8 +1,6 @@
 'use client';
 
 import {
-  AtSign,
-  CakeSlice,
   CheckCircle2,
   CircleX,
   Clock3,
@@ -13,11 +11,10 @@ import {
   PackageCheck,
   Phone,
   Plus,
-  Save,
   Truck,
   UserRound,
 } from 'lucide-react';
-import { useState } from 'react';
+import { Activity, useState, type ReactNode } from 'react';
 
 import { Badge, type BadgeProps } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -39,21 +36,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { DatePicker } from '@/components/ui/date-picker';
 import { TextField } from '@/components/ui/fields/text-field';
 import { Form } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/components/ui/toast';
 import { APP_CURRENCY } from '@/configs/currency';
-
-type ProfileFormValues = {
-  firstName: string;
-  lastName: string;
-  phone: string;
-  email: string;
-  age: string;
-  birthDate: string;
-};
 
 type AddressFormValues = {
   title: string;
@@ -136,90 +123,6 @@ const statusAppearance: Record<
   processing: { color: 'warning', icon: Clock3 },
   cancelled: { color: 'error', icon: CircleX },
 };
-
-function PersonalInformationPanel() {
-  return (
-    <Card variant="outlined" size="lg">
-      <CardHeader>
-        <CardTitle>اطلاعات شخصی</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form<ProfileFormValues>
-          options={{
-            defaultValues: {
-              firstName: 'نیلوفر',
-              lastName: 'احمدی',
-              phone: '09123456789',
-              email: 'niloofar.ahmadi@example.com',
-              age: '31',
-              birthDate: '1995-09-09T00:00:00.000Z',
-            },
-          }}
-          handleSubmit={() =>
-            toast.add({
-              title: 'اطلاعات پروفایل ذخیره شد',
-              description: 'تغییرات حساب کاربری شما با موفقیت ثبت شد.',
-              type: 'success',
-            })
-          }
-        >
-          {({ formState: { isSubmitting } }) => (
-            <>
-              <div className="tw:grid tw:items-start tw:gap-4 tw:md:grid-cols-3">
-                <TextField<ProfileFormValues>
-                  name="firstName"
-                  label="نام"
-                  prefixIcon={<UserRound />}
-                  size="lg"
-                />
-                <TextField<ProfileFormValues>
-                  name="lastName"
-                  label="نام خانوادگی"
-                  prefixIcon={<UserRound />}
-                  size="lg"
-                />
-                <TextField<ProfileFormValues>
-                  name="phone"
-                  label="شماره موبایل"
-                  prefixIcon={<Phone />}
-                  type="tel"
-                  inputMode="tel"
-                  size="lg"
-                />
-                <TextField<ProfileFormValues>
-                  name="email"
-                  label="ایمیل"
-                  prefixIcon={<AtSign />}
-                  type="email"
-                  dir="ltr"
-                  size="lg"
-                />
-                <TextField<ProfileFormValues>
-                  name="age"
-                  label="سن"
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  max={130}
-                  dir="ltr"
-                  prefixIcon={<CakeSlice />}
-                  size="lg"
-                />
-                <DatePicker<ProfileFormValues> name="birthDate" label="تاریخ تولد" size="lg" />
-              </div>
-              <div className="tw:flex tw:justify-end">
-                <Button type="submit" size="lg" isLoading={isSubmitting} loadingText="در حال ذخیره">
-                  <Save data-icon="inline-start" aria-hidden="true" />
-                  ذخیره تغییرات
-                </Button>
-              </div>
-            </>
-          )}
-        </Form>
-      </CardContent>
-    </Card>
-  );
-}
 
 function OrderStatusBadge({ order }: { order: Order }) {
   const appearance = statusAppearance[order.status];
@@ -493,9 +396,11 @@ function AddressesPanel() {
   );
 }
 
-export function ProfileTabs() {
+export function ProfileTabs({ personalInfo }: { personalInfo: ReactNode }) {
+  const [activeTab, setActiveTab] = useState('personal');
+
   return (
-    <Tabs defaultValue="personal" size="lg" className="tw:gap-5">
+    <Tabs value={activeTab} onValueChange={setActiveTab} size="lg" className="tw:gap-5">
       <div className="tw:min-w-0 tw:pb-1">
         <TabsList variant="line" aria-label="بخش‌های پروفایل" className="tw:w-full">
           <TabsTrigger value="orders" className="tw:min-w-0 tw:px-2 tw:sm:px-4">
@@ -512,14 +417,18 @@ export function ProfileTabs() {
           </TabsTrigger>
         </TabsList>
       </div>
-      <TabsContent value="orders">
-        <OrdersPanel />
+      <TabsContent value="orders" keepMounted>
+        <Activity mode={activeTab === 'orders' ? 'visible' : 'hidden'}>
+          <OrdersPanel />
+        </Activity>
       </TabsContent>
-      <TabsContent value="addresses">
-        <AddressesPanel />
+      <TabsContent value="addresses" keepMounted>
+        <Activity mode={activeTab === 'addresses' ? 'visible' : 'hidden'}>
+          <AddressesPanel />
+        </Activity>
       </TabsContent>
-      <TabsContent value="personal">
-        <PersonalInformationPanel />
+      <TabsContent value="personal" keepMounted>
+        <Activity mode={activeTab === 'personal' ? 'visible' : 'hidden'}>{personalInfo}</Activity>
       </TabsContent>
     </Tabs>
   );

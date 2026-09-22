@@ -1,8 +1,8 @@
 import 'server-only';
 
 import { customFetcher } from '@/lib/api/customFetcher';
-import { EntityTag } from '@/utils/entityCache';
 import { getSession } from '@/utils/session';
+import { profileCache } from '@/entities/profile/profile.cache';
 
 import type {
   AllPaginatedUsersDTO,
@@ -30,8 +30,7 @@ import type {
 } from './users.dto';
 import { createUsersListCacheKey, omitNullQueryValues } from './users.helpers';
 import { getAllPaginatedUsersSchema } from './users.schema';
-
-const usersCache = new EntityTag('users');
+import { usersCache } from './users.cache';
 
 export async function getCurrentUser() {
   'use cache: private';
@@ -116,6 +115,10 @@ export async function updateCurrentUserProfile(userId: string, input: UpdateCurr
   const body = new FormData();
   body.set('firstName', input.firstName);
   body.set('lastName', input.lastName);
+  body.set('email', input.email);
+  body.set('nationalCode', input.nationalCode);
+  body.set('age', String(input.age));
+  if (input.birthDate) body.set('birthDate', input.birthDate.slice(0, 10));
   if (input.avatar instanceof File) body.set('avatar', input.avatar);
 
   const result = await customFetcher<CurrentUserDTO, unknown, FormData>({
@@ -126,7 +129,10 @@ export async function updateCurrentUserProfile(userId: string, input: UpdateCurr
     cache: 'no-store',
   });
 
-  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  if (result.isSuccess) {
+    usersCache.invalidateDetail(userId);
+    profileCache.invalidateDetail(userId);
+  }
   return result;
 }
 

@@ -1,12 +1,27 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { toast } from '@/components/ui/toast';
+import { submitCurrentUserProfile } from '@/entities/users/users.client';
+
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('@/entities/profile/profile.actions', () => ({ deleteProfileAvatarAction: vi.fn() }));
+vi.mock('@/entities/users/users.client', () => ({ submitCurrentUserProfile: vi.fn() }));
 
 import { ProfileAvatarField } from './profile-avatar-field';
 
 const createObjectUrl = vi.fn(() => 'blob:profile-avatar');
 const revokeObjectUrl = vi.fn();
+const user = {
+  userId: 'user-1',
+  firstName: 'نیلوفر',
+  lastName: 'احمدی',
+  phoneNumber: '09123456789',
+  email: 'niloofar@example.com',
+  avatar: '',
+  nationalCode: '0012345678',
+  age: 31,
+  birthDate: '1995-09-09T00:00:00.000Z',
+};
 
 beforeEach(() => {
   vi.stubGlobal('URL', { createObjectURL: createObjectUrl, revokeObjectURL: revokeObjectUrl });
@@ -20,8 +35,8 @@ afterEach(() => {
 
 describe('ProfileAvatarField', () => {
   it('lets the user select, replace, and remove an avatar image', async () => {
-    const addToast = vi.spyOn(toast, 'add');
-    render(<ProfileAvatarField />);
+    vi.mocked(submitCurrentUserProfile).mockResolvedValue(true);
+    render(<ProfileAvatarField user={user} />);
 
     const fileInput = screen.getByLabelText('انتخاب تصویر پروفایل');
     expect(fileInput.getAttribute('accept')).toBe('image/jpeg,image/png,image/webp');
@@ -47,9 +62,21 @@ describe('ProfileAvatarField', () => {
     fireEvent.click(screen.getByRole('button', { name: 'ذخیره تصویر' }));
 
     await waitFor(() =>
-      expect(addToast).toHaveBeenCalledWith(
-        expect.objectContaining({ title: 'تصویر پروفایل ذخیره شد', type: 'success' }),
+      expect(submitCurrentUserProfile).toHaveBeenCalledWith(
+        expect.objectContaining({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          nationalCode: user.nationalCode,
+          age: user.age,
+        }),
+        expect.any(Function),
       ),
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'حذف تصویر پروفایل' }).hasAttribute('disabled'),
+      ).toBe(false),
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'حذف تصویر پروفایل' }));

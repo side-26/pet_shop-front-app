@@ -27,8 +27,20 @@ describe('userGetDetailByIdSchema', () => {
 describe('current-user profile schemas', () => {
   it('validates documented editable personal-info fields', async () => {
     await expect(
-      updateCurrentUserProfileSchema.validate({ firstName: '  علی  ', lastName: '  رضایی  ' }),
-    ).resolves.toEqual({ firstName: 'علی', lastName: 'رضایی' });
+      updateCurrentUserProfileSchema.validate({
+        firstName: '  علی  ',
+        lastName: '  رضایی  ',
+        email: 'ali@example.com',
+        nationalCode: '0012345678',
+        age: 30,
+      }),
+    ).resolves.toEqual({
+      firstName: 'علی',
+      lastName: 'رضایی',
+      email: 'ali@example.com',
+      nationalCode: '0012345678',
+      age: 30,
+    });
   });
 
   it('requires a matching, eight-character password confirmation', async () => {

@@ -18,6 +18,7 @@ export interface ProfileAccountDTO {
   avatar: string;
   nationalCode: string;
   age: number | null;
+  birthDate: string | null;
 }
 
 export type ProfileAddressDTO = AddressDTO;

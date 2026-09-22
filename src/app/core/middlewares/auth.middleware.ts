@@ -10,7 +10,12 @@ import type { MiddlewareHandler } from './composer.middleware';
 const ACCESS_TOKEN_TTL_MS = 7 * 60 * 60 * 1_000;
 
 const authRoutes = [routePaths.login, routePaths.register, routePaths.resetPassword] as const;
-const protectedRoutes = [routePaths.cart, routePaths.checkout, routePaths.admin] as const;
+const protectedRoutes = [
+  routePaths.cart,
+  routePaths.checkout,
+  routePaths.profile,
+  routePaths.admin,
+] as const;
 
 function isRouteWithin(pathname: string, route: string): boolean {
   return pathname === route || pathname.startsWith(`${route}/`);

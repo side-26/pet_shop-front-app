@@ -52,6 +52,11 @@ export async function getProfileAccountAction() {
   return 'error' in auth ? auth.error : service.getProfileAccount(auth.session.userId);
 }
 
+export async function deleteProfileAvatarAction() {
+  const auth = await authorizeCustomer();
+  return 'error' in auth ? auth.error : service.deleteProfileAvatar(auth.session.userId);
+}
+
 export async function resetProfilePasswordAction(input: unknown) {
   const auth = await authorizeCustomer();
   if ('error' in auth) return auth.error;
