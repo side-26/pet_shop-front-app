@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 
 import { NeshanMap } from '@/components/ui/map/neshan-map/default';
+import { NeshanMapPluginWrapper } from '@/components/ui/map/neshan-map/plugins/plugin-wrapper';
 import { Button } from '@/components/ui/button';
 
 import { ShowcaseSection } from './showcase-section';
@@ -24,9 +25,18 @@ export function NeshanMapShowcase() {
           center={[51.389, 35.6892]}
         >
           {({ mapCoordinate }) => (
-            <output className="tw:pointer-events-none tw:absolute tw:start-3 tw:top-3 tw:z-1 tw:rounded-lg tw:bg-background/90 tw:px-3 tw:py-2 tw:text-label-s tw:text-foreground tw:shadow-sm">
-              {mapCoordinate.join(', ')}
-            </output>
+            <>
+              <NeshanMapPluginWrapper position="top-left">
+                <output className="tw:pointer-events-none tw:rounded-lg tw:bg-background/90 tw:px-3 tw:py-2 tw:text-label-s tw:text-foreground tw:shadow-sm">
+                  افزونهٔ نقشه
+                </output>
+              </NeshanMapPluginWrapper>
+              <NeshanMapPluginWrapper position="top-right">
+                <output className="tw:pointer-events-none tw:rounded-lg tw:bg-background/90 tw:px-3 tw:py-2 tw:text-label-s tw:text-foreground tw:shadow-sm">
+                  {mapCoordinate.join(', ')}
+                </output>
+              </NeshanMapPluginWrapper>
+            </>
           )}
         </NeshanMap>
         <Button

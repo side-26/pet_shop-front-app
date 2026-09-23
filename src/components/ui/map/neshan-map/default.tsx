@@ -9,7 +9,7 @@ import { type Map as NeshanMapInstance } from '@neshan-maps-platform/maplibre-sd
 import '@neshan-maps-platform/maplibre-sdk/style.css';
 
 import { cn } from '@/lib/utils';
-import { NeshanMapPointerIcon } from './plugin/icons/pointer';
+import { NeshanMapPointerIcon } from './plugins/icons/pointer';
 import { resolveMapStyleCssVariables, type MapStyle } from './style-css-variables';
 
 const DEFAULT_CENTER = [51.389, 35.6892] as const;

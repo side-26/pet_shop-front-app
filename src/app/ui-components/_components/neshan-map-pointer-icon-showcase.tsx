@@ -1,4 +1,4 @@
-import { NeshanMapPointerIcon } from '@/components/ui/map/neshan-map/plugin/icons/pointer';
+import { NeshanMapPointerIcon } from '@/components/ui/map/neshan-map/plugins/icons/pointer';
 
 import { ShowcaseSection } from './showcase-section';
 
