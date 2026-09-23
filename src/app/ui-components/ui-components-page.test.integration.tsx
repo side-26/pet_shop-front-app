@@ -103,6 +103,7 @@ describe(routePaths.uiComponents, () => {
         'Countdown',
         'Counter',
         'Empty',
+        'Neshan Map',
       ]),
     );
     expect(getButtonByName('نمایش توضیحات کامل')?.getAttribute('aria-expanded')).toBe('false');

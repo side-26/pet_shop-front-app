@@ -47,6 +47,7 @@ import { ComboboxShowcase } from './combobox-showcase';
 import { VirtualSelectShowcase } from './virtual-select-showcase';
 import { FetchErrorSectionBoundaryShowcase } from './fetch-error-section-boundary-showcase';
 import { RateFieldShowcase } from './rate-field-showcase';
+import { NeshanMapShowcase } from './neshan-map-showcase';
 
 const navigation = [
   ['#avatars', 'Avatar'],
@@ -96,6 +97,7 @@ const navigation = [
   ['#counters', 'Counter'],
   ['#empty-states', 'Empty'],
   ['#fetch-error-section-boundary', 'Fetch Error Section Boundary'],
+  ['#neshan-maps', 'Neshan Map'],
 ] as const;
 
 export function UiComponentsGallery() {
@@ -181,6 +183,7 @@ export function UiComponentsGallery() {
         <CounterShowcase />
         <EmptyShowcase />
         <FetchErrorSectionBoundaryShowcase />
+        <NeshanMapShowcase />
       </div>
     </main>
   );
