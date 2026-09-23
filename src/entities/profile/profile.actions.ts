@@ -2,6 +2,8 @@
 
 import { ValidationError } from 'yup';
 
+import { refresh } from 'next/cache';
+
 import { USER_ROLES } from '@/configs/user-role';
 import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
 import type { FetcherError } from '@/lib/api/customFetcher';
@@ -71,6 +73,14 @@ export async function resetProfilePasswordAction(input: unknown) {
 export async function getProfileAddressesAction() {
   const auth = await authorizeCustomer();
   return 'error' in auth ? auth.error : service.getProfileAddresses(auth.session.userId);
+}
+
+export async function retryProfileAddressesAction() {
+  const auth = await authorizeCustomer();
+  if ('error' in auth) return auth.error;
+
+  service.invalidateProfileAddresses();
+  refresh();
 }
 
 export async function getProfileAddressAction(input: unknown) {

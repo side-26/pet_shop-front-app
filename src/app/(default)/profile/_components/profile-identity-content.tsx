@@ -9,7 +9,13 @@ import { profilePersonalInfoSkeletonData } from './profile-personal-info-skeleto
 import { ProfilePersonalInfoRenderer } from './profile-personal-info-renderer';
 import { ProfileTabs } from './profile-tabs';
 
-export function ProfileIdentityContent({ orders }: { orders: ReactNode }) {
+export function ProfileIdentityContent({
+  addresses,
+  orders,
+}: {
+  addresses: ReactNode;
+  orders: ReactNode;
+}) {
   const userIdentity = useAuthStore((state) => state.userIdentity);
   const user = userIdentity ?? profilePersonalInfoSkeletonData;
   const isSkeleton = !userIdentity;
@@ -18,6 +24,7 @@ export function ProfileIdentityContent({ orders }: { orders: ReactNode }) {
     <>
       <ProfileHeaderRenderer user={user} isSkeleton={isSkeleton} />
       <ProfileTabs
+        addresses={addresses}
         orders={orders}
         personalInfo={<ProfilePersonalInfoRenderer user={user} isSkeleton={isSkeleton} />}
       />

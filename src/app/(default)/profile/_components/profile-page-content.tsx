@@ -1,4 +1,5 @@
 import { ProfileIdentityContent } from './profile-identity-content';
+import { ProfileAddressesWrapper } from './profile-addresses-wrapper';
 import { ProfileOrdersWrapper } from './profile-orders-wrapper';
 
 export function ProfilePageContent() {
@@ -9,7 +10,10 @@ export function ProfilePageContent() {
         className="tw:pointer-events-none tw:absolute tw:inset-x-0 tw:top-0 tw:-z-10 tw:h-80 tw:bg-[radial-gradient(circle_at_top_right,var(--primary-muted),transparent_58%)] tw:opacity-75"
       />
       <div className="tw:default-layout-container tw:flex tw:flex-col tw:gap-6 tw:sm:gap-8">
-        <ProfileIdentityContent orders={<ProfileOrdersWrapper />} />
+        <ProfileIdentityContent
+          addresses={<ProfileAddressesWrapper />}
+          orders={<ProfileOrdersWrapper />}
+        />
       </div>
     </div>
   );

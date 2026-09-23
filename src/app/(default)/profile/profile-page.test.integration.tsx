@@ -12,6 +12,13 @@ vi.mock('./_components/profile-orders-wrapper', () => ({
     </section>
   ),
 }));
+vi.mock('./_components/profile-addresses-wrapper', () => ({
+  ProfileAddressesWrapper: () => (
+    <section aria-labelledby="addresses-heading">
+      <h2 id="addresses-heading">نشانی‌های من</h2>
+    </section>
+  ),
+}));
 
 import ProfilePage, { metadata } from './page';
 
@@ -64,17 +71,11 @@ describe(routePaths.profile, () => {
     expect(screen.getByRole('heading', { level: 2, name: 'سفارش‌های من' })).toBeTruthy();
   });
 
-  it('shows responsive address cards and the add-address form', () => {
+  it('switches to the addresses tab', () => {
     render(<ProfilePage />);
 
     fireEvent.click(screen.getByRole('tab', { name: 'نشانی‌ها' }));
     expect(screen.getByRole('heading', { level: 2, name: 'نشانی‌های من' })).toBeTruthy();
-    expect(screen.getByText('نشانی پیش‌فرض')).toBeTruthy();
-
-    fireEvent.click(screen.getByRole('button', { name: 'افزودن نشانی' }));
-    expect(screen.getByRole('dialog')).toBeTruthy();
-    expect(screen.getByRole('heading', { name: 'افزودن نشانی جدید' })).toBeTruthy();
-    expect(screen.getByRole('textbox', { name: 'عنوان نشانی' })).toBeTruthy();
   });
 
   it('defines profile metadata', () => {

@@ -76,6 +76,10 @@ export async function getProfileAddresses(userId: string) {
   });
 }
 
+export function invalidateProfileAddresses() {
+  profileCache.invalidateList();
+}
+
 export async function getProfileAddress(userId: string, addressId: string) {
   'use cache: private';
 
