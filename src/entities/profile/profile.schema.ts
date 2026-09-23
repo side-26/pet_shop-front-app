@@ -3,14 +3,7 @@ import { boolean, mixed, number, object, ref, string, type InferType } from 'yup
 import '@/configs/yup.config';
 import { yupMessage } from '@/configs/yup.config';
 import { iranianPhoneNumberSchema } from '@/entities/auth/auth.schema';
-
-export const PROFILE_ORDER_SORT_FIELDS = [
-  'createdAt',
-  'updatedAt',
-  'totalPrice',
-  'deliveryState',
-] as const;
-export const PROFILE_ORDER_DELIVERY_STATES = [0, 1, 2, 3] as const;
+import { ORDER_DELIVERY_STATES, ORDER_SORT_FIELDS } from '@/entities/orders/orders.schema';
 
 const objectIdSchema = string()
   .trim()
@@ -65,12 +58,12 @@ export const profileOrderIdSchema = object({ id: objectIdSchema });
 export const getProfileOrdersSchema = object({
   page: number().integer().min(1).default(1).required(),
   limit: number().integer().min(1).max(100).default(10).required(),
-  sort: mixed<(typeof PROFILE_ORDER_SORT_FIELDS)[number]>()
-    .oneOf(PROFILE_ORDER_SORT_FIELDS)
+  sort: mixed<(typeof ORDER_SORT_FIELDS)[number]>()
+    .oneOf(ORDER_SORT_FIELDS)
     .default('createdAt')
     .required(),
-  deliveryState: mixed<(typeof PROFILE_ORDER_DELIVERY_STATES)[number]>()
-    .oneOf(PROFILE_ORDER_DELIVERY_STATES)
+  deliveryState: mixed<(typeof ORDER_DELIVERY_STATES)[number]>()
+    .oneOf(ORDER_DELIVERY_STATES)
     .optional(),
 });
 
