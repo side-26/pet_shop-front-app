@@ -20,6 +20,7 @@ type NeshanMapMarker = InstanceType<NeshanMapSdk['default']['Marker']>;
 
 export type NeshanMapChildrenContext = Readonly<{
   mapCoordinate: NeshanMapCoordinates;
+  flyTo: NeshanMapHandle['flyTo'];
 }>;
 
 export type NeshanMapHandle = Readonly<{
@@ -73,6 +74,10 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
       root.unmount();
     }
     pointerMarkersRef.current = [];
+  }, []);
+
+  const flyTo = useCallback<NeshanMapHandle['flyTo']>((center, options) => {
+    mapRef.current?.flyTo({ ...options, center: [...center] });
   }, []);
 
   const addNewPointer = useCallback((coordinates: NeshanMapCoordinates) => {
@@ -165,13 +170,11 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
   useImperativeHandle(
     ref,
     () => ({
-      flyTo: (center, options) => {
-        mapRef.current?.flyTo({ ...options, center: [...center] });
-      },
+      flyTo,
       addNewPointer,
       getMap: () => mapRef.current,
     }),
-    [addNewPointer],
+    [addNewPointer, flyTo],
   );
 
   useEffect(() => {
@@ -241,7 +244,7 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
       className={cn('tw:relative tw:overflow-hidden tw:rounded-md', className)}
     >
       <div ref={containerRef} className="tw:absolute tw:inset-0 tw:size-full" />
-      {typeof children === 'function' ? children({ mapCoordinate }) : children}
+      {typeof children === 'function' ? children({ mapCoordinate, flyTo }) : children}
     </section>
   );
 });

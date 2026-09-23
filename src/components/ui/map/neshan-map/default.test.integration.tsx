@@ -126,11 +126,15 @@ describe('NeshanMap', () => {
     expect(addControl).not.toHaveBeenCalled();
   });
 
-  it('adds a primary pointer and exposes its coordinate to render-prop children', async () => {
+  it('adds a primary pointer and exposes map controls to render-prop children', async () => {
     const ref = createRef<NeshanMapHandle>();
+    let childFlyTo: NeshanMapHandle['flyTo'] | undefined;
     render(
       <NeshanMap ref={ref} apiKey="public-key">
-        {({ mapCoordinate }) => <output>{mapCoordinate.join(',')}</output>}
+        {({ mapCoordinate, flyTo: renderPropFlyTo }) => {
+          childFlyTo = renderPropFlyTo;
+          return <output>{mapCoordinate.join(',')}</output>;
+        }}
       </NeshanMap>,
     );
 
@@ -143,6 +147,9 @@ describe('NeshanMap', () => {
     expect(markerSetLngLat).toHaveBeenCalledWith([51.4, 35.7]);
     expect(markerAddTo).toHaveBeenCalledWith(ref.current?.getMap());
     expect(screen.getByText('51.4,35.7')).toBeTruthy();
+
+    childFlyTo?.([51.5, 35.8]);
+    expect(flyTo).toHaveBeenCalledWith({ center: [51.5, 35.8] });
   });
 
   it('uses the resolved application theme and swaps styles without recreating the map', async () => {
