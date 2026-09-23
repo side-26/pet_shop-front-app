@@ -4,6 +4,7 @@ export const profileAddressesSkeletonData: ProfileAddressDTO[] = Array.from({ le
   province: '',
   city: '',
   detailAddress: '',
+  latLng: [0, 0],
   plate: '',
   unit: null,
   postalCode: '',

@@ -4,6 +4,7 @@ import { createUsersListCacheKey } from './users.helpers';
 import {
   createUserSchema,
   changeCurrentUserPasswordSchema,
+  createUserAddressSchema,
   getAllPaginatedUsersSchema,
   updateCurrentUserProfileSchema,
   userGetDetailByIdSchema,
@@ -130,6 +131,29 @@ describe('createUserSchema', () => {
     { ...validInput, role: 'owner' },
   ])('rejects invalid create-user input %#', async (input) => {
     await expect(createUserSchema.validate(input)).rejects.toThrow();
+  });
+});
+
+describe('createUserAddressSchema', () => {
+  const address = {
+    province: 'تهران',
+    city: 'تهران',
+    detailAddress: 'خیابان آزادی پلاک دوازده',
+    latLng: [35.7219, 51.3347],
+    plate: '۱۲',
+    postalCode: '1234567890',
+    receiverIsMe: false,
+    firstName: 'علی',
+    lastName: 'احمدی',
+    nationalCode: '0012345678',
+    phoneNumber: '09121234567',
+  };
+
+  it('requires the backend coordinate tuple for a new address', async () => {
+    await expect(createUserAddressSchema.validate(address)).resolves.toMatchObject(address);
+    await expect(
+      createUserAddressSchema.validate({ ...address, latLng: [35.7219] }),
+    ).rejects.toThrow();
   });
 });
 

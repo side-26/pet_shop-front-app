@@ -42,6 +42,7 @@ const user: UserDetailDTO = {
       province: 'تهران',
       city: 'تهران',
       detailAddress: 'خیابان ولیعصر',
+      latLng: [35.7219, 51.3347],
       plate: '۱۲',
       unit: '۳',
       postalCode: '1234567890',

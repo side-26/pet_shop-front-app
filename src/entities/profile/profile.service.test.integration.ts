@@ -99,6 +99,7 @@ describe('profile service', () => {
       province: 'تهران',
       city: 'تهران',
       detailAddress: 'خیابان آزادی پلاک دوازده',
+      latLng: [35.7219, 51.3347],
       plate: '۱۲',
       postalCode: '1234567890',
       receiverIsMe: true,

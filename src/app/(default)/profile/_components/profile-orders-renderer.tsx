@@ -1,12 +1,4 @@
-import {
-  AlertCircle,
-  CheckCircle2,
-  CircleX,
-  Clock3,
-  FileText,
-  MapPin,
-  Package,
-} from 'lucide-react';
+import { AlertCircle, CheckCircle2, Clock3, FileText, MapPin, Package } from 'lucide-react';
 
 import { Badge, type BadgeProps } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -41,7 +33,6 @@ const deliveryStates: Record<
   1: { label: 'در حال آماده‌سازی', color: 'warning', icon: Clock3 },
   2: { label: 'ارسال شده', color: 'info', icon: Package },
   3: { label: 'تحویل شده', color: 'success', icon: CheckCircle2 },
-  4: { label: 'لغو شده', color: 'error', icon: CircleX },
 };
 
 function formatDate(value: string) {

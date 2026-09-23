@@ -8,6 +8,7 @@ import {
 } from '@/configs/main-image-upload';
 import { USER_ROLES } from '@/configs/user-role';
 import { iranianPhoneNumberSchema } from '@/entities/auth/auth.schema';
+import { isAddressCoordinate, type AddressCoordinate } from '@/utils/address-coordinate';
 
 export const USER_SORT_ORDERS = ['asc', 'dsc'] as const;
 export const USER_ITEM_TYPES = ['product', 'pet'] as const;
@@ -105,6 +106,13 @@ const objectIdSchema = string()
   .trim()
   .required()
   .matches(/^[a-f\d]{24}$/i);
+const addressLatLngSchema = mixed<AddressCoordinate>()
+  .required()
+  .test(
+    'coordinate-pair',
+    'مختصات نشانی باید شامل دو عدد باشد.',
+    (value) => value === undefined || isAddressCoordinate(value),
+  );
 const addressReceiverSchema = object({
   firstName: string()
     .trim()
@@ -127,6 +135,7 @@ export const createUserAddressSchema = object({
   province: string().trim().min(2).required(),
   city: string().trim().min(2).required(),
   detailAddress: string().trim().min(5).required(),
+  latLng: addressLatLngSchema,
   plate: string().trim().min(1).required(),
   unit: string().trim().nullable().optional(),
   postalCode: string()

@@ -38,6 +38,7 @@ export interface AddressDTO {
   province: string;
   city: string;
   detailAddress: string;
+  latLng: [latitude: number, longitude: number];
   plate: string;
   unit: string | null;
   postalCode: string;

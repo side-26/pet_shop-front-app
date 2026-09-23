@@ -4,11 +4,20 @@ import '@/configs/yup.config';
 import { yupMessage } from '@/configs/yup.config';
 import { iranianPhoneNumberSchema } from '@/entities/auth/auth.schema';
 import { ORDER_DELIVERY_STATES, ORDER_SORT_FIELDS } from '@/entities/orders/orders.schema';
+import { isAddressCoordinate, type AddressCoordinate } from '@/utils/address-coordinate';
 
 const objectIdSchema = string()
   .trim()
   .required()
   .matches(/^[a-f\d]{24}$/i);
+
+const addressLatLngSchema = mixed<AddressCoordinate>()
+  .required()
+  .test(
+    'coordinate-pair',
+    'مختصات نشانی باید شامل دو عدد باشد.',
+    (value) => value === undefined || isAddressCoordinate(value),
+  );
 
 const addressReceiverSchema = object({
   firstName: string()
@@ -41,6 +50,7 @@ export const createProfileAddressSchema = object({
   province: string().trim().min(2).required(),
   city: string().trim().min(2).required(),
   detailAddress: string().trim().min(5).required(),
+  latLng: addressLatLngSchema,
   plate: string().trim().min(1).required(),
   unit: string().trim().nullable().optional(),
   postalCode: string()

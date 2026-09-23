@@ -14,6 +14,7 @@ const addresses: ProfileAddressDTO[] = [
     province: 'تهران',
     city: 'تهران',
     detailAddress: 'سعادت‌آباد، خیابان علامه شمالی',
+    latLng: [35.7219, 51.3347],
     plate: '۲۱',
     unit: '۸',
     postalCode: '1998712345',

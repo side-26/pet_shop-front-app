@@ -37,6 +37,7 @@ const orders: ProfileOrdersPageDTO = {
         province: 'تهران',
         city: 'تهران',
         detailAddress: 'سعادت‌آباد',
+        latLng: [35.7219, 51.3347],
         plate: '۲۱',
         unit: '۸',
         postalCode: '1998712345',

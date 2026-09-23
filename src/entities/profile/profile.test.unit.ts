@@ -11,6 +11,7 @@ const address = {
   province: 'تهران',
   city: 'تهران',
   detailAddress: 'خیابان آزادی پلاک دوازده',
+  latLng: [35.7219, 51.3347],
   plate: '۱۲',
   postalCode: '1234567890',
   receiverIsMe: false,
@@ -45,6 +46,14 @@ describe('profile schemas', () => {
         phoneNumber: undefined,
       }),
     ).rejects.toThrow();
+  });
+
+  it.each([
+    { latLng: [35.7219] },
+    { latLng: [35.7219, '51.3347'] },
+    { latLng: [35.7219, 51.3347, 1] },
+  ])('rejects an invalid coordinate pair %#', async ({ latLng }) => {
+    await expect(createProfileAddressSchema.validate({ ...address, latLng })).rejects.toThrow();
   });
 
   it('accepts a partial address update and normalizes order defaults', async () => {
