@@ -48,6 +48,7 @@ import { VirtualSelectShowcase } from './virtual-select-showcase';
 import { FetchErrorSectionBoundaryShowcase } from './fetch-error-section-boundary-showcase';
 import { RateFieldShowcase } from './rate-field-showcase';
 import { NeshanMapShowcase } from './neshan-map-showcase';
+import { NeshanMapPointerIconShowcase } from './neshan-map-pointer-icon-showcase';
 
 const navigation = [
   ['#avatars', 'Avatar'],
@@ -98,6 +99,7 @@ const navigation = [
   ['#empty-states', 'Empty'],
   ['#fetch-error-section-boundary', 'Fetch Error Section Boundary'],
   ['#neshan-maps', 'Neshan Map'],
+  ['#neshan-map-pointer-icons', 'Neshan Map Pointer Icon'],
 ] as const;
 
 export function UiComponentsGallery() {
@@ -184,6 +186,7 @@ export function UiComponentsGallery() {
         <EmptyShowcase />
         <FetchErrorSectionBoundaryShowcase />
         <NeshanMapShowcase />
+        <NeshanMapPointerIconShowcase />
       </div>
     </main>
   );

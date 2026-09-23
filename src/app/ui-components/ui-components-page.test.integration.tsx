@@ -104,6 +104,7 @@ describe(routePaths.uiComponents, () => {
         'Counter',
         'Empty',
         'Neshan Map',
+        'Neshan Map Pointer Icon',
       ]),
     );
     expect(getButtonByName('نمایش توضیحات کامل')?.getAttribute('aria-expanded')).toBe('false');

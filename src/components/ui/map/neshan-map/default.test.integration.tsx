@@ -1,10 +1,25 @@
-import { createRef } from 'react';
+import { act, createRef } from 'react';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { NeshanMap, type NeshanMapHandle } from './default';
 
-const { mapConstructor, remove, flyTo, setStyle } = vi.hoisted(() => ({
+const {
+  addControl,
+  markerAddTo,
+  markerConstructor,
+  markerRemove,
+  markerSetLngLat,
+  mapConstructor,
+  remove,
+  flyTo,
+  setStyle,
+} = vi.hoisted(() => ({
+  addControl: vi.fn(),
+  markerAddTo: vi.fn(),
+  markerConstructor: vi.fn(),
+  markerRemove: vi.fn(),
+  markerSetLngLat: vi.fn(),
   flyTo: vi.fn(),
   remove: vi.fn(),
   setStyle: vi.fn(),
@@ -13,10 +28,28 @@ const { mapConstructor, remove, flyTo, setStyle } = vi.hoisted(() => ({
 
 vi.mock('@neshan-maps-platform/maplibre-sdk', () => ({
   default: {
+    NavigationControl: class NavigationControl {},
+    Marker: class Marker {
+      constructor(options: unknown) {
+        markerConstructor(options);
+      }
+
+      setLngLat(coordinates: unknown) {
+        markerSetLngLat(coordinates);
+        return this;
+      }
+
+      addTo(map: unknown) {
+        markerAddTo(map);
+        return this;
+      }
+
+      remove = markerRemove;
+    },
     Map: class MockMap {
       constructor(options: unknown) {
         mapConstructor(options);
-        return { flyTo, remove, setStyle };
+        return { addControl, flyTo, remove, setStyle };
       }
     },
   },
@@ -69,6 +102,7 @@ describe('NeshanMap', () => {
     expect(screen.getByRole('region', { name: 'نقشه فروشگاه' })).toBeTruthy();
     expect(screen.getByText('پوشش نقشه')).toBeTruthy();
     expect(onMapLoad).toHaveBeenCalledTimes(1);
+    expect(addControl).toHaveBeenCalledWith(expect.anything(), 'top-right');
 
     ref.current?.flyTo([51.4, 35.7]);
     expect(flyTo).toHaveBeenCalledWith({ center: [51.4, 35.7] });
@@ -83,6 +117,32 @@ describe('NeshanMap', () => {
 
     expect(screen.getByRole('alert').textContent).toContain('کلید عمومی نقشه نشان تنظیم نشده است.');
     expect(mapConstructor).not.toHaveBeenCalled();
+  });
+
+  it('allows consumers to opt out of the default zoom control', async () => {
+    render(<NeshanMap apiKey="public-key" zoomControl={false} />);
+
+    await waitFor(() => expect(mapConstructor).toHaveBeenCalledTimes(1));
+    expect(addControl).not.toHaveBeenCalled();
+  });
+
+  it('adds a primary pointer and exposes its coordinate to render-prop children', async () => {
+    const ref = createRef<NeshanMapHandle>();
+    render(
+      <NeshanMap ref={ref} apiKey="public-key">
+        {({ mapCoordinate }) => <output>{mapCoordinate.join(',')}</output>}
+      </NeshanMap>,
+    );
+
+    await waitFor(() => expect(mapConstructor).toHaveBeenCalledTimes(1));
+    act(() => ref.current?.addNewPointer([51.4, 35.7]));
+
+    expect(markerConstructor).toHaveBeenCalledWith(
+      expect.objectContaining({ anchor: 'bottom', element: expect.any(HTMLDivElement) }),
+    );
+    expect(markerSetLngLat).toHaveBeenCalledWith([51.4, 35.7]);
+    expect(markerAddTo).toHaveBeenCalledWith(ref.current?.getMap());
+    expect(screen.getByText('51.4,35.7')).toBeTruthy();
   });
 
   it('uses the resolved application theme and swaps styles without recreating the map', async () => {
