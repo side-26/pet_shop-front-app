@@ -21,6 +21,12 @@ export interface ProfileAccountDTO {
   birthDate: string | null;
 }
 
+export interface ProfileOrderSummaryDTO {
+  orders: number;
+  delivered: number;
+  lastPurchase: string | null;
+}
+
 export type ProfileAddressDTO = AddressDTO;
 export type ProfileOrderDTO = OrderDTO;
 export type ProfileOrdersPageDTO = PaginateDataDTO<ProfileOrderDTO>;

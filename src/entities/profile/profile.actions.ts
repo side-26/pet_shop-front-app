@@ -118,6 +118,11 @@ export async function getProfileOrdersAction(input: unknown = {}) {
     : service.getProfileOrders(auth.session.userId, parsed.value);
 }
 
+export async function getProfileOrderSummaryAction() {
+  const auth = await authorizeCustomer();
+  return 'error' in auth ? auth.error : service.getProfileOrderSummary(auth.session.userId);
+}
+
 export async function getProfileOrderAction(input: unknown) {
   const auth = await authorizeCustomer();
   if ('error' in auth) return auth.error;

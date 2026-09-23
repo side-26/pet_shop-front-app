@@ -6,6 +6,7 @@ import { deleteSessionCookie, getSession } from '@/utils/session';
 import {
   getProfileAccountAction,
   getProfileOrderAction,
+  getProfileOrderSummaryAction,
   resetProfilePasswordAction,
 } from './profile.actions';
 import * as service from './profile.service';
@@ -22,6 +23,7 @@ vi.mock('./profile.service', () => ({
   deleteProfileAvatar: vi.fn(),
   getProfileAddresses: vi.fn(),
   getProfileOrder: vi.fn(),
+  getProfileOrderSummary: vi.fn(),
   getProfileOrders: vi.fn(),
   resetProfilePassword: vi.fn(),
   updateProfileAddress: vi.fn(),
@@ -31,6 +33,7 @@ const getSessionMock = vi.mocked(getSession);
 const deleteSessionCookieMock = vi.mocked(deleteSessionCookie);
 const getProfileAccountMock = vi.mocked(service.getProfileAccount);
 const getProfileOrderMock = vi.mocked(service.getProfileOrder);
+const getProfileOrderSummaryMock = vi.mocked(service.getProfileOrderSummary);
 const resetProfilePasswordMock = vi.mocked(service.resetProfilePassword);
 
 const customerSession = {
@@ -65,6 +68,18 @@ describe('profile actions', () => {
 
     expect(getProfileOrderMock).toHaveBeenCalledOnce();
     expect(getProfileOrderMock).toHaveBeenCalledWith('user-1', '507f1f77bcf86cd799439011');
+  });
+
+  it('reads the authenticated customer order summary', async () => {
+    getProfileOrderSummaryMock.mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: {},
+    } as never);
+
+    await getProfileOrderSummaryAction();
+
+    expect(getProfileOrderSummaryMock).toHaveBeenCalledWith('user-1');
   });
 
   it('deletes the local session only after a successful password reset', async () => {

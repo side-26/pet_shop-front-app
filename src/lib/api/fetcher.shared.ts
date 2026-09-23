@@ -152,12 +152,18 @@ export function parseSuccess<TSuccess, TBackendError>(
 }
 
 export function normalizeSuccessResponse(value: unknown): FetcherSuccess<unknown> {
-  if (isSuccessEnvelope(value)) return value;
+  if (isSuccessEnvelope(value) && !Object.hasOwn(value, 'pagination')) return value;
   if (isRecord(value) && value.isSuccess === true) {
+    const responseData = Object.hasOwn(value, 'data') ? value.data : undefined;
+    const pagination = value.pagination;
+
     return {
       isSuccess: true,
       message: getResponseMessage(value) ?? null,
-      data: Object.hasOwn(value, 'data') ? value.data : undefined,
+      data:
+        Array.isArray(responseData) && isRecord(pagination)
+          ? { result: responseData, pagination }
+          : responseData,
     };
   }
   return { isSuccess: true, message: getResponseMessage(value) ?? null, data: value };

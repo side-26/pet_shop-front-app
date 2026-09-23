@@ -10,6 +10,7 @@ import type {
   ProfileAccountDTO,
   ProfileAddressDTO,
   ProfileOrderDTO,
+  ProfileOrderSummaryDTO,
   ProfileOrdersPageDTO,
   ResetProfilePasswordDTO,
   UpdateProfileAddressDTO,
@@ -155,6 +156,20 @@ async function fetchProfileOrders(userId: string, query: GetProfileOrdersQueryDT
 export async function getProfileOrders(userId: string, params: GetProfileOrdersParams = {}) {
   const query = await getProfileOrdersSchema.validate(params, { stripUnknown: true });
   return fetchProfileOrders(userId, query);
+}
+
+export async function getProfileOrderSummary(userId: string) {
+  'use cache: private';
+
+  profileCache.cacheLife({ stale: 120 });
+  profileCache.registerDetail(`${userId}:orders-summary`);
+
+  return customFetcher<ProfileOrderSummaryDTO>({
+    url: '/profile/orders/summary',
+    method: 'GET',
+    auth: true,
+    cache: 'no-store',
+  });
 }
 
 export async function getProfileOrder(userId: string, orderId: string) {

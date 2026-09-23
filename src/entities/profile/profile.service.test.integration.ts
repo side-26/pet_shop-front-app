@@ -6,6 +6,7 @@ import {
   createProfileAddress,
   deleteProfileAvatar,
   getProfileAccount,
+  getProfileOrderSummary,
   getProfileOrders,
   resetProfilePassword,
   updateProfileAddress,
@@ -69,6 +70,20 @@ describe('profile service', () => {
       cache: 'no-store',
     });
     expect(registerListMock).toHaveBeenCalledWith('orders:user-1:limit=10&page=1&sort=createdAt');
+  });
+
+  it('reads the authenticated customer order summary with a distinct private cache key', async () => {
+    fetcher.mockResolvedValue({ isSuccess: true, message: null, data: {} } as never);
+
+    await getProfileOrderSummary('user-1');
+
+    expect(fetcher).toHaveBeenCalledWith({
+      url: '/profile/orders/summary',
+      method: 'GET',
+      auth: true,
+      cache: 'no-store',
+    });
+    expect(registerDetailMock).toHaveBeenCalledWith('user-1:orders-summary');
   });
 
   it('invalidates profile data only after successful mutations', async () => {

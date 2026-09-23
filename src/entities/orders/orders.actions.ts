@@ -45,7 +45,7 @@ async function adminAction<T>(
 ) {
   const session = await getSession();
   if (!session) return accessError(message);
-  if (session.role !== USER_ROLES.ADMIN)
+  if (session.role !== USER_ROLES.ADMIN && session.role !== USER_ROLES.SELLER)
     return accessError('شما اجازه انجام این عملیات را ندارید.');
   try {
     return callback(await schema.validate(input, { abortEarly: false, stripUnknown: true }));

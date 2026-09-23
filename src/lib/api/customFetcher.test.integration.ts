@@ -50,6 +50,30 @@ describe('customFetcher', () => {
     });
   });
 
+  it('normalizes array data with sibling pagination metadata', async () => {
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse({
+        isSuccess: true,
+        message: null,
+        data: [{ id: 'order-1' }],
+        pagination: { currentPage: 1, totalItems: 1 },
+      }),
+    );
+
+    const result = await customFetcher<{ result: { id: string }[]; pagination: object }>({
+      url: '/orders',
+    });
+
+    expect(result).toEqual({
+      isSuccess: true,
+      message: null,
+      data: {
+        result: [{ id: 'order-1' }],
+        pagination: { currentPage: 1, totalItems: 1 },
+      },
+    });
+  });
+
   it('treats a successful empty response as a successful request', async () => {
     fetchMock.mockResolvedValueOnce(new Response(null, { status: 201 }));
 
