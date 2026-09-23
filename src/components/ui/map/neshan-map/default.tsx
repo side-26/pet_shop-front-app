@@ -3,16 +3,13 @@
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from 'react';
 
-import {
-  type Map as NeshanMapInstance,
-  type NeshanMapOptions,
-} from '@neshan-maps-platform/maplibre-sdk';
+import { type Map as NeshanMapInstance } from '@neshan-maps-platform/maplibre-sdk';
 import '@neshan-maps-platform/maplibre-sdk/style.css';
 
 import { cn } from '@/lib/utils';
+import { resolveMapStyleCssVariables, type MapStyle } from './style-css-variables';
 
 const DEFAULT_CENTER = [51.389, 35.6892] as const;
-type MapStyle = NonNullable<NeshanMapOptions['style']>;
 
 export type NeshanMapCoordinates = readonly [longitude: number, latitude: number];
 
@@ -100,7 +97,7 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
 
         void getThemedStyle(nextIsDark).then((nextStyle) => {
           if (mapRef.current === map) {
-            map.setStyle(nextStyle);
+            map.setStyle(resolveMapStyleCssVariables(nextStyle));
           }
         });
       });
@@ -132,7 +129,9 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
     const initialIsDark = document.documentElement.classList.contains('dark');
 
     void (async () => {
-      const initialStyle = style ?? (await getThemedStyle(initialIsDark));
+      const initialStyle = resolveMapStyleCssVariables(
+        style ?? (await getThemedStyle(initialIsDark)),
+      );
       const initializedMap = await createMap(container, initialStyle);
 
       if (cancelled) {

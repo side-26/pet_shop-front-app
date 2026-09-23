@@ -46,7 +46,7 @@
       "id": "background",
       "type": "background",
       "paint": {
-        "background-color": "#eff0f6"
+        "background-color": "var(--background)"
       }
     },
     {
@@ -60,7 +60,7 @@
         "visibility": "visible"
       },
       "paint": {
-        "line-color": "#7b89b7",
+        "line-color": "var(--border-strong)",
         "line-width": ["interpolate", ["exponential", 1.41], ["zoom"], 0, 0.01, 8, 0.5],
         "line-dasharray": [10, 5]
       }
@@ -76,7 +76,7 @@
         "visibility": "visible"
       },
       "paint": {
-        "line-color": "#5b6ca4",
+        "line-color": "var(--border)",
         "line-width": ["interpolate", ["exponential", 1.41], ["zoom"], 0, 0.3, 8, 2]
       }
     },
@@ -164,7 +164,7 @@
       "paint": {
         "fill-extrusion-opacity": 0.5,
         "fill-extrusion-base": ["get", "min_height"],
-        "fill-extrusion-color": "#bdc4db",
+        "fill-extrusion-color": "var(--surface)",
         "fill-extrusion-height": ["max", ["get", "height"], 5]
       }
     },
@@ -1085,14 +1085,14 @@
           "match",
           ["get", "traffic"],
           [1],
-          "#288333",
+          "var(--success)",
           [2],
-          "#f6830b",
+          "var(--warning)",
           [3],
-          "#c7272d",
+          "var(--error)",
           [4],
-          "#430f0f",
-          "#242b42"
+          "var(--error)",
+          "var(--foreground)"
         ],
         "line-width": ["interpolate", ["exponential", 1.36], ["zoom"], 9, 1, 22, 6],
         "line-offset": ["interpolate", ["exponential", 1.11], ["zoom"], 10, 0.5, 22, 0]
@@ -1121,14 +1121,14 @@
           "match",
           ["get", "traffic"],
           [1],
-          "#288333",
+          "var(--success)",
           [2],
-          "#f6830b",
+          "var(--warning)",
           [3],
-          "#c7272d",
+          "var(--error)",
           [4],
-          "#430f0f",
-          "#242b42"
+          "var(--error)",
+          "var(--foreground)"
         ],
         "line-offset": ["interpolate", ["exponential", 1.11], ["zoom"], 12, 0.8, 22, 0],
         "line-width": ["interpolate", ["exponential", 1.36], ["zoom"], 12, 1, 22, 10]
@@ -1151,14 +1151,14 @@
           "match",
           ["get", "traffic"],
           [1],
-          "#288333",
+          "var(--success)",
           [2, 5],
-          "#f6830b",
+          "var(--warning)",
           [3],
-          "#c7272d",
+          "var(--error)",
           [4],
-          "#430f0f",
-          "#242b42"
+          "var(--error)",
+          "var(--foreground)"
         ],
         "line-width": ["interpolate", ["exponential", 1.26], ["zoom"], 6, 0.8, 22, 10],
         "line-offset": ["interpolate", ["exponential", 1.11], ["zoom"], 10, 1.5, 22, 0]
@@ -1468,7 +1468,7 @@
         "text-field": ["case", ["!=", ["get", "name_fa"], ""], ["get", "name_fa"], ["get", "name"]]
       },
       "paint": {
-        "text-color": "#364163"
+        "text-color": "var(--foreground)"
       }
     },
     {
@@ -1542,7 +1542,7 @@
         "visibility": "visible"
       },
       "paint": {
-        "text-color": "#364163",
+        "text-color": "var(--foreground)",
         "text-opacity": ["interpolate", ["linear"], ["zoom"], 5, 1, 14, 0.5],
         "icon-opacity": ["interpolate", ["linear"], ["zoom"], 5, 1, 14, 0.5]
       }
@@ -1563,7 +1563,7 @@
         "visibility": "visible"
       },
       "paint": {
-        "text-color": "#364163",
+        "text-color": "var(--foreground)",
         "text-opacity": ["interpolate", ["linear"], ["zoom"], 4, 1, 12, 0]
       }
     },
@@ -1588,7 +1588,7 @@
         "visibility": "visible"
       },
       "paint": {
-        "text-color": "#364163",
+        "text-color": "var(--foreground)",
         "text-opacity": ["interpolate", ["linear"], ["zoom"], 4, 1, 12, 0]
       }
     },

@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { NeshanMap, type NeshanMapHandle } from './default';
 
@@ -24,9 +24,17 @@ vi.mock('@neshan-maps-platform/maplibre-sdk', () => ({
 
 vi.mock('@neshan-maps-platform/maplibre-sdk/style.css', () => ({}));
 
+beforeEach(() => {
+  vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+    fillRect: vi.fn(),
+    getImageData: () => ({ data: Uint8ClampedArray.from([11, 102, 193, 255]) }),
+  } as unknown as CanvasRenderingContext2D);
+});
+
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
+  vi.restoreAllMocks();
   document.documentElement.classList.remove('dark');
 });
 
