@@ -29,6 +29,7 @@ const labels = {
   petType: 'نوع حیوان',
   phoneNumber: 'شماره موبایل',
   propertyDefinitions: 'ویژگی‌ها',
+  provinceId: 'شناسه استان',
   rememberMe: 'مرا به خاطر بسپار',
   'reset-password': 'درخواست بازیابی کلمه عبور',
   role: 'نقش کاربر',
