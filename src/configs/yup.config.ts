@@ -41,6 +41,8 @@ const labels = {
   title_fa: 'عنوان فارسی',
   avatar: 'تصویر پروفایل',
   logo: 'لوگو',
+  latitude: 'عرض جغرافیایی',
+  longitude: 'طول جغرافیایی',
   value: 'مقدار ویژگی',
   verificationCode: 'کد تأیید',
 } as const;

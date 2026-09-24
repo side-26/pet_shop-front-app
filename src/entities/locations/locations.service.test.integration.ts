@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { customFetcher } from '@/lib/api/customFetcher';
 
-import { getCitiesByProvinceId, getProvinces } from './locations.service';
+import { getCitiesByProvinceId, getProvinces, reverseGeocode } from './locations.service';
 
 const { registerListMock } = vi.hoisted(() => ({ registerListMock: vi.fn() }));
 
@@ -49,6 +49,28 @@ describe('locations API service', () => {
       url: '/cities/8',
       method: 'GET',
       auth: false,
+    });
+  });
+
+  it('reverse-geocodes authenticated coordinates without caching the response', async () => {
+    const response = {
+      isSuccess: true as const,
+      message: null,
+      data: {
+        formatted_address: 'تهران، خیابان فاطمی',
+        city: 'تهران',
+        state: 'استان تهران',
+      },
+    };
+    customFetcherMock.mockResolvedValue(response);
+
+    await expect(reverseGeocode({ lat: 35.7219, lng: 51.3347 })).resolves.toBe(response);
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/reverse-geocode',
+      method: 'GET',
+      query: { lat: 35.7219, lng: 51.3347 },
+      auth: true,
+      cache: 'no-store',
     });
   });
 });

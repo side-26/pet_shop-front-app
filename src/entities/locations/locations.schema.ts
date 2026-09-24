@@ -7,3 +7,10 @@ export const provinceIdSchema = object({
 });
 
 export type ProvinceIdInput = InferType<typeof provinceIdSchema>;
+
+export const reverseGeocodeSchema = object({
+  lat: number().label(yupLabel('latitude')).min(-90).max(90).required(),
+  lng: number().label(yupLabel('longitude')).min(-180).max(180).required(),
+});
+
+export type ReverseGeocodeInput = InferType<typeof reverseGeocodeSchema>;

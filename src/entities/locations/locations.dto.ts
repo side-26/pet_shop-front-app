@@ -1,4 +1,4 @@
-import type { ProvinceIdInput } from './locations.schema';
+import type { ProvinceIdInput, ReverseGeocodeInput } from './locations.schema';
 
 /** Coordinates from the locations API are `[latitude, longitude]`. */
 export type ProvinceLatLngDTO = readonly [latitude: number, longitude: number];
@@ -17,3 +17,12 @@ export type CityDTO = {
 export type ProvincesDTO = ProvinceDTO[];
 export type CitiesDTO = CityDTO[];
 export type CitiesByProvinceIdDTO = ProvinceIdInput;
+
+/** Neshan location data returned by the authenticated reverse-geocoding endpoint. */
+export type ReverseGeocodedLocationDTO = {
+  formatted_address: string;
+  city?: string;
+  state?: string;
+};
+
+export type ReverseGeocodeQueryDTO = ReverseGeocodeInput;
