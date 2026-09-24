@@ -4,22 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { NeshanMap, type NeshanMapHandle } from './default';
 
-const {
-  addControl,
-  markerAddTo,
-  markerConstructor,
-  markerRemove,
-  markerSetLngLat,
-  mapConstructor,
-  remove,
-  flyTo,
-  setStyle,
-} = vi.hoisted(() => ({
+const { addControl, mapConstructor, remove, flyTo, setStyle } = vi.hoisted(() => ({
   addControl: vi.fn(),
-  markerAddTo: vi.fn(),
-  markerConstructor: vi.fn(),
-  markerRemove: vi.fn(),
-  markerSetLngLat: vi.fn(),
   flyTo: vi.fn(),
   remove: vi.fn(),
   setStyle: vi.fn(),
@@ -29,23 +15,6 @@ const {
 vi.mock('@neshan-maps-platform/maplibre-sdk', () => ({
   default: {
     NavigationControl: class NavigationControl {},
-    Marker: class Marker {
-      constructor(options: unknown) {
-        markerConstructor(options);
-      }
-
-      setLngLat(coordinates: unknown) {
-        markerSetLngLat(coordinates);
-        return this;
-      }
-
-      addTo(map: unknown) {
-        markerAddTo(map);
-        return this;
-      }
-
-      remove = markerRemove;
-    },
     Map: class MockMap {
       constructor(options: unknown) {
         mapConstructor(options);
@@ -126,7 +95,7 @@ describe('NeshanMap', () => {
     expect(addControl).not.toHaveBeenCalled();
   });
 
-  it('adds a primary pointer and exposes map controls to render-prop children', async () => {
+  it('updates the render-prop coordinate when flying the map through its ref', async () => {
     const ref = createRef<NeshanMapHandle>();
     let childFlyTo: NeshanMapHandle['flyTo'] | undefined;
     render(
@@ -139,13 +108,7 @@ describe('NeshanMap', () => {
     );
 
     await waitFor(() => expect(mapConstructor).toHaveBeenCalledTimes(1));
-    act(() => ref.current?.addNewPointer([51.4, 35.7]));
-
-    expect(markerConstructor).toHaveBeenCalledWith(
-      expect.objectContaining({ anchor: 'bottom', element: expect.any(HTMLDivElement) }),
-    );
-    expect(markerSetLngLat).toHaveBeenCalledWith([51.4, 35.7]);
-    expect(markerAddTo).toHaveBeenCalledWith(ref.current?.getMap());
+    act(() => ref.current?.flyTo([51.4, 35.7]));
     expect(screen.getByText('51.4,35.7')).toBeTruthy();
 
     childFlyTo?.([51.5, 35.8]);

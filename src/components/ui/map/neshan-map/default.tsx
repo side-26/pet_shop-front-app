@@ -2,21 +2,17 @@
 
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
-import { createRoot, type Root } from 'react-dom/client';
 
 import { type Map as NeshanMapInstance } from '@neshan-maps-platform/maplibre-sdk';
 import '@neshan-maps-platform/maplibre-sdk/style.css';
 
+import { NeshanMapContextProvider } from '@/entities/map/map.client';
 import { cn } from '@/lib/utils';
-import { NeshanMapPointerIcon } from './plugins/icons/pointer';
 import { resolveMapStyleCssVariables, type MapStyle } from './style-css-variables';
 
 const DEFAULT_CENTER = [51.389, 35.6892] as const;
 
 export type NeshanMapCoordinates = readonly [longitude: number, latitude: number];
-type NeshanMapSdk = typeof import('@neshan-maps-platform/maplibre-sdk');
-type NeshanMapMarker = InstanceType<NeshanMapSdk['default']['Marker']>;
 
 export type NeshanMapChildrenContext = Readonly<{
   mapCoordinate: NeshanMapCoordinates;
@@ -28,7 +24,6 @@ export type NeshanMapHandle = Readonly<{
     center: NeshanMapCoordinates,
     options?: Omit<Parameters<NeshanMapInstance['flyTo']>[0], 'center'>,
   ) => void;
-  addNewPointer: (coordinates: NeshanMapCoordinates) => NeshanMapMarker | null;
   getMap: () => NeshanMapInstance | null;
 }>;
 
@@ -64,47 +59,12 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<NeshanMapInstance>(null);
-  const markerConstructorRef = useRef<NeshanMapSdk['default']['Marker']>(null);
-  const pointerMarkersRef = useRef<Array<Readonly<{ marker: NeshanMapMarker; root: Root }>>>([]);
+  const [map, setMap] = useState<NeshanMapInstance | null>(null);
   const [mapCoordinate, setMapCoordinate] = useState<NeshanMapCoordinates>(center);
-
-  const clearPointers = useCallback(() => {
-    for (const { marker, root } of pointerMarkersRef.current) {
-      marker.remove();
-      root.unmount();
-    }
-    pointerMarkersRef.current = [];
-  }, []);
 
   const flyTo = useCallback<NeshanMapHandle['flyTo']>((center, options) => {
     mapRef.current?.flyTo({ ...options, center: [...center] });
-  }, []);
-
-  const addNewPointer = useCallback((coordinates: NeshanMapCoordinates) => {
-    const map = mapRef.current;
-    const Marker = markerConstructorRef.current;
-
-    if (!map || !Marker) {
-      return null;
-    }
-
-    const element = document.createElement('div');
-    element.className = 'tw:pointer-events-none';
-
-    const root = createRoot(element);
-    flushSync(() => {
-      root.render(<NeshanMapPointerIcon.Root />);
-    });
-
-    const mapCoordinate: NeshanMapCoordinates = [coordinates[0], coordinates[1]];
-    const marker = new Marker({ anchor: 'bottom', element })
-      .setLngLat([...mapCoordinate])
-      .addTo(map);
-
-    pointerMarkersRef.current.push({ marker, root });
-    setMapCoordinate(mapCoordinate);
-
-    return marker;
+    setMapCoordinate(center);
   }, []);
 
   const getThemedStyle = useCallback(
@@ -126,7 +86,6 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
   const createMap = useCallback(
     async (container: HTMLDivElement, mapStyle: MapStyle) => {
       const { default: maplibregl } = await import('@neshan-maps-platform/maplibre-sdk');
-      markerConstructorRef.current = maplibregl.Marker;
 
       const map = new maplibregl.Map({
         apiKey,
@@ -171,10 +130,9 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
     ref,
     () => ({
       flyTo,
-      addNewPointer,
       getMap: () => mapRef.current,
     }),
-    [addNewPointer, flyTo],
+    [flyTo],
   );
 
   useEffect(() => {
@@ -202,6 +160,7 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
 
       map = initializedMap;
       mapRef.current = map;
+      setMap(map);
       onMapLoad?.(map);
 
       if (!style) {
@@ -216,15 +175,14 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
     return () => {
       cancelled = true;
       observer?.disconnect();
-      clearPointers();
       map?.remove();
-      markerConstructorRef.current = null;
 
       if (mapRef.current === map) {
         mapRef.current = null;
+        setMap(null);
       }
     };
-  }, [apiKey, clearPointers, createMap, createThemeObserver, getThemedStyle, onMapLoad, style]);
+  }, [apiKey, createMap, createThemeObserver, getThemedStyle, onMapLoad, style]);
 
   if (!apiKey) {
     return (
@@ -239,13 +197,15 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
   }
 
   return (
-    <section
-      {...sectionProps}
-      className={cn('tw:relative tw:overflow-hidden tw:rounded-md', className)}
-    >
-      <div ref={containerRef} className="tw:absolute tw:inset-0 tw:size-full" />
-      {typeof children === 'function' ? children({ mapCoordinate, flyTo }) : children}
-    </section>
+    <NeshanMapContextProvider value={{ map }}>
+      <section
+        {...sectionProps}
+        className={cn('tw:relative tw:overflow-hidden tw:rounded-md', className)}
+      >
+        <div ref={containerRef} className="tw:absolute tw:inset-0 tw:size-full" />
+        {typeof children === 'function' ? children({ mapCoordinate, flyTo }) : children}
+      </section>
+    </NeshanMapContextProvider>
   );
 });
 
