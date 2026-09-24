@@ -129,4 +129,30 @@ describe('NeshanMapPointer', () => {
     expect(markerOff).toHaveBeenCalledTimes(4);
     expect(markerRemove).toHaveBeenCalledOnce();
   });
+
+  it('updates the controlled coordinate from a map click only when clickMap is enabled', async () => {
+    const mapOn = vi.fn();
+    const mapOff = vi.fn();
+    const map = { on: mapOn, off: mapOff };
+    const setLatLng = vi.fn();
+    let onMapClick: ((event: { lngLat: { lng: number; lat: number } }) => void) | undefined;
+    mapOn.mockImplementation((_event, listener) => {
+      onMapClick = listener;
+    });
+
+    const { unmount } = render(
+      <NeshanMapContextProvider value={{ map: map as never }}>
+        <NeshanMapPointer lngLat={[51.389, 35.6892]} setLatLng={setLatLng} clickMap>
+          <button type="button">نشانگر</button>
+        </NeshanMapPointer>
+      </NeshanMapContextProvider>,
+    );
+
+    await waitFor(() => expect(mapOn).toHaveBeenCalledWith('click', expect.any(Function)));
+    onMapClick?.({ lngLat: { lng: 51.5, lat: 35.8 } });
+    expect(setLatLng).toHaveBeenCalledWith([51.5, 35.8]);
+
+    unmount();
+    expect(mapOff).toHaveBeenCalledWith('click', expect.any(Function));
+  });
 });

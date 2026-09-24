@@ -14,6 +14,7 @@ type MarkerOptions = NonNullable<ConstructorParameters<NeshanMapSdk['default']['
 
 type PointerEventCallback = (event: Event) => void;
 type PointerDomEventCallback = (event: MouseEvent) => void;
+type MapClickEvent = Readonly<{ lngLat: Readonly<{ lng: number; lat: number }> }>;
 
 export type NeshanMapPointerHandle = Omit<
   Marker,
@@ -28,6 +29,9 @@ export type NeshanMapPointerProps = Omit<MarkerOptions, 'anchor' | 'element'> &
     lngLat: NeshanMapCoordinates;
     /** Called after a marker movement or pointer interaction. */
     setLatLng: (lngLat: NeshanMapCoordinates) => void;
+    /** Enables selecting a new marker coordinate by clicking the map. */
+    clickMap?: boolean;
+    onMapClick?: (event: MapClickEvent) => void;
     onClick?: PointerDomEventCallback;
     onDblClick?: PointerDomEventCallback;
     onDragStart?: PointerEventCallback;
@@ -51,6 +55,8 @@ export const NeshanMapPointer = forwardRef<NeshanMapPointerHandle, NeshanMapPoin
       children,
       lngLat,
       setLatLng,
+      clickMap = false,
+      onMapClick,
       onClick,
       onDblClick,
       onDragStart,
@@ -66,13 +72,22 @@ export const NeshanMapPointer = forwardRef<NeshanMapPointerHandle, NeshanMapPoin
     const [marker, setMarker] = useState<Marker | null>(null);
     const callbacksRef = useRef({
       setLatLng,
+      onMapClick,
       onClick,
       onDblClick,
       onDragStart,
       onDrag,
       onDragEnd,
     });
-    callbacksRef.current = { setLatLng, onClick, onDblClick, onDragStart, onDrag, onDragEnd };
+    callbacksRef.current = {
+      setLatLng,
+      onMapClick,
+      onClick,
+      onDblClick,
+      onDragStart,
+      onDrag,
+      onDragEnd,
+    };
 
     const options: MarkerOptions = { ...markerOptions, anchor };
     const optionsKey = markerOptionsKey(options);
@@ -149,6 +164,20 @@ export const NeshanMapPointer = forwardRef<NeshanMapPointerHandle, NeshanMapPoin
     useEffect(() => {
       markerRef.current?.setLngLat([...lngLat]);
     }, [lngLat]);
+
+    useEffect(() => {
+      if (!map || !clickMap) return;
+
+      const handleMapClick = (event: MapClickEvent) => {
+        callbacksRef.current.setLatLng([event.lngLat.lng, event.lngLat.lat]);
+        callbacksRef.current.onMapClick?.(event);
+      };
+      map.on('click', handleMapClick);
+
+      return () => {
+        map.off('click', handleMapClick);
+      };
+    }, [clickMap, map]);
 
     return null;
   },

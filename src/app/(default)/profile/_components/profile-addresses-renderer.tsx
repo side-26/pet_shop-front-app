@@ -1,6 +1,5 @@
-import { MapPin, PackagePlus, Phone, UserRound } from 'lucide-react';
+import { MapPin, Phone, UserRound } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Empty,
@@ -12,6 +11,8 @@ import {
 } from '@/components/ui/empty';
 import type { ProfileAddressDTO } from '@/entities/profile/profile.dto';
 import { cn } from '@/lib/utils';
+
+import { CreateNewAddressButton } from './create-new-address-button';
 
 type Props = Readonly<{ addresses: readonly ProfileAddressDTO[]; isSkeleton?: boolean }>;
 
@@ -31,12 +32,7 @@ function addressDetails(address: ProfileAddressDTO) {
 }
 
 function AddAddressButton() {
-  return (
-    <Button type="button" size="lg">
-      <PackagePlus data-icon="inline-start" aria-hidden="true" />
-      افزودن نشانی جدید
-    </Button>
-  );
+  return <CreateNewAddressButton />;
 }
 
 export function ProfileAddressesRenderer({ addresses, isSkeleton = false }: Props) {

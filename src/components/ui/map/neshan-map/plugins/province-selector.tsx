@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   Select,
@@ -27,25 +27,52 @@ const triggerSizeClassNames: Record<NonNullable<SelectFieldProps['size']>, strin
 export type NeshanMapProvinceSelectorProps = Readonly<{
   /** The map callback supplied by NeshanMap's child render prop. */
   flyTo: NeshanMapChildrenContext['flyTo'];
+  /** Runs after selecting a province with a mappable coordinate. */
+  onProvinceSelect?: (province: ProvinceDTO) => void;
+  /** Selects and flies to this province as soon as the province list is available. */
+  defaultProvinceId?: number;
   size?: SelectFieldProps['size'];
   className?: string;
 }>;
 
 export function NeshanMapProvinceSelector({
   flyTo,
+  onProvinceSelect,
+  defaultProvinceId,
   size = 'md',
   className,
 }: NeshanMapProvinceSelectorProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [provinces, setProvinces] = useState<ProvinceDTO[]>([]);
   const [selectedProvinceId, setSelectedProvinceId] = useState<string | null>(null);
+  const selectionRef = useRef({ flyTo, onProvinceSelect });
+
+  useEffect(() => {
+    selectionRef.current = { flyTo, onProvinceSelect };
+  }, [flyTo, onProvinceSelect]);
+
+  function selectProvince(province: ProvinceDTO) {
+    setSelectedProvinceId(String(province.provinceId));
+    if (!province.latLng) return;
+
+    const [latitude, longitude] = province.latLng;
+    selectionRef.current.flyTo([longitude, latitude]);
+    selectionRef.current.onProvinceSelect?.(province);
+  }
 
   useEffect(() => {
     let isMounted = true;
 
     void loadProvinces()
       .then((items) => {
-        if (isMounted) setProvinces(items ?? []);
+        if (!isMounted) return;
+
+        const nextProvinces = items ?? [];
+        setProvinces(nextProvinces);
+        const defaultProvince = nextProvinces.find(
+          (province) => province.provinceId === defaultProvinceId,
+        );
+        if (defaultProvince) selectProvince(defaultProvince);
       })
       .finally(() => {
         if (isMounted) setIsLoading(false);
@@ -54,7 +81,7 @@ export function NeshanMapProvinceSelector({
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [defaultProvinceId]);
 
   return (
     <div className={cn('tw:w-52', className)} aria-busy={isLoading || undefined}>
@@ -67,11 +94,7 @@ export function NeshanMapProvinceSelector({
         disabled={isLoading}
         onValueChange={(value) => {
           const province = provinces.find((item) => item.provinceId === Number(value));
-          if (!province?.latLng) return;
-
-          setSelectedProvinceId(String(province.provinceId));
-          const [latitude, longitude] = province.latLng;
-          flyTo([longitude, latitude]);
+          if (province) selectProvince(province);
         }}
       >
         <SelectTrigger aria-label="انتخاب استان" className={triggerSizeClassNames[size ?? 'md']}>

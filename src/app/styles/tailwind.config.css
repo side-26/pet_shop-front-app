@@ -33,6 +33,9 @@
   input[type='file'] {
     @apply tw:hidden;
   }
+  .neshan-brand-logo {
+    display: none !important;
+  }
 }
 
 @theme inline {

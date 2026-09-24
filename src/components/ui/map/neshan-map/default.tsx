@@ -3,7 +3,10 @@
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import { type Map as NeshanMapInstance } from '@neshan-maps-platform/maplibre-sdk';
+import {
+  type Map as NeshanMapInstance,
+  type NeshanMapOptions,
+} from '@neshan-maps-platform/maplibre-sdk';
 import '@neshan-maps-platform/maplibre-sdk/style.css';
 
 import { NeshanMapContextProvider } from '@/entities/map/map.client';
@@ -33,6 +36,8 @@ export type NeshanMapProps = Omit<ComponentPropsWithoutRef<'section'>, 'children
     center?: NeshanMapCoordinates;
     zoom?: number;
     zoomControl?: boolean;
+    /** Position for the Pet Shop map copyright attribution. */
+    copyRightPosition?: NeshanMapOptions['copyRightPosition'];
     /** A fixed MapLibre style. When provided, it takes precedence over the themed styles. */
     style?: MapStyle;
     lightStyle?: MapStyle;
@@ -47,6 +52,7 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
     center = DEFAULT_CENTER,
     zoom = 12,
     zoomControl = true,
+    copyRightPosition = 'bottom-left',
     style,
     lightStyle,
     darkStyle,
@@ -90,6 +96,7 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
       const map = new maplibregl.Map({
         apiKey,
         center: [...center],
+        copyRightPosition,
         container,
         style: mapStyle,
         zoom,
@@ -101,7 +108,7 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
 
       return map;
     },
-    [apiKey, center, zoom, zoomControl],
+    [apiKey, center, copyRightPosition, zoom, zoomControl],
   );
 
   const createThemeObserver = useCallback(

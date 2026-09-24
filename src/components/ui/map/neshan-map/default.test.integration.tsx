@@ -64,6 +64,7 @@ describe('NeshanMap', () => {
       expect.objectContaining({
         apiKey: 'public-key',
         center: [51.389, 35.6892],
+        copyRightPosition: 'bottom-left',
         style: 'https://example.test/style.json',
         zoom: 14,
       }),

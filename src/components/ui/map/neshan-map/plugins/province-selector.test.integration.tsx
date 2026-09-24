@@ -14,11 +14,12 @@ describe('NeshanMapProvinceSelector', () => {
 
   it('loads provinces and flies the map using Neshan longitude-latitude coordinates', async () => {
     const flyTo = vi.fn();
+    const onProvinceSelect = vi.fn();
     vi.mocked(loadProvinces).mockResolvedValue([
       { provinceId: 8, title: 'تهران', latLng: [35.6892, 51.389] },
     ]);
 
-    render(<NeshanMapProvinceSelector flyTo={flyTo} />);
+    render(<NeshanMapProvinceSelector flyTo={flyTo} onProvinceSelect={onProvinceSelect} />);
 
     const trigger = screen.getByRole('combobox', { name: 'انتخاب استان' });
     expect(trigger.hasAttribute('disabled')).toBe(true);
@@ -32,6 +33,11 @@ describe('NeshanMapProvinceSelector', () => {
     fireEvent.click(option);
 
     expect(flyTo).toHaveBeenCalledWith([51.389, 35.6892]);
+    expect(onProvinceSelect).toHaveBeenCalledWith({
+      provinceId: 8,
+      title: 'تهران',
+      latLng: [35.6892, 51.389],
+    });
   });
 
   it('applies the Select-compatible size and does not fly without coordinates', async () => {
@@ -48,5 +54,25 @@ describe('NeshanMapProvinceSelector', () => {
     fireEvent.click(await screen.findByRole('option', { name: 'بدون مختصات' }));
 
     expect(flyTo).not.toHaveBeenCalled();
+  });
+
+  it('selects Tehran by default when its province id is supplied', async () => {
+    const flyTo = vi.fn();
+    const onProvinceSelect = vi.fn();
+    vi.mocked(loadProvinces).mockResolvedValue([
+      { provinceId: 8, title: 'تهران', latLng: [35.6892, 51.389] },
+    ]);
+
+    render(
+      <NeshanMapProvinceSelector
+        flyTo={flyTo}
+        defaultProvinceId={8}
+        onProvinceSelect={onProvinceSelect}
+      />,
+    );
+
+    await waitFor(() => expect(flyTo).toHaveBeenCalledWith([51.389, 35.6892]));
+    expect(screen.getByRole('combobox', { name: 'انتخاب استان' }).textContent).toContain('تهران');
+    expect(onProvinceSelect).toHaveBeenCalledOnce();
   });
 });
