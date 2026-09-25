@@ -157,7 +157,11 @@ export const NeshanMapPointer = forwardRef<NeshanMapPointerHandle, NeshanMapPoin
         if (markerRef.current === currentMarker) markerRef.current = null;
         setMarker((value) => (value === currentMarker ? null : value));
         if (markerRootRef.current === root) markerRootRef.current = null;
-        root.unmount();
+        // This cleanup runs as the parent React tree is committing. Unmounting a
+        // nested root synchronously here races React's renderer in React 19.
+        // The marker and every listener are already detached above; defer only
+        // the nested React-root disposal to the next microtask.
+        queueMicrotask(() => root.unmount());
       };
     }, [map, optionsKey]);
 

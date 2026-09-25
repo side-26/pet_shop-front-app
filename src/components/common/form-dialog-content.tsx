@@ -11,6 +11,7 @@ type FormDialogContentProps = Omit<DialogContentProps, 'children' | 'showCloseBu
   children: ReactNode;
   contentClassName?: string;
   formId?: string;
+  headerAction?: ReactNode;
   isLoading?: boolean;
   onClose: () => void;
   submitText?: ReactNode;
@@ -22,6 +23,7 @@ function FormDialogContent({
   className,
   contentClassName,
   formId,
+  headerAction,
   isLoading = false,
   onClose,
   submitText = 'agree',
@@ -37,8 +39,9 @@ function FormDialogContent({
       {...dialogContentProps}
     >
       <Card variant="filled" className="tw:rounded-[inherit]">
-        <CardHeader>
+        <CardHeader className="tw:flex tw:flex-row tw:items-center tw:justify-between tw:gap-3">
           <DialogTitle>{title}</DialogTitle>
+          {headerAction}
         </CardHeader>
 
         <CardContent className={contentClassName}>{children}</CardContent>

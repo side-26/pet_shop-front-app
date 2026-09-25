@@ -1,10 +1,12 @@
 import { cleanup, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { ProfileAddressDTO } from '@/entities/profile/profile.dto';
 
 import { ProfileAddressesRenderer } from './profile-addresses-renderer';
 import { profileAddressesSkeletonData } from './profile-addresses-skeleton-data';
+
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 
 afterEach(cleanup);
 

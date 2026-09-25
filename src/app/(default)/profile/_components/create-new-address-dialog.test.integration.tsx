@@ -1,7 +1,17 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { CreateNewAddressButton } from './create-new-address-button';
+
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('@/entities/locations/locations.actions', () => ({
+  reverseGeocodeAction: vi.fn().mockResolvedValue({
+    isSuccess: true,
+    data: { state: 'تهران', city: 'تهران', formatted_address: 'تهران، خیابان انقلاب' },
+  }),
+}));
+
+afterEach(cleanup);
 
 vi.mock('@/components/ui/map/neshan-map/default', () => ({
   NeshanMap: ({
@@ -58,5 +68,20 @@ describe('CreateNewAddressDialog', () => {
     fireEvent.click(screen.getByRole('button', { name: /نشانگر 51\.389,35\.6892/ }));
     expect(screen.getByText('lat: 35.700000')).toBeTruthy();
     expect(screen.getByText('lng: 51.400000')).toBeTruthy();
+  });
+
+  it('streams reverse-geocoded address fields and keeps receiver details disabled by default', async () => {
+    render(<CreateNewAddressButton />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'افزودن نشانی جدید' }));
+    fireEvent.submit(screen.getAllByRole('form', { name: 'انتخاب موقعیت نشانی' }).at(-1)!);
+
+    expect(await screen.findByRole('heading', { name: 'جزئیات آدرس را وارد کنید' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'ویرایش موقعیت' })).toBeTruthy();
+    expect(await screen.findByDisplayValue('تهران، خیابان انقلاب')).toBeTruthy();
+    expect(screen.getByLabelText('استان').textContent).toContain('تهران');
+    expect((screen.getByLabelText('شهر') as HTMLInputElement).value).toBe('تهران');
+    expect(screen.getByLabelText('نام گیرنده').hasAttribute('disabled')).toBe(true);
+    expect(screen.getByLabelText('شماره موبایل گیرنده').hasAttribute('disabled')).toBe(true);
   });
 });
