@@ -1,7 +1,6 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useRouter } from 'nextjs-toploader/app';
 import { Suspense, useEffect, useRef, useState, useTransition, type RefObject } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
@@ -12,6 +11,7 @@ import { SelectField } from '@/components/ui/fields/select-field';
 import { TextField } from '@/components/ui/fields/text-field';
 import { TextareaField } from '@/components/ui/fields/textarea-field';
 import { Form, type FormHandle } from '@/components/ui/form';
+import type { NeshanMapCoordinates } from '@/components/ui/map/neshan-map/default';
 import { useAuthStore } from '@/entities/auth/auth.store';
 import { reverseGeocodeAction } from '@/entities/locations/locations.actions';
 import type { ReverseGeocodedLocationDTO } from '@/entities/locations/locations.dto';
@@ -42,12 +42,14 @@ export function CreateNewAddressLocationFormBody({
   formRef,
   handleSubmit,
   lngLat = INITIAL_LNG_LAT,
+  focusLngLat,
   setLngLat,
   isSkeleton = false,
 }: Readonly<{
   formRef: RefObject<FormHandle<LocationFormInput> | null>;
   handleSubmit: () => void;
   lngLat?: readonly [number, number];
+  focusLngLat?: NeshanMapCoordinates;
   setLngLat?: (lngLat: readonly [number, number]) => void;
   isSkeleton?: boolean;
 }>) {
@@ -67,6 +69,7 @@ export function CreateNewAddressLocationFormBody({
         ) : (
           <CreateNewAddressLocationContent
             lngLat={lngLat}
+            focusLngLat={focusLngLat}
             setLngLat={(value) => {
               setLngLat?.(value);
               formRef.current?.setValue('lngLat', value);
@@ -217,9 +220,9 @@ export function CreateNewAddressDetailsFormBody({
 }
 
 export function CreateNewAddressDialogContentWrapper({ onClose }: Props) {
-  const router = useRouter();
   const [step, setStep] = useState<Step>('location');
   const [lngLat, setLngLat] = useState<readonly [number, number]>(INITIAL_LNG_LAT);
+  const [shouldFocusLocation, setShouldFocusLocation] = useState(false);
   const [request, setRequest] = useState<Promise<ReverseGeocodeResult> | null>(null);
   const locationFormRef = useRef<FormHandle<LocationFormInput>>(null);
   const detailsFormRef = useRef<FormHandle<CreateProfileAddressInput>>(null);
@@ -227,6 +230,7 @@ export function CreateNewAddressDialogContentWrapper({ onClose }: Props) {
   function close() {
     setStep('location');
     setLngLat(INITIAL_LNG_LAT);
+    setShouldFocusLocation(false);
     locationFormRef.current?.setValue('lngLat', INITIAL_LNG_LAT);
     setRequest(null);
     onClose();
@@ -247,9 +251,8 @@ export function CreateNewAddressDialogContentWrapper({ onClose }: Props) {
           data: { messages: {}, details: {} },
         });
       if (!result.isSuccess) return globalErrorHandler(result, { showErrorFields: form.setError });
-      toast.add({ type: 'success', title: result.message });
+      toast.add({ type: 'success', title: result.message || 'نشانی با موفقیت ثبت شد.' });
       close();
-      router.refresh();
     });
   }
   if (step === 'location')
@@ -266,7 +269,11 @@ export function CreateNewAddressDialogContentWrapper({ onClose }: Props) {
           formRef={locationFormRef}
           handleSubmit={continueToDetails}
           lngLat={lngLat}
-          setLngLat={setLngLat}
+          focusLngLat={shouldFocusLocation ? lngLat : undefined}
+          setLngLat={(value) => {
+            setShouldFocusLocation(false);
+            setLngLat(value);
+          }}
         />
       </FormDialogContent>
     );
@@ -279,7 +286,15 @@ export function CreateNewAddressDialogContentWrapper({ onClose }: Props) {
       title="جزئیات آدرس را وارد کنید"
       size="xl"
       headerAction={
-        <Button type="button" variant="text" size="sm" onClick={() => setStep('location')}>
+        <Button
+          type="button"
+          variant="text"
+          size="sm"
+          onClick={() => {
+            setShouldFocusLocation(true);
+            setStep('location');
+          }}
+        >
           ویرایش موقعیت
         </Button>
       }

@@ -1,6 +1,6 @@
 'use client';
 
-import { NeshanMap } from '@/components/ui/map/neshan-map/default';
+import { NeshanMap, type NeshanMapCoordinates } from '@/components/ui/map/neshan-map/default';
 import { NeshanMapPointerIcon } from '@/components/ui/map/neshan-map/plugins/icons/pointer';
 import { NeshanMapPointer } from '@/components/ui/map/neshan-map/plugins/pointer';
 import { NeshanMapPluginWrapper } from '@/components/ui/map/neshan-map/plugins/plugin-wrapper';
@@ -10,13 +10,14 @@ import type { ProvinceDTO } from '@/entities/locations/locations.dto';
 type Props = Readonly<{
   lngLat: readonly [number, number];
   setLngLat: (lngLat: readonly [number, number]) => void;
+  focusLngLat?: NeshanMapCoordinates;
 }>;
 
 function displayCoordinate(value: number) {
   return value.toFixed(6);
 }
 
-export function CreateNewAddressLocationContent({ lngLat, setLngLat }: Props) {
+export function CreateNewAddressLocationContent({ lngLat, setLngLat, focusLngLat }: Props) {
   return (
     <div className="tw:flex tw:flex-col tw:gap-3">
       <p className="tw:text-body-m tw:text-muted-foreground">
@@ -26,6 +27,9 @@ export function CreateNewAddressLocationContent({ lngLat, setLngLat }: Props) {
         aria-label="نقشه انتخاب موقعیت نشانی"
         className="tw:h-80 tw:w-full tw:border tw:border-border/60"
         copyRightPosition="bottom-left"
+        onMapLoad={(map) => {
+          if (focusLngLat) map.flyTo({ center: [...focusLngLat], zoom: 7 });
+        }}
       >
         {({ flyTo }) => (
           <>
@@ -41,7 +45,7 @@ export function CreateNewAddressLocationContent({ lngLat, setLngLat }: Props) {
             <NeshanMapPluginWrapper position="top-left">
               <NeshanMapProvinceSelector
                 flyTo={flyTo}
-                defaultProvinceId={8}
+                defaultProvinceId={focusLngLat ? undefined : 8}
                 onProvinceSelect={(province: ProvinceDTO) => {
                   if (!province.latLng) return;
                   const [latitude, longitude] = province.latLng;

@@ -3,6 +3,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { CreateNewAddressButton } from './create-new-address-button';
 
+const mapFlyTo = vi.fn();
+const renderProvinceSelector = vi.fn();
+
 vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock('@/entities/locations/locations.actions', () => ({
   reverseGeocodeAction: vi.fn().mockResolvedValue({
@@ -11,15 +14,24 @@ vi.mock('@/entities/locations/locations.actions', () => ({
   }),
 }));
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  mapFlyTo.mockClear();
+  renderProvinceSelector.mockClear();
+});
 
 vi.mock('@/components/ui/map/neshan-map/default', () => ({
   NeshanMap: ({
     children,
+    onMapLoad,
     ...props
   }: {
     children: (context: { flyTo: () => void }) => React.ReactNode;
-  }) => <section {...props}>{children({ flyTo: vi.fn() })}</section>,
+    onMapLoad?: (map: { flyTo: typeof mapFlyTo }) => void;
+  }) => {
+    onMapLoad?.({ flyTo: mapFlyTo });
+    return <section {...props}>{children({ flyTo: vi.fn() })}</section>;
+  },
 }));
 vi.mock('@/components/ui/map/neshan-map/plugins/pointer', () => ({
   NeshanMapPointer: ({
@@ -41,14 +53,25 @@ vi.mock('@/components/ui/map/neshan-map/plugins/plugin-wrapper', () => ({
   NeshanMapPluginWrapper: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 vi.mock('@/components/ui/map/neshan-map/plugins/province-selector', () => ({
-  NeshanMapProvinceSelector: ({ onProvinceSelect }: { onProvinceSelect: Function }) => (
-    <button
-      type="button"
-      onClick={() => onProvinceSelect({ provinceId: 8, title: 'تهران', latLng: [35.6892, 51.389] })}
-    >
-      انتخاب تهران
-    </button>
-  ),
+  NeshanMapProvinceSelector: ({
+    defaultProvinceId,
+    onProvinceSelect,
+  }: {
+    defaultProvinceId?: number;
+    onProvinceSelect: Function;
+  }) => {
+    renderProvinceSelector(defaultProvinceId);
+    return (
+      <button
+        type="button"
+        onClick={() =>
+          onProvinceSelect({ provinceId: 8, title: 'تهران', latLng: [35.6892, 51.389] })
+        }
+      >
+        انتخاب تهران
+      </button>
+    );
+  },
 }));
 
 describe('CreateNewAddressDialog', () => {
@@ -83,5 +106,19 @@ describe('CreateNewAddressDialog', () => {
     expect((screen.getByLabelText('شهر') as HTMLInputElement).value).toBe('تهران');
     expect(screen.getByLabelText('نام گیرنده').hasAttribute('disabled')).toBe(true);
     expect(screen.getByLabelText('شماره موبایل گیرنده').hasAttribute('disabled')).toBe(true);
+  });
+
+  it('flies to the selected address coordinate when editing the location', async () => {
+    render(<CreateNewAddressButton />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'افزودن نشانی جدید' }));
+    fireEvent.click(screen.getByRole('button', { name: /نشانگر 51\.389,35\.6892/ }));
+    fireEvent.submit(screen.getAllByRole('form', { name: 'انتخاب موقعیت نشانی' }).at(-1)!);
+    await screen.findByRole('heading', { name: 'جزئیات آدرس را وارد کنید' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'ویرایش موقعیت' }));
+
+    expect(mapFlyTo).toHaveBeenCalledWith({ center: [51.4, 35.7], zoom: 7 });
+    expect(renderProvinceSelector).toHaveBeenLastCalledWith(undefined);
   });
 });

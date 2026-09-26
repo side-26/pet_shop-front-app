@@ -28,6 +28,7 @@ const labels = {
   petName: 'نام حیوان',
   petType: 'نوع حیوان',
   phoneNumber: 'شماره موبایل',
+  postalCode: 'کد پستی',
   propertyDefinitions: 'ویژگی‌ها',
   provinceId: 'شناسه استان',
   rememberMe: 'مرا به خاطر بسپار',

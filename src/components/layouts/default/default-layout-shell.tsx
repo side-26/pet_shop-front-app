@@ -1,6 +1,7 @@
 import { DefaultFooter } from './default-footer';
 import { DefaultHeader } from './default-header';
 import { MobileBottomNavigationWrapper } from './mobile-bottom-navigation-wrapper';
+import { ConfirmDialog } from '@/components/common/confirm-dialog/main';
 
 type DefaultLayoutShellProps = Readonly<{
   children: React.ReactNode;
@@ -15,6 +16,7 @@ export function DefaultLayoutShell({ children }: DefaultLayoutShellProps) {
       </main>
       <DefaultFooter />
       <MobileBottomNavigationWrapper />
+      <ConfirmDialog />
     </div>
   );
 }

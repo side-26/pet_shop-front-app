@@ -23,18 +23,39 @@ const addressReceiverSchema = object({
   firstName: string()
     .trim()
     .min(2)
-    .when('receiverIsMe', { is: false, then: (schema) => schema.required() }),
+    .when('receiverIsMe', ([receiverIsMe], schema) =>
+      receiverIsMe === true
+        ? schema.optional().strip()
+        : receiverIsMe === false
+          ? schema.required()
+          : schema.optional(),
+    ),
   lastName: string()
     .trim()
     .min(2)
-    .when('receiverIsMe', { is: false, then: (schema) => schema.required() }),
+    .when('receiverIsMe', ([receiverIsMe], schema) =>
+      receiverIsMe === true
+        ? schema.optional().strip()
+        : receiverIsMe === false
+          ? schema.required()
+          : schema.optional(),
+    ),
   nationalCode: string()
     .matches(/^\d{10}$/)
-    .when('receiverIsMe', { is: false, then: (schema) => schema.required() }),
-  phoneNumber: iranianPhoneNumberSchema.when('receiverIsMe', {
-    is: false,
-    then: (schema) => schema.required(),
-  }),
+    .when('receiverIsMe', ([receiverIsMe], schema) =>
+      receiverIsMe === true
+        ? schema.optional().strip()
+        : receiverIsMe === false
+          ? schema.required()
+          : schema.optional(),
+    ),
+  phoneNumber: iranianPhoneNumberSchema.when('receiverIsMe', ([receiverIsMe], schema) =>
+    receiverIsMe === true
+      ? schema.optional().strip()
+      : receiverIsMe === false
+        ? schema.required()
+        : schema.optional(),
+  ),
 });
 
 export const resetProfilePasswordSchema = object({

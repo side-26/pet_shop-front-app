@@ -13,6 +13,7 @@ import type { ProfileAddressDTO } from '@/entities/profile/profile.dto';
 import { cn } from '@/lib/utils';
 
 import { CreateNewAddressButton } from './create-new-address-button';
+import { ProfileAddressCardActions } from './profile-address-card-actions';
 
 type Props = Readonly<{ addresses: readonly ProfileAddressDTO[]; isSkeleton?: boolean }>;
 
@@ -55,9 +56,9 @@ export function ProfileAddressesRenderer({ addresses, isSkeleton = false }: Prop
       </div>
 
       {isSkeleton ? (
-        <div className="tw:grid tw:gap-4 tw:md:grid-cols-2" aria-hidden="true">
+        <div className="tw:grid tw:gap-3 tw:md:grid-cols-2" aria-hidden="true">
           {addresses.map((_, index) => (
-            <Card key={index} size="md" variant="outlined">
+            <Card key={index} size="sm" variant="outlined">
               <CardHeader>
                 <CardTitle className="tw:h-6 tw:w-40 tw:rounded tw:bg-muted" />
               </CardHeader>
@@ -87,22 +88,26 @@ export function ProfileAddressesRenderer({ addresses, isSkeleton = false }: Prop
         </Empty>
       ) : (
         <>
-          <div className="tw:grid tw:gap-4 tw:md:grid-cols-2">
+          <div className="tw:grid tw:gap-3 tw:md:grid-cols-2">
             {addresses.map((address, index) => (
               <Card
                 key={address._id ?? `${address.postalCode}-${index}`}
-                size="md"
+                size="sm"
                 variant="outlined"
               >
-                <CardHeader>
+                <CardHeader className="tw:flex tw:items-center tw:justify-between">
                   <CardTitle className="tw:flex tw:items-center tw:gap-2">
                     <MapPin aria-hidden="true" />
                     {addressTitle(address)}
                   </CardTitle>
+                  <ProfileAddressCardActions
+                    addressId={address._id}
+                    addressTitle={addressTitle(address)}
+                  />
                 </CardHeader>
-                <CardContent className="tw:flex tw:flex-col tw:gap-4">
-                  <p className="tw:text-body-m tw:leading-8">{addressDetails(address)}</p>
-                  <dl className="tw:grid tw:gap-2 tw:text-body-s tw:text-muted-foreground tw:sm:grid-cols-2">
+                <CardContent className="tw:flex tw:flex-col tw:gap-3">
+                  <p className="tw:text-body-m tw:leading-7">{addressDetails(address)}</p>
+                  <dl className="tw:grid tw:gap-2 tw:text-body-s tw:text-muted-foreground tw:md:grid-cols-3">
                     <div className="tw:flex tw:items-center tw:gap-2">
                       <UserRound aria-hidden="true" />
                       <dt className="tw:sr-only">گیرنده</dt>
@@ -115,9 +120,9 @@ export function ProfileAddressesRenderer({ addresses, isSkeleton = false }: Prop
                         <bdi dir="ltr">{address.phoneNumber}</bdi>
                       </dd>
                     </div>
-                    <div className="tw:sm:col-span-2">
-                      <dt className="tw:inline">کد پستی: </dt>
-                      <dd className="tw:inline">
+                    <div className="tw:flex tw:items-center tw:gap-2">
+                      <dt className="tw:shrink-0">کد پستی</dt>
+                      <dd>
                         <bdi dir="ltr">{address.postalCode}</bdi>
                       </dd>
                     </div>

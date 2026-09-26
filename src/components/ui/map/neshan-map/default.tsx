@@ -65,6 +65,8 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<NeshanMapInstance>(null);
+  const onMapLoadRef = useRef(onMapLoad);
+  onMapLoadRef.current = onMapLoad;
   const [map, setMap] = useState<NeshanMapInstance | null>(null);
   const [mapCoordinate, setMapCoordinate] = useState<NeshanMapCoordinates>(center);
 
@@ -168,7 +170,7 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
       map = initializedMap;
       mapRef.current = map;
       setMap(map);
-      onMapLoad?.(map);
+      onMapLoadRef.current?.(map);
 
       if (!style) {
         observer = createThemeObserver(map, initialIsDark);
@@ -189,7 +191,7 @@ export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function Ne
         setMap(null);
       }
     };
-  }, [apiKey, createMap, createThemeObserver, getThemedStyle, onMapLoad, style]);
+  }, [apiKey, createMap, createThemeObserver, getThemedStyle, style]);
 
   if (!apiKey) {
     return (

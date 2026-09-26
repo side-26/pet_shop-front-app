@@ -48,6 +48,32 @@ describe('profile schemas', () => {
     ).rejects.toThrow();
   });
 
+  it('does not validate or retain receiver identity when the receiver is the current user', async () => {
+    await expect(
+      createProfileAddressSchema.validate({
+        ...address,
+        receiverIsMe: true,
+        firstName: 'نا',
+        lastName: '',
+        nationalCode: 'invalid',
+        phoneNumber: 'invalid',
+      }),
+    ).resolves.toEqual(
+      expect.not.objectContaining({
+        firstName: expect.anything(),
+        lastName: expect.anything(),
+        nationalCode: expect.anything(),
+        phoneNumber: expect.anything(),
+      }),
+    );
+  });
+
+  it('uses the Persian postal-code field label in validation messages', async () => {
+    await expect(
+      createProfileAddressSchema.validate({ ...address, postalCode: '123' }),
+    ).rejects.toThrow('کد پستی');
+  });
+
   it.each([
     { latLng: [35.7219] },
     { latLng: [35.7219, '51.3347'] },

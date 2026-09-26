@@ -34,7 +34,12 @@ describe('ProfileAddressesRenderer', () => {
 
     expect(screen.getByText('تهران، سعادت‌آباد، خیابان علامه شمالی، پلاک ۲۱، واحد ۸')).toBeTruthy();
     expect(screen.getByText('نیلوفر احمدی')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'ویرایش نشانی' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'حذف نشانی' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'افزودن نشانی جدید' })).toBeTruthy();
+
+    const details = screen.getByText('نیلوفر احمدی').closest('dl');
+    expect(details?.className).toContain('tw:md:grid-cols-3');
   });
 
   it('renders an inviting empty state with an add-address control', () => {

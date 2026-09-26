@@ -96,7 +96,11 @@ export async function createProfileAddressAction(input: unknown) {
   const auth = await authorizeCustomer();
   if ('error' in auth) return auth.error;
   const parsed = await validate(createProfileAddressSchema, input);
-  return 'error' in parsed ? parsed.error : service.createProfileAddress(parsed.value);
+  if ('error' in parsed) return parsed.error;
+
+  const result = await service.createProfileAddress(parsed.value);
+  if (result.isSuccess) refresh();
+  return result;
 }
 
 export async function updateProfileAddressAction(input: unknown) {
@@ -114,9 +118,11 @@ export async function deleteProfileAddressAction(input: unknown) {
   const auth = await authorizeCustomer();
   if ('error' in auth) return auth.error;
   const parsed = await validate(profileAddressIdSchema, input);
-  return 'error' in parsed
-    ? parsed.error
-    : service.deleteProfileAddress(auth.session.userId, parsed.value.addressId);
+  if ('error' in parsed) return parsed.error;
+
+  const result = await service.deleteProfileAddress(auth.session.userId, parsed.value.addressId);
+  if (result.isSuccess) refresh();
+  return result;
 }
 
 export async function getProfileOrdersAction(input: unknown = {}) {
