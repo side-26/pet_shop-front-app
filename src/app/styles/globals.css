@@ -1,1 +1,41 @@
 @import url('./tailwind.config.css');
+
+@keyframes cart-badge-shine {
+  0% {
+    opacity: 0;
+    transform: translateX(-160%) skewX(-18deg);
+  }
+
+  20% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(260%) skewX(-18deg);
+  }
+}
+
+@keyframes cart-count-increase {
+  0% {
+    opacity: 0;
+    transform: translateY(0.25rem) scale(0.82);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cart-count-decrease {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.25rem) scale(0.82);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

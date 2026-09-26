@@ -1,13 +1,9 @@
-import { ShoppingCart } from 'lucide-react';
-import Link from 'next/link';
 import { Suspense } from 'react';
 
-import { buttonVariants } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { routePaths } from '@/configs/route.path';
-import { cn } from '@/lib/utils';
 
 import { Brand } from './brand';
+import { DesktopCartButton } from './desktop-cart-button';
 import { DesktopNavigation, DesktopNavigationView } from './desktop-navigation';
 import { HeaderProductSearch } from './header-product-search';
 import { DesktopAccountButton } from './desktop-account-button';
@@ -30,17 +26,7 @@ export function DefaultHeader() {
         <div className="tw:flex tw:min-w-0 tw:flex-1 tw:items-center tw:gap-1 tw:sm:gap-1.5 tw:lg:flex-none">
           <HeaderProductSearch className="tw:flex-1" />
           <ThemeToggle variant="icon" />
-          <Link
-            href={routePaths.cart}
-            aria-label="سبد خرید"
-            data-icon-only="true"
-            className={cn(
-              buttonVariants({ variant: 'tonal', color: 'primary', size: 'lg' }),
-              'tw:hidden tw:lg:inline-flex',
-            )}
-          >
-            <ShoppingCart aria-hidden="true" />
-          </Link>
+          <DesktopCartButton />
           <DesktopAccountButton />
         </div>
       </div>
