@@ -151,6 +151,8 @@ export function ProfileAvatarField({ user }: { user: ProfileAccountDTO }) {
             <ImageFilePreview
               avatar
               alt="پیش‌نمایش تصویر پروفایل"
+              loading="eager"
+              fetchPriority="high"
               initialImageUrl={user.avatar || null}
               className="tw:size-16"
               fallback={

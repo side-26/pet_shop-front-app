@@ -79,5 +79,12 @@ export default defineConfig({
         ...devices['Pixel 5'],
       },
     },
+    {
+      name: 'tablet-chromium',
+      metadata: { coreWebVitalsProfile: 'tablet' },
+      use: {
+        ...devices['iPad Pro 11'],
+      },
+    },
   ],
 });

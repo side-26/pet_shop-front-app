@@ -50,7 +50,7 @@ function ImageFilePreview({
   if (avatar) {
     return (
       <Avatar className={className}>
-        <AvatarImage src={imageUrl} alt={alt} />
+        <AvatarImage {...imageProps} src={imageUrl} alt={alt} />
         <AvatarFallback>{avatarFallback}</AvatarFallback>
       </Avatar>
     );

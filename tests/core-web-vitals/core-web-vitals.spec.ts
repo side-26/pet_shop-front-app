@@ -16,7 +16,7 @@ import { discoverAppRoutesSync } from '../../scripts/core-web-vitals/discover-ro
 type MetricName = 'CLS' | 'INP' | 'LCP';
 type MetricResult = { name: MetricName; value: number; rating: string };
 type MetricMap = Partial<Record<MetricName, MetricResult>>;
-type DeviceProfile = 'desktop' | 'mobile';
+type DeviceProfile = 'desktop' | 'mobile' | 'tablet';
 
 const require = createRequire(path.join(process.cwd(), 'package.json'));
 const nextDirectory = path.dirname(require.resolve('next/package.json'));
@@ -25,7 +25,7 @@ const webVitalsSource = readFileSync(
   'utf8',
 );
 const routes = discoverAppRoutesSync({ dynamicRouteFixtures });
-const protectedRoutePrefixes = ['/admin', '/cart', '/checkout'];
+const protectedRoutePrefixes = ['/admin', '/cart', '/checkout', '/profile'];
 const thresholds: Record<MetricName, number> = { CLS: 0.1, INP: 200, LCP: 2_500 };
 
 const profiles = {
@@ -40,6 +40,12 @@ const profiles = {
     latency: 150,
     downloadThroughput: (1.6 * 1024 * 1024) / 8,
     uploadThroughput: (750 * 1024) / 8,
+  },
+  tablet: {
+    cpuSlowdown: 2,
+    latency: 100,
+    downloadThroughput: (5 * 1024 * 1024) / 8,
+    uploadThroughput: (2 * 1024 * 1024) / 8,
   },
 } as const;
 
@@ -80,7 +86,7 @@ function isProtectedRoute(pathname: string) {
   );
 }
 
-async function createAdminSessionCookie(baseURL: string) {
+async function createSessionCookie(baseURL: string, role: 'admin' | 'customer') {
   const secret = process.env.NEXT_PUBLIC_SESSION_SECRET_KEY;
   const cookieName = process.env.NEXT_PUBLIC_SESSION_COOKIE_NAME;
   if (!secret || !cookieName) throw new Error('Core Web Vitals session environment is missing.');
@@ -91,7 +97,7 @@ async function createAdminSessionCookie(baseURL: string) {
     accessExp: now + 60 * 60 * 1_000,
     accessToken: process.env.CORE_WEB_VITALS_ACCESS_TOKEN ?? 'cwv-test-access-token',
     refreshToken: process.env.CORE_WEB_VITALS_REFRESH_TOKEN ?? 'cwv-test-refresh-token',
-    role: 'admin',
+    role,
     sessionExp: now + 2 * 60 * 60 * 1_000,
     userId: process.env.CORE_WEB_VITALS_USER_ID ?? '000000000000000000000001',
   })
@@ -169,7 +175,12 @@ for (const route of routes) {
     await applyDeviceThrottling(context, page, profile);
 
     if (isProtectedRoute(route.pathname)) {
-      await context.addCookies([await createAdminSessionCookie(baseURL)]);
+      await context.addCookies([
+        await createSessionCookie(
+          baseURL,
+          route.pathname.startsWith('/profile') ? 'customer' : 'admin',
+        ),
+      ]);
     }
 
     const response = await page.goto(route.pathname, { waitUntil: 'load' });
