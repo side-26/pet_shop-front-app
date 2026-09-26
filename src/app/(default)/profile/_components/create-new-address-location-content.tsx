@@ -11,13 +11,19 @@ type Props = Readonly<{
   lngLat: readonly [number, number];
   setLngLat: (lngLat: readonly [number, number]) => void;
   focusLngLat?: NeshanMapCoordinates;
+  initialProvinceTitle?: string;
 }>;
 
 function displayCoordinate(value: number) {
   return value.toFixed(6);
 }
 
-export function CreateNewAddressLocationContent({ lngLat, setLngLat, focusLngLat }: Props) {
+export function CreateNewAddressLocationContent({
+  lngLat,
+  setLngLat,
+  focusLngLat,
+  initialProvinceTitle,
+}: Props) {
   return (
     <div className="tw:flex tw:flex-col tw:gap-3">
       <p className="tw:text-body-m tw:text-muted-foreground">
@@ -46,6 +52,7 @@ export function CreateNewAddressLocationContent({ lngLat, setLngLat, focusLngLat
               <NeshanMapProvinceSelector
                 flyTo={flyTo}
                 defaultProvinceId={focusLngLat ? undefined : 8}
+                initialProvinceTitle={initialProvinceTitle}
                 onProvinceSelect={(province: ProvinceDTO) => {
                   if (!province.latLng) return;
                   const [latitude, longitude] = province.latLng;

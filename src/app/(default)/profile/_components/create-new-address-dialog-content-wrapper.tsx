@@ -15,6 +15,7 @@ import type { NeshanMapCoordinates } from '@/components/ui/map/neshan-map/defaul
 import { useAuthStore } from '@/entities/auth/auth.store';
 import { reverseGeocodeAction } from '@/entities/locations/locations.actions';
 import type { ReverseGeocodedLocationDTO } from '@/entities/locations/locations.dto';
+import type { ProfileAddressDTO } from '@/entities/profile/profile.dto';
 import { createProfileAddressAction } from '@/entities/profile/profile.actions';
 import {
   createProfileAddressSchema,
@@ -139,6 +140,8 @@ type AddressFormBodyProps = Readonly<{
   handleSubmit: (input: CreateProfileAddressInput) => void;
   lngLat: readonly [number, number];
   location?: ReverseGeocodedLocationDTO;
+  address?: ProfileAddressDTO;
+  formId?: string;
   isPending?: boolean;
   isSkeleton?: boolean;
 }>;
@@ -148,6 +151,8 @@ export function CreateNewAddressDetailsFormBody({
   handleSubmit,
   lngLat,
   location,
+  address,
+  formId = DETAILS_FORM_ID,
   isPending = false,
   isSkeleton = false,
 }: AddressFormBodyProps) {
@@ -158,23 +163,23 @@ export function CreateNewAddressDetailsFormBody({
   return (
     <Form<CreateProfileAddressInput>
       ref={formRef}
-      id={DETAILS_FORM_ID}
+      id={formId}
       validationSchema={createProfileAddressSchema}
       handleSubmit={handleSubmit}
       options={{
         defaultValues: {
-          province,
-          city,
-          detailAddress,
+          province: location?.state ?? address?.province ?? province,
+          city: location?.city ?? address?.city ?? city,
+          detailAddress: location?.formatted_address ?? address?.detailAddress ?? detailAddress,
           latLng: [lngLat[1], lngLat[0]],
-          plate: '',
-          unit: '',
-          postalCode: '',
-          receiverIsMe: true,
-          firstName: identity?.firstName ?? '',
-          lastName: identity?.lastName ?? '',
-          nationalCode: identity?.nationalCode ?? '',
-          phoneNumber: identity?.phoneNumber ?? '',
+          plate: address?.plate ?? '',
+          unit: address?.unit ?? '',
+          postalCode: address?.postalCode ?? '',
+          receiverIsMe: address?.receiverIsMe ?? true,
+          firstName: address?.firstName ?? identity?.firstName ?? '',
+          lastName: address?.lastName ?? identity?.lastName ?? '',
+          nationalCode: address?.nationalCode ?? identity?.nationalCode ?? '',
+          phoneNumber: address?.phoneNumber ?? identity?.phoneNumber ?? '',
         },
       }}
       aria-label="جزئیات نشانی"

@@ -1,12 +1,18 @@
 'use client';
 
 import { PencilIcon, Trash2Icon } from 'lucide-react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
-import { deleteProfileAddressAction } from '@/entities/profile/profile.actions';
+import {
+  deleteProfileAddressAction,
+  getProfileAddressAction,
+} from '@/entities/profile/profile.actions';
 import { useCommonStore } from '@/stores/common.store';
 import { globalErrorHandler } from '@/utils/helpers';
+
+import { UpdateAddressDialog } from './update-address-dialog';
 
 type Props = Readonly<{
   addressId?: string;
@@ -15,6 +21,7 @@ type Props = Readonly<{
 
 export function ProfileAddressCardActions({ addressId, addressTitle }: Props) {
   const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
+  const [request, setRequest] = useState<ReturnType<typeof getProfileAddressAction> | null>(null);
 
   function confirmDeletion() {
     if (!addressId) return;
@@ -41,9 +48,24 @@ export function ProfileAddressCardActions({ addressId, addressTitle }: Props) {
 
   return (
     <div className="tw:flex tw:items-center tw:gap-1">
-      <Button type="button" size="sm" variant="flat" iconOnly aria-label="ویرایش نشانی">
+      <Button
+        type="button"
+        size="sm"
+        variant="flat"
+        iconOnly
+        disabled={!addressId}
+        aria-label="ویرایش نشانی"
+        onClick={() => addressId && setRequest(getProfileAddressAction({ addressId }))}
+      >
         <PencilIcon aria-hidden="true" />
       </Button>
+      {request && addressId ? (
+        <UpdateAddressDialog
+          addressId={addressId}
+          request={request}
+          onClose={() => setRequest(null)}
+        />
+      ) : null}
       <Button
         type="button"
         size="sm"

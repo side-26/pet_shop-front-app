@@ -31,6 +31,8 @@ export type NeshanMapProvinceSelectorProps = Readonly<{
   onProvinceSelect?: (province: ProvinceDTO) => void;
   /** Selects and flies to this province as soon as the province list is available. */
   defaultProvinceId?: number;
+  /** Selects a province label without changing the current map position. */
+  initialProvinceTitle?: string;
   size?: SelectFieldProps['size'];
   className?: string;
 }>;
@@ -39,6 +41,7 @@ export function NeshanMapProvinceSelector({
   flyTo,
   onProvinceSelect,
   defaultProvinceId,
+  initialProvinceTitle,
   size = 'md',
   className,
 }: NeshanMapProvinceSelectorProps) {
@@ -73,6 +76,12 @@ export function NeshanMapProvinceSelector({
           (province) => province.provinceId === defaultProvinceId,
         );
         if (defaultProvince) selectProvince(defaultProvince);
+        else if (initialProvinceTitle) {
+          const selectedProvince = nextProvinces.find(
+            (province) => province.title === initialProvinceTitle,
+          );
+          if (selectedProvince) setSelectedProvinceId(String(selectedProvince.provinceId));
+        }
       })
       .finally(() => {
         if (isMounted) setIsLoading(false);
@@ -81,7 +90,7 @@ export function NeshanMapProvinceSelector({
     return () => {
       isMounted = false;
     };
-  }, [defaultProvinceId]);
+  }, [defaultProvinceId, initialProvinceTitle]);
 
   return (
     <div className={cn('tw:w-52', className)} aria-busy={isLoading || undefined}>
