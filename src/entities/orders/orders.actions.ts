@@ -27,11 +27,15 @@ async function customerAction<T>(
   input: unknown,
   schema: { validate: (value: unknown, options: object) => Promise<T> },
   message: string,
-  callback: (value: T) => Promise<unknown>,
+  callback: (value: T, userId: string) => Promise<unknown>,
 ) {
-  if (!(await getSession())) return accessError(message);
+  const session = await getSession();
+  if (!session) return accessError(message);
   try {
-    return callback(await schema.validate(input, { abortEarly: false, stripUnknown: true }));
+    return callback(
+      await schema.validate(input, { abortEarly: false, stripUnknown: true }),
+      session.userId,
+    );
   } catch (error) {
     if (error instanceof ValidationError) return validationErrorToFetcherError(error);
     throw error;

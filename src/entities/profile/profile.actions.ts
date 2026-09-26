@@ -139,6 +139,14 @@ export async function getProfileOrderSummaryAction() {
   return 'error' in auth ? auth.error : service.getProfileOrderSummary(auth.session.userId);
 }
 
+export async function retryProfileOrderSummaryAction() {
+  const auth = await authorizeCustomer();
+  if ('error' in auth) return auth.error;
+
+  service.invalidateProfileOrderData(auth.session.userId);
+  refresh();
+}
+
 export async function getProfileOrderAction(input: unknown) {
   const auth = await authorizeCustomer();
   if ('error' in auth) return auth.error;

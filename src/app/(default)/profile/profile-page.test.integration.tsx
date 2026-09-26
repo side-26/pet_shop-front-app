@@ -19,6 +19,9 @@ vi.mock('./_components/profile-addresses-wrapper', () => ({
     </section>
   ),
 }));
+vi.mock('./_components/profile-header-wrapper', () => ({
+  ProfileHeaderWrapper: () => <h1>نیلوفر احمدی</h1>,
+}));
 
 import ProfilePage, { metadata } from './page';
 

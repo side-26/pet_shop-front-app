@@ -1,5 +1,8 @@
+import { getProfileAccountAction } from '@/entities/profile/profile.actions';
+
 import { ProfileIdentityContent } from './profile-identity-content';
 import { ProfileAddressesWrapper } from './profile-addresses-wrapper';
+import { ProfileHeaderWrapper } from './profile-header-wrapper';
 import { ProfileOrdersWrapper } from './profile-orders-wrapper';
 
 export function ProfilePageContent() {
@@ -12,6 +15,7 @@ export function ProfilePageContent() {
       <div className="tw:default-layout-container tw:flex tw:flex-col tw:gap-6 tw:sm:gap-8">
         <ProfileIdentityContent
           addresses={<ProfileAddressesWrapper />}
+          header={<ProfileHeaderWrapper />}
           orders={<ProfileOrdersWrapper />}
         />
       </div>

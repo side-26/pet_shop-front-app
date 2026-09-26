@@ -176,6 +176,13 @@ export async function getProfileOrderSummary(userId: string) {
   });
 }
 
+export function invalidateProfileOrderData(userId: string, orderId?: string) {
+  profileCache.invalidateDetail(`${userId}:orders-summary`);
+  profileCache.invalidateList();
+
+  if (orderId) profileCache.invalidateDetail(`${userId}:order:${orderId}`);
+}
+
 export async function getProfileOrder(userId: string, orderId: string) {
   'use cache: private';
 

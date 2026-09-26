@@ -1,4 +1,6 @@
 import 'server-only';
+
+import { invalidateProfileOrderData } from '@/entities/profile/profile.service';
 import { customFetcher } from '@/lib/api/customFetcher';
 import { EntityTag } from '@/utils/entityCache';
 import type {
@@ -38,7 +40,7 @@ export async function getUserOrder(id: string) {
   ordersCache.registerDetail(id);
   return customFetcher<OrderDTO>({ url: `/orders/${id}`, auth: true, cache: 'no-store' });
 }
-export async function createOrder(input: CreateOrderDTO) {
+export async function createOrder(input: CreateOrderDTO, userId: string) {
   const result = await customFetcher<OrderDTO, unknown, CreateOrderDTO>({
     url: '/orders',
     method: 'POST',
@@ -46,7 +48,10 @@ export async function createOrder(input: CreateOrderDTO) {
     auth: true,
     cache: 'no-store',
   });
-  if (result.isSuccess) ordersCache.invalidateList();
+  if (result.isSuccess) {
+    ordersCache.invalidateList();
+    invalidateProfileOrderData(userId);
+  }
   return result;
 }
 export async function updateOrderDeliveryState(input: UpdateOrderDeliveryStateDTO) {
@@ -61,8 +66,16 @@ export async function updateOrderDeliveryState(input: UpdateOrderDeliveryStateDT
   if (result.isSuccess) {
     ordersCache.invalidateDetail(id);
     ordersCache.invalidateList();
+
+    const userId = getOrderUserId(result.data);
+    if (userId) invalidateProfileOrderData(userId, id);
   }
   return result;
+}
+
+function getOrderUserId(order: OrderDTO | undefined) {
+  if (!order?.user) return undefined;
+  return typeof order.user === 'string' ? order.user : order.user._id;
 }
 export async function updateOrderShippingInfo(input: UpdateOrderShippingInfoDTO) {
   const { id, ...body } = input;
