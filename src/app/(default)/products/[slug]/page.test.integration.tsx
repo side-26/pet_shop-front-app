@@ -174,20 +174,29 @@ describe('/products/product-0de16436', () => {
     fireEvent.click(screen.getByRole('button', { name: 'افزودن به سبد خرید' }));
 
     expect(screen.getByRole('group', { name: 'تعداد محصول' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'کاهش تعداد' }).hasAttribute('disabled')).toBe(true);
+    expect(screen.getByRole('button', { name: 'حذف از سبد خرید' }).hasAttribute('disabled')).toBe(
+      false,
+    );
 
     fireEvent.click(screen.getByRole('button', { name: 'افزایش تعداد' }));
 
     expect(screen.getByText('۴۵۰٬۰۰۰')).toBeTruthy();
     expect(screen.getByText('۵۰۰٬۰۰۰')).toBeTruthy();
 
-    fireEvent.click(screen.getByRole('button', { name: 'حذف از سبد خرید' }));
-
-    expect(screen.getByRole('button', { name: 'افزودن به سبد خرید' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'کاهش تعداد' }));
 
     fireEvent.click(screen.getByText('۲ کیلوگرم'));
 
     expect(screen.getByText('۷۲۰٬۰۰۰')).toBeTruthy();
     expect(screen.getByText('تنها ۱ عدد از این محصول باقی مانده است.')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'افزودن به سبد خرید' }));
+    fireEvent.click(screen.getByText('۱ کیلوگرم'));
+
+    expect(screen.getByRole('group', { name: 'تعداد محصول' })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'حذف از سبد خرید' }));
+
+    expect(screen.getByRole('button', { name: 'افزودن به سبد خرید' })).toBeTruthy();
   });
 });

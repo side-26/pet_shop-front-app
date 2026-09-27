@@ -21,21 +21,23 @@ describe('ProductPurchaseControls', () => {
 
     cy.get('[data-testid="mobile-purchase-controls"]').should('be.visible');
     cy.get('[data-testid="desktop-purchase-controls"]').should('not.be.visible');
-    cy.get('button[aria-label="کاهش تعداد"]:visible').should('be.disabled');
+    cy.get('[data-testid="mobile-purchase-controls"]')
+      .contains('button', 'افزودن به سبد خرید')
+      .should('be.visible')
+      .click();
+    cy.get('button[aria-label="حذف از سبد خرید"]:visible').should('be.visible');
 
     cy.get('button[aria-label="افزایش تعداد"]:visible').click();
     cy.get('[data-testid="mobile-purchase-controls"] output').should('have.text', '۲');
     cy.get('button[aria-label="افزایش تعداد"]:visible').should('be.disabled');
-    cy.get('[data-testid="mobile-purchase-controls"]').then(($controls) => {
-      cy.wrap($controls)
-        .contains('button', 'افزودن به سبد خرید')
-        .then(($button) => {
-          const controlsRect = $controls[0].getBoundingClientRect();
-          const buttonRect = $button[0].getBoundingClientRect();
+    cy.get('[data-testid="mobile-purchase-controls"] [role="group"]').then(($counter) => {
+      const counterRect = $counter[0].getBoundingClientRect();
+      const controlsRect = $counter
+        .closest('[data-testid="mobile-purchase-controls"]')![0]
+        .getBoundingClientRect();
 
-          expect(buttonRect.left).to.be.at.least(controlsRect.left);
-          expect(buttonRect.right).to.be.at.most(controlsRect.right);
-        });
+      expect(counterRect.left).to.be.at.least(controlsRect.left);
+      expect(counterRect.right).to.be.at.most(controlsRect.right);
     });
   });
 
@@ -49,7 +51,7 @@ describe('ProductPurchaseControls', () => {
     cy.get('[data-testid="mobile-purchase-controls"] output').should('have.text', '۱');
     cy.get('[data-testid="mobile-purchase-controls"]')
       .contains('button', 'افزودن به سبد خرید')
-      .should('not.be.visible');
+      .should('not.exist');
     cy.get('[data-testid="mobile-purchase-controls"] [role="group"]').then(($counter) => {
       const counterRect = $counter[0].getBoundingClientRect();
       const controlsRect = $counter

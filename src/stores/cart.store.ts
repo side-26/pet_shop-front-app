@@ -53,6 +53,10 @@ type CartStore = {
   increaseQuantity: (item: CartItem) => Promise<CartOperationResult>;
   decreaseQuantity: (item: CartItem) => Promise<CartOperationResult>;
   setQuantity: (item: CartItem, quantity: number) => Promise<CartOperationResult>;
+  /** Returns whether this exact product and weight pair is currently in the cart. */
+  hasProductWeight: (productId: string, weightId: string) => boolean;
+  /** Returns whether this exact pet is currently in the cart. */
+  hasPet: (petId: string) => boolean;
   /** Call this with the one server-cart request made by the `/cart` route. */
   hydrateFromServer: (cart: CartDTO) => void;
   /** Pushes the current locally persisted entries after authentication. */
@@ -270,6 +274,16 @@ export const useCartStore = create<CartStore>()(
 
           return finishGuestMutation((items) => setItemQuantity(items, item, quantity));
         },
+
+        hasProductWeight: (productId, weightId) =>
+          get().items.some(
+            (item) =>
+              item.type === 'product' &&
+              item.productId === productId &&
+              getWeightId(item.weight) === weightId,
+          ),
+
+        hasPet: (petId) => get().items.some((item) => item.type === 'pet' && item.petId === petId),
 
         hydrateFromServer: (cart) =>
           set((state) => ({

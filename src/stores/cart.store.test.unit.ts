@@ -26,6 +26,11 @@ const product: CartItemInput = {
   },
 };
 
+const pet: CartItemInput = {
+  type: 'pet',
+  petId: '507f1f77bcf86cd799439013',
+};
+
 const cart: CartDTO = {
   totalPrice: 100_000,
   items: [],
@@ -57,6 +62,10 @@ afterEach(() => {
 
 describe('useCartStore', () => {
   it('persists and combines matching guest product and weight entries locally', async () => {
+    expect(useCartStore.getState().hasProductWeight(product.productId, product.weight._id!)).toBe(
+      false,
+    );
+
     await useCartStore.getState().addToCart(product, 1);
     await useCartStore.getState().addToCart(product, 2);
 
@@ -64,6 +73,12 @@ describe('useCartStore', () => {
       items: [{ productId: product.productId, quantity: 3, weight: product.weight }],
       needsServerSync: true,
     });
+    expect(useCartStore.getState().hasProductWeight(product.productId, product.weight._id!)).toBe(
+      true,
+    );
+    expect(useCartStore.getState().hasProductWeight(product.productId, 'another-weight')).toBe(
+      false,
+    );
     expect(addCartItemActionMock).not.toHaveBeenCalled();
   });
 
@@ -84,6 +99,9 @@ describe('useCartStore', () => {
     });
     expect(useCartStore.getState().serverCart).toEqual(cart);
     expect(useCartStore.getState().needsServerSync).toBe(false);
+    expect(useCartStore.getState().hasProductWeight(product.productId, product.weight._id!)).toBe(
+      true,
+    );
   });
 
   it('removes the final guest item when decreasing its quantity', async () => {
@@ -94,5 +112,14 @@ describe('useCartStore', () => {
     await useCartStore.getState().decreaseQuantity(item);
 
     expect(useCartStore.getState().items).toEqual([]);
+  });
+
+  it('finds pets by pet ID', async () => {
+    expect(useCartStore.getState().hasPet(pet.petId)).toBe(false);
+
+    await useCartStore.getState().addToCart(pet);
+
+    expect(useCartStore.getState().hasPet(pet.petId)).toBe(true);
+    expect(useCartStore.getState().hasPet('another-pet')).toBe(false);
   });
 });

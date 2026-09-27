@@ -1,14 +1,12 @@
 'use client';
 
-import { ShoppingCart, Trash2 } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
-import { Button } from '@/components/ui/button';
-import { Counter } from '@/components/ui/counter';
-import { Price } from '@/components/ui/price';
 import { cn } from '@/lib/utils';
 
 import type { ProductDetailViewModel } from './product-detail-data';
+import { ProductPriceSection } from './product-price-section';
+import { ProductPurchaseCounter } from './product-purchase-counter';
 import { ProductWeightSelector } from './product-weight-selector';
 
 type ProductPurchaseControlsProps = Readonly<{
@@ -29,10 +27,8 @@ export function ProductPurchaseControls({
   weights = [],
 }: ProductPurchaseControlsProps) {
   const isDesktop = mode === 'desktop';
-  const selectedWeightIdRef = useRef('');
   const [selectedWeightId, setSelectedWeightId] = useState('');
-  const [purchaseQuantity, setPurchaseQuantity] = useState(1);
-  const [isAddedToCart, setIsAddedToCart] = useState(false);
+  const [quantityByWeightId, setQuantityByWeightId] = useState<Record<string, number>>({});
   const resolvedWeightId = weights.some((weight) => weight.id === selectedWeightId)
     ? selectedWeightId
     : (weights[0]?.id ?? '');
@@ -44,22 +40,15 @@ export function ProductPurchaseControls({
   const currentPrice = selectedWeight ? selectedPayablePrice : price;
   const currentPreviousPrice = selectedWeight ? selectedPrice : previousPrice;
   const currentQuantity = selectedWeight ? selectedQuantity : quantity;
+  const purchaseKey = selectedWeight?.id ?? 'product';
+  const purchaseQuantity = quantityByWeightId[purchaseKey] ?? 0;
+
   const handleWeightChange = (weightId: string) => {
-    selectedWeightIdRef.current = weightId;
     setSelectedWeightId(weightId);
-    setPurchaseQuantity(1);
-    setIsAddedToCart(false);
   };
 
-  const handleAddToCart = () => {
-    setPurchaseQuantity(1);
-    setIsAddedToCart(true);
-  };
-
-  const handleRemoveFromCart = () => {
-    setPurchaseQuantity(0);
-    setIsAddedToCart(false);
-  };
+  const setPurchaseQuantity = (nextQuantity: number) =>
+    setQuantityByWeightId((quantities) => ({ ...quantities, [purchaseKey]: nextQuantity }));
 
   return (
     <div
@@ -82,15 +71,11 @@ export function ProductPurchaseControls({
             />
           ) : null}
           <div className="tw:mb-4 tw:mt-5 tw:flex tw:items-end tw:justify-between tw:gap-3">
-            <div className="tw:flex tw:flex-col tw:gap-1">
-              {currentPreviousPrice && currentPreviousPrice > currentPrice ? (
-                <Price
-                  number={currentPreviousPrice}
-                  className="tw:text-label-s tw:text-muted-foreground tw:line-through"
-                />
-              ) : null}
-              <Price number={currentPrice} className="tw:text-price-m tw:text-primary" />
-            </div>
+            <ProductPriceSection
+              mode="desktop"
+              finalPrice={currentPrice}
+              realPrice={currentPreviousPrice}
+            />
             {selectedQuantity > 0 && selectedQuantity < 8 ? (
               <span className="tw:text-label-s tw:text-muted-foreground">
                 موجودی: {selectedQuantity.toLocaleString('fa-IR')}
@@ -110,68 +95,22 @@ export function ProductPurchaseControls({
             disabled={isSkeleton}
             className="tw:min-w-0 tw:flex-1 tw:gap-2"
           />
-          <div
-            data-slot="mobile-price-column"
-            aria-live="polite"
-            className="tw:flex tw:shrink-0 tw:flex-col tw:items-end tw:gap-0.5 tw:text-end"
-          >
-            {selectedDiscountPercentage > 0 && currentPreviousPrice ? (
-              <Price
-                number={currentPreviousPrice}
-                className="tw:text-label-s tw:text-muted-foreground tw:line-through"
-              />
-            ) : null}
-            <Price number={currentPrice} className="tw:text-label-s tw:text-primary" />
-          </div>
+          <ProductPriceSection
+            mode="mobile"
+            finalPrice={currentPrice}
+            realPrice={currentPreviousPrice}
+          />
         </div>
       ) : null}
 
-      <div
-        className={cn(
-          'tw:flex tw:items-center tw:gap-2',
-          !isDesktop && isAddedToCart && 'tw:justify-center tw:sm:justify-start',
-        )}
-      >
-        <Counter
-          min={1}
-          max={Math.min(2, currentQuantity)}
-          value={purchaseQuantity}
-          onValueChange={setPurchaseQuantity}
-          size="lg"
-          variant="outlined"
-          aria-label="تعداد محصول"
-          incrementLabel="افزایش تعداد"
-          decrementLabel="کاهش تعداد"
-          className={cn('tw:w-fit', !isDesktop && !isAddedToCart && 'tw:hidden tw:sm:flex')}
-        />
-        {!isDesktop && isAddedToCart ? (
-          <Button
-            iconOnly
-            size="lg"
-            variant="outlined"
-            color="error"
-            aria-label="حذف از سبد خرید"
-            className="tw:sm:hidden"
-            disabled={isSkeleton}
-            onClick={handleRemoveFromCart}
-          >
-            <Trash2 aria-hidden="true" />
-          </Button>
-        ) : null}
-        <Button
-          block
-          size="lg"
-          className={cn(
-            'tw:min-w-0 tw:sm:flex-1',
-            !isDesktop && isAddedToCart && 'tw:hidden tw:sm:inline-flex',
-          )}
-          disabled={currentQuantity < 1 || isSkeleton}
-          onClick={handleAddToCart}
-        >
-          <ShoppingCart data-icon="inline-start" aria-hidden="true" />
-          افزودن به سبد خرید
-        </Button>
-      </div>
+      <ProductPurchaseCounter
+        mode={mode}
+        max={Math.min(2, currentQuantity)}
+        quantity={purchaseQuantity}
+        disabled={isSkeleton}
+        onAdd={() => setPurchaseQuantity(1)}
+        onQuantityChange={setPurchaseQuantity}
+      />
       {currentQuantity > 0 && currentQuantity < 8 ? (
         <p className="tw:mt-3 tw:text-label-s tw:text-error" role="status">
           تنها {currentQuantity.toLocaleString('fa-IR')} عدد از این محصول باقی مانده است.
