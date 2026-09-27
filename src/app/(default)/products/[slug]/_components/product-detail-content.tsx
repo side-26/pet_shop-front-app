@@ -182,6 +182,7 @@ export function ProductDetailContent({ isSkeleton = false, product }: ProductDet
       </div>
 
       <ProductPurchaseControls
+        productId={product.id}
         mode="mobile"
         price={product.payablePrice}
         previousPrice={product.price}

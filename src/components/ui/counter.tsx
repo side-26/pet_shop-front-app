@@ -7,6 +7,7 @@ import { tv, type VariantProps } from 'tailwind-variants';
 
 import { Button } from '@/components/ui/button';
 import { ButtonGroup, ButtonGroupText } from '@/components/ui/button-group';
+import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
 
 const counterVariants = tv({
@@ -137,6 +138,8 @@ type CounterProps = Omit<React.ComponentProps<'div'>, 'color' | 'defaultValue' |
     incrementLabel?: string;
     decrementLabel?: string;
     removeLabel?: string;
+    /** Replaces the value with a spinner and disables both quantity controls. */
+    isLoading?: boolean;
   };
 
 type CounterRef = {
@@ -169,6 +172,7 @@ const Counter = forwardRef<CounterRef, CounterProps>(function Counter(
     incrementLabel = 'افزایش مقدار',
     decrementLabel = 'کاهش مقدار',
     removeLabel = 'حذف مقدار',
+    isLoading = false,
     variant = 'fill',
     color = 'primary',
     size = 'md',
@@ -209,6 +213,8 @@ const Counter = forwardRef<CounterRef, CounterProps>(function Counter(
       data-variant={variant}
       data-color={color}
       data-size={size}
+      data-loading={isLoading || undefined}
+      aria-busy={isLoading || undefined}
       className={cn(styles.root(), className)}
     >
       <Button
@@ -217,35 +223,39 @@ const Counter = forwardRef<CounterRef, CounterProps>(function Counter(
         variant={variant}
         color={color}
         aria-label={incrementLabel}
-        disabled={currentValue >= upperBound}
+        disabled={isLoading || currentValue >= upperBound}
         onClick={() => updateValue(currentValue + 1)}
       >
         <Plus aria-hidden="true" />
       </Button>
       <ButtonGroupText className={styles.value()}>
-        <output aria-live="polite" dir="ltr">
-          <span
-            data-counter-value
-            data-testid="counter-value"
-            data-direction={animationDirection > 0 ? 'increase' : 'decrease'}
-            className="tw:relative tw:grid tw:min-h-[1lh] tw:min-w-full tw:place-items-center tw:tabular-nums"
-          >
-            <AnimatePresence initial={false} mode="popLayout" custom={animationDirection}>
-              <motion.span
-                key={formattedValue}
-                custom={animationDirection}
-                className="tw:col-start-1 tw:row-start-1"
-                variants={valueAnimationVariants}
-                initial={reduceMotion ? false : 'enter'}
-                animate="center"
-                exit={reduceMotion ? undefined : 'exit'}
-                transition={reduceMotion ? { duration: 0 } : valueTransition}
-              >
-                {formattedValue}
-              </motion.span>
-            </AnimatePresence>
-          </span>
-        </output>
+        {isLoading ? (
+          <Spinner color={color} size={size} className="tw:text-current" />
+        ) : (
+          <output aria-live="polite" dir="ltr">
+            <span
+              data-counter-value
+              data-testid="counter-value"
+              data-direction={animationDirection > 0 ? 'increase' : 'decrease'}
+              className="tw:relative tw:grid tw:min-h-[1lh] tw:min-w-full tw:place-items-center tw:tabular-nums"
+            >
+              <AnimatePresence initial={false} mode="popLayout" custom={animationDirection}>
+                <motion.span
+                  key={formattedValue}
+                  custom={animationDirection}
+                  className="tw:col-start-1 tw:row-start-1"
+                  variants={valueAnimationVariants}
+                  initial={reduceMotion ? false : 'enter'}
+                  animate="center"
+                  exit={reduceMotion ? undefined : 'exit'}
+                  transition={reduceMotion ? { duration: 0 } : valueTransition}
+                >
+                  {formattedValue}
+                </motion.span>
+              </AnimatePresence>
+            </span>
+          </output>
+        )}
       </ButtonGroupText>
       <Button
         iconOnly
@@ -254,7 +264,7 @@ const Counter = forwardRef<CounterRef, CounterProps>(function Counter(
         color={color}
         aria-label={isRemoveAction ? removeLabel : decrementLabel}
         data-counter-action={isRemoveAction ? 'remove' : 'decrement'}
-        disabled={currentValue <= lowerBound}
+        disabled={isLoading || currentValue <= lowerBound}
         onClick={() => updateValue(currentValue - 1)}
       >
         {isRemoveAction ? (

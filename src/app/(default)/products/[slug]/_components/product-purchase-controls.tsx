@@ -4,12 +4,13 @@ import { useState } from 'react';
 
 import { cn } from '@/lib/utils';
 
+import { ProductAddToCartControl } from './product-add-to-cart-control';
 import type { ProductDetailViewModel } from './product-detail-data';
 import { ProductPriceSection } from './product-price-section';
-import { ProductPurchaseCounter } from './product-purchase-counter';
 import { ProductWeightSelector } from './product-weight-selector';
 
 type ProductPurchaseControlsProps = Readonly<{
+  productId: string;
   price: number;
   previousPrice?: number;
   quantity: number;
@@ -19,6 +20,7 @@ type ProductPurchaseControlsProps = Readonly<{
 }>;
 
 export function ProductPurchaseControls({
+  productId,
   price,
   previousPrice,
   quantity,
@@ -28,7 +30,6 @@ export function ProductPurchaseControls({
 }: ProductPurchaseControlsProps) {
   const isDesktop = mode === 'desktop';
   const [selectedWeightId, setSelectedWeightId] = useState('');
-  const [quantityByWeightId, setQuantityByWeightId] = useState<Record<string, number>>({});
   const resolvedWeightId = weights.some((weight) => weight.id === selectedWeightId)
     ? selectedWeightId
     : (weights[0]?.id ?? '');
@@ -40,15 +41,9 @@ export function ProductPurchaseControls({
   const currentPrice = selectedWeight ? selectedPayablePrice : price;
   const currentPreviousPrice = selectedWeight ? selectedPrice : previousPrice;
   const currentQuantity = selectedWeight ? selectedQuantity : quantity;
-  const purchaseKey = selectedWeight?.id ?? 'product';
-  const purchaseQuantity = quantityByWeightId[purchaseKey] ?? 0;
-
   const handleWeightChange = (weightId: string) => {
     setSelectedWeightId(weightId);
   };
-
-  const setPurchaseQuantity = (nextQuantity: number) =>
-    setQuantityByWeightId((quantities) => ({ ...quantities, [purchaseKey]: nextQuantity }));
 
   return (
     <div
@@ -103,13 +98,11 @@ export function ProductPurchaseControls({
         </div>
       ) : null}
 
-      <ProductPurchaseCounter
-        mode={mode}
-        max={Math.min(2, currentQuantity)}
-        quantity={purchaseQuantity}
+      <ProductAddToCartControl
+        productId={productId}
+        weight={selectedWeight?.cartWeight}
+        maxQuantity={currentQuantity}
         disabled={isSkeleton}
-        onAdd={() => setPurchaseQuantity(1)}
-        onQuantityChange={setPurchaseQuantity}
       />
       {currentQuantity > 0 && currentQuantity < 8 ? (
         <p className="tw:mt-3 tw:text-label-s tw:text-error" role="status">

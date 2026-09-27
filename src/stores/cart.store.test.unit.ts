@@ -114,6 +114,46 @@ describe('useCartStore', () => {
     expect(useCartStore.getState().items).toEqual([]);
   });
 
+  it('replaces an authenticated cart entry when decreasing its quantity', async () => {
+    useAuthStore.getState().saveUserIdentity({ userId: 'user-1' } as never);
+    const cartItem = { ...product, quantity: 2, cartEntryId: 'cart-entry-1' } as const;
+    const cartAfterUpdate: CartDTO = {
+      ...cart,
+      items: [
+        {
+          _id: 'cart-entry-2',
+          item: product.productId,
+          itemType: 'product',
+          weight: product.weight._id,
+          quantity: 1,
+        },
+      ],
+    };
+    deleteCartItemActionMock.mockResolvedValue({ isSuccess: true, message: null, data: cart });
+    addCartItemActionMock.mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: cartAfterUpdate,
+    });
+    useCartStore.setState({ items: [cartItem] });
+
+    await expect(useCartStore.getState().setQuantity(cartItem, 1)).resolves.toMatchObject({
+      isSuccess: true,
+    });
+
+    expect(deleteCartItemActionMock).toHaveBeenCalledWith({ id: 'cart-entry-1' });
+    expect(addCartItemActionMock).toHaveBeenCalledWith({
+      itemId: product.productId,
+      itemType: 'product',
+      weightId: product.weight._id,
+      quantity: 1,
+    });
+    expect(useCartStore.getState().items[0]).toMatchObject({
+      quantity: 1,
+      cartEntryId: 'cart-entry-2',
+    });
+  });
+
   it('finds pets by pet ID', async () => {
     expect(useCartStore.getState().hasPet(pet.petId)).toBe(false);
 

@@ -269,7 +269,26 @@ export const useCartStore = create<CartStore>()(
           }
 
           if (hasAuthenticatedUser()) {
-            return finishError('The cart API does not expose a quantity-update endpoint.');
+            if (!item.cartEntryId)
+              return finishError('The server cart entry id is required to update this item.');
+
+            set({ isSyncing: true, lastError: null });
+            const deleteResult = await deleteCartItemAction({ id: item.cartEntryId });
+            if (!isSuccessfulCartAction(deleteResult))
+              return finishError(
+                getFailedActionMessage(deleteResult, 'Unable to update the cart item.'),
+              );
+
+            const addResult = await addCartItemAction(
+              toAddPayload(toCartItemInput(item), quantity),
+            );
+            if (!isSuccessfulCartAction(addResult))
+              return finishError(
+                getFailedActionMessage(addResult, 'Unable to update the cart item.'),
+              );
+
+            set(({ items }) => ({ items: setItemQuantity(items, item, quantity) }));
+            return finishSuccess(addResult.data);
           }
 
           return finishGuestMutation((items) => setItemQuantity(items, item, quantity));

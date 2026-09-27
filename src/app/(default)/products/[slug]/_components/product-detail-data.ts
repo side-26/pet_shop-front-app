@@ -1,4 +1,5 @@
 import type { LandingProductDetailDTO } from '@/entities/landing/landing.dto';
+import type { ProductWeightDTO } from '@/entities/products/products.dto';
 import { richTextToPlainText, type RichTextFormValue } from '@/lib/rich-text';
 
 export type ProductGalleryImage = Readonly<{
@@ -34,6 +35,7 @@ export type ProductDetailViewModel = Readonly<{
   weights: readonly Readonly<{
     id: string;
     label: string;
+    cartWeight: ProductWeightDTO;
     price: number;
     discountPercentage: number;
     quantity: number;
@@ -92,13 +94,20 @@ export function createProductDetailViewModel(
       alt: index === 0 ? product.title : `${product.title}، تصویر ${index + 1}`,
       placeholder: index === 0 ? product.mainImageThumbnail : undefined,
     })),
-    weights: product.weights.map((weight, index) => ({
-      id: weight._id ?? `${weight.metric}-${weight.value}-${index}`,
-      label: `${weight.value.toLocaleString('fa-IR')} ${weight.metric}`,
-      price: weight.price ?? product.price,
-      discountPercentage: weight.discountPercentage ?? product.discountPercentage,
-      quantity: weight.quantity,
-    })),
+    weights: product.weights.map((weight, index) => {
+      const id = weight._id ?? `${weight.metric}-${weight.value}-${index}`;
+      const price = weight.price ?? product.price;
+      const discountPercentage = weight.discountPercentage ?? product.discountPercentage;
+
+      return {
+        id,
+        label: `${weight.value.toLocaleString('fa-IR')} ${weight.metric}`,
+        cartWeight: { ...weight, _id: weight._id ?? id, price, discountPercentage },
+        price,
+        discountPercentage,
+        quantity: weight.quantity,
+      };
+    }),
     specifications: (product.category.petType?.propertyDefinitions ?? [])
       .map(({ label, value }) => ({ label: label.trim(), value: displayValue(value) }))
       .filter(({ label, value }) => label && value),
@@ -129,8 +138,36 @@ export const productDetailSkeleton: ProductDetailViewModel = {
   hasRated: false,
   images: [{ src: undefined, alt: '' }],
   weights: [
-    { id: 'weight-1', label: 'وزن محصول', price: 1_000_000, discountPercentage: 10, quantity: 1 },
-    { id: 'weight-2', label: 'وزن محصول', price: 1_000_000, discountPercentage: 10, quantity: 1 },
+    {
+      id: 'weight-1',
+      label: 'وزن محصول',
+      cartWeight: {
+        _id: 'weight-1',
+        metric: 'KG',
+        value: 1,
+        price: 1_000_000,
+        discountPercentage: 10,
+        quantity: 1,
+      },
+      price: 1_000_000,
+      discountPercentage: 10,
+      quantity: 1,
+    },
+    {
+      id: 'weight-2',
+      label: 'وزن محصول',
+      cartWeight: {
+        _id: 'weight-2',
+        metric: 'KG',
+        value: 2,
+        price: 1_000_000,
+        discountPercentage: 10,
+        quantity: 1,
+      },
+      price: 1_000_000,
+      discountPercentage: 10,
+      quantity: 1,
+    },
   ],
   specifications: [
     { label: 'ویژگی محصول', value: 'مقدار ویژگی محصول' },

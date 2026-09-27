@@ -97,4 +97,36 @@ describe('Counter', () => {
     expect(incrementButton.className).toBe(incrementClassName);
     expect(decrementButton.className).toBe(decrementClassName);
   });
+
+  it('replaces the value with a matching spinner and disables both controls while loading', () => {
+    const onValueChange = vi.fn();
+    render(
+      <Counter
+        defaultValue={2}
+        min={0}
+        max={4}
+        isLoading
+        size="lg"
+        variant="tonal"
+        color="success"
+        onValueChange={onValueChange}
+      />,
+    );
+
+    const counter = screen.getByRole('group', { name: 'شمارنده' });
+    const spinner = screen.getByRole('status', { name: 'در حال بارگذاری' });
+
+    expect(counter.getAttribute('aria-busy')).toBe('true');
+    expect(counter.getAttribute('data-loading')).toBe('true');
+    expect(spinner.getAttribute('data-color')).toBe('success');
+    expect(spinner.getAttribute('data-size')).toBe('lg');
+    expect(screen.queryByTestId('counter-value')).toBeNull();
+    expect(screen.getByRole('button', { name: 'افزایش مقدار' }).hasAttribute('disabled')).toBe(
+      true,
+    );
+    expect(screen.getByRole('button', { name: 'کاهش مقدار' }).hasAttribute('disabled')).toBe(true);
+
+    fireEvent.click(screen.getByRole('button', { name: 'افزایش مقدار' }));
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
 });

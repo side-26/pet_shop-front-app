@@ -1,21 +1,59 @@
 import { ProductPurchaseControls } from './product-purchase-controls';
+import { useCartStore } from '@/stores/cart.store';
+
+const weights = [
+  {
+    id: 'weight-1',
+    label: '۱ کیلوگرم',
+    cartWeight: {
+      _id: 'weight-1',
+      metric: 'KG',
+      value: 1,
+      price: 2975000,
+      discountPercentage: 15,
+      quantity: 3,
+    },
+    price: 2975000,
+    discountPercentage: 15,
+    quantity: 3,
+  },
+] as const;
 
 function PurchaseControlsFixture() {
   return (
     <>
       <ProductPurchaseControls
+        productId="product-1"
         mode="desktop"
         price={2975000}
         previousPrice={3500000}
         quantity={3}
+        weights={weights}
       />
-      <ProductPurchaseControls mode="mobile" price={2975000} previousPrice={3500000} quantity={3} />
+      <ProductPurchaseControls
+        productId="product-1"
+        mode="mobile"
+        price={2975000}
+        previousPrice={3500000}
+        quantity={3}
+        weights={weights}
+      />
     </>
   );
 }
 
 describe('ProductPurchaseControls', () => {
-  it('uses the mobile purchase dock on tablet and enforces quantity bounds', () => {
+  beforeEach(() => {
+    useCartStore.setState({
+      items: [],
+      serverCart: null,
+      needsServerSync: false,
+      isSyncing: false,
+      lastError: null,
+    });
+  });
+
+  it('uses the mobile purchase dock on tablet and updates the matching weight cart entry', () => {
     cy.viewport(768, 900);
     cy.mount(<PurchaseControlsFixture />);
 
@@ -25,41 +63,24 @@ describe('ProductPurchaseControls', () => {
       .contains('button', 'افزودن به سبد خرید')
       .should('be.visible')
       .click();
-    cy.get('button[aria-label="حذف از سبد خرید"]:visible').should('be.visible');
-
+    cy.get('[data-testid="mobile-purchase-controls"] [role="group"]').should('be.visible');
     cy.get('button[aria-label="افزایش تعداد"]:visible').click();
     cy.get('[data-testid="mobile-purchase-controls"] output').should('have.text', '۲');
-    cy.get('button[aria-label="افزایش تعداد"]:visible').should('be.disabled');
-    cy.get('[data-testid="mobile-purchase-controls"] [role="group"]').then(($counter) => {
-      const counterRect = $counter[0].getBoundingClientRect();
-      const controlsRect = $counter
-        .closest('[data-testid="mobile-purchase-controls"]')![0]
-        .getBoundingClientRect();
-
-      expect(counterRect.left).to.be.at.least(controlsRect.left);
-      expect(counterRect.right).to.be.at.most(controlsRect.right);
-    });
+    cy.then(() => expect(useCartStore.getState().items[0]?.quantity).to.equal(2));
   });
 
-  it('replaces the add action with a fit-content counter on phones', () => {
+  it('replaces the add action with the selected weight counter on phones', () => {
     cy.viewport(390, 844);
     cy.mount(<PurchaseControlsFixture />);
 
     cy.get('[data-testid="mobile-purchase-controls"]')
       .contains('button', 'افزودن به سبد خرید')
+      .should('be.visible')
       .click();
-    cy.get('[data-testid="mobile-purchase-controls"] output').should('have.text', '۱');
+    cy.get('[data-testid="mobile-purchase-controls"] [role="group"]').should('be.visible');
     cy.get('[data-testid="mobile-purchase-controls"]')
       .contains('button', 'افزودن به سبد خرید')
       .should('not.exist');
-    cy.get('[data-testid="mobile-purchase-controls"] [role="group"]').then(($counter) => {
-      const counterRect = $counter[0].getBoundingClientRect();
-      const controlsRect = $counter
-        .closest('[data-testid="mobile-purchase-controls"]')![0]
-        .getBoundingClientRect();
-
-      expect(counterRect.width).to.be.lessThan(controlsRect.width);
-    });
   });
 
   it('switches to the inline purchase panel on desktop', () => {

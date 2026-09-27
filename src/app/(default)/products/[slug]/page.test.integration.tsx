@@ -1,9 +1,10 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LandingProductDetailDTO } from '@/entities/landing/landing.dto';
 import { routePaths } from '@/configs/route.path';
+import { useCartStore } from '@/stores/cart.store';
 import {
   getLandingProductBySlugAction,
   getPublicLandingProductBySlugAction,
@@ -82,7 +83,17 @@ beforeEach(() => {
   );
 });
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  useCartStore.setState({
+    items: [],
+    serverCart: null,
+    needsServerSync: false,
+    isSyncing: false,
+    lastError: null,
+  });
+  useCartStore.persist.clearStorage();
+});
 
 describe('/products/product-0de16436', () => {
   it('streams the API-backed product journey with inventory, taxonomy and specifications', async () => {
@@ -127,12 +138,24 @@ describe('/products/product-0de16436', () => {
 
   it('only exposes the exact inventory count when stock is low', () => {
     const { rerender } = render(
-      <ProductPurchaseControls mode="desktop" price={product.price} quantity={8} />,
+      <ProductPurchaseControls
+        productId={product.id}
+        mode="desktop"
+        price={product.price}
+        quantity={8}
+      />,
     );
 
     expect(screen.queryByText(/موجودی:/)).toBeNull();
 
-    rerender(<ProductPurchaseControls mode="desktop" price={product.price} quantity={7} />);
+    rerender(
+      <ProductPurchaseControls
+        productId={product.id}
+        mode="desktop"
+        price={product.price}
+        quantity={7}
+      />,
+    );
 
     expect(screen.getByText('موجودی: ۷')).toBeTruthy();
   });
@@ -140,6 +163,7 @@ describe('/products/product-0de16436', () => {
   it('keeps mobile weight selection, pricing, and inventory in the purchase dock', () => {
     render(
       <ProductPurchaseControls
+        productId={product.id}
         mode="mobile"
         price={500_000}
         quantity={3}
@@ -147,6 +171,14 @@ describe('/products/product-0de16436', () => {
           {
             id: 'weight-1',
             label: '۱ کیلوگرم',
+            cartWeight: {
+              _id: 'weight-1',
+              metric: 'KG',
+              value: 1,
+              price: 500_000,
+              discountPercentage: 10,
+              quantity: 3,
+            },
             price: 500_000,
             discountPercentage: 10,
             quantity: 3,
@@ -154,6 +186,14 @@ describe('/products/product-0de16436', () => {
           {
             id: 'weight-2',
             label: '۲ کیلوگرم',
+            cartWeight: {
+              _id: 'weight-2',
+              metric: 'KG',
+              value: 2,
+              price: 900_000,
+              discountPercentage: 20,
+              quantity: 1,
+            },
             price: 900_000,
             discountPercentage: 20,
             quantity: 1,
@@ -171,32 +211,96 @@ describe('/products/product-0de16436', () => {
     ).toBeTruthy();
     expect(screen.getByText('تنها ۳ عدد از این محصول باقی مانده است.')).toBeTruthy();
 
-    fireEvent.click(screen.getByRole('button', { name: 'افزودن به سبد خرید' }));
-
-    expect(screen.getByRole('group', { name: 'تعداد محصول' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'حذف از سبد خرید' }).hasAttribute('disabled')).toBe(
-      false,
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'افزایش تعداد' }));
-
-    expect(screen.getByText('۴۵۰٬۰۰۰')).toBeTruthy();
-    expect(screen.getByText('۵۰۰٬۰۰۰')).toBeTruthy();
-
-    fireEvent.click(screen.getByRole('button', { name: 'کاهش تعداد' }));
-
     fireEvent.click(screen.getByText('۲ کیلوگرم'));
 
     expect(screen.getByText('۷۲۰٬۰۰۰')).toBeTruthy();
     expect(screen.getByText('تنها ۱ عدد از این محصول باقی مانده است.')).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: 'افزودن به سبد خرید' }));
-    fireEvent.click(screen.getByText('۱ کیلوگرم'));
 
     expect(screen.getByRole('group', { name: 'تعداد محصول' })).toBeTruthy();
+    expect(useCartStore.getState().items).toMatchObject([
+      { productId: product.id, quantity: 1, weight: { _id: 'weight-2' } },
+    ]);
 
-    fireEvent.click(screen.getByRole('button', { name: 'حذف از سبد خرید' }));
-
+    fireEvent.click(screen.getByText('۱ کیلوگرم'));
     expect(screen.getByRole('button', { name: 'افزودن به سبد خرید' })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'افزودن به سبد خرید' }));
+    expect(screen.getByRole('group', { name: 'تعداد محصول' })).toBeTruthy();
+    expect(screen.getByText('۱')).toBeTruthy();
+
+    fireEvent.click(screen.getByText('۱ کیلوگرم'));
+    fireEvent.click(screen.getByRole('button', { name: 'افزایش تعداد' }));
+
+    expect(useCartStore.getState().items).toMatchObject([
+      { productId: product.id, quantity: 1, weight: { _id: 'weight-2' } },
+      { productId: product.id, quantity: 2, weight: { _id: 'weight-1' } },
+    ]);
+
+    fireEvent.click(screen.getByText('۲ کیلوگرم'));
+    expect(screen.getByText('۱')).toBeTruthy();
+  });
+
+  it('uses the cart mutation loading state for an existing product-weight counter', () => {
+    render(
+      <ProductPurchaseControls
+        productId={product.id}
+        mode="mobile"
+        price={500_000}
+        quantity={3}
+        weights={[
+          {
+            id: 'weight-1',
+            label: '۱ کیلوگرم',
+            cartWeight: {
+              _id: 'weight-1',
+              metric: 'KG',
+              value: 1,
+              price: 500_000,
+              discountPercentage: 10,
+              quantity: 3,
+            },
+            price: 500_000,
+            discountPercentage: 10,
+            quantity: 3,
+          },
+        ]}
+      />,
+    );
+
+    act(() => {
+      useCartStore.setState({ isSyncing: true });
+    });
+
+    expect(
+      screen.getByRole('button', { name: 'در حال افزودن به سبد خرید' }).getAttribute('aria-busy'),
+    ).toBe('true');
+
+    act(() => {
+      useCartStore.setState({
+        isSyncing: true,
+        items: [
+          {
+            type: 'product',
+            productId: product.id,
+            quantity: 1,
+            weight: {
+              _id: 'weight-1',
+              metric: 'KG',
+              value: 1,
+              price: 500_000,
+              discountPercentage: 10,
+              quantity: 3,
+            },
+          },
+        ],
+      });
+    });
+
+    expect(screen.getByRole('group', { name: 'تعداد محصول' }).getAttribute('aria-busy')).toBe(
+      'true',
+    );
+    expect(screen.getByRole('status', { name: 'در حال بارگذاری' })).toBeTruthy();
   });
 });

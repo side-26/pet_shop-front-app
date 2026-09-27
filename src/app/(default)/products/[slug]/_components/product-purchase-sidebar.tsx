@@ -20,6 +20,7 @@ export function ProductPurchaseSidebar({ isSkeleton, product }: ProductPurchaseS
         </CardHeader>
         <CardContent className="tw:flex tw:flex-col tw:gap-5">
           <ProductPurchaseControls
+            productId={product.id}
             mode="desktop"
             price={product.payablePrice}
             previousPrice={product.price}

@@ -531,6 +531,8 @@ decrement action becomes an equal-sized trash-can removal action. Prefer the err
 except on filled surfaces, where it inherits the current action foreground for accessible contrast.
 Its numeric value transitions vertically with Framer Motion on increment and decrement while the
 fixed-size action controls and counter group remain stable; reduced motion disables the transition.
+Pass `isLoading` to replace the numeric value with the shared `Spinner`, preserving the selected
+color and size while disabling both controls and exposing the group as busy.
 
 `ThemeToggle` provides `light|dark|system` appearance modes. It persists the
 preference under `petshop-theme`, applies `.dark` to the root element, and keeps

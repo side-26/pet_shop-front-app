@@ -1,5 +1,5 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
 import type { LandingPetDTO } from '@/entities/landing/landing.dto';
@@ -32,9 +32,12 @@ const pet: LandingPetDTO = {
 };
 
 beforeEach(() => {
-  window.matchMedia = vi
-    .fn()
-    .mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
+  vi.stubGlobal(
+    'matchMedia',
+    vi
+      .fn()
+      .mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }),
+  );
   vi.stubGlobal(
     'IntersectionObserver',
     class IntersectionObserver {
@@ -51,6 +54,11 @@ beforeEach(() => {
       disconnect() {}
     },
   );
+});
+
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
 });
 
 describe('PopularPetsSection', () => {

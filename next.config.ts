@@ -61,6 +61,10 @@ const nextConfig: NextConfig = {
               /^@\/entities\/auth\/auth\.actions$/,
               path.resolve(projectDirectory, 'cypress/support/auth.actions.mock.ts'),
             ),
+            new webpack.NormalModuleReplacementPlugin(
+              /^@\/entities\/users\/users\.actions$/,
+              path.resolve(projectDirectory, 'cypress/support/users.actions.mock.ts'),
+            ),
           );
 
           return config;

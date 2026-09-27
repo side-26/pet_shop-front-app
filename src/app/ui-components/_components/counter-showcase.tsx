@@ -35,7 +35,7 @@ export function CounterShowcase() {
     <ShowcaseSection
       id="counters"
       title="Counter"
-      description="شمارنده کنترل‌شده یا مستقل با مقدار اولیه، حداقل و حداکثر، اندازه‌ها، ظاهرها و رنگ‌های معنایی."
+      description="شمارنده کنترل‌شده یا مستقل با مقدار اولیه، حداقل و حداکثر، حالت بارگذاری، اندازه‌ها، ظاهرها و رنگ‌های معنایی."
     >
       <div className="tw:flex tw:flex-wrap tw:items-center tw:gap-3">
         <Counter ref={counterRef} defaultValue={2} min={1} max={5} aria-label="شمارنده با ref" />
@@ -45,6 +45,20 @@ export function CounterShowcase() {
         {refValue !== undefined ? (
           <output dir="ltr">{refValue.toLocaleString('fa-IR')}</output>
         ) : null}
+      </div>
+      <div className="tw:flex tw:flex-wrap tw:items-center tw:gap-3">
+        <Counter
+          defaultValue={2}
+          min={1}
+          max={5}
+          isLoading
+          variant="tonal"
+          color="success"
+          aria-label="شمارنده در حال بارگذاری"
+        />
+        <p className="tw:text-body-s tw:text-muted-foreground">
+          هنگام بارگذاری، مقدار با نشانگر جایگزین و هر دو کنترل غیرفعال می‌شوند.
+        </p>
       </div>
       <div className="tw:flex tw:flex-wrap tw:items-center tw:gap-3">
         <Counter
