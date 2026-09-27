@@ -36,6 +36,12 @@ export type CartOperationResult =
   | Readonly<{ isSuccess: true; cart: CartDTO | null }>
   | Readonly<{ isSuccess: false; error: CartOperationError }>;
 
+export type PendingCartAddOperation = Readonly<{
+  idempotencyKey: string;
+  item: CartItemInput;
+  quantity: number;
+}>;
+
 type CartActionResult = Awaited<ReturnType<typeof addCartItemAction>>;
 
 type CartStore = {
@@ -45,6 +51,8 @@ type CartStore = {
   serverCart: CartDTO | null;
   /** True only when guest changes still need to be copied to an authenticated cart. */
   needsServerSync: boolean;
+  /** Persisted add operations awaiting an idempotent server confirmation. */
+  pendingAddOperations: PendingCartAddOperation[];
   isSyncing: boolean;
   lastError: CartOperationError | null;
 
@@ -59,7 +67,7 @@ type CartStore = {
   hasPet: (petId: string) => boolean;
   /** Call this with the one server-cart request made by the `/cart` route. */
   hydrateFromServer: (cart: CartDTO) => void;
-  /** Pushes the current locally persisted entries after authentication. */
+  /** Retries the persisted outbox and copies pending guest entries after authentication. */
   syncLocalToServer: () => Promise<CartOperationResult>;
   replaceItems: (items: CartItem[]) => void;
   clearCart: () => void;
@@ -141,8 +149,7 @@ function getFailedActionMessage(result: CartActionResult, fallback: string): str
   return result?.message ?? fallback;
 }
 
-function toAddPayload(item: CartItemInput, quantity: number) {
-  const idempotencyKey = crypto.randomUUID();
+function toAddPayload(item: CartItemInput, quantity: number, idempotencyKey = crypto.randomUUID()) {
   if (item.type === 'pet')
     return { itemId: item.petId, itemType: 'pet' as const, quantity, idempotencyKey };
 
@@ -155,6 +162,10 @@ function toAddPayload(item: CartItemInput, quantity: number) {
     quantity,
     idempotencyKey,
   };
+}
+
+function createPendingAddOperation(item: CartItemInput, quantity: number): PendingCartAddOperation {
+  return { item, quantity, idempotencyKey: crypto.randomUUID() };
 }
 
 function getServerItemId(item: CartItemDTO): string | null {
@@ -221,6 +232,7 @@ export const useCartStore = create<CartStore>()(
         items: [],
         serverCart: null,
         needsServerSync: false,
+        pendingAddOperations: [],
         isSyncing: false,
         lastError: null,
 
@@ -230,12 +242,28 @@ export const useCartStore = create<CartStore>()(
           if (!hasAuthenticatedUser())
             return finishGuestMutation((items) => addOrIncrease(items, item, quantity));
 
-          set({ isSyncing: true, lastError: null });
-          const result = await addCartItemAction(toAddPayload(item, quantity));
-          if (!isSuccessfulCartAction(result))
-            return finishError(getFailedActionMessage(result, 'Unable to add the cart item.'));
+          const operation = createPendingAddOperation(item, quantity);
+          set(({ items }) => ({
+            items: addOrIncrease(items, item, quantity),
+            isSyncing: true,
+            lastError: null,
+          }));
 
-          set(({ items }) => ({ items: addOrIncrease(items, item, quantity) }));
+          const result = await addCartItemAction(
+            toAddPayload(operation.item, operation.quantity, operation.idempotencyKey),
+          );
+          if (!isSuccessfulCartAction(result)) {
+            const error = {
+              message: getFailedActionMessage(result, 'Unable to add the cart item.'),
+            };
+            set(({ pendingAddOperations }) => ({
+              pendingAddOperations: [...pendingAddOperations, operation],
+              isSyncing: false,
+              lastError: error,
+            }));
+            return { isSuccess: false, error };
+          }
+
           return finishSuccess(result.data);
         },
 
@@ -321,20 +349,42 @@ export const useCartStore = create<CartStore>()(
 
         syncLocalToServer: async () => {
           if (!hasAuthenticatedUser()) return finishError('Sign in before syncing the cart.');
-          if (!get().needsServerSync) return finishSuccess(get().serverCart);
+          if (get().isSyncing) return { isSuccess: true, cart: get().serverCart };
+
+          if (get().needsServerSync) {
+            set(({ items, pendingAddOperations }) => ({
+              needsServerSync: false,
+              pendingAddOperations: [
+                ...pendingAddOperations,
+                ...items.map((item) =>
+                  createPendingAddOperation(toCartItemInput(item), item.quantity),
+                ),
+              ],
+            }));
+          }
+
+          const pendingOperations = get().pendingAddOperations;
+          if (pendingOperations.length === 0) return finishSuccess(get().serverCart);
 
           set({ isSyncing: true, lastError: null });
           let latestCart: CartDTO | null = get().serverCart;
-          for (const item of get().items) {
+          for (const operation of pendingOperations) {
             const result = await addCartItemAction(
-              toAddPayload(toCartItemInput(item), item.quantity),
+              toAddPayload(operation.item, operation.quantity, operation.idempotencyKey),
             );
             if (!isSuccessfulCartAction(result))
               return finishError(getFailedActionMessage(result, 'Unable to sync the cart.'));
             latestCart = result.data;
+            set((state) => ({
+              pendingAddOperations: state.pendingAddOperations.filter(
+                (pendingOperation) => pendingOperation.idempotencyKey !== operation.idempotencyKey,
+              ),
+              serverCart: result.data,
+              items: applyServerQuantities(state.items, result.data),
+            }));
           }
-          set({ needsServerSync: false });
-          return finishSuccess(latestCart);
+          set({ isSyncing: false, lastError: null });
+          return { isSuccess: true, cart: latestCart };
         },
 
         replaceItems: (items) => set({ items, lastError: null }),
@@ -343,6 +393,7 @@ export const useCartStore = create<CartStore>()(
             items: [],
             serverCart: null,
             needsServerSync: false,
+            pendingAddOperations: [],
             lastError: null,
             isSyncing: false,
           }),
@@ -352,10 +403,11 @@ export const useCartStore = create<CartStore>()(
     {
       name: CART_STORAGE_KEY ?? 'cart',
       storage: createJSONStorage(() => localStorage),
-      partialize: ({ items, serverCart, needsServerSync }) => ({
+      partialize: ({ items, serverCart, needsServerSync, pendingAddOperations }) => ({
         items,
         serverCart,
         needsServerSync,
+        pendingAddOperations,
       }),
     },
   ),

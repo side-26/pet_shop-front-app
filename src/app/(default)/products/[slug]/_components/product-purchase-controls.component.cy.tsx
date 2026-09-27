@@ -48,6 +48,7 @@ describe('ProductPurchaseControls', () => {
       items: [],
       serverCart: null,
       needsServerSync: false,
+      pendingAddOperations: [],
       isSyncing: false,
       lastError: null,
     });

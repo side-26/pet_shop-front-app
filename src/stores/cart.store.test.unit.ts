@@ -49,6 +49,7 @@ function resetStore() {
     items: [],
     serverCart: null,
     needsServerSync: false,
+    pendingAddOperations: [],
     isSyncing: false,
     lastError: null,
   });
@@ -105,6 +106,35 @@ describe('useCartStore', () => {
     expect(useCartStore.getState().hasProductWeight(product.productId, product.weight._id!)).toBe(
       true,
     );
+  });
+
+  it('persists a failed authenticated add and retries it with the same idempotency key', async () => {
+    useAuthStore.getState().saveUserIdentity({ userId: 'user-1' } as never);
+    addCartItemActionMock
+      .mockResolvedValueOnce({ isSuccess: false, message: 'ارتباط با سرور برقرار نشد.' })
+      .mockResolvedValueOnce({ isSuccess: true, message: null, data: cart });
+
+    await expect(useCartStore.getState().addToCart(product)).resolves.toMatchObject({
+      isSuccess: false,
+    });
+
+    const [firstPayload] = addCartItemActionMock.mock.calls[0];
+    expect(useCartStore.getState().items).toMatchObject([
+      { productId: product.productId, quantity: 1, weight: product.weight },
+    ]);
+    expect(useCartStore.getState().pendingAddOperations).toHaveLength(1);
+    expect(firstPayload).toMatchObject({
+      itemId: product.productId,
+      idempotencyKey: expect.any(String),
+    });
+
+    await expect(useCartStore.getState().syncLocalToServer()).resolves.toEqual({
+      isSuccess: true,
+      cart,
+    });
+
+    expect(addCartItemActionMock).toHaveBeenLastCalledWith(firstPayload);
+    expect(useCartStore.getState().pendingAddOperations).toEqual([]);
   });
 
   it('removes the final guest item when decreasing its quantity', async () => {

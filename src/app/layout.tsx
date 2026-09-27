@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 
 import { ReactQueryProvider } from './react-query-provider';
 import { AuthSessionInitializer } from './_components/auth-session-initializer';
+import { CartSyncInitializer } from './_components/cart-sync-initializer';
 
 import './styles/tailwind.config.css';
 
@@ -77,6 +78,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <RtlLayout>
           <ReactQueryProvider>
             <AuthSessionInitializer />
+            <CartSyncInitializer />
             <Toaster>{children}</Toaster>
           </ReactQueryProvider>
         </RtlLayout>
