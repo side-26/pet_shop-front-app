@@ -6,6 +6,7 @@ import {
   changeCurrentUserPasswordSchema,
   createUserAddressSchema,
   addCartItemSchema,
+  deleteCartItemSchema,
   getAllPaginatedUsersSchema,
   updateCurrentUserProfileSchema,
   userGetDetailByIdSchema,
@@ -62,6 +63,16 @@ describe('current-user profile schemas', () => {
         idempotencyKey: 'cart-add-1',
       }),
     ).resolves.toMatchObject({ idempotencyKey: 'cart-add-1' });
+
+    await expect(
+      deleteCartItemSchema.validate({ id: '507f1f77bcf86cd799439011' }),
+    ).rejects.toThrow();
+    await expect(
+      deleteCartItemSchema.validate({
+        id: '507f1f77bcf86cd799439011',
+        idempotencyKey: 'cart-delete-1',
+      }),
+    ).resolves.toMatchObject({ idempotencyKey: 'cart-delete-1' });
   });
 
   it('requires a matching, eight-character password confirmation', async () => {

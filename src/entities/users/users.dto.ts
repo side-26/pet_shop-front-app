@@ -11,6 +11,7 @@ import type {
   UpdateCurrentUserProfileInput,
   UserGetDetailByIdInput,
   AddCartItemInput,
+  DeleteCartItemInput,
   AddWishlistItemInput,
   CreateUserAddressInput,
   UpdateUserAddressInput,
@@ -28,6 +29,7 @@ export type UserGetDetailByIdDTO = UserGetDetailByIdInput;
 export type UpdateCurrentUserProfileDTO = UpdateCurrentUserProfileInput;
 export type ChangeCurrentUserPasswordDTO = ChangeCurrentUserPasswordInput;
 export type AddCartItemDTO = AddCartItemInput;
+export type DeleteCartItemDTO = DeleteCartItemInput;
 export type AddWishlistItemDTO = AddWishlistItemInput;
 export type CreateUserAddressDTO = CreateUserAddressInput;
 export type UpdateUserAddressDTO = UpdateUserAddressInput;

@@ -149,12 +149,16 @@ describe('useCartStore', () => {
 
   it('replaces an authenticated cart entry when decreasing its quantity', async () => {
     useAuthStore.getState().saveUserIdentity({ userId: 'user-1' } as never);
-    const cartItem = { ...product, quantity: 2, cartEntryId: 'cart-entry-1' } as const;
+    const cartItem = {
+      ...product,
+      quantity: 2,
+      cartEntryId: '507f1f77bcf86cd799439014',
+    } as const;
     const cartAfterUpdate: CartDTO = {
       ...cart,
       items: [
         {
-          _id: 'cart-entry-2',
+          _id: '507f1f77bcf86cd799439015',
           item: product.productId,
           itemType: 'product',
           weight: product.weight._id,
@@ -174,7 +178,10 @@ describe('useCartStore', () => {
       isSuccess: true,
     });
 
-    expect(deleteCartItemActionMock).toHaveBeenCalledWith({ id: 'cart-entry-1' });
+    expect(deleteCartItemActionMock).toHaveBeenCalledWith({
+      id: '507f1f77bcf86cd799439014',
+      idempotencyKey: expect.any(String),
+    });
     expect(addCartItemActionMock).toHaveBeenCalledWith(
       expect.objectContaining({
         itemId: product.productId,
@@ -186,7 +193,7 @@ describe('useCartStore', () => {
     );
     expect(useCartStore.getState().items[0]).toMatchObject({
       quantity: 1,
-      cartEntryId: 'cart-entry-2',
+      cartEntryId: '507f1f77bcf86cd799439015',
     });
   });
 

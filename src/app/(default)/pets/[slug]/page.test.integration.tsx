@@ -1,10 +1,11 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LandingPetDetailDTO } from '@/entities/landing/landing.dto';
 import { routePaths } from '@/configs/route.path';
 import { getLandingPetBySlugAction } from '@/entities/landing/landing.actions';
+import { useCartStore } from '@/stores/cart.store';
 
 import { PetDetailContainer } from './_components/pet-detail-container';
 import PetDetailPage, { generateMetadata } from './page';
@@ -42,7 +43,18 @@ const pet = {
   },
 } satisfies LandingPetDetailDTO;
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  useCartStore.setState({
+    items: [],
+    serverCart: null,
+    needsServerSync: false,
+    pendingAddOperations: [],
+    isSyncing: false,
+    lastError: null,
+  });
+  useCartStore.persist.clearStorage();
+});
 
 beforeEach(() => {
   vi.stubGlobal(
@@ -76,12 +88,31 @@ describe(routePaths.petDetail('max'), () => {
       routePaths.petsListByBreedAndPetType(pet.breed.id, pet.petType.id),
     );
     expect(screen.getByText('گلدن رتریور')).toBeTruthy();
-    expect(screen.getAllByRole('button', { name: `درخواست واگذاری ${pet.title}` })).toHaveLength(2);
+    expect(screen.getAllByRole('button', { name: `پیش‌سفارش ${pet.title}` })).toHaveLength(2);
     // Both responsive presentations stay mounted and are selected with CSS:
     // the expandable drawer for mobile/tablet and the expandable card for desktop.
     expect(screen.getAllByText('خلاصه حیوان')).toHaveLength(2);
     expect(screen.getAllByRole('button', { name: 'نمایش خلاصه حیوان' })).toHaveLength(2);
     expect(screen.getByRole('tab', { name: 'مشخصات' })).toBeTruthy();
+  });
+
+  it('adds and removes the exact pet through the cart store', async () => {
+    render(
+      await PetDetailContainer({
+        petPromise: Promise.resolve({ isSuccess: true, message: null, data: pet }),
+        slugPromise: Promise.resolve(pet.slug),
+      }),
+    );
+
+    fireEvent.click(screen.getAllByRole('button', { name: `پیش‌سفارش ${pet.title}` })[0]!);
+
+    expect(useCartStore.getState().hasPet(pet.id)).toBe(true);
+    expect(screen.getAllByRole('button', { name: `حذف ${pet.title} از سبد خرید` })).toHaveLength(2);
+
+    fireEvent.click(screen.getAllByRole('button', { name: `حذف ${pet.title} از سبد خرید` })[0]!);
+
+    expect(useCartStore.getState().hasPet(pet.id)).toBe(false);
+    expect(screen.getAllByRole('button', { name: `پیش‌سفارش ${pet.title}` })).toHaveLength(2);
   });
 
   it('uses the renderer-backed skeleton while route params are pending', () => {

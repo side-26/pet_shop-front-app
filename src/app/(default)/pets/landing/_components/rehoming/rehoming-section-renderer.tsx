@@ -53,7 +53,7 @@ export function RehomingSectionRenderer({ pets, isSkeleton = false }: Props) {
                 <Link
                   href={routePaths.petDetail(pet.slug)}
                   prefetch={false}
-                  aria-label={isSkeleton ? undefined : `درخواست واگذاری ${pet.title}`}
+                  aria-label={isSkeleton ? undefined : `پیش‌سفارش ${pet.title}`}
                   aria-disabled={isSkeleton || undefined}
                   tabIndex={isSkeleton ? -1 : undefined}
                   className={cn(
@@ -61,7 +61,7 @@ export function RehomingSectionRenderer({ pets, isSkeleton = false }: Props) {
                     'tw:w-full',
                   )}
                 >
-                  درخواست واگذاری
+                  پیش‌سفارش
                 </Link>
               </CardContent>
             </Card>

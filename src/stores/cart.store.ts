@@ -274,7 +274,10 @@ export const useCartStore = create<CartStore>()(
             return finishError('The server cart entry id is required to remove this item.');
 
           set({ isSyncing: true, lastError: null });
-          const result = await deleteCartItemAction({ id: item.cartEntryId });
+          const result = await deleteCartItemAction({
+            id: item.cartEntryId,
+            idempotencyKey: crypto.randomUUID(),
+          });
           if (!isSuccessfulCartAction(result))
             return finishError(getFailedActionMessage(result, 'Unable to remove the cart item.'));
 
@@ -309,7 +312,10 @@ export const useCartStore = create<CartStore>()(
               return finishError('The server cart entry id is required to update this item.');
 
             set({ isSyncing: true, lastError: null });
-            const deleteResult = await deleteCartItemAction({ id: item.cartEntryId });
+            const deleteResult = await deleteCartItemAction({
+              id: item.cartEntryId,
+              idempotencyKey: crypto.randomUUID(),
+            });
             if (!isSuccessfulCartAction(deleteResult))
               return finishError(
                 getFailedActionMessage(deleteResult, 'Unable to update the cart item.'),

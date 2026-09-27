@@ -18,6 +18,7 @@ import type {
   UserGetDetailByIdDTO,
   UserDTO,
   AddCartItemDTO,
+  DeleteCartItemDTO,
   AddWishlistItemDTO,
   CreateUserAddressDTO,
   UpdateUserAddressDTO,
@@ -254,10 +255,11 @@ export async function addCartItem(userId: string, input: AddCartItemDTO) {
   return result;
 }
 
-export async function deleteCartItem(userId: string, id: string) {
-  const result = await customFetcher<CartDTO>({
-    url: `/cart/delete/${id}`,
+export async function deleteCartItem(userId: string, input: DeleteCartItemDTO) {
+  const result = await customFetcher<CartDTO, unknown, Pick<DeleteCartItemDTO, 'idempotencyKey'>>({
+    url: `/cart/delete/${input.id}`,
     method: 'DELETE',
+    body: { idempotencyKey: input.idempotencyKey },
     auth: true,
     cache: 'no-store',
   });

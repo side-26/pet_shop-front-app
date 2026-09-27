@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { ProductGallery } from '@/app/(default)/products/[slug]/_components/product-gallery';
 import { ProductHeaderActions } from '@/app/(default)/products/[slug]/_components/product-header-actions';
 import { ExpandableDrawer } from '@/components/common/expandable-drawer';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Price } from '@/components/ui/price';
 import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
 
 import type { PetDetailViewModel } from './pet-detail-data';
+import { PetAddToCartControl } from './pet-add-to-cart-control';
 import { PetDetailGallery } from './pet-detail-gallery';
 import { PetDetailExpandableCard } from './pet-detail-expandable-card';
 import { PetDetailTabs } from './pet-detail-tabs';
@@ -25,8 +25,9 @@ function PetRequestControls({
   return (
     <div
       className={cn(
+        'tw:flex tw:flex-col tw:gap-4',
         mobile &&
-          'tw:fixed tw:inset-x-4 tw:bottom-20 tw:z-30 tw:flex tw:items-center tw:gap-3 tw:rounded-2xl tw:border tw:border-border tw:bg-background/95 tw:p-3 tw:shadow-xl tw:supports-backdrop-filter:backdrop-blur-xl tw:sm:inset-x-6 tw:sm:bottom-28 tw:lg:hidden',
+          'tw:fixed tw:inset-x-4 tw:bottom-20 tw:z-30 tw:flex-row tw:items-center tw:gap-3 tw:rounded-2xl tw:border tw:border-border tw:bg-background/95 tw:p-3 tw:shadow-xl tw:supports-backdrop-filter:backdrop-blur-xl tw:sm:inset-x-6 tw:sm:bottom-28 tw:lg:hidden',
       )}
     >
       <div className="tw:flex tw:min-w-0 tw:flex-1 tw:flex-col tw:gap-1">
@@ -38,14 +39,11 @@ function PetRequestControls({
         ) : null}
         <Price number={pet.payablePrice} className="tw:text-price-m tw:text-primary" />
       </div>
-      <Button
-        size="lg"
+      <PetAddToCartControl
+        petId={pet.id}
+        petTitle={pet.title}
         disabled={isSkeleton || pet.quantity < 1}
-        className="tw:shrink-0"
-        aria-label={`درخواست واگذاری ${pet.title}`}
-      >
-        درخواست واگذاری
-      </Button>
+      />
     </div>
   );
 }
@@ -152,12 +150,12 @@ export function PetDetailContent({ pet, isSkeleton = false }: Props) {
           <PetDetailTabs pet={pet} isSkeleton={isSkeleton} />
         </div>
         <aside
-          aria-label="درخواست واگذاری"
+          aria-label="پیش‌سفارش"
           className="tw:relative tw:hidden tw:self-start tw:lg:sticky tw:lg:top-28 tw:lg:block"
         >
           <Card size="sm" variant="elevated" className="tw:rounded-3xl">
             <CardHeader>
-              <CardTitle>درخواست واگذاری</CardTitle>
+              <CardTitle>پیش‌سفارش</CardTitle>
             </CardHeader>
             <CardContent>
               <PetRequestControls pet={pet} isSkeleton={isSkeleton} />

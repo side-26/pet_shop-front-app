@@ -14,6 +14,7 @@ import {
   userGetDetailById,
   updateCurrentUserProfile,
   createDeliveryQuote,
+  deleteCartItem,
   selectDeliveryWindow,
 } from './users.service';
 
@@ -72,6 +73,33 @@ describe('getCurrentUser service', () => {
     });
     expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 360 });
     expect(registerDetailMock).toHaveBeenCalledWith('user-42');
+  });
+});
+
+describe('deleteCartItem service', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('sends the delete idempotency key in the request body', async () => {
+    const response = { isSuccess: true as const, message: null, data: {} };
+    customFetcherMock.mockResolvedValue(response);
+
+    await expect(
+      deleteCartItem('user-42', {
+        id: '507f1f77bcf86cd799439011',
+        idempotencyKey: 'cart-delete-1',
+      }),
+    ).resolves.toBe(response);
+
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/cart/delete/507f1f77bcf86cd799439011',
+      method: 'DELETE',
+      body: { idempotencyKey: 'cart-delete-1' },
+      auth: true,
+      cache: 'no-store',
+    });
+    expect(invalidateDetailMock).toHaveBeenCalledWith('user-42');
   });
 });
 

@@ -1,4 +1,4 @@
-import { Bell, Heart } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -58,17 +58,6 @@ export function ProductCard({ isSkeleton = false, product }: ProductCardProps) {
             )}
           />
         )}
-        <Button
-          iconOnly
-          size="sm"
-          variant="transparent"
-          color="error"
-          disabled={isSkeleton}
-          aria-label={`افزودن ${product.title} به علاقه‌مندی‌ها`}
-          className="tw:absolute tw:end-2 tw:top-2"
-        >
-          <Heart aria-hidden="true" />
-        </Button>
         {!product.available ? (
           <Badge color="warning" variant="tonal" className="tw:absolute tw:start-2 tw:bottom-2">
             ناموجود

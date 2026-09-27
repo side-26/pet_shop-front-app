@@ -17,7 +17,7 @@ import {
   userGetDetailByIdSchema,
   addCartItemSchema,
   addWishlistItemSchema,
-  cartEntryIdSchema,
+  deleteCartItemSchema,
   createUserAddressSchema,
   updateUserAddressSchema,
   userAddressIdSchema,
@@ -327,10 +327,10 @@ export async function addCartItemAction(input: unknown) {
 export async function deleteCartItemAction(input: unknown) {
   const result = await validateAuthenticatedInput(
     input,
-    cartEntryIdSchema,
+    deleteCartItemSchema,
     'برای ویرایش سبد خرید وارد حساب کاربری شوید.',
   );
-  return 'error' in result ? result.error : deleteCartItem(result.session.userId, result.value.id);
+  return 'error' in result ? result.error : deleteCartItem(result.session.userId, result.value);
 }
 
 export async function emptyCartAction() {

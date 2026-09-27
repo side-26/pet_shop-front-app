@@ -66,7 +66,7 @@ describe('RehomingSection', () => {
       encodeURIComponent(pet.mainImage),
     );
     expect(screen.getByText(/گربه.*DSH/)).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'درخواست واگذاری نبات' }).getAttribute('href')).toBe(
+    expect(screen.getByRole('link', { name: 'پیش‌سفارش نبات' }).getAttribute('href')).toBe(
       routePaths.petDetail(pet.slug),
     );
   });

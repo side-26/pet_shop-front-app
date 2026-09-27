@@ -17,6 +17,9 @@
   .skeleton *:not(:has(*)) {
     @apply tw:text-gray-200! tw:bg-gray-200! tw:animate-pulse! tw:rounded-md;
   }
+  .skeleton button {
+    @apply tw:text-gray-200! tw:bg-gray-200! tw:animate-pulse! tw:rounded-md;
+  }
   .skeleton img {
     @apply tw:relative;
   }
