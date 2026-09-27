@@ -19,11 +19,13 @@ import type {
   UserDTO,
   AddCartItemDTO,
   DeleteCartItemDTO,
+  EmptyCartDTO,
   AddWishlistItemDTO,
   CreateUserAddressDTO,
   UpdateUserAddressDTO,
   AddressDTO,
   CartDTO,
+  CartItemDetailsDTO,
   WishlistItemDTO,
   CreateDeliveryQuoteDTO,
   DeliveryQuoteDTO,
@@ -243,6 +245,19 @@ export async function getCart(userId: string) {
   return customFetcher<CartDTO>({ url: '/cart/all', auth: true, cache: 'no-store' });
 }
 
+/** Gets populated cart lines, including the current catalog price and stock. */
+export async function getCartItemDetails(userId: string) {
+  'use cache: private';
+  usersCache.cacheLife({ stale: 120 });
+  usersCache.registerDetail(userId);
+  return customFetcher<CartItemDetailsDTO[]>({
+    url: '/cart/items',
+    method: 'GET',
+    auth: true,
+    cache: 'no-store',
+  });
+}
+
 export async function addCartItem(userId: string, input: AddCartItemDTO) {
   const result = await customFetcher<CartDTO, unknown, AddCartItemDTO>({
     url: '/cart/add',
@@ -267,10 +282,11 @@ export async function deleteCartItem(userId: string, input: DeleteCartItemDTO) {
   return result;
 }
 
-export async function emptyCart(userId: string) {
-  const result = await customFetcher<CartDTO>({
+export async function emptyCart(userId: string, input: EmptyCartDTO) {
+  const result = await customFetcher<CartDTO, unknown, EmptyCartDTO>({
     url: '/cart/empty',
     method: 'DELETE',
+    body: input,
     auth: true,
     cache: 'no-store',
   });

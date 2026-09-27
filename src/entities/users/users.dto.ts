@@ -12,6 +12,7 @@ import type {
   UserGetDetailByIdInput,
   AddCartItemInput,
   DeleteCartItemInput,
+  EmptyCartInput,
   AddWishlistItemInput,
   CreateUserAddressInput,
   UpdateUserAddressInput,
@@ -30,6 +31,7 @@ export type UpdateCurrentUserProfileDTO = UpdateCurrentUserProfileInput;
 export type ChangeCurrentUserPasswordDTO = ChangeCurrentUserPasswordInput;
 export type AddCartItemDTO = AddCartItemInput;
 export type DeleteCartItemDTO = DeleteCartItemInput;
+export type EmptyCartDTO = EmptyCartInput;
 export type AddWishlistItemDTO = AddWishlistItemInput;
 export type CreateUserAddressDTO = CreateUserAddressInput;
 export type UpdateUserAddressDTO = UpdateUserAddressInput;
@@ -58,6 +60,19 @@ export interface CartItemDTO {
   itemType: string;
   quantity: number;
   weight?: string | null;
+}
+
+/** A populated cart line returned by `GET /cart/items`. */
+export interface CartItemDetailsDTO {
+  id: string;
+  title: string;
+  mainImage: string;
+  mainThumbnailImage: string;
+  weight: { id: string; value: number; metric: string } | null;
+  cartQuantity: number;
+  discountPrice: number;
+  price: number;
+  productAllowQuantity: number;
 }
 
 export interface ShippingInfoDTO {

@@ -9,6 +9,7 @@ import {
   disableUserById,
   enableUserById,
   getCurrentUser,
+  getCartItemDetails,
   getCurrentUserForSessionSync,
   getAllPaginatedUsers,
   userGetDetailById,
@@ -100,6 +101,27 @@ describe('deleteCartItem service', () => {
       cache: 'no-store',
     });
     expect(invalidateDetailMock).toHaveBeenCalledWith('user-42');
+  });
+});
+
+describe('getCartItemDetails service', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('gets the authenticated user’s populated cart lines', async () => {
+    const response = { isSuccess: true as const, message: null, data: [] };
+    customFetcherMock.mockResolvedValue(response);
+
+    await expect(getCartItemDetails('user-42')).resolves.toBe(response);
+
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/cart/items',
+      method: 'GET',
+      auth: true,
+      cache: 'no-store',
+    });
+    expect(registerDetailMock).toHaveBeenCalledWith('user-42');
   });
 });
 

@@ -18,6 +18,7 @@ import {
   addCartItemSchema,
   addWishlistItemSchema,
   deleteCartItemSchema,
+  emptyCartSchema,
   createUserAddressSchema,
   updateUserAddressSchema,
   userAddressIdSchema,
@@ -43,6 +44,7 @@ import {
   deleteWishlistItem,
   emptyCart,
   getCart,
+  getCartItemDetails,
   getUserAddresses,
   getWishlist,
   updateUserAddress,
@@ -315,6 +317,13 @@ export async function getCartAction() {
     : accessError('برای مشاهده سبد خرید وارد حساب کاربری شوید.');
 }
 
+export async function getCartItemDetailsAction() {
+  const session = await getSession();
+  return session
+    ? getCartItemDetails(session.userId)
+    : accessError('برای مشاهده سبد خرید وارد حساب کاربری شوید.');
+}
+
 export async function addCartItemAction(input: unknown) {
   const result = await validateAuthenticatedInput(
     input,
@@ -333,11 +342,13 @@ export async function deleteCartItemAction(input: unknown) {
   return 'error' in result ? result.error : deleteCartItem(result.session.userId, result.value);
 }
 
-export async function emptyCartAction() {
-  const session = await getSession();
-  return session
-    ? emptyCart(session.userId)
-    : accessError('برای ویرایش سبد خرید وارد حساب کاربری شوید.');
+export async function emptyCartAction(input: unknown) {
+  const result = await validateAuthenticatedInput(
+    input,
+    emptyCartSchema,
+    'برای ویرایش سبد خرید وارد حساب کاربری شوید.',
+  );
+  return 'error' in result ? result.error : emptyCart(result.session.userId, result.value);
 }
 
 export async function createDeliveryQuoteAction(input: unknown) {

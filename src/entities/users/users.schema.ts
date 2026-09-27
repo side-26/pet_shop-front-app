@@ -172,6 +172,10 @@ export const deleteCartItemSchema = cartEntryIdSchema.shape({
   idempotencyKey: string().trim().min(1).max(128).required(),
 });
 export type DeleteCartItemInput = InferType<typeof deleteCartItemSchema>;
+export const emptyCartSchema = object({
+  idempotencyKey: string().trim().min(1).max(128).required(),
+});
+export type EmptyCartInput = InferType<typeof emptyCartSchema>;
 export const addWishlistItemSchema = object({
   itemId: objectIdSchema,
   itemType: mixed<(typeof USER_ITEM_TYPES)[number]>().oneOf(USER_ITEM_TYPES).required(),
