@@ -180,7 +180,8 @@ export async function createUserAction(input: unknown) {
       stripUnknown: true,
     });
 
-    return createUser(validatedInput);
+    const { confirmPassword: _confirmPassword, ...dto } = validatedInput;
+    return createUser(dto);
   } catch (error: unknown) {
     if (error instanceof ValidationError) {
       return validationErrorToFetcherError(error);

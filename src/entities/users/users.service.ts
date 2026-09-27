@@ -106,7 +106,7 @@ export async function getAllUsers() {
 }
 
 export async function createUser(input: CreateUserDTO) {
-  const result = await customFetcher<UserDTO, unknown, CreateUserDTO>({
+  const result = await customFetcher<void, unknown, CreateUserDTO>({
     url: '/users',
     method: 'POST',
     body: input,

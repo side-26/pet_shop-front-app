@@ -13,7 +13,7 @@ import {
   getAllPaginatedUsersAction,
   userGetDetailByIdAction,
 } from './users.actions';
-import type { CurrentUserDTO, UserDetailDTO, UserDTO } from './users.dto';
+import type { CurrentUserDTO, UserDetailDTO } from './users.dto';
 import {
   createUser,
   changeCurrentUserPassword,
@@ -132,18 +132,27 @@ describe('users actions', () => {
     selectDeliveryWindowMock.mockResolvedValue(cart as never);
 
     await expect(
-      createDeliveryQuoteAction({ addressId: '507f1f77bcf86cd799439011' }),
+      createDeliveryQuoteAction({
+        addressId: '507f1f77bcf86cd799439011',
+        idempotencyKey: 'quote-1',
+      }),
     ).resolves.toBe(quote);
     await expect(
-      selectDeliveryWindowAction({ quoteId: 'quote-1', deliveryWindowId: 'window-1' }),
+      selectDeliveryWindowAction({
+        quoteId: 'quote-1',
+        deliveryWindowId: 'window-1',
+        idempotencyKey: 'window-1',
+      }),
     ).resolves.toBe(cart);
 
     expect(createDeliveryQuoteMock).toHaveBeenCalledWith('user-1', {
       addressId: '507f1f77bcf86cd799439011',
+      idempotencyKey: 'quote-1',
     });
     expect(selectDeliveryWindowMock).toHaveBeenCalledWith('user-1', {
       quoteId: 'quote-1',
       deliveryWindowId: 'window-1',
+      idempotencyKey: 'window-1',
     });
   });
 
@@ -296,27 +305,16 @@ describe('users actions', () => {
       confirmPassword: 'password123',
       role: USER_ROLES.CUSTOMER,
     };
-    const createdUser: UserDTO = {
-      _id: 'user-1',
-      firstName: '',
-      lastName: '',
-      nationalCode: '',
-      cart: [],
-      isEnable: true,
-      phoneNumber: input.phoneNumber,
-      email: '',
-      role: input.role,
-      orders: [],
-      wishlist: [],
-      age: 0,
-      addresses: [],
-    };
-    const response = { isSuccess: true as const, message: 'created', data: createdUser };
+    const response = { isSuccess: true as const, message: 'created', data: undefined };
     getSessionMock.mockResolvedValue(session(role));
     createUserMock.mockResolvedValue(response);
 
     await expect(createUserAction({ ...input, unknown: 'removed' })).resolves.toBe(response);
-    expect(createUserMock).toHaveBeenCalledWith(input);
+    expect(createUserMock).toHaveBeenCalledWith({
+      phoneNumber: input.phoneNumber,
+      password: input.password,
+      role: input.role,
+    });
   });
 
   it('returns all create-user validation errors without calling the service', async () => {

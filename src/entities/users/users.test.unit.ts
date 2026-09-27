@@ -5,6 +5,7 @@ import {
   createUserSchema,
   changeCurrentUserPasswordSchema,
   createUserAddressSchema,
+  addCartItemSchema,
   getAllPaginatedUsersSchema,
   updateCurrentUserProfileSchema,
   userGetDetailByIdSchema,
@@ -42,6 +43,25 @@ describe('current-user profile schemas', () => {
       nationalCode: '0012345678',
       age: 30,
     });
+  });
+
+  it('requires idempotency keys for cart and delivery mutations', async () => {
+    await expect(
+      addCartItemSchema.validate({
+        itemId: '507f1f77bcf86cd799439011',
+        itemType: 'pet',
+        quantity: 1,
+      }),
+    ).rejects.toThrow();
+
+    await expect(
+      addCartItemSchema.validate({
+        itemId: '507f1f77bcf86cd799439011',
+        itemType: 'pet',
+        quantity: 1,
+        idempotencyKey: 'cart-add-1',
+      }),
+    ).resolves.toMatchObject({ idempotencyKey: 'cart-add-1' });
   });
 
   it('requires a matching, eight-character password confirmation', async () => {

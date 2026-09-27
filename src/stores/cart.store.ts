@@ -142,11 +142,19 @@ function getFailedActionMessage(result: CartActionResult, fallback: string): str
 }
 
 function toAddPayload(item: CartItemInput, quantity: number) {
-  if (item.type === 'pet') return { itemId: item.petId, itemType: 'pet' as const, quantity };
+  const idempotencyKey = crypto.randomUUID();
+  if (item.type === 'pet')
+    return { itemId: item.petId, itemType: 'pet' as const, quantity, idempotencyKey };
 
   const weightId = getWeightId(item.weight);
   if (!weightId) throw new Error('A product cart item requires a weight id.');
-  return { itemId: item.productId, itemType: 'product' as const, weightId, quantity };
+  return {
+    itemId: item.productId,
+    itemType: 'product' as const,
+    weightId,
+    quantity,
+    idempotencyKey,
+  };
 }
 
 function getServerItemId(item: CartItemDTO): string | null {

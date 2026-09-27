@@ -91,12 +91,15 @@ describe('useCartStore', () => {
       cart,
     });
 
-    expect(addCartItemActionMock).toHaveBeenCalledWith({
-      itemId: product.productId,
-      itemType: 'product',
-      weightId: product.weight._id,
-      quantity: 1,
-    });
+    expect(addCartItemActionMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        itemId: product.productId,
+        itemType: 'product',
+        weightId: product.weight._id,
+        quantity: 1,
+        idempotencyKey: expect.any(String),
+      }),
+    );
     expect(useCartStore.getState().serverCart).toEqual(cart);
     expect(useCartStore.getState().needsServerSync).toBe(false);
     expect(useCartStore.getState().hasProductWeight(product.productId, product.weight._id!)).toBe(
@@ -142,12 +145,15 @@ describe('useCartStore', () => {
     });
 
     expect(deleteCartItemActionMock).toHaveBeenCalledWith({ id: 'cart-entry-1' });
-    expect(addCartItemActionMock).toHaveBeenCalledWith({
-      itemId: product.productId,
-      itemType: 'product',
-      weightId: product.weight._id,
-      quantity: 1,
-    });
+    expect(addCartItemActionMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        itemId: product.productId,
+        itemType: 'product',
+        weightId: product.weight._id,
+        quantity: 1,
+        idempotencyKey: expect.any(String),
+      }),
+    );
     expect(useCartStore.getState().items[0]).toMatchObject({
       quantity: 1,
       cartEntryId: 'cart-entry-2',

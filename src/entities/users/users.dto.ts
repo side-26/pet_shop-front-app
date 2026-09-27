@@ -20,7 +20,8 @@ import type {
 
 export type GetAllPaginatedUsersQueryDTO = GetAllPaginatedUsersInput;
 export type GetAllPaginatedUsersParams = Partial<GetAllPaginatedUsersInput>;
-export type CreateUserDTO = CreateUserInput;
+/** The backend accepts account fields only; password confirmation is UI-only. */
+export type CreateUserDTO = Omit<CreateUserInput, 'confirmPassword'>;
 export type DeleteUserByIdDTO = DeleteUserByIdInput;
 export type UpdateUserStatusByIdDTO = UpdateUserStatusByIdInput;
 export type UserGetDetailByIdDTO = UserGetDetailByIdInput;
@@ -108,7 +109,8 @@ export interface UserDTO {
   role: UserRole;
   orders: OrderDTO[];
   wishlist: OrderDTO[];
-  age: number;
+  age: number | null;
+  birthDate: string | null;
   addresses: AddressDTO[];
 }
 

@@ -198,6 +198,7 @@ describe(routePaths.adminUsers, () => {
               orders: [],
               wishlist: [],
               age: 32,
+              birthDate: null,
               addresses: [],
             },
           ],

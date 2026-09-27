@@ -188,7 +188,6 @@ describe('createUser service', () => {
   const input = {
     phoneNumber: '09123456789',
     password: 'password123',
-    confirmPassword: 'password123',
     role: 'customer' as const,
   };
 
@@ -197,7 +196,7 @@ describe('createUser service', () => {
   });
 
   it('posts the exact authenticated request body and invalidates the users list on success', async () => {
-    const response = { isSuccess: true as const, message: 'created', data: { _id: 'user-1' } };
+    const response = { isSuccess: true as const, message: 'created', data: undefined };
     customFetcherMock.mockResolvedValue(response);
 
     await expect(createUser(input)).resolves.toBe(response);
@@ -316,20 +315,27 @@ describe('cart delivery service', () => {
   it('creates and selects authenticated delivery windows using the updated cart endpoints', async () => {
     customFetcherMock.mockResolvedValue({ isSuccess: true, message: null, data: {} } as never);
 
-    await createDeliveryQuote('user-1', { addressId: '507f1f77bcf86cd799439011' });
-    await selectDeliveryWindow('user-1', { quoteId: 'quote-1', deliveryWindowId: 'window-1' });
+    await createDeliveryQuote('user-1', {
+      addressId: '507f1f77bcf86cd799439011',
+      idempotencyKey: 'quote-1',
+    });
+    await selectDeliveryWindow('user-1', {
+      quoteId: 'quote-1',
+      deliveryWindowId: 'window-1',
+      idempotencyKey: 'window-1',
+    });
 
     expect(customFetcherMock).toHaveBeenNthCalledWith(1, {
       url: '/cart/delivery-windows',
       method: 'POST',
-      body: { addressId: '507f1f77bcf86cd799439011' },
+      body: { addressId: '507f1f77bcf86cd799439011', idempotencyKey: 'quote-1' },
       auth: true,
       cache: 'no-store',
     });
     expect(customFetcherMock).toHaveBeenNthCalledWith(2, {
       url: '/cart/delivery-window',
       method: 'PATCH',
-      body: { quoteId: 'quote-1', deliveryWindowId: 'window-1' },
+      body: { quoteId: 'quote-1', deliveryWindowId: 'window-1', idempotencyKey: 'window-1' },
       auth: true,
       cache: 'no-store',
     });

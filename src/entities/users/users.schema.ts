@@ -159,6 +159,7 @@ export const addCartItemSchema = object({
   itemType: mixed<(typeof USER_ITEM_TYPES)[number]>().oneOf(USER_ITEM_TYPES).required(),
   quantity: number().integer().min(1).required(),
   weightId: objectIdSchema.optional(),
+  idempotencyKey: string().trim().min(1).max(128).required(),
 }).test(
   'product-weight',
   'وزن محصول الزامی است.',
@@ -175,11 +176,15 @@ export type AddWishlistItemInput = InferType<typeof addWishlistItemSchema>;
 export const wishlistEntryIdSchema = cartEntryIdSchema;
 export type WishlistEntryIdInput = InferType<typeof wishlistEntryIdSchema>;
 
-export const createDeliveryQuoteSchema = object({ addressId: objectIdSchema });
+export const createDeliveryQuoteSchema = object({
+  addressId: objectIdSchema,
+  idempotencyKey: string().trim().min(1).max(128).required(),
+});
 export type CreateDeliveryQuoteInput = InferType<typeof createDeliveryQuoteSchema>;
 
 export const selectDeliveryWindowSchema = object({
   quoteId: string().trim().min(1).max(100).required(),
   deliveryWindowId: string().trim().min(1).max(100).required(),
+  idempotencyKey: string().trim().min(1).max(128).required(),
 });
 export type SelectDeliveryWindowInput = InferType<typeof selectDeliveryWindowSchema>;
