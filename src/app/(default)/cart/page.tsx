@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { CartPageContent } from './_components/cart-page-content';
+import { CartPageSection } from './_components/cart-page-section';
 
 export const metadata: Metadata = {
   title: 'سبد خرید | پت شاپ پرشین',
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function CartPage() {
-  return <CartPageContent />;
+  return <CartPageSection />;
 }

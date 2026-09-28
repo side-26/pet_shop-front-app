@@ -1,5 +1,6 @@
 import type { OrderDTO } from '@/entities/orders/orders.dto';
 import type { PaginateDataDTO, PaginateResponseDTO } from '@/entities/pagination/pagination.dto';
+import type { ProductWeightDTO } from '@/entities/products/products.dto';
 import type { UserRole } from '@/configs/user-role';
 
 import type {
@@ -54,8 +55,20 @@ export interface AddressDTO {
   phoneNumber: string;
 }
 
+export interface CartCatalogItemDTO {
+  _id: string;
+  title: string;
+  mainImage: string;
+  mainImageThumbnail?: string;
+  price: number;
+  discountPercentage: number;
+  quantity?: number;
+  weights?: ProductWeightDTO[];
+}
+
 export interface CartItemDTO {
   _id?: string;
+  /** `GET /cart/all` returns this catalog item populated by the backend. */
   item: unknown;
   itemType: string;
   quantity: number;
@@ -64,7 +77,11 @@ export interface CartItemDTO {
 
 /** A populated cart line returned by `GET /cart/items`. */
 export interface CartItemDetailsDTO {
+  /** Embedded cart-entry identifier, used by `DELETE /cart/delete/:id`. */
   id: string;
+  /** Referenced product or pet identifier, used when adjusting quantity. */
+  itemId: string;
+  itemType: 'product' | 'pet';
   title: string;
   mainImage: string;
   mainThumbnailImage: string;

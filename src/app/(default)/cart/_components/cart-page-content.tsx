@@ -1,7 +1,11 @@
-import { initialCartItems } from './cart-data';
+import type { CartItem } from './cart-data';
+import { CartPageHeader } from './cart-page-header';
 import { CartOrder } from './cart-order';
 
-export function CartPageContent() {
+export function CartPageContent({
+  initialItems = [],
+  isSkeleton = false,
+}: Readonly<{ initialItems?: readonly CartItem[]; isSkeleton?: boolean }>) {
   return (
     <div
       data-cart-page
@@ -12,10 +16,8 @@ export function CartPageContent() {
         className="tw:pointer-events-none tw:absolute tw:inset-x-0 tw:top-0 tw:-z-10 tw:h-72 tw:bg-[radial-gradient(circle_at_top_right,var(--primary-muted),transparent_62%)] tw:opacity-70"
       />
       <div className="tw:default-layout-container tw:flex tw:flex-col tw:gap-6 tw:lg:h-full tw:lg:min-h-0 tw:lg:gap-4">
-        <header>
-          <h1 className="tw:text-heading-2 tw:text-foreground">سبد خرید</h1>
-        </header>
-        <CartOrder initialItems={initialCartItems} />
+        <CartPageHeader />
+        <CartOrder initialItems={initialItems} isSkeleton={isSkeleton} />
       </div>
     </div>
   );
