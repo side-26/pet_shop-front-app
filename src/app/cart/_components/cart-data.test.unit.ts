@@ -13,6 +13,7 @@ it('maps populated /cart/all entries to weight-specific cart lines', () => {
         _id: 'product-1',
         title: 'غذای خشک سگ',
         mainImage: '/product.jpg',
+        mainImageThumbnail: 'data:image/webp;base64,AAAA',
         price: 900_000,
         discountPercentage: 0,
         weights: [
@@ -33,6 +34,7 @@ it('maps populated /cart/all entries to weight-specific cart lines', () => {
     expect.objectContaining({
       id: 'cart-entry-1',
       title: 'غذای خشک سگ',
+      mainThumbnailImage: 'data:image/webp;base64,AAAA',
       detail: '2 کیلوگرم',
       price: 720_000,
       previousPrice: 800_000,

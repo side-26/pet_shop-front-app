@@ -59,6 +59,8 @@ export function CartProductItemCard({
               src={item.image}
               alt={item.title}
               fill
+              placeholder={item.mainThumbnailImage ? 'blur' : 'empty'}
+              blurDataURL={item.mainThumbnailImage}
               sizes="(min-width: 640px) 136px, 104px"
               className="tw:object-cover"
             />

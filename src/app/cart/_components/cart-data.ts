@@ -5,6 +5,7 @@ type CartItemBase = Readonly<{
   id: string;
   title: string;
   image: string;
+  mainThumbnailImage?: string;
   detail: string;
   price: number;
   previousPrice?: number;
@@ -64,6 +65,7 @@ export function createCartItems(items: CartDTO['items']): CartItem[] {
       id: entry._id,
       title: entry.item.title,
       image: entry.item.mainImage,
+      mainThumbnailImage: entry.item.mainImageThumbnail,
       detail: selectedWeight ? `${selectedWeight.value} ${selectedWeight.metric}` : 'پیش‌سفارش',
       price: price - discount,
       ...(discount > 0 ? { previousPrice: price } : {}),
