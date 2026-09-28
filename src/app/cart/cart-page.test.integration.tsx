@@ -99,6 +99,27 @@ describe(routePaths.cart, () => {
     expect(screen.getByRole('contentinfo')).toBeTruthy();
   });
 
+  it('opens the shared confirmation dialog before removing a cart item', async () => {
+    render(
+      <CartRouteLayout>
+        <CartPageContent initialItems={cartItems} />
+      </CartRouteLayout>,
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'حذف کالا از سبد خرید: غذای خشک سگ مدل رویال کنین Maxi Adult',
+      }),
+    );
+
+    expect(await screen.findByRole('heading', { name: 'حذف کالا از سبد خرید' })).toBeTruthy();
+    expect(
+      screen.getByText(
+        'آیا از حذف «غذای خشک سگ مدل رویال کنین Maxi Adult» از سبد خرید مطمئن هستید؟',
+      ),
+    ).toBeTruthy();
+  });
+
   it('hides the order-summary sidebar for an empty cart', () => {
     render(<CartPageContent initialItems={[]} />);
 

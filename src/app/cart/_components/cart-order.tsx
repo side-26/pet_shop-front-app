@@ -77,7 +77,7 @@ export function CartOrder({ initialItems, isSkeleton = false }: CartOrderProps) 
           <>
             <section
               aria-labelledby="cart-products-title"
-              className="tw:flex tw:flex-col tw:gap-3 tw:md:grid tw:md:grid-cols-2"
+              className="tw:flex tw:flex-col tw:gap-3 tw:md:grid tw:md:grid-cols-2 tw:lg:flex"
             >
               <h3
                 id="cart-products-title"
@@ -89,7 +89,7 @@ export function CartOrder({ initialItems, isSkeleton = false }: CartOrderProps) 
             </section>
             <section
               aria-labelledby="cart-pets-title"
-              className="tw:flex tw:flex-col tw:gap-3 tw:md:grid tw:md:grid-cols-2"
+              className="tw:flex tw:flex-col tw:gap-3 tw:md:grid tw:md:grid-cols-2 tw:lg:flex"
             >
               <h3
                 id="cart-pets-title"
@@ -104,7 +104,7 @@ export function CartOrder({ initialItems, isSkeleton = false }: CartOrderProps) 
         {productItems.length > 0 ? (
           <section
             aria-labelledby="cart-products-title"
-            className="tw:flex tw:flex-col tw:gap-3 tw:md:grid tw:md:grid-cols-2"
+            className="tw:flex tw:flex-col tw:gap-3 tw:md:grid tw:md:grid-cols-2 tw:lg:flex"
           >
             <h3
               id="cart-products-title"
@@ -124,7 +124,7 @@ export function CartOrder({ initialItems, isSkeleton = false }: CartOrderProps) 
         {petItems.length > 0 ? (
           <section
             aria-labelledby="cart-pets-title"
-            className="tw:flex tw:flex-col tw:gap-3 tw:md:grid tw:md:grid-cols-2"
+            className="tw:flex tw:flex-col tw:gap-3 tw:md:grid tw:md:grid-cols-2 tw:lg:flex"
           >
             <h3
               id="cart-pets-title"

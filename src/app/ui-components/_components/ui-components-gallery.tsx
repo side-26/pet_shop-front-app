@@ -49,6 +49,7 @@ import { FetchErrorSectionBoundaryShowcase } from './fetch-error-section-boundar
 import { RateFieldShowcase } from './rate-field-showcase';
 import { NeshanMapShowcase } from './neshan-map-showcase';
 import { NeshanMapPointerIconShowcase } from './neshan-map-pointer-icon-showcase';
+import { FitTextShowcase } from './fit-text-showcase';
 
 const navigation = [
   ['#avatars', 'Avatar'],
@@ -100,6 +101,7 @@ const navigation = [
   ['#fetch-error-section-boundary', 'Fetch Error Section Boundary'],
   ['#neshan-maps', 'Neshan Map'],
   ['#neshan-map-pointer-icons', 'Neshan Map Pointer Icon'],
+  ['#fit-text', 'Fit Text'],
 ] as const;
 
 export function UiComponentsGallery() {
@@ -187,6 +189,7 @@ export function UiComponentsGallery() {
         <FetchErrorSectionBoundaryShowcase />
         <NeshanMapShowcase />
         <NeshanMapPointerIconShowcase />
+        <FitTextShowcase />
       </div>
     </main>
   );

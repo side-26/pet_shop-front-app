@@ -18,7 +18,8 @@
     "test:core-web-vitals:routes": "node --test scripts/core-web-vitals/discover-routes.test.mjs",
     "core-web-vitals:install": "playwright install chromium",
     "prepare": "husky",
-    "cypress:open": "cypress open --e2e"
+    "cypress:open": "cypress open --e2e",
+    "generate:typography": "node ./src/scripts/typography.generator.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
