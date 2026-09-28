@@ -15,9 +15,18 @@ import {
   userGetDetailById,
   updateCurrentUserProfile,
   createDeliveryQuote,
+  addCartItem,
+  getCart,
   deleteCartItem,
   selectDeliveryWindow,
 } from './users.service';
+
+const { cartCacheLifeMock, cartCacheInvalidateDetailMock, cartCacheRegisterDetailMock } =
+  vi.hoisted(() => ({
+    cartCacheLifeMock: vi.fn(),
+    cartCacheInvalidateDetailMock: vi.fn(),
+    cartCacheRegisterDetailMock: vi.fn(),
+  }));
 
 const {
   cacheLifeMock,
@@ -50,6 +59,13 @@ vi.mock('@/utils/entityCache', () => ({
     this.invalidateDetail = invalidateDetailMock;
   }),
 }));
+vi.mock('./cart.cache', () => ({
+  cartCache: {
+    cacheLife: cartCacheLifeMock,
+    invalidateDetail: cartCacheInvalidateDetailMock,
+    registerDetail: cartCacheRegisterDetailMock,
+  },
+}));
 
 const customFetcherMock = vi.mocked(customFetcher);
 const getSessionMock = vi.mocked(getSession);
@@ -77,12 +93,27 @@ describe('getCurrentUser service', () => {
   });
 });
 
-describe('deleteCartItem service', () => {
+describe('cart cache service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('sends the delete idempotency key in the request body', async () => {
+  it('caches the populated cart by user and tags the `/cart/all` read', async () => {
+    const response = { isSuccess: true as const, message: null, data: { items: [] } };
+    customFetcherMock.mockResolvedValue(response);
+
+    await expect(getCart('user-42')).resolves.toBe(response);
+
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/cart/all',
+      auth: true,
+      cache: 'no-store',
+    });
+    expect(cartCacheLifeMock).toHaveBeenCalledWith({ stale: 120 });
+    expect(cartCacheRegisterDetailMock).toHaveBeenCalledWith('user-42');
+  });
+
+  it('invalidates the user cart cache after a successful deletion', async () => {
     const response = { isSuccess: true as const, message: null, data: {} };
     customFetcherMock.mockResolvedValue(response);
 
@@ -100,7 +131,30 @@ describe('deleteCartItem service', () => {
       auth: true,
       cache: 'no-store',
     });
-    expect(invalidateDetailMock).toHaveBeenCalledWith('user-42');
+    expect(cartCacheInvalidateDetailMock).toHaveBeenCalledWith('user-42');
+  });
+
+  it('invalidates the user cart cache after a successful addition', async () => {
+    const input = {
+      itemId: 'product-42',
+      itemType: 'product' as const,
+      weightId: 'weight-42',
+      quantity: 1,
+      idempotencyKey: 'cart-add-1',
+    };
+    const response = { isSuccess: true as const, message: null, data: {} };
+    customFetcherMock.mockResolvedValue(response);
+
+    await expect(addCartItem('user-42', input)).resolves.toBe(response);
+
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/cart/add',
+      method: 'POST',
+      body: input,
+      auth: true,
+      cache: 'no-store',
+    });
+    expect(cartCacheInvalidateDetailMock).toHaveBeenCalledWith('user-42');
   });
 });
 
@@ -121,7 +175,7 @@ describe('getCartItemDetails service', () => {
       auth: true,
       cache: 'no-store',
     });
-    expect(registerDetailMock).toHaveBeenCalledWith('user-42');
+    expect(cartCacheRegisterDetailMock).toHaveBeenCalledWith('user-42');
   });
 });
 
@@ -389,7 +443,7 @@ describe('cart delivery service', () => {
       auth: true,
       cache: 'no-store',
     });
-    expect(invalidateDetailMock).toHaveBeenCalledWith('user-1');
+    expect(cartCacheInvalidateDetailMock).toHaveBeenCalledWith('user-1');
   });
 });
 

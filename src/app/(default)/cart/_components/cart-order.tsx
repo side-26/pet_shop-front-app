@@ -4,15 +4,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'nextjs-toploader/app';
 import { cn } from '@/lib/utils';
 import { useCartStore } from '@/stores/cart.store';
-import type { CartItem } from './cart-data';
+import type { CartItem, CartPetItem, CartProductItem } from './cart-data';
 import { CartEmptyState } from './cart-empty-state';
-import { CartItemCard } from './cart-item-card';
+import { CartPetItemCard } from './cart-pet-item-card';
+import { CartProductItemCard } from './cart-product-item-card';
 import { CartOrderSummary } from './cart-order-summary';
 
 type CartLine = CartItem & { quantity: number };
 type CartOrderProps = Readonly<{ initialItems: readonly CartItem[]; isSkeleton?: boolean }>;
-
-const cartSkeletonItemIds = ['cart-skeleton-item-1', 'cart-skeleton-item-2'] as const;
 
 export function CartOrder({ initialItems, isSkeleton = false }: CartOrderProps) {
   const [items, setItems] = useState<readonly CartLine[]>(initialItems);
@@ -22,6 +21,10 @@ export function CartOrder({ initialItems, isSkeleton = false }: CartOrderProps) 
   );
   const syncLocalToServer = useCartStore((state) => state.syncLocalToServer);
   const hasItems = items.length > 0;
+  const productItems = items.filter(
+    (item): item is CartProductItem => item.cartItem.type === 'product',
+  );
+  const petItems = items.filter((item): item is CartPetItem => item.cartItem.type === 'pet');
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const merchandiseTotal = useMemo(
     () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
@@ -51,6 +54,10 @@ export function CartOrder({ initialItems, isSkeleton = false }: CartOrderProps) 
     );
   }
 
+  function handleItemRemoved(id: string) {
+    handleQuantityChanged(id, 0);
+  }
+
   return (
     <div
       className={cn(
@@ -66,13 +73,46 @@ export function CartOrder({ initialItems, isSkeleton = false }: CartOrderProps) 
         <h2 id="cart-items-title" className="tw:sr-only">
           کالاهای سبد خرید
         </h2>
-        {isSkeleton
-          ? cartSkeletonItemIds.map((id) => (
-              <CartItemCard key={id} isSkeleton onQuantityChanged={handleQuantityChanged} />
-            ))
-          : items.map((item) => (
-              <CartItemCard key={item.id} item={item} onQuantityChanged={handleQuantityChanged} />
+        {isSkeleton ? (
+          <>
+            <section aria-labelledby="cart-products-title" className="tw:flex tw:flex-col tw:gap-3">
+              <h3 id="cart-products-title" className="tw:text-title-m tw:text-foreground">
+                محصولات
+              </h3>
+              <CartProductItemCard isSkeleton onQuantityChanged={handleQuantityChanged} />
+            </section>
+            <section aria-labelledby="cart-pets-title" className="tw:flex tw:flex-col tw:gap-3">
+              <h3 id="cart-pets-title" className="tw:text-title-m tw:text-foreground">
+                حیوانات
+              </h3>
+              <CartPetItemCard isSkeleton onRemoved={handleItemRemoved} />
+            </section>
+          </>
+        ) : null}
+        {productItems.length > 0 ? (
+          <section aria-labelledby="cart-products-title" className="tw:flex tw:flex-col tw:gap-3">
+            <h3 id="cart-products-title" className="tw:text-title-m tw:text-foreground">
+              محصولات
+            </h3>
+            {productItems.map((item) => (
+              <CartProductItemCard
+                key={item.id}
+                item={item}
+                onQuantityChanged={handleQuantityChanged}
+              />
             ))}
+          </section>
+        ) : null}
+        {petItems.length > 0 ? (
+          <section aria-labelledby="cart-pets-title" className="tw:flex tw:flex-col tw:gap-3">
+            <h3 id="cart-pets-title" className="tw:text-title-m tw:text-foreground">
+              حیوانات
+            </h3>
+            {petItems.map((item) => (
+              <CartPetItemCard key={item.id} item={item} onRemoved={handleItemRemoved} />
+            ))}
+          </section>
+        ) : null}
         {!hasItems && !isSkeleton ? <CartEmptyState /> : null}
       </section>
       {hasItems || isSkeleton ? (

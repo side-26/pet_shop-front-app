@@ -1,6 +1,6 @@
 'use client';
 
-import { RefreshCw, TriangleAlert, type LucideIcon } from 'lucide-react';
+import { CircleX, RefreshCw, ServerCrash, type LucideIcon } from 'lucide-react';
 import { useTransition } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -19,9 +19,9 @@ type PageErrorStateProps = Readonly<{
 export function PageErrorState({
   className,
   errorMessage,
-  icon: Icon = TriangleAlert,
-  onRetry,
   statusCode,
+  icon: Icon = statusCode === 400 ? CircleX : ServerCrash,
+  onRetry,
   title = statusCode === 400 ? 'درخواست قابل انجام نیست' : 'خطایی در سرور رخ داد',
 }: PageErrorStateProps) {
   const [isRetrying, startRetryTransition] = useTransition();
@@ -45,9 +45,6 @@ export function PageErrorState({
             aria-hidden="true"
           >
             <Icon />
-          </span>
-          <span className="tw:text-title-s tw:text-error" dir="ltr">
-            {statusCode}
           </span>
           <CardTitle>{title}</CardTitle>
           <CardDescription>

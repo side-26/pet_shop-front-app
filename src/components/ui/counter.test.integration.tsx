@@ -26,14 +26,17 @@ describe('Counter', () => {
 
   it('clamps values and exposes visual axes', () => {
     const { rerender } = render(
-      <Counter defaultValue={20} min={2} max={5} variant="tonal" color="success" size="xl" />,
+      <Counter defaultValue={20} min={2} max={5} variant="outlined" color="success" size="xl" />,
     );
     const counter = screen.getByRole('group', { name: 'شمارنده' });
 
     expect(screen.getByText('۵')).toBeTruthy();
-    expect(counter.getAttribute('data-variant')).toBe('tonal');
+    expect(counter.getAttribute('data-variant')).toBe('outlined');
     expect(counter.getAttribute('data-color')).toBe('success');
     expect(counter.getAttribute('data-size')).toBe('xl');
+    expect(counter.querySelector('[data-slot="button-group-text"]')?.className).toContain(
+      'tw:border-success-border',
+    );
 
     rerender(<Counter value={-10} min={2} max={5} />);
     expect(screen.getByText('۲')).toBeTruthy();

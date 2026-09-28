@@ -1,7 +1,7 @@
 import type { CartCatalogItemDTO, CartDTO } from '@/entities/users/users.dto';
 import type { CartItem as StoreCartItem } from '@/stores/cart.store';
 
-export type CartItem = Readonly<{
+type CartItemBase = Readonly<{
   id: string;
   title: string;
   image: string;
@@ -10,8 +10,13 @@ export type CartItem = Readonly<{
   previousPrice?: number;
   quantity: number;
   stock: number;
-  cartItem: StoreCartItem;
 }>;
+
+export type CartProductItem = CartItemBase &
+  Readonly<{ cartItem: Extract<StoreCartItem, { type: 'product' }> }>;
+export type CartPetItem = CartItemBase &
+  Readonly<{ cartItem: Extract<StoreCartItem, { type: 'pet' }> }>;
+export type CartItem = CartProductItem | CartPetItem;
 
 function isCartCatalogItem(item: unknown): item is CartCatalogItemDTO {
   if (!item || typeof item !== 'object') return false;
@@ -55,7 +60,7 @@ export function createCartItems(items: CartDTO['items']): CartItem[] {
       cartEntryId: entry._id,
       quantity: entry.quantity,
     };
-    return {
+    const cartItemData = {
       id: entry._id,
       title: entry.item.title,
       image: entry.item.mainImage,
@@ -66,5 +71,8 @@ export function createCartItems(items: CartDTO['items']): CartItem[] {
       stock: selectedWeight?.quantity ?? entry.item.quantity ?? entry.quantity,
       cartItem,
     };
+    return entry.itemType === 'product'
+      ? (cartItemData as CartProductItem)
+      : (cartItemData as CartPetItem);
   });
 }

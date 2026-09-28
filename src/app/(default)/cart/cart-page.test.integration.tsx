@@ -1,7 +1,9 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
+import { ConfirmDialog } from '@/components/common/confirm-dialog/main';
+import { useCommonStore } from '@/stores/common.store';
 
 import CartPage, { metadata } from './page';
 import { CartPageContent } from './_components/cart-page-content';
@@ -9,7 +11,10 @@ import type { CartItem } from './_components/cart-data';
 
 vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  act(() => useCommonStore.getState().hideConfirmDialog());
+});
 
 const cartItems: readonly CartItem[] = [
   {
@@ -35,6 +40,21 @@ const cartItems: readonly CartItem[] = [
       },
     },
   },
+  {
+    id: 'cart-pet-1',
+    title: 'گربه پرشین سفید',
+    image: '/images/product-placeholder.webp',
+    detail: 'پیش‌سفارش',
+    price: 12_000_000,
+    quantity: 1,
+    stock: 1,
+    cartItem: {
+      type: 'pet',
+      petId: 'pet-1',
+      cartEntryId: 'cart-pet-1',
+      quantity: 1,
+    },
+  },
 ];
 
 describe(routePaths.cart, () => {
@@ -44,12 +64,15 @@ describe(routePaths.cart, () => {
     expect(container.querySelector('main')).toBeNull();
     expect(screen.getByRole('heading', { level: 1, name: 'سبد خرید' })).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'خلاصه سفارش' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'محصولات' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'حیوانات' })).toBeTruthy();
     expect(screen.getAllByRole('group', { name: /تعداد/ })).toHaveLength(1);
     expect(
       screen
         .getByRole('group', { name: 'تعداد غذای خشک سگ مدل رویال کنین Maxi Adult' })
         .querySelector('output')?.textContent,
     ).toBe('۱');
+    expect(screen.queryByRole('group', { name: 'تعداد گربه پرشین سفید' })).toBeNull();
     expect(screen.queryByText('کد تخفیف دارید؟')).toBeNull();
     expect(screen.queryByText('۴ کالا برای ادامه خرید آماده است.')).toBeNull();
     expect(screen.queryByText('تخفیف دارد')).toBeNull();
@@ -75,8 +98,24 @@ describe(routePaths.cart, () => {
     expect(container.querySelector('[data-cart-page] [aria-busy="true"]')).toBeTruthy();
   });
 
-  it('asks for confirmation before removing a cart item', () => {
-    render(<CartPageContent initialItems={cartItems} />);
+  it('adopts refreshed cart data supplied after navigation', async () => {
+    const { rerender } = render(<CartPageContent initialItems={[cartItems[0]]} />);
+
+    rerender(<CartPageContent initialItems={[cartItems[1]]} />);
+
+    await waitFor(() => {
+      expect(screen.queryByText('غذای خشک سگ مدل رویال کنین Maxi Adult')).toBeNull();
+      expect(screen.getByText('گربه پرشین سفید')).toBeTruthy();
+    });
+  });
+
+  it('asks for confirmation before removing a cart item', async () => {
+    render(
+      <>
+        <CartPageContent initialItems={cartItems} />
+        <ConfirmDialog />
+      </>,
+    );
 
     fireEvent.click(
       screen.getByRole('button', {
@@ -84,8 +123,12 @@ describe(routePaths.cart, () => {
       }),
     );
 
-    expect(screen.getByRole('heading', { name: 'حذف کالا از سبد خرید' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'حذف کالا' })).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: 'حذف کالا از سبد خرید' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'تأیید' }));
+
+    return waitFor(() => {
+      expect(screen.queryByText('غذای خشک سگ مدل رویال کنین Maxi Adult')).toBeNull();
+    });
   });
 
   it('defines cart metadata', () => {

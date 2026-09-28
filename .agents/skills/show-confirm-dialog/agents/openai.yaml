@@ -1,0 +1,3 @@
+interface:
+  display_name: "Show Confirm Dialog"
+  short_description: "Open shared store-backed confirmations"

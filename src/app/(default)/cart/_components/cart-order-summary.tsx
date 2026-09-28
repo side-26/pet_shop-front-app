@@ -46,10 +46,10 @@ export function CartOrderSummary({
         <CardContent>
           <dl className="tw:flex tw:flex-col tw:gap-4">
             <SummaryRow
-              label={`قیمت کالاها (${itemCount.toLocaleString('fa-IR')})`}
+              label={`قیمت آیتم ها(${itemCount.toLocaleString('fa-IR')})`}
               value={merchandiseTotal + discountTotal}
             />
-            <SummaryRow label="تخفیف کالاها" value={discountTotal} />
+            <SummaryRow label="تخفیف آیتم ها" value={discountTotal} />
           </dl>
           <Separator className="tw:my-5" />
           <div className="tw:flex tw:items-center tw:justify-between tw:gap-4">

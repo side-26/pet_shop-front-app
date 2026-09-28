@@ -123,6 +123,32 @@ const counterVariants = tv({
       color: 'error',
       class: { value: 'tw:text-error' },
     },
+    {
+      variant: 'outlined',
+      color: 'primary',
+      class: { value: 'tw:border-primary' },
+    },
+    {
+      variant: 'outlined',
+      color: 'secondary',
+      class: { value: 'tw:border-secondary' },
+    },
+    { variant: 'outlined', color: 'info', class: { value: 'tw:border-info' } },
+    {
+      variant: 'outlined',
+      color: 'success',
+      class: { value: 'tw:border-success-border' },
+    },
+    {
+      variant: 'outlined',
+      color: 'warning',
+      class: { value: 'tw:border-warning-border' },
+    },
+    {
+      variant: 'outlined',
+      color: 'error',
+      class: { value: 'tw:border-error-border' },
+    },
   ],
   defaultVariants: { variant: 'fill', color: 'primary', size: 'md' },
 });

@@ -34,6 +34,7 @@ import type {
 import { createUsersListCacheKey, omitNullQueryValues } from './users.helpers';
 import { getAllPaginatedUsersSchema } from './users.schema';
 import { usersCache } from './users.cache';
+import { cartCache } from './cart.cache';
 
 export async function getCurrentUser() {
   'use cache: private';
@@ -240,16 +241,16 @@ export async function updateUserAddress(
 
 export async function getCart(userId: string) {
   'use cache: private';
-  usersCache.cacheLife({ stale: 120 });
-  usersCache.registerDetail(userId);
+  cartCache.cacheLife({ stale: 120 });
+  cartCache.registerDetail(userId);
   return customFetcher<CartDTO>({ url: '/cart/all', auth: true, cache: 'no-store' });
 }
 
 /** Gets populated cart lines, including the current catalog price and stock. */
 export async function getCartItemDetails(userId: string) {
   'use cache: private';
-  usersCache.cacheLife({ stale: 120 });
-  usersCache.registerDetail(userId);
+  cartCache.cacheLife({ stale: 120 });
+  cartCache.registerDetail(userId);
   return customFetcher<CartItemDetailsDTO[]>({
     url: '/cart/items',
     method: 'GET',
@@ -266,7 +267,7 @@ export async function addCartItem(userId: string, input: AddCartItemDTO) {
     auth: true,
     cache: 'no-store',
   });
-  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  if (result.isSuccess) cartCache.invalidateDetail(userId);
   return result;
 }
 
@@ -278,7 +279,7 @@ export async function deleteCartItem(userId: string, input: DeleteCartItemDTO) {
     auth: true,
     cache: 'no-store',
   });
-  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  if (result.isSuccess) cartCache.invalidateDetail(userId);
   return result;
 }
 
@@ -290,7 +291,7 @@ export async function emptyCart(userId: string, input: EmptyCartDTO) {
     auth: true,
     cache: 'no-store',
   });
-  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  if (result.isSuccess) cartCache.invalidateDetail(userId);
   return result;
 }
 
@@ -302,7 +303,7 @@ export async function createDeliveryQuote(userId: string, input: CreateDeliveryQ
     auth: true,
     cache: 'no-store',
   });
-  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  if (result.isSuccess) cartCache.invalidateDetail(userId);
   return result;
 }
 
@@ -314,7 +315,7 @@ export async function selectDeliveryWindow(userId: string, input: SelectDelivery
     auth: true,
     cache: 'no-store',
   });
-  if (result.isSuccess) usersCache.invalidateDetail(userId);
+  if (result.isSuccess) cartCache.invalidateDetail(userId);
   return result;
 }
 

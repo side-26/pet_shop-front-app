@@ -3,40 +3,58 @@
 import { Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Counter } from '@/components/ui/counter';
 import { Price } from '@/components/ui/price';
 import { useCartStore } from '@/stores/cart.store';
-import type { CartItem } from './cart-data';
+import { useCommonStore } from '@/stores/common.store';
+import type { CartProductItem } from './cart-data';
 
-type CartLine = CartItem & { quantity: number };
 type CartItemCardProps = Readonly<{
-  item?: CartLine;
+  item?: CartProductItem;
   isSkeleton?: boolean;
   onQuantityChanged: (id: string, quantity: number) => void;
 }>;
 
-export function CartItemCard({ item, isSkeleton = false, onQuantityChanged }: CartItemCardProps) {
+export function CartProductItemCard({
+  item,
+  isSkeleton = false,
+  onQuantityChanged,
+}: CartItemCardProps) {
   const [isPending, setIsPending] = useState(false);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
   const setQuantity = useCartStore((state) => state.setQuantity);
+  const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
   async function updateQuantity(quantity: number) {
     if (!item || isSkeleton) return;
     setIsPending(true);
     const result = await setQuantity(item.cartItem, quantity);
     if (result.isSuccess) onQuantityChanged(item.id, quantity);
     setIsPending(false);
+  }
+
+  async function removeItem() {
+    if (!item || isSkeleton) return;
+
+    setIsPending(true);
+    const result = await removeFromCart(item.cartItem);
+    if (result.isSuccess) {
+      onQuantityChanged(item.id, 0);
+    }
+    setIsPending(false);
+  }
+
+  function openRemoveConfirmation() {
+    if (!item || isSkeleton) return;
+
+    showConfirmDialog({
+      title: 'حذف کالا از سبد خرید',
+      message: `آیا از حذف «${item.title}» از سبد خرید مطمئن هستید؟`,
+      icon: Trash2,
+      variant: 'error',
+      onSuccess: removeItem,
+    });
   }
   return (
     <Card
@@ -45,8 +63,8 @@ export function CartItemCard({ item, isSkeleton = false, onQuantityChanged }: Ca
       aria-busy={isSkeleton || undefined}
       className={`tw:lg:shrink-0 tw:lg:py-2${isSkeleton ? ' skeleton tw:pointer-events-none tw:select-none' : ''}`}
     >
-      <CardContent className="tw:grid tw:grid-cols-[6.5rem_minmax(0,1fr)] tw:gap-4 tw:sm:grid-cols-[8.5rem_minmax(0,1fr)] tw:sm:gap-6 tw:lg:grid-cols-[4rem_minmax(0,1fr)] tw:lg:gap-4 tw:lg:px-3">
-        <div className="tw:relative tw:aspect-square tw:overflow-hidden tw:rounded-2xl tw:bg-muted">
+      <CardContent className="tw:grid tw:grid-cols-[auto_minmax(0,1fr)] tw:gap-4 tw:sm:gap-6 tw:lg:gap-4 tw:lg:px-3">
+        <div className="tw:relative tw:h-full tw:aspect-square tw:self-stretch tw:overflow-hidden tw:rounded-2xl tw:bg-muted">
           {item ? (
             <Image
               src={item.image}
@@ -77,38 +95,17 @@ export function CartItemCard({ item, isSkeleton = false, onQuantityChanged }: Ca
               onValueChange={(quantity) => void updateQuantity(quantity)}
             />
             <div className="tw:flex tw:flex-col tw:items-start tw:gap-0.5 tw:sm:items-end">
-              <AlertDialog>
-                <AlertDialogTrigger
-                  render={
-                    <Button
-                      iconOnly
-                      size="sm"
-                      variant="transparent"
-                      color="error"
-                      disabled={isSkeleton || isPending}
-                      aria-label={
-                        item ? `حذف کالا از سبد خرید: ${item.title}` : 'حذف کالا از سبد خرید'
-                      }
-                    />
-                  }
-                >
-                  <Trash2 aria-hidden="true" />
-                </AlertDialogTrigger>
-                <AlertDialogContent size="sm">
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>حذف کالا از سبد خرید</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      آیا از حذف «{item?.title}» از سبد خرید مطمئن هستید؟
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>انصراف</AlertDialogCancel>
-                    <AlertDialogAction color="error" onClick={() => void updateQuantity(0)}>
-                      حذف کالا
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <Button
+                iconOnly
+                size="sm"
+                variant="transparent"
+                color="error"
+                disabled={isSkeleton || isPending}
+                aria-label={item ? `حذف کالا از سبد خرید: ${item.title}` : 'حذف کالا از سبد خرید'}
+                onClick={openRemoveConfirmation}
+              >
+                <Trash2 aria-hidden="true" />
+              </Button>
               {item?.previousPrice ? (
                 <Price
                   number={item.previousPrice * item.quantity}

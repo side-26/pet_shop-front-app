@@ -6,6 +6,15 @@ export function CartPageContent({
   initialItems = [],
   isSkeleton = false,
 }: Readonly<{ initialItems?: readonly CartItem[]; isSkeleton?: boolean }>) {
+  const cartOrderKey = isSkeleton
+    ? 'cart-skeleton'
+    : initialItems
+        .map(
+          (item) =>
+            `${item.id}:${item.quantity}:${item.price}:${item.previousPrice ?? ''}:${item.stock}`,
+        )
+        .join('|');
+
   return (
     <div
       data-cart-page
@@ -17,7 +26,7 @@ export function CartPageContent({
       />
       <div className="tw:default-layout-container tw:flex tw:flex-col tw:gap-6 tw:lg:h-full tw:lg:min-h-0 tw:lg:gap-4">
         <CartPageHeader />
-        <CartOrder initialItems={initialItems} isSkeleton={isSkeleton} />
+        <CartOrder key={cartOrderKey} initialItems={initialItems} isSkeleton={isSkeleton} />
       </div>
     </div>
   );

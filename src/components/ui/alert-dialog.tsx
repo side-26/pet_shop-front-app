@@ -153,7 +153,10 @@ function AlertDialogAction({
       data-slot="alert-dialog-action"
       variant={variant}
       color={color}
-      className={cn('tw:max-sm:w-full', className)}
+      className={cn(
+        'tw:max-sm:w-full tw:group-data-[size=sm]/alert-dialog-content:order-first',
+        className,
+      )}
       {...props}
     />
   );
