@@ -16,7 +16,7 @@ export function CartEmptyState() {
   return (
     <Empty className="tw:min-h-56 tw:border">
       <EmptyHeader>
-        <EmptyMedia variant="icon">
+        <EmptyMedia variant="icon" className="tw:mx-auto tw:self-center">
           <PackageCheck aria-hidden="true" />
         </EmptyMedia>
         <EmptyTitle role="heading" aria-level={2}>

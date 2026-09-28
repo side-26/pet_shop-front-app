@@ -41,7 +41,7 @@ export function PageErrorState({
       >
         <CardHeader className="tw:items-center tw:gap-4">
           <span
-            className="tw:grid tw:size-14 tw:place-items-center tw:rounded-2xl tw:bg-error-muted tw:text-error-muted-foreground"
+            className="tw:mx-auto tw:grid tw:size-14 tw:self-center tw:place-items-center tw:rounded-2xl tw:bg-error-muted tw:text-error-muted-foreground"
             aria-hidden="true"
           >
             <Icon />

@@ -11,6 +11,7 @@ import {
   enableUserByIdAction,
   getCurrentUserAction,
   getAllPaginatedUsersAction,
+  retryCartAction,
   userGetDetailByIdAction,
 } from './users.actions';
 import type { CurrentUserDTO, UserDetailDTO } from './users.dto';
@@ -23,13 +24,17 @@ import {
   getCurrentUser,
   getAllPaginatedUsers,
   getAllUsers,
+  invalidateCart,
   userGetDetailById,
   updateCurrentUserProfile,
   createDeliveryQuote,
   selectDeliveryWindow,
 } from './users.service';
 
+const { refreshMock } = vi.hoisted(() => ({ refreshMock: vi.fn() }));
+
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
+vi.mock('next/cache', () => ({ refresh: refreshMock }));
 vi.mock('./users.service', () => ({
   changeCurrentUserPassword: vi.fn(),
   createUser: vi.fn(),
@@ -39,6 +44,7 @@ vi.mock('./users.service', () => ({
   getCurrentUser: vi.fn(),
   getAllPaginatedUsers: vi.fn(),
   getAllUsers: vi.fn(),
+  invalidateCart: vi.fn(),
   userGetDetailById: vi.fn(),
   updateCurrentUserProfile: vi.fn(),
   createDeliveryQuote: vi.fn(),
@@ -58,6 +64,7 @@ const changeCurrentUserPasswordMock = vi.mocked(changeCurrentUserPassword);
 const userGetDetailByIdMock = vi.mocked(userGetDetailById);
 const createDeliveryQuoteMock = vi.mocked(createDeliveryQuote);
 const selectDeliveryWindowMock = vi.mocked(selectDeliveryWindow);
+const invalidateCartMock = vi.mocked(invalidateCart);
 
 const successResponse = {
   isSuccess: true as const,
@@ -175,6 +182,15 @@ describe('users actions', () => {
 
     await expect(getCurrentUserAction()).resolves.toBe(response);
     expect(getCurrentUserMock).toHaveBeenCalledOnce();
+  });
+
+  it('expires only the signed-in cart before retrying the cart route', async () => {
+    getSessionMock.mockResolvedValue(session(USER_ROLES.CUSTOMER));
+
+    await expect(retryCartAction()).resolves.toBeUndefined();
+
+    expect(invalidateCartMock).toHaveBeenCalledWith('user-1');
+    expect(refreshMock).toHaveBeenCalledOnce();
   });
 
   it('gets the non-paginated management list for an admin only', async () => {

@@ -246,6 +246,11 @@ export async function getCart(userId: string) {
   return customFetcher<CartDTO>({ url: '/cart/all', auth: true, cache: 'no-store' });
 }
 
+/** Expires the current user's populated cart read before an explicit retry. */
+export function invalidateCart(userId: string) {
+  cartCache.invalidateDetail(userId);
+}
+
 /** Gets populated cart lines, including the current catalog price and stock. */
 export async function getCartItemDetails(userId: string) {
   'use cache: private';

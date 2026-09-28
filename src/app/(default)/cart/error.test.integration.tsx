@@ -1,14 +1,19 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import CartError from './error';
+
+const { retryCartActionMock } = vi.hoisted(() => ({ retryCartActionMock: vi.fn() }));
+
+vi.mock('@/entities/users/users.actions', () => ({ retryCartAction: retryCartActionMock }));
 
 afterEach(() => {
   vi.restoreAllMocks();
 });
 
-it('renders the cart error message and retries the route', () => {
+it('expires the cart cache before retrying the route', async () => {
   const retry = vi.fn();
+  retryCartActionMock.mockResolvedValue(undefined);
   vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
   render(<CartError error={new Error('اتصال به سبد خرید برقرار نشد')} retry={retry} />);
@@ -19,5 +24,8 @@ it('renders the cart error message and retries the route', () => {
 
   fireEvent.click(screen.getByRole('button', { name: 'تلاش دوباره' }));
 
-  expect(retry).toHaveBeenCalledOnce();
+  await waitFor(() => {
+    expect(retryCartActionMock).toHaveBeenCalledOnce();
+    expect(retry).toHaveBeenCalledOnce();
+  });
 });

@@ -1,6 +1,7 @@
 'use server';
 
 import { ValidationError } from 'yup';
+import { refresh } from 'next/cache';
 
 import { USER_ROLES, type UserRole } from '@/configs/user-role';
 import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
@@ -45,6 +46,7 @@ import {
   emptyCart,
   getCart,
   getCartItemDetails,
+  invalidateCart,
   getUserAddresses,
   getWishlist,
   updateUserAddress,
@@ -315,6 +317,15 @@ export async function getCartAction() {
   return session
     ? getCart(session.userId)
     : accessError('برای مشاهده سبد خرید وارد حساب کاربری شوید.');
+}
+
+/** Expire only the signed-in user's cart before retrying the cart route. */
+export async function retryCartAction() {
+  const session = await getSession();
+  if (!session) return accessError('برای مشاهده سبد خرید وارد حساب کاربری شوید.');
+
+  invalidateCart(session.userId);
+  refresh();
 }
 
 export async function getCartItemDetailsAction() {

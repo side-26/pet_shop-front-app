@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 
 import { PageErrorState } from '@/components/common/page-error-state';
+import { retryCartAction } from '@/entities/users/users.actions';
 
 export default function CartError({
   error,
@@ -12,12 +13,17 @@ export default function CartError({
     console.error(error);
   }, [error]);
 
+  async function handleRetry() {
+    await retryCartAction();
+    retry();
+  }
+
   return (
     <PageErrorState
       statusCode={500}
       title="بارگذاری سبد خرید انجام نشد"
       errorMessage={error.message}
-      onRetry={retry}
+      onRetry={handleRetry}
     />
   );
 }
