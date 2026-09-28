@@ -2,14 +2,16 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
-import { ConfirmDialog } from '@/components/common/confirm-dialog/main';
 import { useCommonStore } from '@/stores/common.store';
 
 import CartPage, { metadata } from './page';
 import { CartPageContent } from './_components/cart-page-content';
+import { CartRouteLayout } from './_components/cart-route-layout';
 import type { CartItem } from './_components/cart-data';
 
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('nextjs-toploader/app', () => ({
+  useRouter: () => ({ back: vi.fn(), push: vi.fn(), refresh: vi.fn(), replace: vi.fn() }),
+}));
 
 afterEach(() => {
   cleanup();
@@ -59,7 +61,11 @@ const cartItems: readonly CartItem[] = [
 
 describe(routePaths.cart, () => {
   it('renders the responsive cart content and order summary for a populated cart', () => {
-    const { container } = render(<CartPageContent initialItems={cartItems} />);
+    const { container } = render(
+      <CartRouteLayout>
+        <CartPageContent initialItems={cartItems} />
+      </CartRouteLayout>,
+    );
 
     expect(container.querySelector('main')).toBeNull();
     expect(screen.getByRole('heading', { level: 1, name: 'سبد خرید' })).toBeTruthy();
@@ -77,9 +83,20 @@ describe(routePaths.cart, () => {
     expect(screen.queryByText('۴ کالا برای ادامه خرید آماده است.')).toBeNull();
     expect(screen.queryByText('تخفیف دارد')).toBeNull();
     expect(screen.queryByText('موجود در انبار')).toBeNull();
-    expect(screen.getByRole('button', { name: /ادامه خرید/ }).getAttribute('href')).toBe(
-      routePaths.productsList,
+    expect(screen.getAllByRole('button', { name: 'ادامه خرید' })).toHaveLength(2);
+  });
+
+  it('renders cart-specific route chrome and the order summary footer', () => {
+    render(
+      <CartRouteLayout>
+        <CartPageContent initialItems={cartItems} />
+      </CartRouteLayout>,
     );
+
+    expect(screen.getByRole('heading', { level: 1, name: 'سبد خرید' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'خالی کردن سبد خرید' })).toBeTruthy();
+    expect(screen.getAllByRole('button', { name: 'ادامه خرید' })).toHaveLength(2);
+    expect(screen.getByRole('contentinfo')).toBeTruthy();
   });
 
   it('hides the order-summary sidebar for an empty cart', () => {
@@ -109,22 +126,12 @@ describe(routePaths.cart, () => {
     });
   });
 
-  it('asks for confirmation before removing a cart item', async () => {
-    render(
-      <>
-        <CartPageContent initialItems={cartItems} />
-        <ConfirmDialog />
-      </>,
-    );
+  it('removes a cart product through its counter', async () => {
+    render(<CartPageContent initialItems={cartItems} />);
 
     fireEvent.click(
-      screen.getByRole('button', {
-        name: 'حذف کالا از سبد خرید: غذای خشک سگ مدل رویال کنین Maxi Adult',
-      }),
+      screen.getByRole('button', { name: 'حذف غذای خشک سگ مدل رویال کنین Maxi Adult' }),
     );
-
-    expect(await screen.findByRole('heading', { name: 'حذف کالا از سبد خرید' })).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'تأیید' }));
 
     return waitFor(() => {
       expect(screen.queryByText('غذای خشک سگ مدل رویال کنین Maxi Adult')).toBeNull();

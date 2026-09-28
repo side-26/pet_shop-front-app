@@ -4,7 +4,11 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { useAuthStore } from '@/entities/auth/auth.store';
-import { addCartItemAction, deleteCartItemAction } from '@/entities/users/users.actions';
+import {
+  addCartItemAction,
+  deleteCartItemAction,
+  emptyCartAction,
+} from '@/entities/users/users.actions';
 import type { CartDTO, CartItemDTO } from '@/entities/users/users.dto';
 import type { ProductWeightDTO } from '@/entities/products/products.dto';
 
@@ -60,6 +64,7 @@ type CartStore = {
   removeFromCart: (item: CartItem) => Promise<CartOperationResult>;
   increaseQuantity: (item: CartItem) => Promise<CartOperationResult>;
   decreaseQuantity: (item: CartItem) => Promise<CartOperationResult>;
+  emptyCart: () => Promise<CartOperationResult>;
   setQuantity: (item: CartItem, quantity: number) => Promise<CartOperationResult>;
   /** Returns whether this exact product and weight pair is currently in the cart. */
   hasProductWeight: (productId: string, weightId: string) => boolean;
@@ -296,6 +301,21 @@ export const useCartStore = create<CartStore>()(
           }
 
           return finishGuestMutation((items) => setItemQuantity(items, item, item.quantity - 1));
+        },
+
+        emptyCart: async () => {
+          if (!hasAuthenticatedUser()) {
+            get().clearCart();
+            return finishSuccess(null);
+          }
+
+          set({ isSyncing: true, lastError: null });
+          const result = await emptyCartAction({ idempotencyKey: crypto.randomUUID() });
+          if (!isSuccessfulCartAction(result))
+            return finishError(getFailedActionMessage(result, 'Unable to empty the cart.'));
+
+          set({ items: [] });
+          return finishSuccess(result.data);
         },
 
         setQuantity: async (item, quantity) => {

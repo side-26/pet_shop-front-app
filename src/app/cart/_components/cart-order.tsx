@@ -75,14 +75,26 @@ export function CartOrder({ initialItems, isSkeleton = false }: CartOrderProps) 
         </h2>
         {isSkeleton ? (
           <>
-            <section aria-labelledby="cart-products-title" className="tw:flex tw:flex-col tw:gap-3">
-              <h3 id="cart-products-title" className="tw:text-title-m tw:text-foreground">
+            <section
+              aria-labelledby="cart-products-title"
+              className="tw:flex tw:flex-col tw:gap-3 tw:md:grid tw:md:grid-cols-2"
+            >
+              <h3
+                id="cart-products-title"
+                className="tw:text-title-m tw:text-foreground tw:md:col-span-2"
+              >
                 محصولات
               </h3>
               <CartProductItemCard isSkeleton onQuantityChanged={handleQuantityChanged} />
             </section>
-            <section aria-labelledby="cart-pets-title" className="tw:flex tw:flex-col tw:gap-3">
-              <h3 id="cart-pets-title" className="tw:text-title-m tw:text-foreground">
+            <section
+              aria-labelledby="cart-pets-title"
+              className="tw:flex tw:flex-col tw:gap-3 tw:md:grid tw:md:grid-cols-2"
+            >
+              <h3
+                id="cart-pets-title"
+                className="tw:text-title-m tw:text-foreground tw:md:col-span-2"
+              >
                 حیوانات
               </h3>
               <CartPetItemCard isSkeleton onRemoved={handleItemRemoved} />
@@ -90,8 +102,14 @@ export function CartOrder({ initialItems, isSkeleton = false }: CartOrderProps) 
           </>
         ) : null}
         {productItems.length > 0 ? (
-          <section aria-labelledby="cart-products-title" className="tw:flex tw:flex-col tw:gap-3">
-            <h3 id="cart-products-title" className="tw:text-title-m tw:text-foreground">
+          <section
+            aria-labelledby="cart-products-title"
+            className="tw:flex tw:flex-col tw:gap-3 tw:md:grid tw:md:grid-cols-2"
+          >
+            <h3
+              id="cart-products-title"
+              className="tw:text-title-m tw:text-foreground tw:md:col-span-2"
+            >
               محصولات
             </h3>
             {productItems.map((item) => (
@@ -104,8 +122,14 @@ export function CartOrder({ initialItems, isSkeleton = false }: CartOrderProps) 
           </section>
         ) : null}
         {petItems.length > 0 ? (
-          <section aria-labelledby="cart-pets-title" className="tw:flex tw:flex-col tw:gap-3">
-            <h3 id="cart-pets-title" className="tw:text-title-m tw:text-foreground">
+          <section
+            aria-labelledby="cart-pets-title"
+            className="tw:flex tw:flex-col tw:gap-3 tw:md:grid tw:md:grid-cols-2"
+          >
+            <h3
+              id="cart-pets-title"
+              className="tw:text-title-m tw:text-foreground tw:md:col-span-2"
+            >
               حیوانات
             </h3>
             {petItems.map((item) => (

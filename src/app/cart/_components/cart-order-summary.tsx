@@ -32,18 +32,36 @@ export function CartOrderSummary({
   isSkeleton = false,
 }: CartOrderSummaryProps) {
   return (
-    <aside
+    <footer
       aria-busy={isSkeleton || undefined}
       className={cn(
-        'tw:flex tw:flex-col tw:gap-4 tw:lg:h-fit',
+        'tw:fixed tw:inset-x-0 tw:bottom-0 tw:z-30 tw:mx-auto tw:w-full tw:max-w-3xl tw:p-2 tw:pb-[max(0.5rem,env(safe-area-inset-bottom))] tw:sm:p-3 tw:sm:pb-3 tw:lg:sticky tw:lg:top-24 tw:lg:bottom-auto tw:lg:max-w-none tw:lg:self-start tw:lg:p-0',
         isSkeleton && 'skeleton tw:pointer-events-none tw:select-none',
       )}
     >
-      <Card variant="glass" size="md">
-        <CardHeader>
+      <Card
+        variant="glass"
+        size="sm"
+        className="tw:rounded-b-none tw:shadow-2xl tw:shadow-foreground/15 tw:lg:rounded-b-3xl tw:lg:shadow-xl tw:lg:shadow-foreground/8"
+      >
+        <div className="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:px-(--card-spacing) tw:lg:hidden">
+          <div className="tw:flex tw:min-w-0 tw:flex-col tw:gap-0.5">
+            <span className="tw:text-label-s tw:text-muted-foreground">مبلغ قابل پرداخت</span>
+            <Price number={merchandiseTotal} className="tw:text-price-m tw:text-primary" />
+          </div>
+          <Button
+            nativeButton={false}
+            render={<Link href={routePaths.checkout} />}
+            size="md"
+            disabled={isSkeleton}
+          >
+            ادامه خرید
+          </Button>
+        </div>
+        <CardHeader className="tw:hidden tw:lg:grid">
           <CardTitle className="tw:text-title-l">خلاصه سفارش</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="tw:hidden tw:lg:block">
           <dl className="tw:flex tw:flex-col tw:gap-4">
             <SummaryRow
               label={`قیمت آیتم ها(${itemCount.toLocaleString('fa-IR')})`}
@@ -57,7 +75,7 @@ export function CartOrderSummary({
             <Price number={merchandiseTotal} className="tw:text-price-m tw:text-primary" />
           </div>
         </CardContent>
-        <CardFooter className="tw:flex-col tw:items-stretch">
+        <CardFooter className="tw:hidden tw:flex-col tw:items-stretch tw:lg:flex">
           <Button
             nativeButton={false}
             render={<Link href={routePaths.checkout} />}
@@ -73,7 +91,7 @@ export function CartOrderSummary({
           </p>
         </CardFooter>
       </Card>
-      <div className="tw:grid tw:grid-cols-2 tw:gap-3 tw:text-label-s tw:text-muted-foreground">
+      <div className="tw:hidden tw:grid-cols-2 tw:gap-3 tw:text-label-s tw:text-muted-foreground tw:lg:grid">
         <p className="tw:flex tw:items-center tw:gap-2">
           <Truck aria-hidden="true" className="tw:size-5 tw:text-primary" />
           ارسال سریع
@@ -83,6 +101,6 @@ export function CartOrderSummary({
           خرید مطمئن
         </p>
       </div>
-    </aside>
+    </footer>
   );
 }

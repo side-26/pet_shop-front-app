@@ -1,5 +1,17 @@
 @import url('./tailwind.config.css');
 
+/* The checkout-like cart route owns its own chrome instead of the storefront shell. */
+[data-slot='default-layout-shell']:has([data-cart-route-layout]) > header,
+[data-slot='default-layout-shell']:has([data-cart-route-layout]) > footer,
+[data-slot='default-layout-shell']:has([data-cart-route-layout]) > nav[aria-label='ناوبری موبایل'] {
+  display: none;
+}
+
+[data-slot='default-layout-shell']:has([data-cart-route-layout])
+  > [data-slot='default-layout-main'] {
+  padding: 0;
+}
+
 @keyframes cart-badge-shine {
   0% {
     opacity: 0;

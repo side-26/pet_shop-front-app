@@ -49,10 +49,10 @@ export function CartPetItemCard({ item, isSkeleton = false, onRemoved }: CartPet
       variant="elevated"
       size="sm"
       aria-busy={isSkeleton || undefined}
-      className={`tw:lg:shrink-0 tw:lg:py-2${isSkeleton ? ' skeleton tw:pointer-events-none tw:select-none' : ''}`}
+      className={`tw:w-full tw:lg:shrink-0 tw:lg:py-2${isSkeleton ? ' skeleton tw:pointer-events-none tw:select-none' : ''}`}
     >
-      <CardContent className="tw:grid tw:grid-cols-[auto_minmax(0,1fr)] tw:gap-4 tw:sm:gap-6 tw:lg:gap-4 tw:lg:px-3">
-        <div className="tw:relative tw:h-full tw:aspect-square tw:self-stretch tw:overflow-hidden tw:rounded-2xl tw:bg-muted">
+      <CardContent className="tw:grid tw:grid-cols-[minmax(4.5rem,26vw)_minmax(0,1fr)] tw:items-start tw:gap-3 tw:sm:grid-cols-[minmax(6.5rem,18vw)_minmax(0,1fr)] tw:sm:gap-5 tw:lg:grid-cols-[auto_minmax(0,1fr)] tw:lg:items-stretch tw:lg:gap-4 tw:lg:px-3">
+        <div className="tw:relative tw:w-full tw:aspect-square tw:self-start tw:overflow-hidden tw:rounded-2xl tw:bg-muted tw:lg:h-full tw:lg:w-auto tw:lg:self-stretch">
           {item ? (
             <Image
               src={item.image}
@@ -65,12 +65,12 @@ export function CartPetItemCard({ item, isSkeleton = false, onRemoved }: CartPet
         </div>
         <div className="tw:flex tw:min-w-0 tw:flex-col tw:justify-between tw:gap-3 tw:lg:grid tw:lg:grid-cols-[minmax(0,1fr)_auto] tw:lg:items-center tw:lg:gap-4">
           <div className="tw:flex tw:min-w-0 tw:flex-col tw:gap-1 tw:lg:gap-0.5">
-            <h3 className="tw:text-title-s tw:leading-7 tw:text-card-foreground tw:sm:text-title-m tw:lg:truncate tw:lg:leading-5">
+            <h3 className="tw:line-clamp-2 tw:text-title-s tw:leading-7 tw:text-card-foreground tw:sm:text-title-m tw:lg:leading-5">
               {item?.title ?? '—'}
             </h3>
             <p className="tw:text-body-s tw:text-muted-foreground">{item?.detail ?? '—'}</p>
           </div>
-          <div className="tw:flex tw:flex-col tw:items-start tw:gap-0.5 tw:sm:items-end">
+          <div className="tw:flex tw:flex-col tw:items-end tw:gap-0.5">
             <Button
               iconOnly
               size="sm"

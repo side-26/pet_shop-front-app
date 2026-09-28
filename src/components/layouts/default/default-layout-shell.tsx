@@ -9,9 +9,15 @@ type DefaultLayoutShellProps = Readonly<{
 
 export function DefaultLayoutShell({ children }: DefaultLayoutShellProps) {
   return (
-    <div className="tw:flex tw:min-h-svh tw:flex-col tw:bg-background tw:text-foreground">
+    <div
+      data-slot="default-layout-shell"
+      className="tw:flex tw:min-h-svh tw:flex-col tw:bg-background tw:text-foreground"
+    >
       <DefaultHeader />
-      <main className="tw:flex-1 tw:pt-[76px] tw:pb-24 tw:sm:pb-28 tw:lg:pt-[88px] tw:lg:pb-0">
+      <main
+        data-slot="default-layout-main"
+        className="tw:flex-1 tw:pt-[76px] tw:pb-24 tw:sm:pb-28 tw:lg:pt-[88px] tw:lg:pb-0"
+      >
         {children}
       </main>
       <DefaultFooter />
