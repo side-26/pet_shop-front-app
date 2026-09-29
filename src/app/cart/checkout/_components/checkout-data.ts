@@ -1,13 +1,3 @@
-export type CheckoutAddress = Readonly<{
-  id: string;
-  title: string;
-  recipient: string;
-  address: string;
-  phone: string;
-  postalCode: string;
-  isDefault?: boolean;
-}>;
-
 export type DeliveryMethod = Readonly<{
   id: string;
   title: string;
@@ -29,26 +19,6 @@ export type DeliveryTimeSlot = Readonly<{
   label: string;
   description: string;
 }>;
-
-export const checkoutAddresses: readonly CheckoutAddress[] = [
-  {
-    id: 'home',
-    title: 'خانه',
-    recipient: 'نیلوفر احمدی',
-    address: 'تهران، سعادت‌آباد، بلوار دریا، خیابان صراف‌های جنوبی، پلاک ۲۴، واحد ۸',
-    phone: '۰۹۱۲۱۲۳۴۵۶۷',
-    postalCode: '۱۹۹۸۷۶۵۴۳۲',
-    isDefault: true,
-  },
-  {
-    id: 'work',
-    title: 'محل کار',
-    recipient: 'نیلوفر احمدی',
-    address: 'تهران، میدان ونک، خیابان ملاصدرا، خیابان شیراز جنوبی، پلاک ۱۸',
-    phone: '۰۹۱۲۱۲۳۴۵۶۷',
-    postalCode: '۱۴۳۵۸۷۶۴۲۱',
-  },
-] as const;
 
 export const deliveryMethods: readonly DeliveryMethod[] = [
   {

@@ -1,18 +1,9 @@
 'use client';
 
-import {
-  CalendarDays,
-  Clock3,
-  MapPin,
-  PackageCheck,
-  Pencil,
-  Plus,
-  ShieldCheck,
-  Truck,
-} from 'lucide-react';
+import { CalendarDays, Clock3, PackageCheck, ShieldCheck, Truck } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -32,15 +23,10 @@ import { Separator } from '@/components/ui/separator';
 import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
 
-import type {
-  CheckoutAddress,
-  DeliveryDate,
-  DeliveryMethod,
-  DeliveryTimeSlot,
-} from './checkout-data';
+import type { DeliveryDate, DeliveryMethod, DeliveryTimeSlot } from './checkout-data';
 
 type ShipmentFormProps = Readonly<{
-  addresses: readonly CheckoutAddress[];
+  addressSelection: ReactNode;
   deliveryDates: readonly DeliveryDate[];
   deliveryMethods: readonly DeliveryMethod[];
   deliveryTimeSlots: readonly DeliveryTimeSlot[];
@@ -49,14 +35,13 @@ type ShipmentFormProps = Readonly<{
 }>;
 
 export function ShipmentForm({
-  addresses,
+  addressSelection,
   deliveryDates,
   deliveryMethods,
   deliveryTimeSlots,
   items,
   totals,
 }: ShipmentFormProps) {
-  const [addressId, setAddressId] = useState(addresses[0]?.id);
   const [deliveryId, setDeliveryId] = useState(deliveryMethods[0]?.id);
   const initialAvailableDates = deliveryDates.filter((date) =>
     date.methodIds.includes(deliveryMethods[0]?.id ?? ''),
@@ -86,84 +71,7 @@ export function ShipmentForm({
   return (
     <div className="tw:grid tw:items-start tw:gap-6 tw:lg:grid-cols-[minmax(0,1fr)_22rem] tw:xl:gap-8">
       <div className="tw:flex tw:min-w-0 tw:flex-col tw:gap-6">
-        <Card variant="elevated" size="md">
-          <CardHeader>
-            <CardTitle className="tw:flex tw:items-center tw:gap-2">
-              <MapPin aria-hidden="true" className="tw:size-5 tw:text-primary" />
-              نشانی تحویل
-            </CardTitle>
-            <CardAction>
-              <Button type="button" size="sm" variant="flat">
-                <Plus data-icon="inline-start" aria-hidden="true" />
-                افزودن نشانی
-              </Button>
-            </CardAction>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={addressId}
-              onValueChange={setAddressId}
-              aria-label="انتخاب نشانی تحویل"
-              className="tw:grid tw:gap-3 tw:md:grid-cols-2"
-            >
-              {addresses.map((address) => {
-                const selected = address.id === addressId;
-                return (
-                  <Field
-                    key={address.id}
-                    className={cn(
-                      'tw:relative tw:rounded-2xl tw:border tw:p-4 tw:transition-colors',
-                      selected
-                        ? 'tw:border-primary tw:bg-primary-muted/45'
-                        : 'tw:border-border tw:bg-card',
-                    )}
-                  >
-                    <FieldLabel
-                      htmlFor={`address-${address.id}`}
-                      className="tw:w-full tw:cursor-pointer tw:items-start tw:gap-3"
-                    >
-                      <RadioGroupItem
-                        id={`address-${address.id}`}
-                        value={address.id}
-                        className="tw:mt-1"
-                      />
-                      <span className="tw:flex tw:min-w-0 tw:flex-1 tw:flex-col tw:gap-2">
-                        <span className="tw:flex tw:flex-wrap tw:items-center tw:gap-2 tw:text-title-s">
-                          {address.title}
-                          {address.isDefault ? (
-                            <Badge size="sm" variant="tonal" color="success">
-                              نشانی پیش‌فرض
-                            </Badge>
-                          ) : null}
-                        </span>
-                        <span className="tw:text-body-s tw:leading-6 tw:text-muted-foreground">
-                          {address.address}
-                        </span>
-                        <span className="tw:flex tw:flex-wrap tw:gap-x-4 tw:gap-y-1 tw:text-label-s tw:text-muted-foreground">
-                          <span>{address.recipient}</span>
-                          <bdi dir="ltr">{address.phone}</bdi>
-                          <span>
-                            کدپستی: <bdi>{address.postalCode}</bdi>
-                          </span>
-                        </span>
-                      </span>
-                    </FieldLabel>
-                    <Button
-                      type="button"
-                      iconOnly
-                      size="xs"
-                      variant="flat"
-                      aria-label={`ویرایش نشانی ${address.title}`}
-                      className="tw:absolute tw:end-3 tw:bottom-3"
-                    >
-                      <Pencil aria-hidden="true" />
-                    </Button>
-                  </Field>
-                );
-              })}
-            </RadioGroup>
-          </CardContent>
-        </Card>
+        {addressSelection}
 
         <Card variant="elevated" size="md">
           <CardHeader>

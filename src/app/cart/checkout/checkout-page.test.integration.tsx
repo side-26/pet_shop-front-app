@@ -1,9 +1,15 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
 
 import CheckoutPage, { metadata } from './page';
+
+vi.mock('./_components/address-selection/address-selection', () => ({
+  CheckoutAddressSelection: () => (
+    <section aria-label="انتخاب نشانی تحویل">نشانی‌های تحویل</section>
+  ),
+}));
 
 afterEach(cleanup);
 
@@ -16,7 +22,7 @@ describe(routePaths.checkout, () => {
     expect(screen.queryByRole('list', { name: 'مراحل ثبت سفارش' })).toBeNull();
     expect(screen.getByRole('radiogroup', { name: 'انتخاب روز تحویل' })).toBeTruthy();
     expect(screen.getByRole('radiogroup', { name: 'انتخاب بازه زمانی تحویل' })).toBeTruthy();
-    expect(screen.getByText('نشانی پیش‌فرض')).toBeTruthy();
+    expect(screen.getByLabelText('انتخاب نشانی تحویل')).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'خلاصه سفارش' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'سبد خرید' }).getAttribute('href')).toBe(
       routePaths.cart,
