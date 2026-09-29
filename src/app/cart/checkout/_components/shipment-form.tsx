@@ -2,7 +2,6 @@
 
 import {
   CalendarDays,
-  ChevronRight,
   Clock3,
   MapPin,
   PackageCheck,
@@ -334,8 +333,16 @@ export function ShipmentForm({
 
       <aside className="tw:flex tw:flex-col tw:gap-4 tw:lg:sticky tw:lg:top-24 tw:lg:self-start">
         <Card variant="glass" size="md">
-          <CardHeader>
+          <CardHeader className="tw:flex tw:flex-row tw:items-center tw:justify-between tw:gap-3">
             <CardTitle className="tw:text-title-l">خلاصه سفارش</CardTitle>
+            <Button
+              nativeButton={false}
+              render={<Link href={routePaths.cart} />}
+              size="xs"
+              variant="text"
+            >
+              سبد خرید
+            </Button>
           </CardHeader>
           <CardContent className="tw:flex tw:flex-col tw:gap-4">
             <ul className="tw:flex tw:flex-col tw:gap-3" aria-label="کالاهای سفارش">
@@ -401,15 +408,6 @@ export function ShipmentForm({
           <CardFooter className="tw:flex-col tw:items-stretch">
             <Button block size="lg">
               ادامه و پرداخت
-            </Button>
-            <Button
-              nativeButton={false}
-              render={<Link href={routePaths.cart} />}
-              block
-              variant="text"
-            >
-              <ChevronRight data-icon="inline-start" aria-hidden="true" />
-              بازگشت به سبد خرید
             </Button>
             <p className="tw:flex tw:items-center tw:justify-center tw:gap-1.5 tw:text-label-s tw:text-muted-foreground">
               <ShieldCheck aria-hidden="true" className="tw:size-4" />

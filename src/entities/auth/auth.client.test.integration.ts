@@ -147,11 +147,11 @@ describe('loginUser client orchestration', () => {
     await submitLoginUser(
       { phoneNumber: '09123456789', password: '123456', rememberMe: false },
       vi.fn(),
-      '/checkout?step=payment',
+      `${routePaths.checkout}?step=payment`,
       navigate,
     );
 
-    expect(navigate).toHaveBeenCalledWith('/checkout?step=payment');
+    expect(navigate).toHaveBeenCalledWith(`${routePaths.checkout}?step=payment`);
   });
 
   it('passes login errors unchanged to the global error handler', async () => {
@@ -167,7 +167,7 @@ describe('loginUser client orchestration', () => {
     await submitLoginUser(
       { phoneNumber: '09123456789', password: '123456', rememberMe: false },
       setError,
-      '/checkout',
+      routePaths.checkout,
       navigate,
     );
 

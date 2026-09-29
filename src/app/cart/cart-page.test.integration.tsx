@@ -95,7 +95,15 @@ describe(routePaths.cart, () => {
     expect(screen.queryByText('۴ کالا برای ادامه خرید آماده است.')).toBeNull();
     expect(screen.queryByText('تخفیف دارد')).toBeNull();
     expect(screen.queryByText('موجود در انبار')).toBeNull();
-    expect(screen.getAllByRole('button', { name: 'ادامه خرید' })).toHaveLength(2);
+    const checkoutButtons = screen.getAllByRole('button', { name: 'ادامه خرید' });
+
+    expect(checkoutButtons).toHaveLength(2);
+    expect(
+      checkoutButtons.find((button) => button.hasAttribute('href'))?.getAttribute('href'),
+    ).toBe(routePaths.checkout);
+    expect(screen.getByRole('button', { name: 'ادامه فرایند خرید' }).getAttribute('href')).toBe(
+      routePaths.checkout,
+    );
   });
 
   it('renders cart-specific route chrome and the order summary footer', () => {

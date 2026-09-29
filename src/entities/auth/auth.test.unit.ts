@@ -152,8 +152,10 @@ describe('validationErrorToFetcherError', () => {
 
 describe('resolveLoginRedirectPath', () => {
   it('uses a safe internal callback URL before the role fallback', () => {
-    expect(resolveLoginRedirectPath('/checkout?step=payment#summary', USER_ROLES.ADMIN)).toBe(
-      '/checkout?step=payment#summary',
+    const checkoutPaymentPath = `${routePaths.checkout}?step=payment#summary`;
+
+    expect(resolveLoginRedirectPath(checkoutPaymentPath, USER_ROLES.ADMIN)).toBe(
+      checkoutPaymentPath,
     );
   });
 

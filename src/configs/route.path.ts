@@ -7,7 +7,7 @@ export const PATHS = {
   SERVICES: '/services',
   ABOUT: '/about',
   CART: '/cart',
-  CHECKOUT: '/checkout',
+  CHECKOUT: '/cart/checkout',
   PROFILE: '/profile',
   AUTH: {
     LOGIN: '/login',

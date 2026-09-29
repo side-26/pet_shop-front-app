@@ -8,17 +8,17 @@ import CheckoutPage, { metadata } from './page';
 afterEach(cleanup);
 
 describe(routePaths.checkout, () => {
-  it('renders the shipment step, addresses, delivery methods, and order summary', () => {
+  it('renders addresses, delivery methods, and the order summary without checkout steps', () => {
     const { container } = render(<CheckoutPage />);
 
     expect(container.querySelector('main')).toBeNull();
     expect(screen.getByRole('heading', { level: 1, name: 'ارسال و تحویل سفارش' })).toBeTruthy();
-    expect(screen.getByRole('list', { name: 'مراحل ثبت سفارش' })).toBeTruthy();
+    expect(screen.queryByRole('list', { name: 'مراحل ثبت سفارش' })).toBeNull();
     expect(screen.getByRole('radiogroup', { name: 'انتخاب روز تحویل' })).toBeTruthy();
     expect(screen.getByRole('radiogroup', { name: 'انتخاب بازه زمانی تحویل' })).toBeTruthy();
     expect(screen.getByText('نشانی پیش‌فرض')).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'خلاصه سفارش' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'بازگشت به سبد خرید' }).getAttribute('href')).toBe(
+    expect(screen.getByRole('button', { name: 'سبد خرید' }).getAttribute('href')).toBe(
       routePaths.cart,
     );
   });

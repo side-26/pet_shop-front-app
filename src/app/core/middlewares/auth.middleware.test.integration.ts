@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { AuthSessionModel } from '@/_types';
+import { routePaths } from '@/configs/route.path';
 import { USER_ROLES } from '@/configs/user-role';
 
 const { createSessionCookieMock, decryptSessionMock, refreshAccessTokenMock } = vi.hoisted(() => ({
@@ -48,17 +49,20 @@ describe('authMiddleware', () => {
     vi.setSystemTime(Date.UTC(2026, 7, 26, 11, 0, 0));
   });
 
-  it.each(['/cart', '/checkout', '/profile', '/admin', '/admin/users'])(
-    'redirects unauthenticated access to protected route %s',
-    async (pathname) => {
-      const response = await authMiddleware(request(pathname), next);
-      const location = new URL(response.headers.get('location')!);
+  it.each([
+    routePaths.cart,
+    routePaths.checkout,
+    routePaths.profile,
+    routePaths.admin,
+    routePaths.adminUsers,
+  ])('redirects unauthenticated access to protected route %s', async (pathname) => {
+    const response = await authMiddleware(request(pathname), next);
+    const location = new URL(response.headers.get('location')!);
 
-      expect(location.pathname).toBe('/login');
-      expect(location.searchParams.get('callbackUrl')).toBe(pathname);
-      expect(next).not.toHaveBeenCalled();
-    },
-  );
+    expect(location.pathname).toBe('/login');
+    expect(location.searchParams.get('callbackUrl')).toBe(pathname);
+    expect(next).not.toHaveBeenCalled();
+  });
 
   it('allows an unauthenticated request to the public home route', async () => {
     const response = await authMiddleware(request('/'), next);
@@ -98,7 +102,7 @@ describe('authMiddleware', () => {
       },
     });
 
-    const response = await authMiddleware(request('/checkout', true), next);
+    const response = await authMiddleware(request(routePaths.checkout, true), next);
 
     expect(refreshAccessTokenMock).toHaveBeenCalledWith({ refreshToken: 'refresh-token' });
     expect(createSessionCookieMock).toHaveBeenCalledWith({
