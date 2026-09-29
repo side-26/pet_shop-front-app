@@ -1,5 +1,5 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
 import { useCommonStore } from '@/stores/common.store';
@@ -13,9 +13,21 @@ vi.mock('nextjs-toploader/app', () => ({
   useRouter: () => ({ back: vi.fn(), push: vi.fn(), refresh: vi.fn(), replace: vi.fn() }),
 }));
 
+beforeEach(() => {
+  vi.stubGlobal(
+    'ResizeObserver',
+    class ResizeObserver {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    },
+  );
+});
+
 afterEach(() => {
   cleanup();
   act(() => useCommonStore.getState().hideConfirmDialog());
+  vi.unstubAllGlobals();
 });
 
 const cartItems: readonly CartItem[] = [

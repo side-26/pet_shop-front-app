@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Counter } from '@/components/ui/counter';
+import { FitText } from '@/components/ui/fit-text';
 import { Price } from '@/components/ui/price';
 import { useCartStore } from '@/stores/cart.store';
 import { useCommonStore } from '@/stores/common.store';
@@ -74,11 +75,21 @@ export function CartProductItemCard({
             <p className="tw:text-body-s tw:text-muted-foreground">{item?.detail ?? '—'}</p>
           </div>
           <div className="tw:mt-auto tw:flex tw:flex-wrap tw:items-end tw:justify-between tw:gap-2 tw:sm:gap-3 tw:lg:mt-0 tw:lg:items-center tw:lg:gap-4">
-            <div className="tw:flex tw:flex-col tw:items-end tw:gap-0.5">
+            <FitText
+              as="div"
+              variant="body"
+              className="tw:flex-auto tw:w-1 tw:text-end tw:lg:hidden"
+            >
+              <Price
+                number={(item?.price ?? 0) * (item?.quantity ?? 1)}
+                className="tw:text-primary"
+              />
+            </FitText>
+            <div className="tw:hidden tw:flex-col tw:items-end tw:gap-0.5 tw:lg:flex">
               {item?.previousPrice ? (
                 <Price
                   number={item.previousPrice * item.quantity}
-                  className="tw:hidden tw:text-label-s tw:text-muted-foreground tw:line-through tw:lg:block"
+                  className="tw:text-label-s tw:text-muted-foreground tw:line-through"
                 />
               ) : null}
               <Price
@@ -93,6 +104,7 @@ export function CartProductItemCard({
               size="sm"
               variant="outlined"
               isLoading={isSkeleton || isPending}
+              className="tw:flex-none"
               aria-label={item ? `تعداد ${item.title}` : 'تعداد کالا'}
               removeLabel={item ? `حذف ${item.title}` : 'حذف کالا'}
               onValueChange={(quantity) => void updateQuantity(quantity)}
