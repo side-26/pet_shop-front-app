@@ -44,6 +44,8 @@ const input = {
   },
   basePrice: 0,
   packingPrice: 0,
+  cityLeadDays: 0,
+  outsideCityLeadDays: 1,
   pricePerKilometerInCity: 1000,
   pricePerKilometer: 2000,
   isEnable: true,

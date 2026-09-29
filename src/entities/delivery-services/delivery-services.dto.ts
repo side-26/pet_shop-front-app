@@ -16,6 +16,8 @@ export type DeliveryServiceDTO = {
   availability: DeliveryServiceAvailabilityInput;
   basePrice: number;
   packingPrice: number;
+  cityLeadDays: number;
+  outsideCityLeadDays: number;
   pricePerKilometerInCity: number;
   pricePerKilometer: number;
   isEnable: boolean;
@@ -31,10 +33,16 @@ export type DeliveryAvailabilitySlotDTO = {
   endsAt: string;
 };
 
-export type AvailableDeliveryServiceDTO = Omit<DeliveryServiceDTO, 'availability'> & {
+/** Public quote responses intentionally exclude provider pricing inputs and origin coordinates. */
+export type AvailableDeliveryServiceDTO = {
+  id: string;
+  title: string;
+  title_fa: string;
+  logo: string;
+  packingPrice: number;
   availability: DeliveryAvailabilitySlotDTO[];
   distanceKm: number;
-  shippingPrice: number;
+  calculatedPricePerKilometer: number;
 };
 
 export type DeliveryServiceIdDTO = DeliveryServiceIdInput;

@@ -41,6 +41,8 @@ const input = {
     friday: [],
     saturday: [],
   },
+  cityLeadDays: 0,
+  outsideCityLeadDays: 1,
   pricePerKilometerInCity: 1000,
   pricePerKilometer: 2000,
 };

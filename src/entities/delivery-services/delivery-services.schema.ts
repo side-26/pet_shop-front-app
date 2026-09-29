@@ -38,6 +38,8 @@ const deliveryServiceFields = {
   availability: deliveryServiceAvailabilitySchema,
   basePrice: number().integer().min(0).default(0).required(),
   packingPrice: number().integer().min(0).default(0).required(),
+  cityLeadDays: number().integer().min(0).required(),
+  outsideCityLeadDays: number().integer().min(0).required(),
   pricePerKilometerInCity: number().integer().positive().required(),
   pricePerKilometer: number().integer().positive().required(),
   isEnable: boolean().default(true).required(),
