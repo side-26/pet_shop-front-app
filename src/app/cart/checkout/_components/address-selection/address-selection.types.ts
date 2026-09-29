@@ -5,4 +5,5 @@ export type CheckoutAddressViewModel = Readonly<{
   recipient: string;
   phone: string;
   postalCode: string;
+  latLng: readonly [latitude: number, longitude: number];
 }>;

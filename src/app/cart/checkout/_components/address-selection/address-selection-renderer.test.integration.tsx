@@ -1,7 +1,8 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
+import { useCheckoutStore } from '@/stores/checkout.store';
 
 import { CheckoutAddressSelectionRenderer } from './address-selection-renderer';
 import { checkoutAddressSelectionSkeletonData } from './address-selection-skeleton-data';
@@ -23,7 +24,10 @@ vi.mock('@/components/ui/carousel', () => ({
   CarouselNext: () => <button type="button">اسلاید بعدی</button>,
 }));
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  useCheckoutStore.getState().clearCheckout();
+});
 
 const addresses: readonly CheckoutAddressViewModel[] = [
   {
@@ -33,6 +37,7 @@ const addresses: readonly CheckoutAddressViewModel[] = [
     recipient: 'نیلوفر احمدی',
     phone: '09121234567',
     postalCode: '1998712345',
+    latLng: [35.72, 51.33],
   },
   {
     id: 'address-2',
@@ -41,6 +46,7 @@ const addresses: readonly CheckoutAddressViewModel[] = [
     recipient: 'رضا احمدی',
     phone: '09120000000',
     postalCode: '1998754321',
+    latLng: [35.75, 51.41],
   },
 ];
 
@@ -64,6 +70,18 @@ describe('CheckoutAddressSelectionRenderer', () => {
     screen.getAllByRole('button', { name: 'افزودن نشانی' }).forEach((button) => {
       expect(button.getAttribute('href')).toBe(routePaths.profile);
     });
+  });
+
+  it('stores the selected address ID and its latitude/longitude for checkout delivery quoting', () => {
+    render(<CheckoutAddressSelectionRenderer addresses={addresses} />);
+
+    expect(useCheckoutStore.getState().checkoutInformation.addressId).toBe('address-1');
+    expect(useCheckoutStore.getState().getSelectedAddressCoordinates()).toEqual([35.72, 51.33]);
+
+    fireEvent.click(screen.getByRole('radio', { name: /تهران، ونک/ }));
+
+    expect(useCheckoutStore.getState().checkoutInformation.addressId).toBe('address-2');
+    expect(useCheckoutStore.getState().getSelectedAddressCoordinates()).toEqual([35.75, 51.41]);
   });
 
   it('renders an inaccessible skeleton while address data streams', () => {

@@ -2,7 +2,7 @@
 
 import { MapPin } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,6 +23,7 @@ import {
 import { RadioGroup } from '@/components/ui/fields/radio-group';
 import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
+import { useCheckoutStore } from '@/stores/checkout.store';
 
 import type { CheckoutAddressViewModel } from './address-selection.types';
 import { CheckoutAddressCarouselItem } from './address-carousel-item';
@@ -47,6 +48,17 @@ function ProfileLinkButton({ children }: Readonly<{ children: React.ReactNode }>
 
 export function CheckoutAddressSelectionRenderer({ addresses, isSkeleton = false }: Props) {
   const [addressId, setAddressId] = useState(addresses[0]?.id);
+  const selectAddress = useCheckoutStore((state) => state.selectAddress);
+
+  useEffect(() => {
+    const selectedAddress = addresses.find((address) => address.id === addressId);
+    if (!selectedAddress || isSkeleton) return;
+    selectAddress(selectedAddress.id, selectedAddress.latLng);
+  }, [addressId, addresses, isSkeleton, selectAddress]);
+
+  function selectDeliveryAddress(nextAddressId: string) {
+    setAddressId(nextAddressId);
+  }
 
   return (
     <section
@@ -86,7 +98,7 @@ export function CheckoutAddressSelectionRenderer({ addresses, isSkeleton = false
           ) : (
             <RadioGroup
               value={addressId}
-              onValueChange={setAddressId}
+              onValueChange={selectDeliveryAddress}
               aria-label="انتخاب نشانی تحویل"
             >
               <CheckoutAddressCarousel addresses={addresses} selectedAddressId={addressId} />

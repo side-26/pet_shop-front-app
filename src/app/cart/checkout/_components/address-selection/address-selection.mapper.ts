@@ -19,5 +19,6 @@ export function mapCheckoutAddresses(
     recipient: `${address.firstName} ${address.lastName}`.trim(),
     phone: address.phoneNumber,
     postalCode: address.postalCode,
+    latLng: address.latLng,
   }));
 }

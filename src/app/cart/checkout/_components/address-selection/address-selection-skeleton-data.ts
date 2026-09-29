@@ -9,5 +9,6 @@ export const checkoutAddressSelectionSkeletonData: readonly CheckoutAddressViewM
     recipient: '',
     phone: '',
     postalCode: '',
+    latLng: [0, 0],
   }),
 );
