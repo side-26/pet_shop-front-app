@@ -20,6 +20,7 @@ export type CheckoutAddressCoordinates = readonly [latitude: number, longitude: 
 /** Values retained only for the active checkout journey and supplied to checkout/order actions. */
 export type CheckoutInformation = Readonly<{
   addressId?: string;
+  deliveryServiceId?: string;
   deliveryQuoteId?: string;
   deliveryWindowId?: string;
   paymentTrackingId?: string;

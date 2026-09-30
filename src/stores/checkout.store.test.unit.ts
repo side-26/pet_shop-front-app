@@ -46,6 +46,7 @@ describe('useCheckoutStore', () => {
       .calculatePrices([{ price: 50_000, discountPercentage: 20, quantity: 2 }], 15_000);
     useCheckoutStore.getState().selectAddress('address-1', [35.72, 51.33]);
     useCheckoutStore.getState().saveCheckoutInformation({
+      deliveryServiceId: 'delivery-service-1',
       deliveryQuoteId: 'quote-1',
       deliveryWindowId: 'window-1',
       paymentTrackingId: 'payment-1',
@@ -60,6 +61,7 @@ describe('useCheckoutStore', () => {
     expect(useCheckoutStore.getState().getSelectedAddressCoordinates()).toEqual([35.72, 51.33]);
     expect(useCheckoutStore.getState().checkoutInformation).toEqual({
       addressId: 'address-1',
+      deliveryServiceId: 'delivery-service-1',
       deliveryQuoteId: 'quote-1',
       deliveryWindowId: 'window-1',
       paymentTrackingId: 'payment-1',

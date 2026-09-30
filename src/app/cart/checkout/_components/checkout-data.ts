@@ -1,16 +1,7 @@
-export type DeliveryMethod = Readonly<{
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  arrival: string;
-}>;
-
 export type DeliveryDate = Readonly<{
   id: string;
   weekday: string;
   date: string;
-  methodIds: readonly string[];
   recommended?: boolean;
 }>;
 
@@ -20,43 +11,23 @@ export type DeliveryTimeSlot = Readonly<{
   description: string;
 }>;
 
-export const deliveryMethods: readonly DeliveryMethod[] = [
-  {
-    id: 'standard',
-    title: 'ارسال استاندارد',
-    description: 'تحویل توسط پست پیشتاز',
-    price: 0,
-    arrival: 'شنبه ۸ شهریور',
-  },
-  {
-    id: 'express',
-    title: 'ارسال سریع',
-    description: 'تحویل اختصاصی در بازه انتخابی',
-    price: 120_000,
-    arrival: 'پنجشنبه ۶ شهریور',
-  },
-] as const;
-
 export const deliveryDates: readonly DeliveryDate[] = [
   {
     id: 'thu-6-shahrivar',
     weekday: 'پنجشنبه',
     date: '۶ شهریور',
-    methodIds: ['express'],
     recommended: true,
   },
   {
     id: 'sat-8-shahrivar',
     weekday: 'شنبه',
     date: '۸ شهریور',
-    methodIds: ['standard', 'express'],
     recommended: true,
   },
   {
     id: 'sun-9-shahrivar',
     weekday: 'یکشنبه',
     date: '۹ شهریور',
-    methodIds: ['standard', 'express'],
   },
 ] as const;
 

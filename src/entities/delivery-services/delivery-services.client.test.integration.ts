@@ -1,3 +1,6 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, waitFor } from '@testing-library/react';
+import { createElement, type ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { toast } from '@/components/ui/toast';
@@ -8,6 +11,7 @@ import {
   deleteDeliveryServiceAction,
   disableDeliveryServiceAction,
   enableDeliveryServiceAction,
+  getAvailableDeliveryServicesAction,
   updateDeliveryServiceAction,
 } from './delivery-services.actions';
 import {
@@ -15,6 +19,8 @@ import {
   submitDeleteDeliveryService,
   submitDeliveryServiceEnabledUpdate,
   submitUpdateDeliveryService,
+  getAvailableDeliveryServices,
+  useAvailableDeliveryServices,
 } from './delivery-services.client';
 
 vi.mock('./delivery-services.actions', () => ({
@@ -22,6 +28,7 @@ vi.mock('./delivery-services.actions', () => ({
   deleteDeliveryServiceAction: vi.fn(),
   disableDeliveryServiceAction: vi.fn(),
   enableDeliveryServiceAction: vi.fn(),
+  getAvailableDeliveryServicesAction: vi.fn(),
   updateDeliveryServiceAction: vi.fn(),
 }));
 vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
@@ -76,6 +83,34 @@ describe('delivery service client orchestration', () => {
     expect(updateDeliveryServiceAction).toHaveBeenCalledWith({ id, ...input });
     expect(toast.add).toHaveBeenNthCalledWith(1, { type: 'success', title: 'ایجاد شد.' });
     expect(toast.add).toHaveBeenNthCalledWith(2, { type: 'success', title: 'ویرایش شد.' });
+  });
+
+  it('reads public delivery quotes through the delivery-service Server Action', async () => {
+    const result = { isSuccess: true as const, message: null, data: [] };
+    vi.mocked(getAvailableDeliveryServicesAction).mockResolvedValue(result);
+
+    await expect(getAvailableDeliveryServices({ lat: 35.72, lng: 51.33 })).resolves.toBe(result);
+    expect(getAvailableDeliveryServicesAction).toHaveBeenCalledWith({ lat: 35.72, lng: 51.33 });
+  });
+
+  it('uses an ephemeral TanStack Query for available-delivery reads', async () => {
+    vi.mocked(getAvailableDeliveryServicesAction).mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: [],
+    });
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const wrapper = ({ children }: { children: ReactNode }) =>
+      createElement(QueryClientProvider, { client: queryClient }, children);
+
+    const { result } = renderHook(() => useAvailableDeliveryServices({ lat: 35.72, lng: 51.33 }), {
+      wrapper,
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(getAvailableDeliveryServicesAction).toHaveBeenCalledWith({ lat: 35.72, lng: 51.33 });
+    expect(queryClient.getQueryCache().findAll()).toHaveLength(1);
+    queryClient.clear();
   });
 
   it.each([

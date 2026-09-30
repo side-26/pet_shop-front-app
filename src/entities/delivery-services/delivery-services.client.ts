@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useRef, useTransition } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import type { UseFormSetError } from 'react-hook-form';
 
 import type { FormHandle } from '@/components/ui/form';
@@ -13,9 +14,54 @@ import {
   deleteDeliveryServiceAction,
   disableDeliveryServiceAction,
   enableDeliveryServiceAction,
+  getAvailableDeliveryServicesAction,
   updateDeliveryServiceAction,
 } from './delivery-services.actions';
-import type { DeliveryServiceInput, UpdateDeliveryServiceInput } from './delivery-services.schema';
+import type {
+  AvailableDeliveryServicesQueryInput,
+  DeliveryServiceInput,
+  UpdateDeliveryServiceInput,
+} from './delivery-services.schema';
+
+export const deliveryServicesQueryKeys = {
+  available: (input: AvailableDeliveryServicesQueryInput) =>
+    ['delivery-services', 'available', input.lat, input.lng] as const,
+};
+
+export class AvailableDeliveryServicesQueryError extends Error {
+  constructor(message: string | null) {
+    super(message ?? 'دریافت سرویس‌های ارسال انجام نشد.');
+    this.name = 'AvailableDeliveryServicesQueryError';
+  }
+}
+
+/** Client-side checkout reads stay behind the entity boundary rather than calling a Server Action in UI. */
+export function getAvailableDeliveryServices(input: AvailableDeliveryServicesQueryInput) {
+  return getAvailableDeliveryServicesAction(input);
+}
+
+/**
+ * Quotes are intentionally ephemeral: they are stale immediately and discarded when unused.
+ * The Server Action remains the only client-to-server transport boundary.
+ */
+export function useAvailableDeliveryServices(input: AvailableDeliveryServicesQueryInput | null) {
+  return useQuery({
+    queryKey: input
+      ? deliveryServicesQueryKeys.available(input)
+      : (['delivery-services', 'available', 'unselected-address'] as const),
+    queryFn: async () => {
+      if (!input) return [];
+      const result = await getAvailableDeliveryServices(input);
+      if (!result.isSuccess) throw new AvailableDeliveryServicesQueryError(result.message);
+      return result.data;
+    },
+    enabled: input !== null,
+    staleTime: 0,
+    gcTime: 0,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+}
 
 export async function submitCreateDeliveryService(
   input: DeliveryServiceInput,

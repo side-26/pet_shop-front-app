@@ -14,7 +14,7 @@ vi.mock('./_components/address-selection/address-selection', () => ({
 afterEach(cleanup);
 
 describe(routePaths.checkout, () => {
-  it('renders addresses, delivery methods, and the order summary without checkout steps', () => {
+  it('renders addresses, API-backed delivery selection, and the order summary without checkout steps', () => {
     const { container } = render(<CheckoutPage />);
 
     expect(container.querySelector('main')).toBeNull();
@@ -23,20 +23,18 @@ describe(routePaths.checkout, () => {
     expect(screen.getByRole('radiogroup', { name: 'انتخاب روز تحویل' })).toBeTruthy();
     expect(screen.getByRole('radiogroup', { name: 'انتخاب بازه زمانی تحویل' })).toBeTruthy();
     expect(screen.getByLabelText('انتخاب نشانی تحویل')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'سرویس ارسال' })).toBeTruthy();
+    expect(screen.queryByRole('heading', { name: 'روش ارسال' })).toBeNull();
     expect(screen.getByRole('heading', { name: 'خلاصه سفارش' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'سبد خرید' }).getAttribute('href')).toBe(
       routePaths.cart,
     );
   });
 
-  it('updates the selected delivery method', () => {
+  it('removes the legacy mock delivery-method choices', () => {
     render(<CheckoutPage />);
 
-    const expressDelivery = screen.getByRole('radio', { name: /ارسال سریع/ });
-    fireEvent.click(expressDelivery);
-
-    expect(expressDelivery.getAttribute('aria-checked')).toBe('true');
-    expect(screen.getAllByText('۱۲۰٬۰۰۰').length).toBeGreaterThan(0);
+    expect(screen.queryByRole('radio', { name: /ارسال سریع/ })).toBeNull();
     const deliveryDates = screen.getByRole('radiogroup', { name: 'انتخاب روز تحویل' });
     expect(
       within(deliveryDates)

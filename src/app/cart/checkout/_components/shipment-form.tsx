@@ -1,34 +1,23 @@
 'use client';
 
-import { CalendarDays, Clock3, PackageCheck, ShieldCheck, Truck } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useMemo, useState, type ReactNode } from 'react';
+import { CalendarDays } from 'lucide-react';
+import { useState, type ReactNode } from 'react';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field } from '@/components/ui/field/default';
 import { FieldLabel } from '@/components/ui/field/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/fields/radio-group';
-import { Price } from '@/components/ui/price';
 import { Separator } from '@/components/ui/separator';
-import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
 
-import type { DeliveryDate, DeliveryMethod, DeliveryTimeSlot } from './checkout-data';
+import type { DeliveryDate, DeliveryTimeSlot } from './checkout-data';
+import { CheckoutOrderSummary } from './checkout-order-summary';
 
 type ShipmentFormProps = Readonly<{
   addressSelection: ReactNode;
+  deliveryServicesSelection: ReactNode;
   deliveryDates: readonly DeliveryDate[];
-  deliveryMethods: readonly DeliveryMethod[];
   deliveryTimeSlots: readonly DeliveryTimeSlot[];
   items: readonly Readonly<{ id: string; title: string; image: string; quantity: number }>[];
   totals: Readonly<{ merchandise: number; discount: number; payable: number }>;
@@ -36,106 +25,23 @@ type ShipmentFormProps = Readonly<{
 
 export function ShipmentForm({
   addressSelection,
+  deliveryServicesSelection,
   deliveryDates,
-  deliveryMethods,
   deliveryTimeSlots,
   items,
   totals,
 }: ShipmentFormProps) {
-  const [deliveryId, setDeliveryId] = useState(deliveryMethods[0]?.id);
-  const initialAvailableDates = deliveryDates.filter((date) =>
-    date.methodIds.includes(deliveryMethods[0]?.id ?? ''),
-  );
-  const [deliveryDateId, setDeliveryDateId] = useState(initialAvailableDates[0]?.id);
+  const [deliveryDateId, setDeliveryDateId] = useState(deliveryDates[0]?.id);
   const [timeSlotId, setTimeSlotId] = useState(deliveryTimeSlots[0]?.id);
-  const selectedDelivery = useMemo(
-    () => deliveryMethods.find((method) => method.id === deliveryId) ?? deliveryMethods[0],
-    [deliveryId, deliveryMethods],
-  );
-  const availableDates = useMemo(
-    () => deliveryDates.filter((date) => date.methodIds.includes(deliveryId ?? '')),
-    [deliveryDates, deliveryId],
-  );
-  const selectedDate = availableDates.find((date) => date.id === deliveryDateId);
+  const selectedDate = deliveryDates.find((date) => date.id === deliveryDateId);
   const selectedTimeSlot = deliveryTimeSlots.find((slot) => slot.id === timeSlotId);
-  const shippingPrice = selectedDelivery?.price ?? 0;
-
-  function selectDeliveryMethod(nextDeliveryId: string) {
-    const nextAvailableDates = deliveryDates.filter((date) =>
-      date.methodIds.includes(nextDeliveryId),
-    );
-    setDeliveryId(nextDeliveryId);
-    setDeliveryDateId(nextAvailableDates[0]?.id);
-  }
+  const shippingPrice = 0;
 
   return (
     <div className="tw:grid tw:items-start tw:gap-6 tw:lg:grid-cols-[minmax(0,1fr)_22rem] tw:xl:gap-8">
       <div className="tw:flex tw:min-w-0 tw:flex-col tw:gap-6">
         {addressSelection}
-
-        <Card variant="elevated" size="md">
-          <CardHeader>
-            <CardTitle className="tw:flex tw:items-center tw:gap-2">
-              <Truck aria-hidden="true" className="tw:size-5 tw:text-primary" />
-              روش ارسال
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={deliveryId}
-              onValueChange={selectDeliveryMethod}
-              aria-label="انتخاب روش ارسال"
-              className="tw:grid tw:gap-3 tw:sm:grid-cols-2"
-            >
-              {deliveryMethods.map((method) => {
-                const selected = method.id === deliveryId;
-                return (
-                  <Field
-                    key={method.id}
-                    className={cn(
-                      'tw:rounded-2xl tw:border tw:p-4 tw:transition-colors',
-                      selected
-                        ? 'tw:border-primary tw:bg-primary-muted/45'
-                        : 'tw:border-border tw:bg-card',
-                    )}
-                  >
-                    <FieldLabel
-                      htmlFor={`delivery-${method.id}`}
-                      className="tw:w-full tw:cursor-pointer tw:items-start tw:gap-3"
-                    >
-                      <RadioGroupItem
-                        id={`delivery-${method.id}`}
-                        value={method.id}
-                        className="tw:mt-1"
-                      />
-                      <span className="tw:flex tw:flex-1 tw:flex-col tw:gap-1.5">
-                        <span className="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:text-title-s">
-                          <span>{method.title}</span>
-                          {method.price === 0 ? (
-                            <span className="tw:text-success">رایگان</span>
-                          ) : (
-                            <Price number={method.price} className="tw:text-primary" />
-                          )}
-                        </span>
-                        <span className="tw:text-body-s tw:text-muted-foreground">
-                          {method.description}
-                        </span>
-                        <span className="tw:flex tw:items-center tw:gap-1.5 tw:text-label-s tw:text-primary">
-                          <CalendarDays aria-hidden="true" className="tw:size-4" />
-                          {method.arrival}
-                        </span>
-                      </span>
-                    </FieldLabel>
-                  </Field>
-                );
-              })}
-            </RadioGroup>
-            <div className="tw:mt-4 tw:flex tw:items-center tw:gap-2 tw:rounded-2xl tw:bg-muted tw:p-3 tw:text-body-s tw:text-muted-foreground">
-              <Clock3 aria-hidden="true" className="tw:size-4 tw:text-primary" />
-              بازه دقیق تحویل پس از ثبت سفارش با شما هماهنگ می‌شود.
-            </div>
-          </CardContent>
-        </Card>
+        {deliveryServicesSelection}
 
         <Card variant="elevated" size="md">
           <CardHeader>
@@ -153,7 +59,7 @@ export function ShipmentForm({
                 aria-label="انتخاب روز تحویل"
                 className="tw:grid tw:grid-cols-2 tw:gap-3 tw:sm:grid-cols-3"
               >
-                {availableDates.map((date) => {
+                {deliveryDates.map((date) => {
                   const selected = date.id === deliveryDateId;
                   return (
                     <Field
@@ -239,95 +145,13 @@ export function ShipmentForm({
         </Card>
       </div>
 
-      <aside className="tw:flex tw:flex-col tw:gap-4 tw:lg:sticky tw:lg:top-24 tw:lg:self-start">
-        <Card variant="glass" size="md">
-          <CardHeader className="tw:flex tw:flex-row tw:items-center tw:justify-between tw:gap-3">
-            <CardTitle className="tw:text-title-l">خلاصه سفارش</CardTitle>
-            <Button
-              nativeButton={false}
-              render={<Link href={routePaths.cart} />}
-              size="xs"
-              variant="text"
-            >
-              سبد خرید
-            </Button>
-          </CardHeader>
-          <CardContent className="tw:flex tw:flex-col tw:gap-4">
-            <ul className="tw:flex tw:flex-col tw:gap-3" aria-label="کالاهای سفارش">
-              {items.map((item) => (
-                <li key={item.id} className="tw:flex tw:items-center tw:gap-3">
-                  <span className="tw:relative tw:size-12 tw:shrink-0 tw:overflow-hidden tw:rounded-xl tw:bg-muted">
-                    <Image src={item.image} alt="" fill sizes="48px" className="tw:object-cover" />
-                  </span>
-                  <span className="tw:min-w-0 tw:flex-1 tw:truncate tw:text-body-s">
-                    {item.title}
-                  </span>
-                  <Badge size="sm" variant="tonal" color="secondary">
-                    {item.quantity.toLocaleString('fa-IR')} عدد
-                  </Badge>
-                </li>
-              ))}
-            </ul>
-            <Separator />
-            <div className="tw:flex tw:items-start tw:gap-2 tw:rounded-2xl tw:bg-muted tw:p-3">
-              <CalendarDays
-                aria-hidden="true"
-                className="tw:mt-0.5 tw:size-4 tw:shrink-0 tw:text-primary"
-              />
-              <p className="tw:text-body-s tw:text-muted-foreground">
-                تحویل {selectedDate?.weekday} {selectedDate?.date}، ساعت{' '}
-                <bdi>{selectedTimeSlot?.label}</bdi>
-              </p>
-            </div>
-            <Separator />
-            <dl className="tw:flex tw:flex-col tw:gap-3">
-              <div className="tw:flex tw:justify-between tw:gap-4">
-                <dt className="tw:text-body-s tw:text-muted-foreground">قیمت کالاها</dt>
-                <dd className="tw:text-label-m">
-                  <Price number={totals.merchandise} />
-                </dd>
-              </div>
-              <div className="tw:flex tw:justify-between tw:gap-4">
-                <dt className="tw:text-body-s tw:text-muted-foreground">تخفیف کالاها</dt>
-                <dd className="tw:text-label-m tw:text-error">
-                  <Price number={totals.discount} />
-                </dd>
-              </div>
-              <div className="tw:flex tw:justify-between tw:gap-4">
-                <dt className="tw:text-body-s tw:text-muted-foreground">هزینه ارسال</dt>
-                <dd
-                  className={
-                    shippingPrice === 0 ? 'tw:text-label-m tw:text-success' : 'tw:text-label-m'
-                  }
-                >
-                  {shippingPrice === 0 ? 'رایگان' : <Price number={shippingPrice} />}
-                </dd>
-              </div>
-            </dl>
-            <Separator />
-            <div className="tw:flex tw:items-center tw:justify-between tw:gap-4">
-              <span className="tw:text-title-s">مبلغ قابل پرداخت</span>
-              <Price
-                number={totals.payable + shippingPrice}
-                className="tw:text-price-m tw:text-primary"
-              />
-            </div>
-          </CardContent>
-          <CardFooter className="tw:flex-col tw:items-stretch">
-            <Button block size="lg">
-              ادامه و پرداخت
-            </Button>
-            <p className="tw:flex tw:items-center tw:justify-center tw:gap-1.5 tw:text-label-s tw:text-muted-foreground">
-              <ShieldCheck aria-hidden="true" className="tw:size-4" />
-              پرداخت امن و تضمین اصالت کالا
-            </p>
-          </CardFooter>
-        </Card>
-        <p className="tw:flex tw:items-center tw:justify-center tw:gap-2 tw:text-label-s tw:text-muted-foreground">
-          <PackageCheck aria-hidden="true" className="tw:size-4 tw:text-primary" />
-          تمام کالاها آماده ارسال هستند.
-        </p>
-      </aside>
+      <CheckoutOrderSummary
+        items={items}
+        selectedDate={selectedDate}
+        selectedTimeSlot={selectedTimeSlot}
+        shippingPrice={shippingPrice}
+        totals={totals}
+      />
     </div>
   );
 }
