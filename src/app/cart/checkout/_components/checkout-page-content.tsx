@@ -1,6 +1,5 @@
 import { MapPin } from 'lucide-react';
 
-import { checkoutTotals, deliveryDates, deliveryTimeSlots } from './checkout-data';
 import { CheckoutAddressSelection } from './address-selection/address-selection';
 import { CheckoutDeliveryServices } from './delivery-services/delivery-services';
 import { ShipmentForm } from './shipment-form';
@@ -30,9 +29,6 @@ export function CheckoutPageContent() {
         <ShipmentForm
           addressSelection={<CheckoutAddressSelection />}
           deliveryServicesSelection={<CheckoutDeliveryServices />}
-          deliveryDates={deliveryDates}
-          deliveryTimeSlots={deliveryTimeSlots}
-          totals={checkoutTotals}
         />
       </div>
     </div>
