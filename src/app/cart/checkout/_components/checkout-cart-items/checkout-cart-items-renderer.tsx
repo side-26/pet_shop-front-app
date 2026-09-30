@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { CartItemDetailsDTO } from '@/entities/users/users.dto';
-
 type CheckoutCartItemsRendererProps = Readonly<{
   isSkeleton?: boolean;
   items: readonly CartItemDetailsDTO[];

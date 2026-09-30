@@ -30,6 +30,7 @@ export function CheckoutDeliveryServicesRenderer({
     (state) => state.checkoutInformation.deliveryServiceAvailability,
   );
   const saveCheckoutInformation = useCheckoutStore((state) => state.saveCheckoutInformation);
+  const setDeliveryPrices = useCheckoutStore((state) => state.setDeliveryPrices);
 
   function selectDeliveryService(service: CheckoutDeliveryServiceViewModel) {
     saveCheckoutInformation({
@@ -38,6 +39,7 @@ export function CheckoutDeliveryServicesRenderer({
       deliveryDate: undefined,
       deliveryTimeSlot: undefined,
     });
+    setDeliveryPrices(service.calculatedPricePerKilometer, service.packingPrice);
   }
 
   useEffect(() => {
@@ -56,11 +58,13 @@ export function CheckoutDeliveryServicesRenderer({
       deliveryServiceId: selectedService.id,
       deliveryServiceAvailability: selectedService.availability,
     });
+    setDeliveryPrices(selectedService.calculatedPricePerKilometer, selectedService.packingPrice);
   }, [
     deliveryServiceAvailability,
     deliveryServiceId,
     isSkeleton,
     saveCheckoutInformation,
+    setDeliveryPrices,
     services,
   ]);
 

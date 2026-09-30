@@ -11,9 +11,10 @@ export type CheckoutPriceLine = Readonly<{
 }>;
 
 export type CheckoutPrices = Readonly<{
-  itemsPrice: number;
+  productPrice: number;
   discountPrice: number;
   shippingPrice: number;
+  packingPrice: number;
   payablePrice: number;
 }>;
 
@@ -49,9 +50,10 @@ export type CheckoutInformation = Readonly<{
 }>;
 
 const initialPrices: CheckoutPrices = {
-  itemsPrice: 0,
+  productPrice: 0,
   discountPrice: 0,
   shippingPrice: 0,
+  packingPrice: 0,
   payablePrice: 0,
 };
 
@@ -67,12 +69,16 @@ function isPositiveInteger(value: number) {
 export function calculateCheckoutPrices(
   lines: readonly CheckoutPriceLine[],
   shippingPrice = 0,
+  packingPrice = 0,
 ): CheckoutPrices {
   if (!isNonNegativeFiniteNumber(shippingPrice)) {
     throw new Error('Shipping price must be a non-negative finite number.');
   }
+  if (!isNonNegativeFiniteNumber(packingPrice)) {
+    throw new Error('Packing price must be a non-negative finite number.');
+  }
 
-  const { itemsPrice, discountPrice } = lines.reduce(
+  const { productPrice, discountPrice } = lines.reduce(
     (totals, line) => {
       if (!isNonNegativeFiniteNumber(line.price)) {
         throw new Error('Checkout line price must be a non-negative finite number.');
@@ -86,18 +92,19 @@ export function calculateCheckoutPrices(
 
       const linePrice = line.price * line.quantity;
       return {
-        itemsPrice: totals.itemsPrice + linePrice,
+        productPrice: totals.productPrice + linePrice,
         discountPrice: totals.discountPrice + linePrice * (line.discountPercentage / 100),
       };
     },
-    { itemsPrice: 0, discountPrice: 0 },
+    { productPrice: 0, discountPrice: 0 },
   );
 
   return {
-    itemsPrice,
+    productPrice,
     discountPrice,
     shippingPrice,
-    payablePrice: itemsPrice - discountPrice + shippingPrice,
+    packingPrice,
+    payablePrice: productPrice - discountPrice + shippingPrice + packingPrice,
   };
 }
 
@@ -106,7 +113,13 @@ type CheckoutStore = {
   selectedAddressCoordinates: CheckoutAddressCoordinates | null;
   checkoutInformation: CheckoutInformation;
 
-  calculatePrices: (lines: readonly CheckoutPriceLine[], shippingPrice?: number) => CheckoutPrices;
+  calculatePrices: (
+    lines: readonly CheckoutPriceLine[],
+    shippingPrice?: number,
+    packingPrice?: number,
+  ) => CheckoutPrices;
+  setCartPrices: (prices: Pick<CheckoutPrices, 'productPrice' | 'discountPrice'>) => CheckoutPrices;
+  setDeliveryPrices: (shippingPrice: number, packingPrice: number) => CheckoutPrices;
   setSelectedAddressCoordinates: (coordinates: CheckoutAddressCoordinates | null) => void;
   getSelectedAddressCoordinates: () => CheckoutAddressCoordinates | null;
   selectAddress: (addressId: string, coordinates: CheckoutAddressCoordinates) => void;
@@ -119,8 +132,40 @@ export const useCheckoutStore = create<CheckoutStore>()((set, get) => ({
   selectedAddressCoordinates: null,
   checkoutInformation: {},
 
-  calculatePrices: (lines, shippingPrice = 0) => {
-    const prices = calculateCheckoutPrices(lines, shippingPrice);
+  calculatePrices: (lines, shippingPrice = 0, packingPrice = 0) => {
+    const prices = calculateCheckoutPrices(lines, shippingPrice, packingPrice);
+    set({ prices });
+    return prices;
+  },
+  setCartPrices: ({ productPrice, discountPrice }) => {
+    if (!isNonNegativeFiniteNumber(productPrice) || !isNonNegativeFiniteNumber(discountPrice)) {
+      throw new Error('Product prices must be non-negative finite numbers.');
+    }
+
+    const { shippingPrice, packingPrice } = get().prices;
+    const prices: CheckoutPrices = {
+      productPrice,
+      discountPrice,
+      shippingPrice,
+      packingPrice,
+      payablePrice: productPrice - discountPrice + shippingPrice + packingPrice,
+    };
+    set({ prices });
+    return prices;
+  },
+  setDeliveryPrices: (shippingPrice, packingPrice) => {
+    if (!isNonNegativeFiniteNumber(shippingPrice) || !isNonNegativeFiniteNumber(packingPrice)) {
+      throw new Error('Delivery prices must be non-negative finite numbers.');
+    }
+
+    const { productPrice, discountPrice } = get().prices;
+    const prices: CheckoutPrices = {
+      productPrice,
+      discountPrice,
+      shippingPrice,
+      packingPrice,
+      payablePrice: productPrice - discountPrice + shippingPrice + packingPrice,
+    };
     set({ prices });
     return prices;
   },

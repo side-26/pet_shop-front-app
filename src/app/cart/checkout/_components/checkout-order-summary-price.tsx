@@ -13,7 +13,13 @@ export function CheckoutOrderSummaryPrice() {
         <div className="tw:flex tw:justify-between tw:gap-4">
           <dt className="tw:text-body-s tw:text-muted-foreground">قیمت کالاها</dt>
           <dd className="tw:text-label-m">
-            <Price number={prices.itemsPrice} />
+            <Price number={prices.productPrice} />
+          </dd>
+        </div>
+        <div className="tw:flex tw:justify-between tw:gap-4">
+          <dt className="tw:text-body-s tw:text-muted-foreground">هزینه بسته‌بندی</dt>
+          <dd className="tw:text-label-m">
+            <Price number={prices.packingPrice} />
           </dd>
         </div>
         <div className="tw:flex tw:justify-between tw:gap-4">

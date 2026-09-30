@@ -17,12 +17,14 @@ describe('calculateCheckoutPrices', () => {
           { price: 80_000, discountPercentage: 25, quantity: 1 },
         ],
         30_000,
+        10_000,
       ),
     ).toEqual({
-      itemsPrice: 280_000,
+      productPrice: 280_000,
       discountPrice: 40_000,
       shippingPrice: 30_000,
-      payablePrice: 270_000,
+      packingPrice: 10_000,
+      payablePrice: 280_000,
     });
   });
 
@@ -40,10 +42,23 @@ describe('calculateCheckoutPrices', () => {
 });
 
 describe('useCheckoutStore', () => {
+  it('keeps product, discount, shipping, and packing prices in one payable total', () => {
+    useCheckoutStore.getState().setCartPrices({ productPrice: 300_000, discountPrice: 45_000 });
+    const prices = useCheckoutStore.getState().setDeliveryPrices(25_000, 10_000);
+
+    expect(prices).toEqual({
+      productPrice: 300_000,
+      discountPrice: 45_000,
+      shippingPrice: 25_000,
+      packingPrice: 10_000,
+      payablePrice: 290_000,
+    });
+  });
+
   it('stores calculated prices, selected address coordinates, and order-ready checkout information', () => {
     const prices = useCheckoutStore
       .getState()
-      .calculatePrices([{ price: 50_000, discountPercentage: 20, quantity: 2 }], 15_000);
+      .calculatePrices([{ price: 50_000, discountPercentage: 20, quantity: 2 }], 15_000, 5_000);
     useCheckoutStore.getState().selectAddress('address-1', [35.72, 51.33]);
     useCheckoutStore.getState().saveCheckoutInformation({
       deliveryServiceId: 'delivery-service-1',
@@ -75,10 +90,11 @@ describe('useCheckoutStore', () => {
     });
 
     expect(prices).toEqual({
-      itemsPrice: 100_000,
+      productPrice: 100_000,
       discountPrice: 20_000,
       shippingPrice: 15_000,
-      payablePrice: 95_000,
+      packingPrice: 5_000,
+      payablePrice: 100_000,
     });
     expect(useCheckoutStore.getState().getSelectedAddressCoordinates()).toEqual([35.72, 51.33]);
     expect(useCheckoutStore.getState().checkoutInformation).toEqual({
@@ -122,7 +138,13 @@ describe('useCheckoutStore', () => {
     useCheckoutStore.getState().clearCheckout();
 
     expect(useCheckoutStore.getState()).toMatchObject({
-      prices: { itemsPrice: 0, discountPrice: 0, shippingPrice: 0, payablePrice: 0 },
+      prices: {
+        productPrice: 0,
+        discountPrice: 0,
+        shippingPrice: 0,
+        packingPrice: 0,
+        payablePrice: 0,
+      },
       selectedAddressCoordinates: null,
       checkoutInformation: {},
     });
