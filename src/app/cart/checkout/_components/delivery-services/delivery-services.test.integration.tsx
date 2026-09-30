@@ -7,6 +7,7 @@ import { useCheckoutStore } from '@/stores/checkout.store';
 
 import { CheckoutDeliveryServicesClientContainer } from './delivery-services-client-container';
 import { CheckoutDeliveryServicesRenderer } from './delivery-services-renderer';
+import { DeliveryTime } from '../delivery-time/delivery-time';
 
 vi.mock('@/entities/delivery-services/delivery-services.client', () => ({
   useAvailableDeliveryServices: vi.fn(),
@@ -19,7 +20,16 @@ const services: AvailableDeliveryServiceDTO[] = [
     title_fa: 'پیک شهری',
     logo: 'https://cdn.example.test/courier.webp',
     packingPrice: 12_000,
-    availability: [{ weekday: 'sunday', startsAt: '09:00', endsAt: '18:00' }],
+    availability: [
+      {
+        weekday: 'sunday',
+        weekday_fa: 'یکشنبه',
+        date: '01/10/2026',
+        month_ja: 7,
+        day_ja: 9,
+        availableTimes: [{ start: 9, end: 11 }],
+      },
+    ],
     distanceKm: 8.5,
     calculatedPricePerKilometer: 45_000,
   },
@@ -29,7 +39,16 @@ const services: AvailableDeliveryServiceDTO[] = [
     title_fa: 'ارسال سریع',
     logo: 'https://cdn.example.test/express.webp',
     packingPrice: 20_000,
-    availability: [{ weekday: 'monday', startsAt: '12:00', endsAt: '16:00' }],
+    availability: [
+      {
+        weekday: 'monday',
+        weekday_fa: 'دوشنبه',
+        date: '02/10/2026',
+        month_ja: 7,
+        day_ja: 10,
+        availableTimes: [{ start: 12, end: 14 }],
+      },
+    ],
     distanceKm: 5.2,
     calculatedPricePerKilometer: 60_000,
   },
@@ -44,6 +63,29 @@ afterEach(resetCheckoutStore);
 afterEach(cleanup);
 
 describe('Checkout delivery services', () => {
+  it('resets the appointment to the new service’s first available day and time', async () => {
+    render(
+      <>
+        <CheckoutDeliveryServicesRenderer hasSelectedAddress services={services} />
+        <DeliveryTime />
+      </>,
+    );
+
+    await waitFor(() =>
+      expect(useCheckoutStore.getState().checkoutInformation.deliveryTimeSlot?.id).toBe(
+        '01/10/2026-9-11',
+      ),
+    );
+    fireEvent.click(screen.getByRole('radio', { name: 'ارسال سریع' }));
+    await waitFor(() =>
+      expect(useCheckoutStore.getState().checkoutInformation).toMatchObject({
+        deliveryServiceId: 'express',
+        deliveryDate: { id: '02/10/2026' },
+        deliveryTimeSlot: { id: '02/10/2026-12-14', label: '12 تا 14' },
+      }),
+    );
+  });
+
   it('selects the first service by default and saves its availability', async () => {
     render(<CheckoutDeliveryServicesRenderer hasSelectedAddress services={services} />);
 
@@ -74,9 +116,9 @@ describe('Checkout delivery services', () => {
       ),
     );
     fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات پیک شهری' }));
-    expect(screen.getAllByText('فاصله')).not.toHaveLength(0);
     expect(screen.getAllByText('هزینه مسیر')).not.toHaveLength(0);
     expect(screen.getAllByText('بسته‌بندی')).not.toHaveLength(0);
+    expect(screen.getAllByText('بازه')).not.toHaveLength(0);
   });
 
   it('uses the selected address coordinates to load available services', async () => {

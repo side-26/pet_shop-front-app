@@ -35,6 +35,8 @@ export function CheckoutDeliveryServicesRenderer({
     saveCheckoutInformation({
       deliveryServiceId: service.id,
       deliveryServiceAvailability: service.availability,
+      deliveryDate: undefined,
+      deliveryTimeSlot: undefined,
     });
   }
 

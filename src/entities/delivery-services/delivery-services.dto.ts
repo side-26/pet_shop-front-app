@@ -27,10 +27,18 @@ export type DeliveryServiceDTO = {
   updatedAt: string;
 };
 
-export type DeliveryAvailabilitySlotDTO = {
+export type DeliveryAvailabilityTimeDTO = {
+  start: number | string;
+  end: number | string;
+};
+
+export type DeliveryAvailabilityDayDTO = {
   weekday: string;
-  startsAt: string;
-  endsAt: string;
+  weekday_fa: string;
+  date: string;
+  month_ja: number;
+  day_ja: number;
+  availableTimes: DeliveryAvailabilityTimeDTO[];
 };
 
 /** Public quote responses intentionally exclude provider pricing inputs and origin coordinates. */
@@ -40,7 +48,7 @@ export type AvailableDeliveryServiceDTO = {
   title_fa: string;
   logo: string;
   packingPrice: number;
-  availability: DeliveryAvailabilitySlotDTO[];
+  availability: DeliveryAvailabilityDayDTO[];
   distanceKm: number;
   calculatedPricePerKilometer: number;
 };

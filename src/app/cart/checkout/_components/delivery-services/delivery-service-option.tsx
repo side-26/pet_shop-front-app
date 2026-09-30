@@ -1,6 +1,6 @@
 'use client';
 
-import { CalendarClock, ChevronDown, MapPinned, PackageCheck, Route } from 'lucide-react';
+import { CalendarClock, ChevronDown, PackageCheck, Route } from 'lucide-react';
 import { useState } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -75,11 +75,6 @@ export function DeliveryServiceOption({
         <div className="tw:flex tw:flex-col tw:gap-3 tw:border-t tw:border-border/70 tw:p-3">
           <div className="tw:grid tw:grid-cols-3 tw:gap-2">
             <DeliveryServiceDetailItem
-              icon={MapPinned}
-              label="فاصله"
-              value={<bdi dir="ltr">{service.distanceKm.toLocaleString('fa-IR')} کیلومتر</bdi>}
-            />
-            <DeliveryServiceDetailItem
               icon={Route}
               label="هزینه مسیر"
               value={<Price number={service.calculatedPricePerKilometer} />}
@@ -89,13 +84,12 @@ export function DeliveryServiceOption({
               label="بسته‌بندی"
               value={<Price number={service.packingPrice} />}
             />
+            <DeliveryServiceDetailItem
+              icon={CalendarClock}
+              label="بازه"
+              value={`${service.availability.length.toLocaleString('fa-IR')} بازه`}
+            />
           </div>
-          <p className="tw:flex tw:items-center tw:gap-1.5 tw:text-label-s tw:text-muted-foreground">
-            <CalendarClock aria-hidden="true" className="tw:size-4 tw:text-primary" />
-            {service.availability.length > 0
-              ? `${service.availability.length.toLocaleString('fa-IR')} بازه تحویل در دسترس است.`
-              : 'بازه تحویلی برای این سرویس ثبت نشده است.'}
-          </p>
         </div>
       </CollapsibleContent>
     </Collapsible>

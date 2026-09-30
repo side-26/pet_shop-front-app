@@ -13,7 +13,13 @@ const timeRangeSchema = object({
   startsAt: timeSchema,
   endsAt: timeSchema,
 }).test('ordered-range', 'زمان پایان باید بعد از زمان شروع باشد.', (value) =>
-  Boolean(value && value.startsAt < value.endsAt),
+  Boolean(
+    value &&
+    Number(value.endsAt.slice(0, 2)) * 60 +
+      Number(value.endsAt.slice(3)) -
+      (Number(value.startsAt.slice(0, 2)) * 60 + Number(value.startsAt.slice(3))) ===
+      120,
+  ),
 );
 const dayScheduleSchema = array(timeRangeSchema.required()).required();
 

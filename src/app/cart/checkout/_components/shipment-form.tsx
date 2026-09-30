@@ -3,17 +3,24 @@
 import { CalendarDays } from 'lucide-react';
 import { useEffect, type ReactNode } from 'react';
 
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field } from '@/components/ui/field/default';
 import { FieldLabel } from '@/components/ui/field/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/fields/radio-group';
-import { Separator } from '@/components/ui/separator';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/fields/select';
+import { fetchJalaliMonth } from '@/configs/contants';
 import { cn } from '@/lib/utils';
 import { useCheckoutStore } from '@/stores/checkout.store';
 
 import type { DeliveryDate, DeliveryTimeSlot } from './checkout-data';
 import { CheckoutOrderSummary } from './checkout-order-summary';
+import { DeliveryTime } from './delivery-time/delivery-time';
 
 type ShipmentFormProps = Readonly<{
   addressSelection: ReactNode;
@@ -27,38 +34,58 @@ type ShipmentFormProps = Readonly<{
 export function ShipmentForm({
   addressSelection,
   deliveryServicesSelection,
-  deliveryDates,
-  deliveryTimeSlots,
+  deliveryDates: _deliveryDates,
+  deliveryTimeSlots: _deliveryTimeSlots,
   items,
   totals,
 }: ShipmentFormProps) {
   const selectedDate = useCheckoutStore((state) => state.checkoutInformation.deliveryDate);
   const selectedTimeSlot = useCheckoutStore((state) => state.checkoutInformation.deliveryTimeSlot);
+  const availability =
+    useCheckoutStore((state) => state.checkoutInformation.deliveryServiceAvailability) ?? [];
   const saveCheckoutInformation = useCheckoutStore((state) => state.saveCheckoutInformation);
-  const deliveryDateId = selectedDate?.id;
   const timeSlotId = selectedTimeSlot?.id;
   const shippingPrice = 0;
 
   useEffect(() => {
-    const defaultDate = deliveryDates[0];
-    const defaultTimeSlot = deliveryTimeSlots[0];
-
-    if ((selectedDate || !defaultDate) && (selectedTimeSlot || !defaultTimeSlot)) return;
-
+    const day = availability[0];
+    const time = day?.availableTimes[0];
+    if (!day || !time || selectedTimeSlot) return;
     saveCheckoutInformation({
-      ...(selectedDate || !defaultDate ? {} : { deliveryDate: defaultDate }),
-      ...(selectedTimeSlot || !defaultTimeSlot ? {} : { deliveryTimeSlot: defaultTimeSlot }),
+      deliveryDate: {
+        id: day.date,
+        weekday: `${day.weekday_fa}، ${day.day_ja} ${fetchJalaliMonth(day.month_ja)}`,
+      },
+      deliveryTimeSlot: {
+        id: `${day.date}-${time.start}-${time.end}`,
+        label: `${time.start} تا ${time.end}`,
+        description: '',
+        weekday: day.weekday,
+        startsAt: String(time.start),
+        endsAt: String(time.end),
+      },
     });
-  }, [deliveryDates, deliveryTimeSlots, saveCheckoutInformation, selectedDate, selectedTimeSlot]);
+  }, [availability, selectedTimeSlot, saveCheckoutInformation]);
 
-  function selectDeliveryDate(deliveryDateId: string) {
-    const deliveryDate = deliveryDates.find((date) => date.id === deliveryDateId);
-    if (deliveryDate) saveCheckoutInformation({ deliveryDate });
-  }
-
-  function selectDeliveryTimeSlot(deliveryTimeSlotId: string) {
-    const deliveryTimeSlot = deliveryTimeSlots.find((slot) => slot.id === deliveryTimeSlotId);
-    if (deliveryTimeSlot) saveCheckoutInformation({ deliveryTimeSlot });
+  function selectDeliveryTime(
+    day: (typeof availability)[number],
+    time: (typeof availability)[number]['availableTimes'][number],
+  ) {
+    const label = `${time.start} تا ${time.end}`;
+    saveCheckoutInformation({
+      deliveryDate: {
+        id: day.date,
+        weekday: `${day.weekday_fa}، ${day.day_ja} ${fetchJalaliMonth(day.month_ja)}`,
+      },
+      deliveryTimeSlot: {
+        id: `${day.date}-${time.start}-${time.end}`,
+        label,
+        description: '',
+        weekday: day.weekday,
+        startsAt: String(time.start),
+        endsAt: String(time.end),
+      },
+    });
   }
 
   return (
@@ -66,107 +93,78 @@ export function ShipmentForm({
       <div className="tw:flex tw:min-w-0 tw:flex-col tw:gap-6">
         {addressSelection}
         {deliveryServicesSelection}
+        <DeliveryTime />
 
-        <Card variant="elevated" size="md">
-          <CardHeader>
-            <CardTitle className="tw:flex tw:items-center tw:gap-2">
-              <CalendarDays aria-hidden="true" className="tw:size-5 tw:text-primary" />
-              زمان تحویل
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="tw:flex tw:flex-col tw:gap-5">
-            <div className="tw:flex tw:flex-col tw:gap-3">
-              <p className="tw:text-label-l tw:text-card-foreground">روز تحویل</p>
+        {false ? (
+          <Card variant="elevated" size="md">
+            <CardHeader>
+              <CardTitle className="tw:flex tw:items-center tw:gap-2">
+                <CalendarDays aria-hidden="true" className="tw:size-5 tw:text-primary" />
+                زمان تحویل
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
               <RadioGroup
-                value={deliveryDateId ?? ''}
-                onValueChange={selectDeliveryDate}
+                value={selectedDate?.id ?? ''}
                 aria-label="انتخاب روز تحویل"
-                className="tw:grid tw:grid-cols-2 tw:gap-3 tw:sm:grid-cols-3"
+                className="tw:flex tw:flex-wrap tw:gap-2"
               >
-                {deliveryDates.map((date) => {
-                  const selected = date.id === deliveryDateId;
+                {availability.map((day) => {
+                  const selected = selectedDate?.id === day.date;
                   return (
                     <Field
-                      key={date.id}
+                      key={day.date}
                       className={cn(
-                        'tw:rounded-2xl tw:border tw:p-3 tw:transition-colors tw:sm:p-4',
+                        'tw:flex tw:w-fit tw:items-center tw:justify-center tw:rounded-xl tw:border tw:p-3 tw:transition-[background-color,border-color,box-shadow] tw:motion-reduce:transition-none',
                         selected
-                          ? 'tw:border-primary tw:bg-primary-muted/45'
+                          ? 'tw:border-primary/45 tw:bg-primary-muted/70 tw:shadow-lg tw:shadow-primary/10 tw:supports-backdrop-filter:backdrop-blur-xl'
                           : 'tw:border-border tw:bg-card',
                       )}
                     >
-                      <FieldLabel
-                        htmlFor={`delivery-date-${date.id}`}
-                        className="tw:w-full tw:cursor-pointer tw:items-start tw:gap-3"
-                      >
-                        <RadioGroupItem
-                          id={`delivery-date-${date.id}`}
-                          value={date.id}
-                          className="tw:mt-1"
-                        />
-                        <span className="tw:flex tw:min-w-0 tw:flex-1 tw:flex-col tw:gap-1">
-                          <span className="tw:flex tw:flex-wrap tw:items-center tw:gap-1.5 tw:text-title-s">
-                            {date.weekday}
-                            {date.recommended ? (
-                              <Badge size="xs" variant="tonal" color="success">
-                                پیشنهادی
-                              </Badge>
-                            ) : null}
+                      <div className="tw:flex tw:items-center tw:gap-3">
+                        <FieldLabel
+                          htmlFor={`delivery-day-${day.date}`}
+                          onClick={() => selectDeliveryTime(day, day.availableTimes[0])}
+                          className="tw:min-w-0 tw:flex-1 tw:cursor-pointer tw:gap-2"
+                        >
+                          <RadioGroupItem id={`delivery-day-${day.date}`} value={day.date} />
+                          <span className="tw:text-title-s">
+                            {day.weekday_fa}، {day.day_ja} {fetchJalaliMonth(day.month_ja)}
                           </span>
-                          <span className="tw:text-body-s tw:text-muted-foreground">
-                            {date.date}
-                          </span>
-                        </span>
-                      </FieldLabel>
+                        </FieldLabel>
+                        {selectedDate?.id === day.date ? (
+                          <Select
+                            value={timeSlotId}
+                            onValueChange={(id) => {
+                              const time = day.availableTimes.find(
+                                (item) => `${day.date}-${item.start}-${item.end}` === id,
+                              );
+                              if (time) selectDeliveryTime(day, time);
+                            }}
+                          >
+                            <SelectTrigger className="tw:w-32">
+                              <SelectValue>{selectedTimeSlot?.label}</SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {day.availableTimes.map((time) => {
+                                const id = `${day.date}-${time.start}-${time.end}`;
+                                return (
+                                  <SelectItem key={id} value={id}>
+                                    {time.start} تا {time.end}
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
+                        ) : null}
+                      </div>
                     </Field>
                   );
                 })}
               </RadioGroup>
-            </div>
-
-            <Separator />
-
-            <div className="tw:flex tw:flex-col tw:gap-3">
-              <p className="tw:text-label-l tw:text-card-foreground">بازه زمانی</p>
-              <RadioGroup
-                value={timeSlotId ?? ''}
-                onValueChange={selectDeliveryTimeSlot}
-                aria-label="انتخاب بازه زمانی تحویل"
-                className="tw:grid tw:grid-cols-3 tw:gap-2 tw:sm:gap-3"
-              >
-                {deliveryTimeSlots.map((slot) => {
-                  const selected = slot.id === timeSlotId;
-                  return (
-                    <Field
-                      key={slot.id}
-                      className={cn(
-                        'tw:rounded-2xl tw:border tw:p-3 tw:transition-colors tw:sm:p-4',
-                        selected
-                          ? 'tw:border-primary tw:bg-primary-muted/45'
-                          : 'tw:border-border tw:bg-card',
-                      )}
-                    >
-                      <FieldLabel
-                        htmlFor={`delivery-time-${slot.id}`}
-                        className="tw:w-full tw:cursor-pointer tw:flex-col tw:items-center tw:gap-1 tw:text-center"
-                      >
-                        <RadioGroupItem
-                          id={`delivery-time-${slot.id}`}
-                          value={slot.id}
-                          className="tw:mb-1"
-                        />
-                        <span className="tw:text-title-s">{slot.label}</span>
-                        <span className="tw:text-label-s tw:text-muted-foreground">
-                          {slot.description}
-                        </span>
-                      </FieldLabel>
-                    </Field>
-                  );
-                })}
-              </RadioGroup>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ) : null}
       </div>
 
       <CheckoutOrderSummary
@@ -179,3 +177,13 @@ export function ShipmentForm({
     </div>
   );
 }
+
+const weekdayNames: Record<string, string> = {
+  saturday: 'شنبه',
+  sunday: 'یکشنبه',
+  monday: 'دوشنبه',
+  tuesday: 'سه‌شنبه',
+  wednesday: 'چهارشنبه',
+  thursday: 'پنجشنبه',
+  friday: 'جمعه',
+};

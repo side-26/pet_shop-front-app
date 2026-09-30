@@ -2,6 +2,8 @@
 
 import { create } from 'zustand';
 
+import type { DeliveryAvailabilityDayDTO } from '@/entities/delivery-services/delivery-services.dto';
+
 export type CheckoutPriceLine = Readonly<{
   price: number;
   discountPercentage: number;
@@ -17,23 +19,21 @@ export type CheckoutPrices = Readonly<{
 
 export type CheckoutAddressCoordinates = readonly [latitude: number, longitude: number];
 
-export type CheckoutDeliveryAvailability = Readonly<{
-  weekday: string;
-  startsAt: string;
-  endsAt: string;
-}>;
+/** The public delivery-service availability response is retained without reshaping its day groups. */
+export type CheckoutDeliveryAvailability = DeliveryAvailabilityDayDTO;
 
 export type CheckoutDeliveryDate = Readonly<{
   id: string;
   weekday: string;
-  date: string;
-  recommended?: boolean;
 }>;
 
 export type CheckoutDeliveryTimeSlot = Readonly<{
   id: string;
   label: string;
   description: string;
+  weekday?: string;
+  startsAt?: string;
+  endsAt?: string;
 }>;
 
 /** Values retained only for the active checkout journey and supplied to checkout/order actions. */

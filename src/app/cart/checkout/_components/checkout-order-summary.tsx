@@ -11,7 +11,7 @@ import { routePaths } from '@/configs/route.path';
 
 type CheckoutOrderSummaryProps = Readonly<{
   items: readonly Readonly<{ id: string; title: string; image: string; quantity: number }>[];
-  selectedDate?: Readonly<{ weekday: string; date: string }>;
+  selectedDate?: Readonly<{ weekday: string }>;
   selectedTimeSlot?: Readonly<{ label: string }>;
   shippingPrice: number;
   totals: Readonly<{ merchandise: number; discount: number; payable: number }>;
@@ -61,8 +61,7 @@ export function CheckoutOrderSummary({
               className="tw:mt-0.5 tw:size-4 tw:shrink-0 tw:text-primary"
             />
             <p className="tw:text-body-s tw:text-muted-foreground">
-              تحویل {selectedDate?.weekday} {selectedDate?.date}، ساعت{' '}
-              <bdi>{selectedTimeSlot?.label}</bdi>
+              تحویل {selectedDate?.weekday}، ساعت <bdi>{selectedTimeSlot?.label}</bdi>
             </p>
           </div>
           <Separator />

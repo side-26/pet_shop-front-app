@@ -8,7 +8,7 @@ import {
 } from './delivery-services.schema';
 
 const schedule = {
-  sunday: [{ startsAt: '08:00', endsAt: '12:00' }],
+  sunday: [{ startsAt: '08:00', endsAt: '10:00' }],
   monday: [],
   tuesday: [],
   wednesday: [],
