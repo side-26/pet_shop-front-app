@@ -1,16 +1,14 @@
 import { CalendarDays, PackageCheck, ShieldCheck } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Price } from '@/components/ui/price';
 import { Separator } from '@/components/ui/separator';
 import { routePaths } from '@/configs/route.path';
+import { CheckoutCartItems } from './checkout-cart-items/checkout-cart-items';
 
 type CheckoutOrderSummaryProps = Readonly<{
-  items: readonly Readonly<{ id: string; title: string; image: string; quantity: number }>[];
   selectedDate?: Readonly<{ weekday: string }>;
   selectedTimeSlot?: Readonly<{ label: string }>;
   shippingPrice: number;
@@ -18,7 +16,6 @@ type CheckoutOrderSummaryProps = Readonly<{
 }>;
 
 export function CheckoutOrderSummary({
-  items,
   selectedDate,
   selectedTimeSlot,
   shippingPrice,
@@ -39,21 +36,7 @@ export function CheckoutOrderSummary({
           </Button>
         </CardHeader>
         <CardContent className="tw:flex tw:flex-col tw:gap-4">
-          <ul className="tw:flex tw:flex-col tw:gap-3" aria-label="کالاهای سفارش">
-            {items.map((item) => (
-              <li key={item.id} className="tw:flex tw:items-center tw:gap-3">
-                <span className="tw:relative tw:size-12 tw:shrink-0 tw:overflow-hidden tw:rounded-xl tw:bg-muted">
-                  <Image src={item.image} alt="" fill sizes="48px" className="tw:object-cover" />
-                </span>
-                <span className="tw:min-w-0 tw:flex-1 tw:truncate tw:text-body-s">
-                  {item.title}
-                </span>
-                <Badge size="sm" variant="tonal" color="secondary">
-                  {item.quantity.toLocaleString('fa-IR')} عدد
-                </Badge>
-              </li>
-            ))}
-          </ul>
+          <CheckoutCartItems />
           <Separator />
           <div className="tw:flex tw:items-start tw:gap-2 tw:rounded-2xl tw:bg-muted tw:p-3">
             <CalendarDays

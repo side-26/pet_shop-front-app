@@ -16,18 +16,19 @@ import {
 } from '@/components/ui/fields/select';
 import { fetchJalaliMonth } from '@/configs/contants';
 import { cn } from '@/lib/utils';
-import { useCheckoutStore } from '@/stores/checkout.store';
+import { type CheckoutDeliveryAvailability, useCheckoutStore } from '@/stores/checkout.store';
 
 import type { DeliveryDate, DeliveryTimeSlot } from './checkout-data';
 import { CheckoutOrderSummary } from './checkout-order-summary';
 import { DeliveryTime } from './delivery-time/delivery-time';
+
+const EMPTY_DELIVERY_AVAILABILITY: readonly CheckoutDeliveryAvailability[] = [];
 
 type ShipmentFormProps = Readonly<{
   addressSelection: ReactNode;
   deliveryServicesSelection: ReactNode;
   deliveryDates: readonly DeliveryDate[];
   deliveryTimeSlots: readonly DeliveryTimeSlot[];
-  items: readonly Readonly<{ id: string; title: string; image: string; quantity: number }>[];
   totals: Readonly<{ merchandise: number; discount: number; payable: number }>;
 }>;
 
@@ -36,13 +37,13 @@ export function ShipmentForm({
   deliveryServicesSelection,
   deliveryDates: _deliveryDates,
   deliveryTimeSlots: _deliveryTimeSlots,
-  items,
   totals,
 }: ShipmentFormProps) {
   const selectedDate = useCheckoutStore((state) => state.checkoutInformation.deliveryDate);
   const selectedTimeSlot = useCheckoutStore((state) => state.checkoutInformation.deliveryTimeSlot);
   const availability =
-    useCheckoutStore((state) => state.checkoutInformation.deliveryServiceAvailability) ?? [];
+    useCheckoutStore((state) => state.checkoutInformation.deliveryServiceAvailability) ??
+    EMPTY_DELIVERY_AVAILABILITY;
   const saveCheckoutInformation = useCheckoutStore((state) => state.saveCheckoutInformation);
   const timeSlotId = selectedTimeSlot?.id;
   const shippingPrice = 0;
@@ -168,7 +169,6 @@ export function ShipmentForm({
       </div>
 
       <CheckoutOrderSummary
-        items={items}
         selectedDate={selectedDate}
         selectedTimeSlot={selectedTimeSlot}
         shippingPrice={shippingPrice}
