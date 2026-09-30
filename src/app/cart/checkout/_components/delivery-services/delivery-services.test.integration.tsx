@@ -23,6 +23,16 @@ const services: AvailableDeliveryServiceDTO[] = [
     distanceKm: 8.5,
     calculatedPricePerKilometer: 45_000,
   },
+  {
+    id: 'express',
+    title: 'Express delivery',
+    title_fa: 'ارسال سریع',
+    logo: 'https://cdn.example.test/express.webp',
+    packingPrice: 20_000,
+    availability: [{ weekday: 'monday', startsAt: '12:00', endsAt: '16:00' }],
+    distanceKm: 5.2,
+    calculatedPricePerKilometer: 60_000,
+  },
 ];
 
 function resetCheckoutStore() {
@@ -34,34 +44,39 @@ afterEach(resetCheckoutStore);
 afterEach(cleanup);
 
 describe('Checkout delivery services', () => {
-  it('uses the delivery service selected in the checkout store', () => {
-    act(() =>
-      useCheckoutStore.getState().saveCheckoutInformation({ deliveryServiceId: 'courier' }),
-    );
-
+  it('selects the first service by default and saves its availability', async () => {
     render(<CheckoutDeliveryServicesRenderer hasSelectedAddress services={services} />);
 
-    expect(screen.getByRole('radio', { name: 'پیک شهری' }).getAttribute('aria-checked')).toBe(
-      'true',
-    );
-  });
-
-  it('renders every service as a collapsible option and saves its selection for order creation', async () => {
-    render(<CheckoutDeliveryServicesRenderer hasSelectedAddress services={services} />);
-
-    const radio = screen.getByRole('radio', { name: 'پیک شهری' });
-    fireEvent.click(radio);
-
-    expect(useCheckoutStore.getState().checkoutInformation.deliveryServiceId).toBe('courier');
     await waitFor(() =>
       expect(screen.getByRole('radio', { name: 'پیک شهری' }).getAttribute('aria-checked')).toBe(
         'true',
       ),
     );
+    expect(useCheckoutStore.getState().checkoutInformation).toMatchObject({
+      deliveryServiceId: 'courier',
+      deliveryServiceAvailability: services[0].availability,
+    });
+  });
+
+  it('renders every service as a collapsible option and saves its selection for order creation', async () => {
+    render(<CheckoutDeliveryServicesRenderer hasSelectedAddress services={services} />);
+
+    const radio = screen.getByRole('radio', { name: 'ارسال سریع' });
+    fireEvent.click(radio);
+
+    expect(useCheckoutStore.getState().checkoutInformation).toMatchObject({
+      deliveryServiceId: 'express',
+      deliveryServiceAvailability: services[1].availability,
+    });
+    await waitFor(() =>
+      expect(screen.getByRole('radio', { name: 'ارسال سریع' }).getAttribute('aria-checked')).toBe(
+        'true',
+      ),
+    );
     fireEvent.click(screen.getByRole('button', { name: 'نمایش جزئیات پیک شهری' }));
-    expect(screen.getByText('فاصله')).toBeTruthy();
-    expect(screen.getByText('هزینه مسیر')).toBeTruthy();
-    expect(screen.getByText('بسته‌بندی')).toBeTruthy();
+    expect(screen.getAllByText('فاصله')).not.toHaveLength(0);
+    expect(screen.getAllByText('هزینه مسیر')).not.toHaveLength(0);
+    expect(screen.getAllByText('بسته‌بندی')).not.toHaveLength(0);
   });
 
   it('uses the selected address coordinates to load available services', async () => {

@@ -17,10 +17,32 @@ export type CheckoutPrices = Readonly<{
 
 export type CheckoutAddressCoordinates = readonly [latitude: number, longitude: number];
 
+export type CheckoutDeliveryAvailability = Readonly<{
+  weekday: string;
+  startsAt: string;
+  endsAt: string;
+}>;
+
+export type CheckoutDeliveryDate = Readonly<{
+  id: string;
+  weekday: string;
+  date: string;
+  recommended?: boolean;
+}>;
+
+export type CheckoutDeliveryTimeSlot = Readonly<{
+  id: string;
+  label: string;
+  description: string;
+}>;
+
 /** Values retained only for the active checkout journey and supplied to checkout/order actions. */
 export type CheckoutInformation = Readonly<{
   addressId?: string;
   deliveryServiceId?: string;
+  deliveryServiceAvailability?: readonly CheckoutDeliveryAvailability[];
+  deliveryDate?: CheckoutDeliveryDate;
+  deliveryTimeSlot?: CheckoutDeliveryTimeSlot;
   deliveryQuoteId?: string;
   deliveryWindowId?: string;
   paymentTrackingId?: string;

@@ -1,7 +1,8 @@
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
+import { useCheckoutStore } from '@/stores/checkout.store';
 
 import CheckoutPage, { metadata } from './page';
 
@@ -11,7 +12,10 @@ vi.mock('./_components/address-selection/address-selection', () => ({
   ),
 }));
 
-afterEach(cleanup);
+afterEach(() => {
+  useCheckoutStore.getState().clearCheckout();
+  cleanup();
+});
 
 describe(routePaths.checkout, () => {
   it('renders addresses, API-backed delivery selection, and the order summary without checkout steps', () => {
@@ -31,16 +35,18 @@ describe(routePaths.checkout, () => {
     );
   });
 
-  it('removes the legacy mock delivery-method choices', () => {
+  it('removes the legacy mock delivery-method choices', async () => {
     render(<CheckoutPage />);
 
     expect(screen.queryByRole('radio', { name: /ارسال سریع/ })).toBeNull();
     const deliveryDates = screen.getByRole('radiogroup', { name: 'انتخاب روز تحویل' });
-    expect(
-      within(deliveryDates)
-        .getByRole('radio', { name: /پنجشنبه.*۶ شهریور/ })
-        .getAttribute('aria-checked'),
-    ).toBe('true');
+    await waitFor(() =>
+      expect(
+        within(deliveryDates)
+          .getByRole('radio', { name: /پنجشنبه.*۶ شهریور/ })
+          .getAttribute('aria-checked'),
+      ).toBe('true'),
+    );
   });
 
   it('lets the customer choose a delivery day and time window', () => {
@@ -55,6 +61,10 @@ describe(routePaths.checkout, () => {
     expect(deliveryDate.getAttribute('aria-checked')).toBe('true');
     expect(deliveryTime.getAttribute('aria-checked')).toBe('true');
     expect(screen.getByText(/تحویل یکشنبه ۹ شهریور، ساعت/)).toBeTruthy();
+    expect(useCheckoutStore.getState().checkoutInformation).toMatchObject({
+      deliveryDate: { id: 'sun-9-shahrivar', weekday: 'یکشنبه', date: '۹ شهریور' },
+      deliveryTimeSlot: { id: 'evening', label: '۱۵ تا ۱۸', description: 'عصر' },
+    });
   });
 
   it('defines checkout metadata', () => {

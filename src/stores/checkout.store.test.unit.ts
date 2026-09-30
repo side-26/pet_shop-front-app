@@ -47,6 +47,14 @@ describe('useCheckoutStore', () => {
     useCheckoutStore.getState().selectAddress('address-1', [35.72, 51.33]);
     useCheckoutStore.getState().saveCheckoutInformation({
       deliveryServiceId: 'delivery-service-1',
+      deliveryServiceAvailability: [{ weekday: 'sunday', startsAt: '09:00', endsAt: '18:00' }],
+      deliveryDate: {
+        id: 'thu-6-shahrivar',
+        weekday: 'پنجشنبه',
+        date: '۶ شهریور',
+        recommended: true,
+      },
+      deliveryTimeSlot: { id: 'morning', label: '۹ تا ۱۲', description: 'صبح' },
       deliveryQuoteId: 'quote-1',
       deliveryWindowId: 'window-1',
       paymentTrackingId: 'payment-1',
@@ -62,6 +70,14 @@ describe('useCheckoutStore', () => {
     expect(useCheckoutStore.getState().checkoutInformation).toEqual({
       addressId: 'address-1',
       deliveryServiceId: 'delivery-service-1',
+      deliveryServiceAvailability: [{ weekday: 'sunday', startsAt: '09:00', endsAt: '18:00' }],
+      deliveryDate: {
+        id: 'thu-6-shahrivar',
+        weekday: 'پنجشنبه',
+        date: '۶ شهریور',
+        recommended: true,
+      },
+      deliveryTimeSlot: { id: 'morning', label: '۹ تا ۱۲', description: 'صبح' },
       deliveryQuoteId: 'quote-1',
       deliveryWindowId: 'window-1',
       paymentTrackingId: 'payment-1',

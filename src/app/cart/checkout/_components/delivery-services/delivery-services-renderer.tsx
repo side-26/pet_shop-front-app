@@ -1,6 +1,7 @@
 'use client';
 
 import { Truck } from 'lucide-react';
+import { useEffect } from 'react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup } from '@/components/ui/fields/radio-group';
@@ -25,11 +26,41 @@ export function CheckoutDeliveryServicesRenderer({
   const deliveryServiceId = useCheckoutStore(
     (state) => state.checkoutInformation.deliveryServiceId,
   );
+  const deliveryServiceAvailability = useCheckoutStore(
+    (state) => state.checkoutInformation.deliveryServiceAvailability,
+  );
   const saveCheckoutInformation = useCheckoutStore((state) => state.saveCheckoutInformation);
 
-  function selectDeliveryService(serviceId: string) {
-    saveCheckoutInformation({ deliveryServiceId: serviceId });
+  function selectDeliveryService(service: CheckoutDeliveryServiceViewModel) {
+    saveCheckoutInformation({
+      deliveryServiceId: service.id,
+      deliveryServiceAvailability: service.availability,
+    });
   }
+
+  useEffect(() => {
+    if (isSkeleton || services.length === 0) return;
+
+    const selectedService =
+      services.find((service) => service.id === deliveryServiceId) ?? services[0];
+    if (
+      selectedService.id === deliveryServiceId &&
+      selectedService.availability === deliveryServiceAvailability
+    ) {
+      return;
+    }
+
+    saveCheckoutInformation({
+      deliveryServiceId: selectedService.id,
+      deliveryServiceAvailability: selectedService.availability,
+    });
+  }, [
+    deliveryServiceAvailability,
+    deliveryServiceId,
+    isSkeleton,
+    saveCheckoutInformation,
+    services,
+  ]);
 
   return (
     <section
@@ -48,7 +79,7 @@ export function CheckoutDeliveryServicesRenderer({
             <RadioGroup
               aria-label="انتخاب سرویس ارسال"
               className="tw:flex tw:flex-col tw:gap-3"
-              value={deliveryServiceId}
+              value={deliveryServiceId ?? ''}
             >
               {services.map((service) => (
                 <DeliveryServiceOption
@@ -65,8 +96,11 @@ export function CheckoutDeliveryServicesRenderer({
             <RadioGroup
               aria-label="انتخاب سرویس ارسال"
               className="tw:flex tw:flex-col tw:gap-3"
-              onValueChange={selectDeliveryService}
-              value={deliveryServiceId}
+              onValueChange={(serviceId) => {
+                const service = services.find((candidate) => candidate.id === serviceId);
+                if (service) selectDeliveryService(service);
+              }}
+              value={deliveryServiceId ?? ''}
             >
               {services.map((service) => (
                 <DeliveryServiceOption

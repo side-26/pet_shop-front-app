@@ -1,7 +1,7 @@
 'use client';
 
 import { CalendarDays } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +10,7 @@ import { FieldLabel } from '@/components/ui/field/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/fields/radio-group';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { useCheckoutStore } from '@/stores/checkout.store';
 
 import type { DeliveryDate, DeliveryTimeSlot } from './checkout-data';
 import { CheckoutOrderSummary } from './checkout-order-summary';
@@ -31,11 +32,34 @@ export function ShipmentForm({
   items,
   totals,
 }: ShipmentFormProps) {
-  const [deliveryDateId, setDeliveryDateId] = useState(deliveryDates[0]?.id);
-  const [timeSlotId, setTimeSlotId] = useState(deliveryTimeSlots[0]?.id);
-  const selectedDate = deliveryDates.find((date) => date.id === deliveryDateId);
-  const selectedTimeSlot = deliveryTimeSlots.find((slot) => slot.id === timeSlotId);
+  const selectedDate = useCheckoutStore((state) => state.checkoutInformation.deliveryDate);
+  const selectedTimeSlot = useCheckoutStore((state) => state.checkoutInformation.deliveryTimeSlot);
+  const saveCheckoutInformation = useCheckoutStore((state) => state.saveCheckoutInformation);
+  const deliveryDateId = selectedDate?.id;
+  const timeSlotId = selectedTimeSlot?.id;
   const shippingPrice = 0;
+
+  useEffect(() => {
+    const defaultDate = deliveryDates[0];
+    const defaultTimeSlot = deliveryTimeSlots[0];
+
+    if ((selectedDate || !defaultDate) && (selectedTimeSlot || !defaultTimeSlot)) return;
+
+    saveCheckoutInformation({
+      ...(selectedDate || !defaultDate ? {} : { deliveryDate: defaultDate }),
+      ...(selectedTimeSlot || !defaultTimeSlot ? {} : { deliveryTimeSlot: defaultTimeSlot }),
+    });
+  }, [deliveryDates, deliveryTimeSlots, saveCheckoutInformation, selectedDate, selectedTimeSlot]);
+
+  function selectDeliveryDate(deliveryDateId: string) {
+    const deliveryDate = deliveryDates.find((date) => date.id === deliveryDateId);
+    if (deliveryDate) saveCheckoutInformation({ deliveryDate });
+  }
+
+  function selectDeliveryTimeSlot(deliveryTimeSlotId: string) {
+    const deliveryTimeSlot = deliveryTimeSlots.find((slot) => slot.id === deliveryTimeSlotId);
+    if (deliveryTimeSlot) saveCheckoutInformation({ deliveryTimeSlot });
+  }
 
   return (
     <div className="tw:grid tw:items-start tw:gap-6 tw:lg:grid-cols-[minmax(0,1fr)_22rem] tw:xl:gap-8">
@@ -54,8 +78,8 @@ export function ShipmentForm({
             <div className="tw:flex tw:flex-col tw:gap-3">
               <p className="tw:text-label-l tw:text-card-foreground">روز تحویل</p>
               <RadioGroup
-                value={deliveryDateId}
-                onValueChange={setDeliveryDateId}
+                value={deliveryDateId ?? ''}
+                onValueChange={selectDeliveryDate}
                 aria-label="انتخاب روز تحویل"
                 className="tw:grid tw:grid-cols-2 tw:gap-3 tw:sm:grid-cols-3"
               >
@@ -105,8 +129,8 @@ export function ShipmentForm({
             <div className="tw:flex tw:flex-col tw:gap-3">
               <p className="tw:text-label-l tw:text-card-foreground">بازه زمانی</p>
               <RadioGroup
-                value={timeSlotId}
-                onValueChange={setTimeSlotId}
+                value={timeSlotId ?? ''}
+                onValueChange={selectDeliveryTimeSlot}
                 aria-label="انتخاب بازه زمانی تحویل"
                 className="tw:grid tw:grid-cols-3 tw:gap-2 tw:sm:gap-3"
               >
