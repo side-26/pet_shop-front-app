@@ -20,9 +20,13 @@ afterEach(() => {
 describe(routePaths.checkout, () => {
   it('renders addresses, API-backed delivery selection, and the order summary without checkout steps', () => {
     const { container } = render(<CheckoutPage />);
+    const pageTitle = screen.getByRole('heading', { level: 1, name: 'ارسال و تحویل سفارش' });
+    const pageSubtitle = screen.getByText('نشانی و روش تحویل سفارش را انتخاب کنید.');
 
     expect(container.querySelector('main')).toBeNull();
-    expect(screen.getByRole('heading', { level: 1, name: 'ارسال و تحویل سفارش' })).toBeTruthy();
+    expect(pageTitle).toBeTruthy();
+    expect(pageTitle.className).toContain('tw:text-title-l');
+    expect(pageSubtitle.className).toContain('tw:text-caption');
     expect(screen.queryByRole('list', { name: 'مراحل ثبت سفارش' })).toBeNull();
     expect(screen.getByRole('heading', { name: 'زمان تحویل' })).toBeTruthy();
     expect(screen.getByLabelText('انتخاب نشانی تحویل')).toBeTruthy();

@@ -1,7 +1,5 @@
 import { MapPin } from 'lucide-react';
 
-import { CheckoutAddressSelection } from './address-selection/address-selection';
-import { CheckoutDeliveryServices } from './delivery-services/delivery-services';
 import { ShipmentForm } from './shipment-form';
 
 export function CheckoutPageContent() {
@@ -18,18 +16,15 @@ export function CheckoutPageContent() {
               <MapPin aria-hidden="true" className="tw:size-5" />
             </span>
             <div>
-              <h1 className="tw:text-heading-2 tw:text-foreground">ارسال و تحویل سفارش</h1>
-              <p className="tw:text-body-s tw:text-muted-foreground">
+              <h1 className="tw:text-title-l tw:text-foreground">ارسال و تحویل سفارش</h1>
+              <p className="tw:text-caption tw:text-muted-foreground">
                 نشانی و روش تحویل سفارش را انتخاب کنید.
               </p>
             </div>
           </div>
         </header>
 
-        <ShipmentForm
-          addressSelection={<CheckoutAddressSelection />}
-          deliveryServicesSelection={<CheckoutDeliveryServices />}
-        />
+        <ShipmentForm />
       </div>
     </div>
   );

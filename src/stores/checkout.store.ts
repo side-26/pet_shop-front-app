@@ -20,6 +20,16 @@ export type CheckoutPrices = Readonly<{
 
 export type CheckoutAddressCoordinates = readonly [latitude: number, longitude: number];
 
+export type CheckoutSelectedAddress = Readonly<{
+  id: string;
+  title: string;
+  address: string;
+  recipient: string;
+  phone: string;
+  postalCode: string;
+  latLng: CheckoutAddressCoordinates;
+}>;
+
 /** The public delivery-service availability response is retained without reshaping its day groups. */
 export type CheckoutDeliveryAvailability = DeliveryAvailabilityDayDTO;
 
@@ -111,6 +121,7 @@ export function calculateCheckoutPrices(
 type CheckoutStore = {
   prices: CheckoutPrices;
   selectedAddressCoordinates: CheckoutAddressCoordinates | null;
+  selectedAddress: CheckoutSelectedAddress | null;
   checkoutInformation: CheckoutInformation;
 
   calculatePrices: (
@@ -122,7 +133,7 @@ type CheckoutStore = {
   setDeliveryPrices: (shippingPrice: number, packingPrice: number) => CheckoutPrices;
   setSelectedAddressCoordinates: (coordinates: CheckoutAddressCoordinates | null) => void;
   getSelectedAddressCoordinates: () => CheckoutAddressCoordinates | null;
-  selectAddress: (addressId: string, coordinates: CheckoutAddressCoordinates) => void;
+  selectAddress: (address: CheckoutSelectedAddress) => void;
   saveCheckoutInformation: (information: Partial<CheckoutInformation>) => void;
   clearCheckout: () => void;
 };
@@ -130,6 +141,7 @@ type CheckoutStore = {
 export const useCheckoutStore = create<CheckoutStore>()((set, get) => ({
   prices: initialPrices,
   selectedAddressCoordinates: null,
+  selectedAddress: null,
   checkoutInformation: {},
 
   calculatePrices: (lines, shippingPrice = 0, packingPrice = 0) => {
@@ -172,10 +184,11 @@ export const useCheckoutStore = create<CheckoutStore>()((set, get) => ({
   setSelectedAddressCoordinates: (selectedAddressCoordinates) =>
     set({ selectedAddressCoordinates }),
   getSelectedAddressCoordinates: () => get().selectedAddressCoordinates,
-  selectAddress: (addressId, selectedAddressCoordinates) =>
+  selectAddress: (selectedAddress) =>
     set((state) => ({
-      selectedAddressCoordinates,
-      checkoutInformation: { ...state.checkoutInformation, addressId },
+      selectedAddressCoordinates: selectedAddress.latLng,
+      selectedAddress,
+      checkoutInformation: { ...state.checkoutInformation, addressId: selectedAddress.id },
     })),
   saveCheckoutInformation: (information) =>
     set((state) => ({
@@ -185,6 +198,7 @@ export const useCheckoutStore = create<CheckoutStore>()((set, get) => ({
     set({
       prices: initialPrices,
       selectedAddressCoordinates: null,
+      selectedAddress: null,
       checkoutInformation: {},
     }),
 }));

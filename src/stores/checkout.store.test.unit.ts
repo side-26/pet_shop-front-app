@@ -59,7 +59,15 @@ describe('useCheckoutStore', () => {
     const prices = useCheckoutStore
       .getState()
       .calculatePrices([{ price: 50_000, discountPercentage: 20, quantity: 2 }], 15_000, 5_000);
-    useCheckoutStore.getState().selectAddress('address-1', [35.72, 51.33]);
+    useCheckoutStore.getState().selectAddress({
+      id: 'address-1',
+      title: 'تهران',
+      address: 'تهران، خیابان علامه',
+      recipient: 'نیلوفر احمدی',
+      phone: '09121234567',
+      postalCode: '1998712345',
+      latLng: [35.72, 51.33],
+    });
     useCheckoutStore.getState().saveCheckoutInformation({
       deliveryServiceId: 'delivery-service-1',
       deliveryServiceAvailability: [
