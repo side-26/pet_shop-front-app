@@ -27,11 +27,11 @@ export function CheckoutOrderSummary() {
         <CardContent className="tw:flex tw:flex-col tw:gap-4">
           <CheckoutCartItems />
           <Separator />
-          <CheckoutOrderSummaryFullDate />
-          <Separator />
-          <CheckoutOrderSummaryPrice />
+          <CheckoutOrderSummaryFullDate className="tw:hidden tw:lg:flex" />
+          <Separator className="tw:hidden tw:lg:block" />
+          <CheckoutOrderSummaryPrice finalPriceClassName="tw:hidden tw:lg:flex" />
         </CardContent>
-        <CardFooter className="tw:flex-col tw:items-stretch">
+        <CardFooter className="tw:hidden tw:flex-col tw:items-stretch tw:lg:flex">
           <Button block size="lg">
             ادامه و پرداخت
           </Button>

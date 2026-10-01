@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
@@ -44,6 +44,26 @@ describe(routePaths.checkout, () => {
     expect(screen.queryByRole('radio', { name: /ارسال سریع/ })).toBeNull();
     expect(screen.queryByRole('radiogroup', { name: 'انتخاب روز تحویل' })).toBeNull();
     expect(screen.getByText('زمان تحویل را انتخاب کنید')).toBeTruthy();
+  });
+
+  it('keeps the mobile payment action disabled until a delivery time is selected', async () => {
+    render(<CheckoutPage />);
+
+    expect(
+      screen.getByRole('button', { name: 'زمان ارسال را انتخاب کنید' }).getAttribute('disabled'),
+    ).not.toBeNull();
+    expect(screen.getByLabelText('پرداخت سفارش')).toBeTruthy();
+
+    act(() =>
+      useCheckoutStore.getState().saveCheckoutInformation({
+        deliveryDate: { id: 'delivery-date-1', weekday: 'شنبه' },
+        deliveryTimeSlot: { id: 'delivery-time-1', label: '۹ تا ۱۲', description: '' },
+      }),
+    );
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'پرداخت' }).getAttribute('disabled')).toBeNull(),
+    );
   });
 
   it('defines checkout metadata', () => {

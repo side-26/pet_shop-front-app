@@ -2,9 +2,12 @@
 
 import { Price } from '@/components/ui/price';
 import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 import { useCheckoutStore } from '@/stores/checkout.store';
 
-export function CheckoutOrderSummaryPrice() {
+export function CheckoutOrderSummaryPrice({
+  finalPriceClassName,
+}: Readonly<{ finalPriceClassName?: string }>) {
   const prices = useCheckoutStore((state) => state.prices);
 
   return (
@@ -39,8 +42,10 @@ export function CheckoutOrderSummaryPrice() {
           </dd>
         </div>
       </dl>
-      <Separator />
-      <div className="tw:flex tw:items-center tw:justify-between tw:gap-4">
+      <Separator className={finalPriceClassName} />
+      <div
+        className={cn('tw:flex tw:items-center tw:justify-between tw:gap-4', finalPriceClassName)}
+      >
         <span className="tw:text-title-s">مبلغ قابل پرداخت</span>
         <Price number={prices.payablePrice} className="tw:text-price-m tw:text-primary" />
       </div>

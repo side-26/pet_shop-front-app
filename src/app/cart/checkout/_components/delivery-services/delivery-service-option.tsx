@@ -73,7 +73,7 @@ export function DeliveryServiceOption({
       </div>
       <CollapsibleContent>
         <div className="tw:flex tw:flex-col tw:gap-3 tw:border-t tw:border-border/70 tw:p-3">
-          <div className="tw:grid tw:grid-cols-3 tw:gap-2">
+          <div className="tw:flex tw:flex-wrap tw:gap-2 tw:lg:grid tw:lg:grid-cols-3">
             <DeliveryServiceDetailItem
               icon={Route}
               label="هزینه مسیر"

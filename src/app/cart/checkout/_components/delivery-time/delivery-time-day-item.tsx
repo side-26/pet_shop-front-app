@@ -53,7 +53,7 @@ export function DeliveryTimeDayItem() {
           className="tw:min-w-0 tw:flex-1 tw:cursor-pointer tw:gap-2"
         >
           <RadioGroupItem id={`delivery-day-${day.date}`} value={day.date} />
-          <span className="tw:text-title-s">
+          <span className="tw:text-label-m">
             {day.weekday_fa}، {day.day_ja} {fetchJalaliMonth(day.month_ja)}
           </span>
         </FieldLabel>

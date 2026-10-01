@@ -1,10 +1,11 @@
 import { MapPin } from 'lucide-react';
 
+import { CheckoutMobilePaymentBar } from './checkout-mobile-payment-bar';
 import { ShipmentForm } from './shipment-form';
 
 export function CheckoutPageContent() {
   return (
-    <div className="tw:relative tw:overflow-clip tw:py-7 tw:sm:py-10 tw:lg:py-14 tw:[--text-heading-2:1.375rem] tw:[--text-title-l:0.9375rem] tw:[--text-title-m:0.875rem] tw:[--text-title-s:0.8125rem] tw:[--text-body-m:0.8125rem] tw:[--text-body-s:0.75rem] tw:[--text-label-l:0.8125rem] tw:[--text-label-m:0.75rem] tw:[--text-price-m:1rem] tw:[--text-price-s:0.875rem]">
+    <div className="tw:relative tw:overflow-clip tw:py-7 tw:pb-32 tw:sm:py-10 tw:sm:pb-36 tw:lg:py-14 tw:[--text-heading-2:1.375rem] tw:[--text-title-l:0.9375rem] tw:[--text-title-m:0.875rem] tw:[--text-title-s:0.8125rem] tw:[--text-body-m:0.8125rem] tw:[--text-body-s:0.75rem] tw:[--text-label-l:0.8125rem] tw:[--text-label-m:0.75rem] tw:[--text-price-m:1rem] tw:[--text-price-s:0.875rem]">
       <div
         aria-hidden="true"
         className="tw:pointer-events-none tw:absolute tw:inset-x-0 tw:top-0 tw:-z-10 tw:h-72 tw:bg-[radial-gradient(circle_at_top_right,var(--primary-muted),transparent_62%)] tw:opacity-70"
@@ -25,6 +26,7 @@ export function CheckoutPageContent() {
         </header>
 
         <ShipmentForm />
+        <CheckoutMobilePaymentBar />
       </div>
     </div>
   );
