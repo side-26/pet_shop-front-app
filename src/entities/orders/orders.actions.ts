@@ -58,7 +58,7 @@ async function adminAction<T>(
     throw error;
   }
 }
-export async function prepareOrderAction(input: unknown) {
+export async function prepareServiceAction(input: unknown) {
   return customerAction(
     input,
     prepareOrderSchema,

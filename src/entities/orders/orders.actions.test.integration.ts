@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { USER_ROLES } from '@/configs/user-role';
 import { getSession } from '@/utils/session';
 
-import { getAllOrdersAction, prepareOrderAction } from './orders.actions';
+import { getAllOrdersAction, prepareServiceAction } from './orders.actions';
 import * as service from './orders.service';
 
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
@@ -30,7 +30,7 @@ describe('orders actions', () => {
     } as Awaited<ReturnType<typeof getSession>>);
     prepareOrderMock.mockResolvedValue({ isSuccess: true, message: 'created', data: {} } as never);
 
-    await prepareOrderAction({
+    await prepareServiceAction({
       addressId: '507f1f77bcf86cd799439011',
       deliveryServiceId: '507f1f77bcf86cd799439012',
       deliveryDateId: '03/10/2026',
