@@ -2,13 +2,13 @@ import type { PaginateDataDTO } from '@/entities/pagination/pagination.dto';
 import type { DeliveryWindowDTO, ShippingInfoDTO } from '@/entities/users/users.dto';
 
 import type {
-  CreateOrderInput,
+  PrepareOrderInput,
   GetOrdersInput,
   UpdateOrderDeliveryStateInput,
   UpdateOrderShippingInfoInput,
 } from './orders.schema';
 
-export type CreateOrderDTO = CreateOrderInput;
+export type PrepareOrderDTO = PrepareOrderInput;
 export type GetOrdersQueryDTO = GetOrdersInput;
 export type GetOrdersParams = Partial<GetOrdersInput>;
 export type UpdateOrderDeliveryStateDTO = UpdateOrderDeliveryStateInput;
@@ -58,8 +58,11 @@ export interface OrderDTO {
   trackingCode: string;
   orderNumber: string;
   deliveryState: number;
-  paymentTrackingId: string;
+  paymentTrackingId: string | null;
   paymentStatus: 'pending' | 'paid' | 'failed';
+  paymentExpiresAt: string | null;
+  inventoryReservationState: 'reserved' | 'released' | null;
+  inventoryReleasedAt: string | null;
   totalPrice: number;
   items: OrderItemDTO[];
   discountPrice: number;
@@ -75,3 +78,9 @@ export interface OrderDTO {
 }
 
 export type OrdersPaginatedDTO = PaginateDataDTO<OrderDTO>;
+
+export type PreparedOrderDTO = {
+  orderId: string;
+  expiresAt: string;
+  payableAmount: number;
+};

@@ -12,7 +12,7 @@ import {
   requestPaymentAction,
   updatePaymentStatusAction,
 } from './payments.actions';
-import type { CreatePaymentDTO, UpdatePaymentStatusDTO } from './payments.dto';
+import type { CreatePaymentDTO, RequestPaymentDTO, UpdatePaymentStatusDTO } from './payments.dto';
 import type { PaymentAuthorityInput } from './payments.schema';
 
 const PAYMENT_MUTATION_RETRY_COUNT = 2;
@@ -42,7 +42,7 @@ export function useCreatePaymentMutation() {
 }
 
 export function useRequestPaymentMutation() {
-  return usePaymentMutation(() => requestPaymentAction());
+  return usePaymentMutation((input: RequestPaymentDTO) => requestPaymentAction(input));
 }
 
 export function useUpdatePaymentStatusMutation() {

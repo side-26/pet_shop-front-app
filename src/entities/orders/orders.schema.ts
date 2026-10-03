@@ -8,8 +8,14 @@ const objectId = string()
   .matches(/^[a-f\d]{24}$/i);
 
 export const orderIdSchema = object({ id: objectId });
-export const createOrderSchema = object({
-  paymentTrackingId: string().trim().min(1).max(200).required(),
+export const prepareOrderSchema = object({
+  addressId: objectId,
+  deliveryServiceId: objectId,
+  deliveryDateId: string()
+    .trim()
+    .matches(/^\d{2}\/\d{2}\/\d{4}$/)
+    .required(),
+  deliveryTimeSlotId: string().trim().min(1).max(100).required(),
 });
 export const getOrdersSchema = object({
   page: number().integer().min(1).default(1).required(),
@@ -41,7 +47,7 @@ export const updateOrderShippingInfoSchema = object({
     ),
   ),
 );
-export type CreateOrderInput = InferType<typeof createOrderSchema>;
+export type PrepareOrderInput = InferType<typeof prepareOrderSchema>;
 export type GetOrdersInput = InferType<typeof getOrdersSchema>;
 export type UpdateOrderDeliveryStateInput = InferType<typeof updateOrderDeliveryStateSchema>;
 export type UpdateOrderShippingInfoInput = InferType<typeof updateOrderShippingInfoSchema>;

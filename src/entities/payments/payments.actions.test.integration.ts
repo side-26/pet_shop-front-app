@@ -43,13 +43,15 @@ describe('payment actions', () => {
     getSessionMock.mockResolvedValue(session(USER_ROLES.CUSTOMER));
   });
 
-  it('accepts no client checkout data because the backend owns the Cart snapshot', async () => {
+  it('requires the customer-owned prepared order ID for the gateway request', async () => {
     vi.mocked(service.requestPayment).mockResolvedValue(success);
-    await expect(requestPaymentAction()).resolves.toBe(success);
-    expect(service.requestPayment).toHaveBeenCalledWith();
+    await expect(requestPaymentAction({ orderId: id })).resolves.toBe(success);
+    expect(service.requestPayment).toHaveBeenCalledWith({ orderId: id });
 
-    await expect(requestPaymentAction({ untrusted: 'ignored' })).resolves.toBe(success);
-    expect(service.requestPayment).toHaveBeenCalledTimes(2);
+    await expect(requestPaymentAction({ untrusted: 'ignored' })).resolves.toMatchObject({
+      isSuccess: false,
+    });
+    expect(service.requestPayment).toHaveBeenCalledOnce();
   });
 
   it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(

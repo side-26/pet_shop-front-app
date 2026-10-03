@@ -6,6 +6,7 @@ import {
   getGatewayPayment,
   getUserPayment,
   getUserPayments,
+  cancelGatewayPayment,
   payGatewayPayment,
   requestPayment,
   updatePaymentStatus,
@@ -90,11 +91,11 @@ describe('payments service', () => {
 
   it('sends exact mutation bodies and invalidates only successful related scopes', async () => {
     fetcher.mockResolvedValue({ isSuccess: true, message: 'created', data: {} } as never);
-    await requestPayment();
+    await requestPayment({ orderId: id });
     expect(fetcher).toHaveBeenCalledWith({
       url: '/payments/request',
       method: 'POST',
-      body: {},
+      body: { orderId: id },
       auth: true,
       cache: 'no-store',
     });
@@ -131,6 +132,19 @@ describe('payments service', () => {
     await payGatewayPayment(authority);
     expect(fetcher).toHaveBeenCalledWith({
       url: `/gateway/payments/${authority}/pay`,
+      method: 'POST',
+      body: undefined,
+      auth: false,
+      cache: 'no-store',
+    });
+    expect(invalidateAllMock).toHaveBeenCalledOnce();
+  });
+
+  it('invalidates payment scopes after a successful public gateway cancellation', async () => {
+    fetcher.mockResolvedValue({ isSuccess: true, message: null, data: undefined } as never);
+    await cancelGatewayPayment(authority);
+    expect(fetcher).toHaveBeenCalledWith({
+      url: `/gateway/payments/${authority}/cancel`,
       method: 'POST',
       body: undefined,
       auth: false,

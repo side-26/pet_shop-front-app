@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { customFetcher } from '@/lib/api/customFetcher';
-import { createOrder, getUserOrders, updateOrderDeliveryState } from './orders.service';
+import { getUserOrders, prepareOrder, updateOrderDeliveryState } from './orders.service';
 
 const {
   invalidateDetailMock,
@@ -46,9 +46,29 @@ describe('orders service', () => {
     });
     expect(registerListMock).toHaveBeenCalledWith('/orders:limit=10&page=1&sort=createdAt');
   });
-  it('invalidates the orders list only after a successful checkout', async () => {
+  it('prepares an order from the trusted checkout selection and invalidates dependent lists', async () => {
     fetcher.mockResolvedValue({ isSuccess: true, message: 'created', data: {} } as never);
-    await createOrder({ paymentTrackingId: 'payment-1' }, 'user-1');
+    await prepareOrder(
+      {
+        addressId: '507f1f77bcf86cd799439011',
+        deliveryServiceId: '507f1f77bcf86cd799439012',
+        deliveryDateId: '03/10/2026',
+        deliveryTimeSlotId: '03/10/2026-09:00-12:00',
+      },
+      'user-1',
+    );
+    expect(fetcher).toHaveBeenLastCalledWith({
+      url: '/orders/prepare',
+      method: 'POST',
+      body: {
+        addressId: '507f1f77bcf86cd799439011',
+        deliveryServiceId: '507f1f77bcf86cd799439012',
+        deliveryDateId: '03/10/2026',
+        deliveryTimeSlotId: '03/10/2026-09:00-12:00',
+      },
+      auth: true,
+      cache: 'no-store',
+    });
     expect(invalidateListMock).toHaveBeenCalledOnce();
     expect(invalidateProfileOrderDataMock).toHaveBeenCalledWith('user-1');
   });

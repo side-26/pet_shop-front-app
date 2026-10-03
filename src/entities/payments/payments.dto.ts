@@ -8,7 +8,7 @@ import type {
   UpdatePaymentStatusInput,
 } from './payments.schema';
 
-export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'cancelled';
+export type PaymentStatus = 'pending' | 'paid' | 'failed';
 
 export type PaymentUserDTO = {
   _id: string;
@@ -21,12 +21,10 @@ export type PaymentUserDTO = {
 
 export type PaymentDTO = {
   _id: string;
-  /** Null until a successful gateway payment atomically creates the final order. */
-  order: string | null;
+  /** A prepared, stock-reserved order owned by the payment attempt. */
+  order: string;
   user: string | PaymentUserDTO;
   amount: number;
-  /** Server-owned immutable Cart and Order snapshot used only to complete payment. */
-  checkoutSnapshot: unknown;
   authority: string;
   status: PaymentStatus;
   gatewayReferenceId: string | null;

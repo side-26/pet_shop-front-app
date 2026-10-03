@@ -60,7 +60,12 @@ describe('payment client mutations', () => {
         expiresAt: new Date('2099-01-01T00:00:00.000Z'),
       },
     ],
-    ['requests a checkout payment', useRequestPaymentMutation, requestPaymentAction, undefined],
+    [
+      'requests a checkout payment',
+      useRequestPaymentMutation,
+      requestPaymentAction,
+      { orderId: id },
+    ],
     [
       'updates payment status',
       useUpdatePaymentStatusMutation,
@@ -104,7 +109,7 @@ describe('payment client mutations', () => {
     const { result } = renderHook(() => useRequestPaymentMutation(), { wrapper });
 
     await act(async () => {
-      await expect(result.current.mutateAsync()).rejects.toBe(failure);
+      await expect(result.current.mutateAsync({ orderId: id })).rejects.toBe(failure);
     });
     await waitFor(() => expect(globalErrorHandler).toHaveBeenCalledWith(failure));
 

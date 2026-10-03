@@ -1,12 +1,26 @@
 import { describe, expect, it } from 'vitest';
 
-import { createOrderSchema, getOrdersSchema, updateOrderShippingInfoSchema } from './orders.schema';
+import {
+  getOrdersSchema,
+  prepareOrderSchema,
+  updateOrderShippingInfoSchema,
+} from './orders.schema';
 
 describe('orders schemas', () => {
   it('validates checkout and applies list defaults', async () => {
     await expect(
-      createOrderSchema.validate({ paymentTrackingId: '  payment-1  ' }),
-    ).resolves.toEqual({ paymentTrackingId: 'payment-1' });
+      prepareOrderSchema.validate({
+        addressId: '507f1f77bcf86cd799439011',
+        deliveryServiceId: '507f1f77bcf86cd799439012',
+        deliveryDateId: '03/10/2026',
+        deliveryTimeSlotId: ' 03/10/2026-09:00-12:00 ',
+      }),
+    ).resolves.toEqual({
+      addressId: '507f1f77bcf86cd799439011',
+      deliveryServiceId: '507f1f77bcf86cd799439012',
+      deliveryDateId: '03/10/2026',
+      deliveryTimeSlotId: '03/10/2026-09:00-12:00',
+    });
     await expect(getOrdersSchema.validate({})).resolves.toEqual({
       page: 1,
       limit: 10,

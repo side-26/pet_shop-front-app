@@ -1,7 +1,10 @@
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
+import { usePrepareOrderMutation } from '@/entities/orders/orders.client';
+import { useRequestPaymentMutation } from '@/entities/payments/payments.client';
+import { usePreventPageLeave } from '@/hooks/use-prevent-page-leave';
 import { useCheckoutStore } from '@/stores/checkout.store';
 
 import CheckoutPage, { metadata } from './page';
@@ -11,10 +14,29 @@ vi.mock('./_components/address-selection/address-selection', () => ({
     <section aria-label="انتخاب نشانی تحویل">نشانی‌های تحویل</section>
   ),
 }));
+vi.mock('@/entities/payments/payments.client', () => ({ useRequestPaymentMutation: vi.fn() }));
+vi.mock('@/entities/orders/orders.client', () => ({ usePrepareOrderMutation: vi.fn() }));
+vi.mock('@/hooks/use-prevent-page-leave', () => ({ usePreventPageLeave: vi.fn() }));
+
+const requestPayment = vi.fn();
+const prepareOrder = vi.fn();
 
 afterEach(() => {
   useCheckoutStore.getState().clearCheckout();
   cleanup();
+  vi.restoreAllMocks();
+});
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  vi.mocked(useRequestPaymentMutation).mockReturnValue({
+    isPending: false,
+    mutate: requestPayment,
+  } as never);
+  vi.mocked(usePrepareOrderMutation).mockReturnValue({
+    isPending: false,
+    mutate: prepareOrder,
+  } as never);
 });
 
 describe(routePaths.checkout, () => {
@@ -50,12 +72,16 @@ describe(routePaths.checkout, () => {
     render(<CheckoutPage />);
 
     expect(
-      screen.getByRole('button', { name: 'زمان ارسال را انتخاب کنید' }).getAttribute('disabled'),
-    ).not.toBeNull();
+      screen
+        .getAllByRole('button', { name: 'زمان ارسال را انتخاب کنید' })
+        .every((button) => button.getAttribute('disabled') !== null),
+    ).toBe(true);
     expect(screen.getByLabelText('پرداخت سفارش')).toBeTruthy();
 
     act(() =>
       useCheckoutStore.getState().saveCheckoutInformation({
+        addressId: '507f1f77bcf86cd799439011',
+        deliveryServiceId: '507f1f77bcf86cd799439012',
         deliveryDate: { id: 'delivery-date-1', weekday: 'شنبه' },
         deliveryTimeSlot: { id: 'delivery-time-1', label: '۹ تا ۱۲', description: '' },
       }),
@@ -64,6 +90,55 @@ describe(routePaths.checkout, () => {
     await waitFor(() =>
       expect(screen.getByRole('button', { name: 'پرداخت' }).getAttribute('disabled')).toBeNull(),
     );
+  });
+
+  it('requests payment locally and protects the page while the gateway request is pending', () => {
+    vi.mocked(useRequestPaymentMutation).mockReturnValue({
+      isPending: true,
+      mutate: requestPayment,
+    } as never);
+    useCheckoutStore.getState().saveCheckoutInformation({
+      addressId: '507f1f77bcf86cd799439011',
+      deliveryServiceId: '507f1f77bcf86cd799439012',
+      deliveryDate: { id: 'delivery-date-1', weekday: 'شنبه' },
+      deliveryTimeSlot: { id: 'delivery-time-1', label: '۹ تا ۱۲', description: '' },
+    });
+
+    render(<CheckoutPage />);
+
+    expect(screen.getAllByRole('button', { name: 'انتقال به درگاه بانکی...' })).toHaveLength(2);
+    expect(usePreventPageLeave).toHaveBeenCalledWith({
+      force: true,
+      message: 'درخواست پرداخت در حال انجام است. لطفاً تا انتقال به درگاه بانکی صبر کنید.',
+    });
+  });
+
+  it('starts one shared payment request from either responsive payment button', async () => {
+    render(<CheckoutPage />);
+    act(() =>
+      useCheckoutStore.getState().saveCheckoutInformation({
+        addressId: '507f1f77bcf86cd799439011',
+        deliveryServiceId: '507f1f77bcf86cd799439012',
+        deliveryDate: { id: 'delivery-date-1', weekday: 'شنبه' },
+        deliveryTimeSlot: { id: 'delivery-time-1', label: '۹ تا ۱۲', description: '' },
+      }),
+    );
+
+    await waitFor(() => screen.getByRole('button', { name: 'پرداخت' }));
+    fireEvent.click(screen.getByRole('button', { name: 'پرداخت' }));
+    fireEvent.click(screen.getByRole('button', { name: 'ادامه و پرداخت' }));
+
+    expect(prepareOrder).toHaveBeenCalledOnce();
+    expect(prepareOrder).toHaveBeenCalledWith(
+      {
+        addressId: '507f1f77bcf86cd799439011',
+        deliveryServiceId: '507f1f77bcf86cd799439012',
+        deliveryDateId: 'delivery-date-1',
+        deliveryTimeSlotId: 'delivery-time-1',
+      },
+      expect.any(Object),
+    );
+    expect(requestPayment).not.toHaveBeenCalled();
   });
 
   it('defines checkout metadata', () => {

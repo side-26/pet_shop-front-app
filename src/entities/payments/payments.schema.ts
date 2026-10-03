@@ -1,6 +1,6 @@
 import { date, mixed, number, object, string, type InferType } from 'yup';
 
-export const PAYMENT_STATUSES = ['pending', 'paid', 'failed', 'cancelled'] as const;
+export const PAYMENT_STATUSES = ['pending', 'paid', 'failed'] as const;
 export const PAYMENT_SORT_FIELDS = ['createdAt', 'updatedAt', 'amount', 'expiresAt'] as const;
 
 const objectId = string()
@@ -20,8 +20,7 @@ export const createPaymentSchema = object({
   authority: string().trim().min(1).max(200).required(),
   expiresAt: date().required(),
 });
-/** The backend derives an immutable checkout snapshot from the authenticated user's cart. */
-export const requestPaymentSchema = object({}).required();
+export const requestPaymentSchema = object({ orderId: objectId }).required();
 export const getPaymentsSchema = object({
   page: number().integer().min(1).default(1).required(),
   limit: number().integer().min(1).max(100).default(10).required(),

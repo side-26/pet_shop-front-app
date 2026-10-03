@@ -32,6 +32,9 @@ const orders: ProfileOrdersPageDTO = {
       user: 'user-1',
       trackingCode: '',
       paymentTrackingId: '',
+      paymentExpiresAt: null,
+      inventoryReservationState: null,
+      inventoryReleasedAt: null,
       discountPrice: 0,
       userAddress: {
         sourceId: 'address-1',

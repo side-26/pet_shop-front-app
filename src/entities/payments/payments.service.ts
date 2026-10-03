@@ -12,6 +12,7 @@ import type {
   PaymentDTO,
   PaymentRequestDTO,
   PaymentsPageDTO,
+  RequestPaymentDTO,
   UpdatePaymentStatusDTO,
 } from './payments.dto';
 import { createPaymentsListCacheKey } from './payments.helpers';
@@ -81,11 +82,11 @@ export async function createPayment(input: CreatePaymentDTO) {
   return result;
 }
 
-export async function requestPayment() {
-  const result = await customFetcher<PaymentRequestDTO, unknown, Record<string, never>>({
+export async function requestPayment(input: RequestPaymentDTO) {
+  const result = await customFetcher<PaymentRequestDTO, unknown, RequestPaymentDTO>({
     url: '/payments/request',
     method: 'POST',
-    body: {},
+    body: input,
     auth: true,
     cache: 'no-store',
   });
@@ -121,12 +122,14 @@ export async function payGatewayPayment(authority: string) {
   return result;
 }
 
-export function cancelGatewayPayment(authority: string) {
-  return customFetcher<void, unknown, undefined>({
+export async function cancelGatewayPayment(authority: string) {
+  const result = await customFetcher<void, unknown, undefined>({
     url: `/gateway/payments/${authority}/cancel`,
     method: 'POST',
     body: undefined,
     auth: false,
     cache: 'no-store',
   });
+  if (result.isSuccess) paymentsCache.invalidateAll();
+  return result;
 }

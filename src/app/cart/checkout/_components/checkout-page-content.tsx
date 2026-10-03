@@ -1,6 +1,7 @@
 import { MapPin } from 'lucide-react';
 
 import { CheckoutMobilePaymentBar } from './checkout-mobile-payment-bar';
+import { CheckoutPaymentProvider } from './checkout-payment-provider';
 import { ShipmentForm } from './shipment-form';
 
 export function CheckoutPageContent() {
@@ -25,8 +26,10 @@ export function CheckoutPageContent() {
           </div>
         </header>
 
-        <ShipmentForm />
-        <CheckoutMobilePaymentBar />
+        <CheckoutPaymentProvider>
+          <ShipmentForm />
+          <CheckoutMobilePaymentBar />
+        </CheckoutPaymentProvider>
       </div>
     </div>
   );

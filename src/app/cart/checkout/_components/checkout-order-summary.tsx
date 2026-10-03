@@ -8,6 +8,7 @@ import { routePaths } from '@/configs/route.path';
 import { CheckoutCartItems } from './checkout-cart-items/checkout-cart-items';
 import { CheckoutOrderSummaryFullDate } from './checkout-order-summary-full-date';
 import { CheckoutOrderSummaryPrice } from './checkout-order-summary-price';
+import { CheckoutDesktopPaymentButton } from './checkout-desktop-payment-button';
 
 export function CheckoutOrderSummary() {
   return (
@@ -32,9 +33,7 @@ export function CheckoutOrderSummary() {
           <CheckoutOrderSummaryPrice finalPriceClassName="tw:hidden tw:lg:flex" />
         </CardContent>
         <CardFooter className="tw:hidden tw:flex-col tw:items-stretch tw:lg:flex">
-          <Button block size="lg">
-            ادامه و پرداخت
-          </Button>
+          <CheckoutDesktopPaymentButton />
           <p className="tw:flex tw:items-center tw:justify-center tw:gap-1.5 tw:text-label-s tw:text-muted-foreground">
             <ShieldCheck aria-hidden="true" className="tw:size-4" />
             پرداخت امن و تضمین اصالت کالا

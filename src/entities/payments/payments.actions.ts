@@ -75,7 +75,7 @@ export async function requestPaymentAction(input: unknown = {}) {
   const auth = await authorizeUser();
   if ('error' in auth) return auth.error;
   const parsed = await validate(requestPaymentSchema, input);
-  return 'error' in parsed ? parsed.error : service.requestPayment();
+  return 'error' in parsed ? parsed.error : service.requestPayment(parsed.value);
 }
 
 export async function getAllPaymentsAction(input: unknown = {}) {

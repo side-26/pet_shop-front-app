@@ -4,7 +4,8 @@ import { invalidateProfileOrderData } from '@/entities/profile/profile.service';
 import { customFetcher } from '@/lib/api/customFetcher';
 import { EntityTag } from '@/utils/entityCache';
 import type {
-  CreateOrderDTO,
+  PreparedOrderDTO,
+  PrepareOrderDTO,
   GetOrdersParams,
   GetOrdersQueryDTO,
   OrderDTO,
@@ -40,9 +41,9 @@ export async function getUserOrder(id: string) {
   ordersCache.registerDetail(id);
   return customFetcher<OrderDTO>({ url: `/orders/${id}`, auth: true, cache: 'no-store' });
 }
-export async function createOrder(input: CreateOrderDTO, userId: string) {
-  const result = await customFetcher<OrderDTO, unknown, CreateOrderDTO>({
-    url: '/orders',
+export async function prepareOrder(input: PrepareOrderDTO, userId: string) {
+  const result = await customFetcher<PreparedOrderDTO, unknown, PrepareOrderDTO>({
+    url: '/orders/prepare',
     method: 'POST',
     body: input,
     auth: true,

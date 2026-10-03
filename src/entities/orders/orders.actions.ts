@@ -4,14 +4,14 @@ import { USER_ROLES } from '@/configs/user-role';
 import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
 import { getSession } from '@/utils/session';
 import {
-  createOrderSchema,
+  prepareOrderSchema,
   getOrdersSchema,
   orderIdSchema,
   updateOrderDeliveryStateSchema,
   updateOrderShippingInfoSchema,
 } from './orders.schema';
 import {
-  createOrder,
+  prepareOrder,
   getAllOrders,
   getUserOrder,
   getUserOrders,
@@ -58,32 +58,51 @@ async function adminAction<T>(
     throw error;
   }
 }
-export const createOrderAction = (input: unknown) =>
-  customerAction(input, createOrderSchema, 'برای ثبت سفارش وارد حساب کاربری شوید.', createOrder);
-export const getUserOrdersAction = (input: unknown = {}) =>
-  customerAction(
+export async function prepareOrderAction(input: unknown) {
+  return customerAction(
+    input,
+    prepareOrderSchema,
+    'برای ثبت سفارش وارد حساب کاربری شوید.',
+    prepareOrder,
+  );
+}
+export async function getUserOrdersAction(input: unknown = {}) {
+  return customerAction(
     input,
     getOrdersSchema,
     'برای مشاهده سفارش‌ها وارد حساب کاربری شوید.',
     getUserOrders,
   );
-export const getUserOrderAction = (input: unknown) =>
-  customerAction(input, orderIdSchema, 'برای مشاهده سفارش وارد حساب کاربری شوید.', ({ id }) =>
-    getUserOrder(id),
+}
+export async function getUserOrderAction(input: unknown) {
+  return customerAction(
+    input,
+    orderIdSchema,
+    'برای مشاهده سفارش وارد حساب کاربری شوید.',
+    ({ id }) => getUserOrder(id),
   );
-export const getAllOrdersAction = (input: unknown = {}) =>
-  adminAction(input, getOrdersSchema, 'برای مشاهده سفارش‌ها وارد حساب مدیریتی شوید.', getAllOrders);
-export const updateOrderDeliveryStateAction = (input: unknown) =>
-  adminAction(
+}
+export async function getAllOrdersAction(input: unknown = {}) {
+  return adminAction(
+    input,
+    getOrdersSchema,
+    'برای مشاهده سفارش‌ها وارد حساب مدیریتی شوید.',
+    getAllOrders,
+  );
+}
+export async function updateOrderDeliveryStateAction(input: unknown) {
+  return adminAction(
     input,
     updateOrderDeliveryStateSchema,
     'برای ویرایش سفارش وارد حساب مدیریتی شوید.',
     updateOrderDeliveryState,
   );
-export const updateOrderShippingInfoAction = (input: unknown) =>
-  adminAction(
+}
+export async function updateOrderShippingInfoAction(input: unknown) {
+  return adminAction(
     input,
     updateOrderShippingInfoSchema,
     'برای ویرایش سفارش وارد حساب مدیریتی شوید.',
     updateOrderShippingInfo,
   );
+}

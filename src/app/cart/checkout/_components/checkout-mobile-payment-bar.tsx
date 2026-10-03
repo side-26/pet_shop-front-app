@@ -8,11 +8,20 @@ import { Price } from '@/components/ui/price';
 import { Separator } from '@/components/ui/separator';
 import { useCheckoutStore } from '@/stores/checkout.store';
 
+import { useCheckoutPayment } from './checkout-payment-provider';
+
 export function CheckoutMobilePaymentBar() {
+  const { isPending, requestPayment } = useCheckoutPayment();
   const payablePrice = useCheckoutStore((state) => state.prices.payablePrice);
+  const addressId = useCheckoutStore((state) => state.checkoutInformation.addressId);
+  const deliveryServiceId = useCheckoutStore(
+    (state) => state.checkoutInformation.deliveryServiceId,
+  );
   const deliveryDate = useCheckoutStore((state) => state.checkoutInformation.deliveryDate);
   const deliveryTimeSlot = useCheckoutStore((state) => state.checkoutInformation.deliveryTimeSlot);
-  const canPay = Boolean(deliveryTimeSlot?.id);
+  const canPay = Boolean(
+    addressId && deliveryServiceId && deliveryDate?.id && deliveryTimeSlot?.id,
+  );
 
   return (
     <footer
@@ -42,7 +51,14 @@ export function CheckoutMobilePaymentBar() {
             </div>
           </div>
           <Separator orientation="vertical" className="tw:h-11 tw:flex-none" />
-          <Button className="tw:flex-auto tw:w-10" size="lg" disabled={!canPay}>
+          <Button
+            className="tw:flex-auto tw:w-10"
+            size="lg"
+            disabled={!canPay}
+            isLoading={isPending}
+            loadingText="انتقال به درگاه بانکی..."
+            onClick={requestPayment}
+          >
             {canPay ? 'پرداخت' : 'زمان ارسال را انتخاب کنید'}
           </Button>
         </CardFooter>
