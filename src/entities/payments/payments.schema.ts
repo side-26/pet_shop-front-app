@@ -20,7 +20,8 @@ export const createPaymentSchema = object({
   authority: string().trim().min(1).max(200).required(),
   expiresAt: date().required(),
 });
-export const requestPaymentSchema = object({ orderId: objectId });
+/** The backend derives an immutable checkout snapshot from the authenticated user's cart. */
+export const requestPaymentSchema = object({}).required();
 export const getPaymentsSchema = object({
   page: number().integer().min(1).default(1).required(),
   limit: number().integer().min(1).max(100).default(10).required(),

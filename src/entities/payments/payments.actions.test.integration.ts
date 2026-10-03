@@ -43,17 +43,13 @@ describe('payment actions', () => {
     getSessionMock.mockResolvedValue(session(USER_ROLES.CUSTOMER));
   });
 
-  it('validates customer payment requests before calling the service', async () => {
+  it('accepts no client checkout data because the backend owns the Cart snapshot', async () => {
     vi.mocked(service.requestPayment).mockResolvedValue(success);
-    await expect(requestPaymentAction({ orderId: ` ${id} `, ignored: true })).resolves.toBe(
-      success,
-    );
-    expect(service.requestPayment).toHaveBeenCalledWith({ orderId: id });
+    await expect(requestPaymentAction()).resolves.toBe(success);
+    expect(service.requestPayment).toHaveBeenCalledWith();
 
-    await expect(requestPaymentAction({ orderId: 'invalid' })).resolves.toMatchObject({
-      isSuccess: false,
-    });
-    expect(service.requestPayment).toHaveBeenCalledOnce();
+    await expect(requestPaymentAction({ untrusted: 'ignored' })).resolves.toBe(success);
+    expect(service.requestPayment).toHaveBeenCalledTimes(2);
   });
 
   it.each([USER_ROLES.ADMIN, USER_ROLES.SELLER])(

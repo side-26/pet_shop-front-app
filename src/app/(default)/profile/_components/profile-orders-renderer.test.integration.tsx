@@ -14,6 +14,7 @@ const orders: ProfileOrdersPageDTO = {
       _id: 'order-1',
       orderNumber: 'PH-1405-2841',
       deliveryState: 3,
+      paymentStatus: 'paid',
       totalPrice: 2_480_000,
       items: [
         {

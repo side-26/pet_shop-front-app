@@ -25,4 +25,11 @@ describe('orders schemas', () => {
       }),
     ).resolves.toMatchObject({ trackingCode: '123' });
   });
+
+  it('validates the backend delivery-state query values', async () => {
+    await expect(getOrdersSchema.validate({ deliveryState: 3 })).resolves.toMatchObject({
+      deliveryState: 3,
+    });
+    await expect(getOrdersSchema.validate({ deliveryState: 4 })).rejects.toThrow();
+  });
 });

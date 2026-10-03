@@ -21,9 +21,12 @@ export type PaymentUserDTO = {
 
 export type PaymentDTO = {
   _id: string;
-  order: string;
+  /** Null until a successful gateway payment atomically creates the final order. */
+  order: string | null;
   user: string | PaymentUserDTO;
   amount: number;
+  /** Server-owned immutable Cart and Order snapshot used only to complete payment. */
+  checkoutSnapshot: unknown;
   authority: string;
   status: PaymentStatus;
   gatewayReferenceId: string | null;

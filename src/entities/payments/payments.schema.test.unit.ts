@@ -18,11 +18,11 @@ describe('payment schemas', () => {
     await expect(getPaymentsSchema.validate({ status: 'processing' })).rejects.toThrow();
   });
 
-  it('accepts only valid order IDs, gateway authorities, and status updates', async () => {
+  it('accepts an empty checkout request, gateway authorities, and status updates', async () => {
     const id = '507f1f77bcf86cd799439011';
-    await expect(requestPaymentSchema.validate({ orderId: ` ${id} ` })).resolves.toEqual({
-      orderId: id,
-    });
+    await expect(
+      requestPaymentSchema.validate({ orderId: id }, { stripUnknown: true }),
+    ).resolves.toEqual({});
     await expect(paymentAuthoritySchema.validate({ authority: 'a'.repeat(64) })).resolves.toEqual({
       authority: 'a'.repeat(64),
     });

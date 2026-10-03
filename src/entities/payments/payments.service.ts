@@ -12,7 +12,6 @@ import type {
   PaymentDTO,
   PaymentRequestDTO,
   PaymentsPageDTO,
-  RequestPaymentDTO,
   UpdatePaymentStatusDTO,
 } from './payments.dto';
 import { createPaymentsListCacheKey } from './payments.helpers';
@@ -82,11 +81,11 @@ export async function createPayment(input: CreatePaymentDTO) {
   return result;
 }
 
-export async function requestPayment(input: RequestPaymentDTO) {
-  const result = await customFetcher<PaymentRequestDTO, unknown, RequestPaymentDTO>({
+export async function requestPayment() {
+  const result = await customFetcher<PaymentRequestDTO, unknown, Record<string, never>>({
     url: '/payments/request',
     method: 'POST',
-    body: input,
+    body: {},
     auth: true,
     cache: 'no-store',
   });

@@ -90,11 +90,11 @@ describe('payments service', () => {
 
   it('sends exact mutation bodies and invalidates only successful related scopes', async () => {
     fetcher.mockResolvedValue({ isSuccess: true, message: 'created', data: {} } as never);
-    await requestPayment({ orderId: id });
+    await requestPayment();
     expect(fetcher).toHaveBeenCalledWith({
       url: '/payments/request',
       method: 'POST',
-      body: { orderId: id },
+      body: {},
       auth: true,
       cache: 'no-store',
     });

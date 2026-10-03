@@ -1,5 +1,5 @@
 import type { PaginateDataDTO } from '@/entities/pagination/pagination.dto';
-import type { AddressDTO, DeliveryWindowDTO, ShippingInfoDTO } from '@/entities/users/users.dto';
+import type { DeliveryWindowDTO, ShippingInfoDTO } from '@/entities/users/users.dto';
 
 import type {
   CreateOrderInput,
@@ -35,6 +35,23 @@ export interface OrderUserDTO {
   role: string;
 }
 
+/** Historical delivery address snapshot; it intentionally has no live-address `_id`. */
+export interface OrderAddressDTO {
+  sourceId: string;
+  province: string;
+  city: string;
+  detailAddress: string;
+  latLng: [number, number];
+  plate: string;
+  unit: string | null;
+  postalCode: string;
+  receiverIsMe: boolean;
+  firstName: string;
+  lastName: string;
+  nationalCode: string;
+  phoneNumber: string;
+}
+
 export interface OrderDTO {
   _id: string;
   user: string | OrderUserDTO;
@@ -42,10 +59,11 @@ export interface OrderDTO {
   orderNumber: string;
   deliveryState: number;
   paymentTrackingId: string;
+  paymentStatus: 'pending' | 'paid' | 'failed';
   totalPrice: number;
   items: OrderItemDTO[];
   discountPrice: number;
-  userAddress: AddressDTO & { sourceId: string };
+  userAddress: OrderAddressDTO;
   deliveryWindow: DeliveryWindowDTO;
   deliveringDateToShipping: string;
   shippingPrice: number;

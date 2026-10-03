@@ -71,11 +71,11 @@ export async function createPaymentAction(input: unknown) {
   return 'error' in parsed ? parsed.error : service.createPayment(parsed.value);
 }
 
-export async function requestPaymentAction(input: unknown) {
+export async function requestPaymentAction(input: unknown = {}) {
   const auth = await authorizeUser();
   if ('error' in auth) return auth.error;
   const parsed = await validate(requestPaymentSchema, input);
-  return 'error' in parsed ? parsed.error : service.requestPayment(parsed.value);
+  return 'error' in parsed ? parsed.error : service.requestPayment();
 }
 
 export async function getAllPaymentsAction(input: unknown = {}) {
