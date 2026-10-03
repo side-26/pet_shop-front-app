@@ -53,3 +53,12 @@ error/loading behavior.
 INP needs a real browser interaction. A page-specific safe selector can be registered in
 `routeInteractionSelectors`. Otherwise the runner clicks the first visible non-submit button and uses
 a fixed, layout-neutral probe only when the page has no suitable control.
+
+`/cart` additionally has an interaction-coverage test. For each device profile it discovers every
+currently visible enabled button, link, role-button, submit/input button, and summary control, then
+measures that control in an isolated browser session. The attached
+`cart-inp-interactions.json` contains the individual interaction duration and fails any control above
+200 ms. Link navigation is prevented and write requests are aborted during this test, so cart
+quantity/removal controls are exercised without changing the benchmark account or cart. To include
+item-card controls, provide the three authenticated backend environment variables above for a
+disposable account whose cart contains representative product and pet items.

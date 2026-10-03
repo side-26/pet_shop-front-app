@@ -17,6 +17,17 @@ type MetricName = 'CLS' | 'INP' | 'LCP';
 type MetricResult = { name: MetricName; value: number; rating: string };
 type MetricMap = Partial<Record<MetricName, MetricResult>>;
 type DeviceProfile = 'desktop' | 'mobile' | 'tablet';
+type InteractiveTarget = {
+  name: string;
+  selector: string;
+  type: 'button' | 'link' | 'other';
+};
+type InteractionTiming = {
+  duration: number;
+  interactionId: number;
+  name: string;
+  startTime: number;
+};
 
 const require = createRequire(path.join(process.cwd(), 'package.json'));
 const nextDirectory = path.dirname(require.resolve('next/package.json'));
@@ -58,12 +69,27 @@ function metricsInitScript() {
     const { onCLS, onINP, onLCP } = module.exports;
     const metrics = {};
     globalThis.__PETSHOP_CORE_WEB_VITALS__ = metrics;
+    globalThis.__PETSHOP_INTERACTION_TIMINGS__ = [];
     const record = ({ name, value, rating }) => {
       metrics[name] = { name, value, rating };
     };
     onCLS(record, { reportAllChanges: true });
     onINP(record, { reportAllChanges: true, durationThreshold: 0 });
     onLCP(record, { reportAllChanges: true });
+
+    if (PerformanceObserver.supportedEntryTypes.includes('event')) {
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          if (!entry.interactionId) continue;
+          globalThis.__PETSHOP_INTERACTION_TIMINGS__.push({
+            duration: entry.duration,
+            interactionId: entry.interactionId,
+            name: entry.name,
+            startTime: entry.startTime,
+          });
+        }
+      }).observe({ type: 'event', buffered: true, durationThreshold: 0 });
+    }
 
     const addProbe = () => {
       if (!document.body || document.getElementById('__petshop-cwv-interaction-probe')) return;
@@ -162,6 +188,125 @@ async function readMetrics(page: Page): Promise<MetricMap> {
   });
 }
 
+async function readInteractionTimings(page: Page): Promise<InteractionTiming[]> {
+  return page.evaluate(() => {
+    const timingsGlobal = globalThis as typeof globalThis & {
+      __PETSHOP_INTERACTION_TIMINGS__?: InteractionTiming[];
+    };
+    return JSON.parse(JSON.stringify(timingsGlobal.__PETSHOP_INTERACTION_TIMINGS__ ?? []));
+  });
+}
+
+async function discoverInteractiveTargets(page: Page): Promise<InteractiveTarget[]> {
+  return page.evaluate(() => {
+    const selector = [
+      'button:not([disabled])',
+      'a[href]',
+      '[role="button"]:not([aria-disabled="true"])',
+      'input[type="button"]:not([disabled])',
+      'input[type="submit"]:not([disabled])',
+      'summary',
+    ].join(',');
+    const isVisible = (element: Element) => {
+      const style = window.getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+      return (
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        style.pointerEvents !== 'none' &&
+        rect.width > 0 &&
+        rect.height > 0
+      );
+    };
+    const cssPath = (element: Element) => {
+      const segments: string[] = [];
+      let current: Element | null = element;
+      while (current && current !== document.body) {
+        const tag = current.tagName.toLowerCase();
+        let index = 1;
+        let sibling = current.previousElementSibling;
+        while (sibling) {
+          if (sibling.tagName === current.tagName) index += 1;
+          sibling = sibling.previousElementSibling;
+        }
+        segments.unshift(`${tag}:nth-of-type(${index})`);
+        current = current.parentElement;
+      }
+      return `body > ${segments.join(' > ')}`;
+    };
+    const accessibleName = (element: Element) => {
+      const labelledBy = element.getAttribute('aria-labelledby');
+      const labelledByText = labelledBy
+        ?.split(/\s+/)
+        .map((id) => document.getElementById(id)?.textContent?.trim())
+        .filter(Boolean)
+        .join(' ');
+      return (
+        element.getAttribute('aria-label') ??
+        labelledByText ??
+        element.textContent?.replace(/\s+/g, ' ').trim() ??
+        element.tagName.toLowerCase()
+      );
+    };
+
+    return Array.from(document.querySelectorAll(selector))
+      .filter(
+        (element) =>
+          element.id !== '__petshop-cwv-interaction-probe' &&
+          !element.closest('[aria-busy="true"], .skeleton') &&
+          isVisible(element),
+      )
+      .map((element) => ({
+        name: accessibleName(element),
+        selector: cssPath(element),
+        type: element.matches('a[href]')
+          ? 'link'
+          : element.matches('button, input[type="button"], input[type="submit"]')
+            ? 'button'
+            : 'other',
+      }));
+  });
+}
+
+async function prepareCartInteractionPage(
+  context: BrowserContext,
+  page: Page,
+  baseURL: string,
+  profile: DeviceProfile,
+) {
+  await page.addInitScript({ content: metricsInitScript() });
+  await page.addInitScript(() => {
+    document.addEventListener(
+      'click',
+      (event) => {
+        if ((event.target as Element | null)?.closest('a[href]')) event.preventDefault();
+      },
+      true,
+    );
+  });
+  await applyDeviceThrottling(context, page, profile);
+  await context.addCookies([await createSessionCookie(baseURL, 'admin')]);
+
+  // Quantity and removal controls are included in INP coverage, but benchmark runs
+  // must never change the account/cart represented by the optional test credentials.
+  await page.route('**/*', async (route) => {
+    const method = route.request().method();
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
+      await route.abort('blockedbyclient');
+      return;
+    }
+    await route.continue();
+  });
+}
+
+async function visitCart(page: Page) {
+  const response = await page.goto('/cart', { waitUntil: 'load' });
+  expect(response, 'No document response received for /cart').not.toBeNull();
+  expect(response?.status(), 'Unexpected HTTP status for /cart').toBeLessThan(400);
+  await page.waitForLoadState('networkidle', { timeout: 5_000 }).catch(() => undefined);
+  await page.waitForTimeout(Number(process.env.CORE_WEB_VITALS_SETTLE_MS ?? 1_500));
+}
+
 for (const route of routes) {
   test(`${route.pathname} (${route.sourceFile}) stays within Core Web Vitals budgets`, async ({
     context,
@@ -229,3 +374,83 @@ for (const route of routes) {
     expect(failures, `${profile} budgets failed for ${route.pathname}`).toEqual([]);
   });
 }
+
+test.describe('/cart INP interaction coverage', () => {
+  test('measures every visible clickable control without mutating the cart', async ({
+    browser,
+    baseURL,
+  }, testInfo) => {
+    if (!baseURL) throw new Error('The Core Web Vitals base URL is not configured.');
+
+    const profile = testInfo.project.metadata.coreWebVitalsProfile as DeviceProfile;
+    const discoveryContext = await browser.newContext({
+      ...testInfo.project.use,
+      baseURL,
+    });
+    const discoveryPage = await discoveryContext.newPage();
+    await prepareCartInteractionPage(discoveryContext, discoveryPage, baseURL, profile);
+    await visitCart(discoveryPage);
+    const targets = await discoverInteractiveTargets(discoveryPage);
+    await discoveryContext.close();
+
+    expect(targets, 'No visible clickable controls were found on /cart.').not.toEqual([]);
+
+    const results: Array<
+      InteractiveTarget & { inp: number | null; status: 'measured' | 'not-reported' }
+    > = [];
+
+    for (const target of targets) {
+      await test.step(`${target.type}: ${target.name}`, async () => {
+        const context = await browser.newContext({ ...testInfo.project.use, baseURL });
+        const page = await context.newPage();
+        try {
+          await prepareCartInteractionPage(context, page, baseURL, profile);
+          await visitCart(page);
+
+          const locator = page.locator(target.selector);
+          await expect(locator, `Clickable control disappeared: ${target.name}`).toBeVisible();
+          await locator.scrollIntoViewIfNeeded();
+          const timingCount = (await readInteractionTimings(page)).length;
+          await locator.click();
+          await page.waitForTimeout(350);
+
+          const newTimings = (await readInteractionTimings(page)).slice(timingCount);
+          const interactionGroups = new Map<number, InteractionTiming[]>();
+          for (const timing of newTimings) {
+            const group = interactionGroups.get(timing.interactionId) ?? [];
+            group.push(timing);
+            interactionGroups.set(timing.interactionId, group);
+          }
+          const latestInteraction = Array.from(interactionGroups.values())
+            .sort((left, right) => right[0].startTime - left[0].startTime)[0]
+            ?.reduce((maximum, timing) => Math.max(maximum, timing.duration), 0);
+
+          results.push({
+            ...target,
+            inp: latestInteraction ?? null,
+            status: latestInteraction === undefined ? 'not-reported' : 'measured',
+          });
+          expect(
+            latestInteraction,
+            `No Event Timing entry was reported for ${target.type} “${target.name}”.`,
+          ).toBeDefined();
+          expect(
+            latestInteraction,
+            `INP budget failed for ${target.type} “${target.name}”.`,
+          ).toBeLessThanOrEqual(thresholds.INP);
+        } finally {
+          await context.close();
+        }
+      });
+    }
+
+    await testInfo.attach('cart-inp-interactions.json', {
+      body: JSON.stringify(
+        { profile, route: '/cart', threshold: thresholds.INP, results },
+        null,
+        2,
+      ),
+      contentType: 'application/json',
+    });
+  });
+});

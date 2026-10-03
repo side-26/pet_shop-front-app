@@ -17,6 +17,7 @@ describe('Register', () => {
   beforeEach(() => {
     registeredPhoneNumber = undefined;
     cy.clearCookies();
+    cy.task('resetE2ERegisterRateLimit', undefined, { log: false });
     cy.visit(routePaths.register);
   });
 
@@ -91,6 +92,7 @@ describe('Register', () => {
     cy.get('[data-slot="toast"]').should('contain.text', registrationSuccessMessage);
     cy.location('pathname', { timeout: 6_000 }).should('eq', routePaths.login);
 
+    cy.task('resetE2ERegisterRateLimit', undefined, { log: false });
     cy.visit(routePaths.register);
     fillRegistrationForm(phoneNumber, password);
     cy.get('button[type="submit"]').click();

@@ -11,6 +11,7 @@ const dotenv = requireBackendDependency('dotenv') as {
 dotenv.config({ path: resolve(backendDirectory, '.env') });
 
 const e2eDatabaseUri = process.env.MONGODB_E2E_URI ?? process.env.MONGODB_URI;
+const registerRateLimitKeyPattern = 'rate-limit:users:POST:/api/users/register:*';
 
 async function deleteE2ERegisteredUser(phoneNumber: string) {
   if (!/^09\d{9}$/.test(phoneNumber)) {
@@ -39,6 +40,43 @@ async function deleteE2ERegisteredUser(phoneNumber: string) {
   return null;
 }
 
+async function resetE2ERegisterRateLimit() {
+  const { createClient } = requireBackendDependency('redis') as {
+    createClient(options?: { url?: string; socket?: { host: string; port: number } }): {
+      connect(): Promise<void>;
+      del(keys: string[]): Promise<number>;
+      isOpen: boolean;
+      quit(): Promise<void>;
+      scanIterator(options: { MATCH: string }): AsyncIterable<string[]>;
+    };
+  };
+  const redisUrl = process.env.REDIS_URL?.trim();
+  const configuredPort = Number.parseInt(process.env.REDIS_PORT ?? '', 10);
+  const client = createClient(
+    redisUrl
+      ? { url: redisUrl }
+      : {
+          socket: {
+            host: process.env.REDIS_HOST?.trim() || '127.0.0.1',
+            port: Number.isInteger(configuredPort) ? configuredPort : 6379,
+          },
+        },
+  );
+
+  await client.connect();
+  try {
+    const keys: string[] = [];
+    for await (const batch of client.scanIterator({ MATCH: registerRateLimitKeyPattern })) {
+      keys.push(...batch);
+    }
+    if (keys.length) await client.del(keys);
+  } finally {
+    if (client.isOpen) await client.quit();
+  }
+
+  return null;
+}
+
 process.env.PETSHOP_CYPRESS_COMPONENT_TEST = 'true';
 
 export default defineConfig({
@@ -57,7 +95,7 @@ export default defineConfig({
     excludeSpecPattern: ['node_modules/**', '.next/**'],
     supportFile: 'cypress/support/e2e.ts',
     setupNodeEvents(on) {
-      on('task', { deleteE2ERegisteredUser });
+      on('task', { deleteE2ERegisteredUser, resetE2ERegisterRateLimit });
     },
   },
 });
