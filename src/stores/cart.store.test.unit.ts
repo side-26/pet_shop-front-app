@@ -137,6 +137,27 @@ describe('useCartStore', () => {
     expect(useCartStore.getState().pendingAddOperations).toEqual([]);
   });
 
+  it('shares one in-flight guest-cart synchronization between concurrent callers', async () => {
+    await useCartStore.getState().addToCart(product);
+    useAuthStore.getState().saveUserIdentity({ userId: 'user-1' } as never);
+
+    let resolveAdd: ((value: unknown) => void) | undefined;
+    addCartItemActionMock.mockImplementationOnce(
+      () => new Promise((resolve) => (resolveAdd = resolve)),
+    );
+
+    const firstSync = useCartStore.getState().syncLocalToServer();
+    const secondSync = useCartStore.getState().syncLocalToServer();
+
+    expect(addCartItemActionMock).toHaveBeenCalledOnce();
+    resolveAdd?.({ isSuccess: true, message: null, data: cart });
+
+    await expect(Promise.all([firstSync, secondSync])).resolves.toEqual([
+      { isSuccess: true, cart },
+      { isSuccess: true, cart },
+    ]);
+  });
+
   it('removes the final guest item when decreasing its quantity', async () => {
     await useCartStore.getState().addToCart(product);
     const item = useCartStore.getState().items[0];

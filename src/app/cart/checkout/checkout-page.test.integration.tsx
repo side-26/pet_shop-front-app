@@ -6,6 +6,7 @@ import { usePrepareOrderMutation } from '@/entities/orders/orders.client';
 import { useRequestPaymentMutation } from '@/entities/payments/payments.client';
 import { usePreventPageLeave } from '@/hooks/use-prevent-page-leave';
 import { useCheckoutStore } from '@/stores/checkout.store';
+import { useCartStore } from '@/stores/cart.store';
 
 import CheckoutPage, { metadata } from './page';
 
@@ -31,12 +32,15 @@ beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(useRequestPaymentMutation).mockReturnValue({
     isPending: false,
-    mutate: requestPayment,
+    mutateAsync: requestPayment,
   } as never);
   vi.mocked(usePrepareOrderMutation).mockReturnValue({
     isPending: false,
-    mutate: prepareOrder,
+    mutateAsync: prepareOrder,
   } as never);
+  useCartStore.setState({
+    syncLocalToServer: vi.fn().mockResolvedValue({ isSuccess: true, cart: null }),
+  });
 });
 
 describe(routePaths.checkout, () => {
@@ -113,7 +117,9 @@ describe(routePaths.checkout, () => {
     });
   });
 
-  it('starts one shared payment request from either responsive payment button', async () => {
+  it('prepares the order, requests its payment, and navigates the current tab to the gateway', async () => {
+    prepareOrder.mockResolvedValue({ orderId: 'order-1' });
+    requestPayment.mockResolvedValue({ gatewayUrl: 'https://gateway.example.test/pay' });
     render(<CheckoutPage />);
     act(() =>
       useCheckoutStore.getState().saveCheckoutInformation({
@@ -128,17 +134,15 @@ describe(routePaths.checkout, () => {
     fireEvent.click(screen.getByRole('button', { name: 'پرداخت' }));
     fireEvent.click(screen.getByRole('button', { name: 'ادامه و پرداخت' }));
 
-    expect(prepareOrder).toHaveBeenCalledOnce();
-    expect(prepareOrder).toHaveBeenCalledWith(
-      {
-        addressId: '507f1f77bcf86cd799439011',
-        deliveryServiceId: '507f1f77bcf86cd799439012',
-        deliveryDateId: 'delivery-date-1',
-        deliveryTimeSlotId: 'delivery-time-1',
-      },
-      expect.any(Object),
-    );
-    expect(requestPayment).not.toHaveBeenCalled();
+    await waitFor(() => expect(prepareOrder).toHaveBeenCalledOnce());
+    expect(useCartStore.getState().syncLocalToServer).toHaveBeenCalledOnce();
+    expect(prepareOrder).toHaveBeenCalledWith({
+      addressId: '507f1f77bcf86cd799439011',
+      deliveryServiceId: '507f1f77bcf86cd799439012',
+      deliveryDateId: 'delivery-date-1',
+      deliveryTimeSlotId: 'delivery-time-1',
+    });
+    await waitFor(() => expect(requestPayment).toHaveBeenCalledWith({ orderId: 'order-1' }));
   });
 
   it('defines checkout metadata', () => {

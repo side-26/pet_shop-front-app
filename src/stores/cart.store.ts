@@ -48,6 +48,8 @@ export type PendingCartAddOperation = Readonly<{
 
 type CartActionResult = Awaited<ReturnType<typeof addCartItemAction>>;
 
+let cartSyncPromise: Promise<CartOperationResult> | null = null;
+
 type CartStore = {
   /** Rich client-side entries, persisted for guest carts and fast cart rendering. */
   items: CartItem[];
@@ -375,42 +377,51 @@ export const useCartStore = create<CartStore>()(
 
         syncLocalToServer: async () => {
           if (!hasAuthenticatedUser()) return finishError('Sign in before syncing the cart.');
-          if (get().isSyncing) return { isSuccess: true, cart: get().serverCart };
+          if (cartSyncPromise) return cartSyncPromise;
 
-          if (get().needsServerSync) {
-            set(({ items, pendingAddOperations }) => ({
-              needsServerSync: false,
-              pendingAddOperations: [
-                ...pendingAddOperations,
-                ...items.map((item) =>
-                  createPendingAddOperation(toCartItemInput(item), item.quantity),
+          cartSyncPromise = (async () => {
+            if (get().needsServerSync) {
+              set(({ items, pendingAddOperations }) => ({
+                needsServerSync: false,
+                pendingAddOperations: [
+                  ...pendingAddOperations,
+                  ...items.map((item) =>
+                    createPendingAddOperation(toCartItemInput(item), item.quantity),
+                  ),
+                ],
+              }));
+            }
+
+            const pendingOperations = get().pendingAddOperations;
+            if (pendingOperations.length === 0) return finishSuccess(get().serverCart);
+
+            set({ isSyncing: true, lastError: null });
+            let latestCart: CartDTO | null = get().serverCart;
+            for (const operation of pendingOperations) {
+              const result = await addCartItemAction(
+                toAddPayload(operation.item, operation.quantity, operation.idempotencyKey),
+              );
+              if (!isSuccessfulCartAction(result))
+                return finishError(getFailedActionMessage(result, 'Unable to sync the cart.'));
+              latestCart = result.data;
+              set((state) => ({
+                pendingAddOperations: state.pendingAddOperations.filter(
+                  (pendingOperation) =>
+                    pendingOperation.idempotencyKey !== operation.idempotencyKey,
                 ),
-              ],
-            }));
-          }
+                serverCart: result.data,
+                items: applyServerQuantities(state.items, result.data),
+              }));
+            }
+            set({ isSyncing: false, lastError: null });
+            return { isSuccess: true, cart: latestCart };
+          })();
 
-          const pendingOperations = get().pendingAddOperations;
-          if (pendingOperations.length === 0) return finishSuccess(get().serverCart);
-
-          set({ isSyncing: true, lastError: null });
-          let latestCart: CartDTO | null = get().serverCart;
-          for (const operation of pendingOperations) {
-            const result = await addCartItemAction(
-              toAddPayload(operation.item, operation.quantity, operation.idempotencyKey),
-            );
-            if (!isSuccessfulCartAction(result))
-              return finishError(getFailedActionMessage(result, 'Unable to sync the cart.'));
-            latestCart = result.data;
-            set((state) => ({
-              pendingAddOperations: state.pendingAddOperations.filter(
-                (pendingOperation) => pendingOperation.idempotencyKey !== operation.idempotencyKey,
-              ),
-              serverCart: result.data,
-              items: applyServerQuantities(state.items, result.data),
-            }));
+          try {
+            return await cartSyncPromise;
+          } finally {
+            cartSyncPromise = null;
           }
-          set({ isSyncing: false, lastError: null });
-          return { isSuccess: true, cart: latestCart };
         },
 
         replaceItems: (items) => set({ items, lastError: null }),

@@ -5,6 +5,7 @@ import { createContext, useContext, useRef, type ReactNode } from 'react';
 import { usePrepareOrderMutation } from '@/entities/orders/orders.client';
 import { useRequestPaymentMutation } from '@/entities/payments/payments.client';
 import { usePreventPageLeave } from '@/hooks/use-prevent-page-leave';
+import { useCartStore } from '@/stores/cart.store';
 import { useCheckoutStore } from '@/stores/checkout.store';
 
 type CheckoutPaymentContextValue = Readonly<{
@@ -15,8 +16,9 @@ type CheckoutPaymentContextValue = Readonly<{
 const CheckoutPaymentContext = createContext<CheckoutPaymentContextValue | null>(null);
 
 export function CheckoutPaymentProvider({ children }: Readonly<{ children: ReactNode }>) {
-  const { isPending: isPreparingOrder, mutate: prepareOrderMutation } = usePrepareOrderMutation();
-  const { isPending: isRequestingPayment, mutate: requestPaymentMutation } =
+  const { isPending: isPreparingOrder, mutateAsync: prepareOrderMutation } =
+    usePrepareOrderMutation();
+  const { isPending: isRequestingPayment, mutateAsync: requestPaymentMutation } =
     useRequestPaymentMutation();
   const paymentRequestInFlight = useRef(false);
   const isPending = isPreparingOrder || isRequestingPayment;
@@ -26,7 +28,7 @@ export function CheckoutPaymentProvider({ children }: Readonly<{ children: React
     message: 'درخواست پرداخت در حال انجام است. لطفاً تا انتقال به درگاه بانکی صبر کنید.',
   });
 
-  function requestPayment() {
+  async function requestPayment() {
     if (paymentRequestInFlight.current) return;
     paymentRequestInFlight.current = true;
 
@@ -37,30 +39,21 @@ export function CheckoutPaymentProvider({ children }: Readonly<{ children: React
       return;
     }
 
-    prepareOrderMutation(
-      {
+    try {
+      const cartSync = await useCartStore.getState().syncLocalToServer();
+      if (!cartSync.isSuccess) return;
+
+      const { orderId } = await prepareOrderMutation({
         addressId,
         deliveryServiceId,
         deliveryDateId: deliveryDate.id,
         deliveryTimeSlotId: deliveryTimeSlot.id,
-      },
-      {
-        onError: () => {
-          paymentRequestInFlight.current = false;
-        },
-        onSuccess: ({ orderId }) => {
-          requestPaymentMutation(
-            { orderId },
-            {
-              onSuccess: ({ gatewayUrl }) => window.location.assign(gatewayUrl),
-              onSettled: () => {
-                paymentRequestInFlight.current = false;
-              },
-            },
-          );
-        },
-      },
-    );
+      });
+      const { gatewayUrl } = await requestPaymentMutation({ orderId });
+      window.location.assign(gatewayUrl);
+    } finally {
+      paymentRequestInFlight.current = false;
+    }
   }
 
   return (
