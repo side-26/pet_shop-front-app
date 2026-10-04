@@ -9,6 +9,7 @@ export const PATHS = {
   CART: '/cart',
   CHECKOUT: '/cart/checkout',
   PROFILE: '/profile',
+  PAYMENT_RESULT: '/payment/result',
   AUTH: {
     LOGIN: '/login',
     LOGIN_AFTER_LOGOUT: '/login?logout=success',
@@ -55,6 +56,7 @@ export const routePaths = {
   cart: PATHS.CART,
   checkout: PATHS.CHECKOUT,
   profile: PATHS.PROFILE,
+  paymentResult: (authority: string) => `${PATHS.PAYMENT_RESULT}/${encodeURIComponent(authority)}`,
   login: PATHS.AUTH.LOGIN,
   register: PATHS.AUTH.REGISTER,
   forgetPassword: PATHS.AUTH.FORGET_PASSWORD,
