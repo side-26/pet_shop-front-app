@@ -27,6 +27,7 @@ import { CountdownShowcase } from './countdown-showcase';
 import { CounterShowcase } from './counter-showcase';
 import { HoverCardShowcase } from './hover-card-showcase';
 import { PriceShowcase } from './price-showcase';
+import { AnimatedPriceShowcase } from './animated-price-showcase';
 import { PriceMaskShowcase } from './price-mask-showcase';
 import { BreadcrumbShowcase } from './breadcrumb-showcase';
 import { ExpandableCardShowcase } from './expandable-card-showcase';
@@ -65,6 +66,7 @@ const navigation = [
   ['#virtual-select', 'Virtual Combobox'],
   ['#expandable-cards', 'Expandable Card'],
   ['#prices', 'Price'],
+  ['#animated-prices', 'Animated Price'],
   ['#price-mask-fields', 'Price Mask Field'],
   ['#breadcrumbs', 'Breadcrumb'],
   ['#alert-dialogs', 'Alert Dialog'],
@@ -153,6 +155,7 @@ export function UiComponentsGallery() {
         <VirtualSelectShowcase />
         <ExpandableCardShowcase />
         <PriceShowcase />
+        <AnimatedPriceShowcase />
         <PriceMaskShowcase />
         <BreadcrumbShowcase />
         <AlertDialogShowcase />
