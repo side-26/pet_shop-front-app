@@ -27,6 +27,7 @@ import {
   getAllPaginatedUsers,
   getAllUsers,
   getCart,
+  getCartForSync,
   invalidateCart,
   userGetDetailById,
   updateCurrentUserProfile,
@@ -49,6 +50,7 @@ vi.mock('./users.service', () => ({
   getAllPaginatedUsers: vi.fn(),
   getAllUsers: vi.fn(),
   getCart: vi.fn(),
+  getCartForSync: vi.fn(),
   invalidateCart: vi.fn(),
   userGetDetailById: vi.fn(),
   updateCurrentUserProfile: vi.fn(),
@@ -66,6 +68,7 @@ const disableUserByIdMock = vi.mocked(disableUserById);
 const enableUserByIdMock = vi.mocked(enableUserById);
 const getCurrentUserMock = vi.mocked(getCurrentUser);
 const getCartMock = vi.mocked(getCart);
+const getCartForSyncMock = vi.mocked(getCartForSync);
 const updateCurrentUserProfileMock = vi.mocked(updateCurrentUserProfile);
 const changeCurrentUserPasswordMock = vi.mocked(changeCurrentUserPassword);
 const userGetDetailByIdMock = vi.mocked(userGetDetailById);
@@ -214,15 +217,15 @@ describe('users actions', () => {
     expect(refreshMock).toHaveBeenCalledOnce();
   });
 
-  it('expires and reads the signed-in cart before a client-side cart merge', async () => {
+  it('reads fresh cart data for a client-side cart merge without invalidating the route cache', async () => {
     const response = { isSuccess: true as const, message: null, data: userDetail.cart };
     getSessionMock.mockResolvedValue(session(USER_ROLES.CUSTOMER));
-    getCartMock.mockResolvedValue(response);
+    getCartForSyncMock.mockResolvedValue(response);
 
     await expect(getCartForSyncAction()).resolves.toBe(response);
 
-    expect(invalidateCartMock).toHaveBeenCalledWith('user-1');
-    expect(getCartMock).toHaveBeenCalledWith('user-1');
+    expect(invalidateCartMock).not.toHaveBeenCalled();
+    expect(getCartForSyncMock).toHaveBeenCalledOnce();
   });
 
   it('gets the non-paginated management list for an admin only', async () => {

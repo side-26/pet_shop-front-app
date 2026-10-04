@@ -4,9 +4,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { routePaths } from '@/configs/route.path';
 import { usePrepareOrderMutation } from '@/entities/orders/orders.client';
 import { useRequestPaymentMutation } from '@/entities/payments/payments.client';
+import { useCartCheckout } from '@/entities/users/cart.client';
 import { usePreventPageLeave } from '@/hooks/use-prevent-page-leave';
 import { useCheckoutStore } from '@/stores/checkout.store';
-import { useCartStore } from '@/stores/cart.store';
 
 import CheckoutPage, { metadata } from './page';
 
@@ -18,6 +18,7 @@ vi.mock('./_components/address-selection/address-selection', () => ({
 vi.mock('@/entities/payments/payments.client', () => ({ useRequestPaymentMutation: vi.fn() }));
 vi.mock('@/entities/orders/orders.client', () => ({ usePrepareOrderMutation: vi.fn() }));
 vi.mock('@/hooks/use-prevent-page-leave', () => ({ usePreventPageLeave: vi.fn() }));
+vi.mock('@/entities/users/cart.client', () => ({ useCartCheckout: vi.fn() }));
 
 const requestPayment = vi.fn();
 const prepareOrder = vi.fn();
@@ -40,9 +41,7 @@ beforeEach(() => {
     mutateAsync: prepareOrder,
   } as never);
   vi.mocked(usePreventPageLeave).mockReturnValue({ allowNextUnload } as never);
-  useCartStore.setState({
-    syncLocalToServer: vi.fn().mockResolvedValue({ isSuccess: true, cart: null }),
-  });
+  vi.mocked(useCartCheckout).mockReturnValue({ data: null, isFetching: false } as never);
 });
 
 describe(routePaths.checkout, () => {
@@ -137,7 +136,6 @@ describe(routePaths.checkout, () => {
     fireEvent.click(screen.getByRole('button', { name: 'ادامه و پرداخت' }));
 
     await waitFor(() => expect(prepareOrder).toHaveBeenCalledOnce());
-    expect(useCartStore.getState().syncLocalToServer).toHaveBeenCalledOnce();
     expect(prepareOrder).toHaveBeenCalledWith({
       addressId: '507f1f77bcf86cd799439011',
       deliveryServiceId: '507f1f77bcf86cd799439012',

@@ -46,6 +46,7 @@ import {
   deleteWishlistItem,
   emptyCart,
   getCart,
+  getCartForSync,
   getCartItemDetails,
   invalidateCart,
   getUserAddresses,
@@ -321,13 +322,12 @@ export async function getCartAction() {
     : accessError('برای مشاهده سبد خرید وارد حساب کاربری شوید.');
 }
 
-/** Reads the signed-in cart after expiring its private cache for a client-side merge. */
+/** Reads fresh cart data for background client synchronization without route invalidation. */
 export async function getCartForSyncAction() {
   const session = await getSession();
   if (!session) return accessError('برای همگام‌سازی سبد خرید وارد حساب کاربری شوید.');
 
-  invalidateCart(session.userId);
-  return getCart(session.userId);
+  return getCartForSync();
 }
 
 /** Expire only the signed-in user's cart before retrying the cart route. */

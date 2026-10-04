@@ -17,6 +17,7 @@ import {
   createDeliveryQuote,
   addCartItem,
   getCart,
+  getCartForSync,
   deleteCartItem,
   selectDeliveryWindow,
   getCartCheckout,
@@ -112,6 +113,20 @@ describe('cart cache service', () => {
     });
     expect(cartCacheLifeMock).toHaveBeenCalledWith({ stale: 120 });
     expect(cartCacheRegisterDetailMock).toHaveBeenCalledWith('user-42');
+  });
+
+  it('reads the latest cart for background synchronization without cache-tag registration', async () => {
+    const response = { isSuccess: true as const, message: null, data: { items: [] } };
+    customFetcherMock.mockResolvedValue(response);
+
+    await expect(getCartForSync()).resolves.toBe(response);
+
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/cart/all',
+      auth: true,
+      cache: 'no-store',
+    });
+    expect(cartCacheRegisterDetailMock).not.toHaveBeenCalled();
   });
 
   it('invalidates the user cart cache after a successful deletion', async () => {

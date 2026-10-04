@@ -4,15 +4,16 @@ import { CalendarDays } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardFooter, CardHeader } from '@/components/ui/card';
-import { Price } from '@/components/ui/price';
+import { AnimatedPrice } from '@/components/ui/animated-price';
 import { Separator } from '@/components/ui/separator';
 import { useCheckoutStore } from '@/stores/checkout.store';
 
+import { useCheckoutCartPrices } from './checkout-cart-prices-context';
 import { useCheckoutPayment } from './checkout-payment-provider';
 
 export function CheckoutMobilePaymentBar() {
   const { isPending, requestPayment } = useCheckoutPayment();
-  const payablePrice = useCheckoutStore((state) => state.prices.payablePrice);
+  const { prices, isLoading: isPriceLoading } = useCheckoutCartPrices();
   const addressId = useCheckoutStore((state) => state.checkoutInformation.addressId);
   const deliveryServiceId = useCheckoutStore(
     (state) => state.checkoutInformation.deliveryServiceId,
@@ -31,7 +32,11 @@ export function CheckoutMobilePaymentBar() {
       <Card variant="glass" size="sm" className="tw:shadow-2xl tw:shadow-foreground/15">
         <CardHeader className="tw:flex tw:flex-row tw:items-center tw:justify-between tw:gap-3">
           <span className="tw:text-label-s tw:text-muted-foreground">مبلغ قابل پرداخت</span>
-          <Price number={payablePrice} className="tw:text-price-m tw:text-primary" />
+          <AnimatedPrice
+            number={prices?.payableAmount}
+            isLoading={isPriceLoading}
+            className="tw:text-price-m tw:text-primary"
+          />
         </CardHeader>
         <CardFooter className="tw:flex-nowrap tw:justify-between tw:gap-3">
           <div className="tw:flex tw:flex-none tw:items-start tw:gap-2">

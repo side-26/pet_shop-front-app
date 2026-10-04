@@ -5,7 +5,6 @@ import { createContext, useContext, useRef, type ReactNode } from 'react';
 import { usePrepareOrderMutation } from '@/entities/orders/orders.client';
 import { useRequestPaymentMutation } from '@/entities/payments/payments.client';
 import { usePreventPageLeave } from '@/hooks/use-prevent-page-leave';
-import { useCartStore } from '@/stores/cart.store';
 import { useCheckoutStore } from '@/stores/checkout.store';
 
 type CheckoutPaymentContextValue = Readonly<{
@@ -40,9 +39,6 @@ export function CheckoutPaymentProvider({ children }: Readonly<{ children: React
     }
 
     try {
-      const cartSync = await useCartStore.getState().syncLocalToServer();
-      if (!cartSync.isSuccess) return;
-
       const { orderId } = await prepareOrderMutation({
         addressId,
         deliveryServiceId,

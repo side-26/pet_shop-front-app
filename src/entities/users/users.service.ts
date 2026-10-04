@@ -253,6 +253,18 @@ export async function getCart(userId: string) {
   return customFetcher<CartDTO>({ url: usersApiPaths.cart.all, auth: true, cache: 'no-store' });
 }
 
+/**
+ * Fresh cart read for client synchronization. Unlike cached route reads, this
+ * must not invalidate a tag because background sync must not re-render routes.
+ */
+export function getCartForSync() {
+  return customFetcher<CartDTO>({
+    url: usersApiPaths.cart.all,
+    auth: true,
+    cache: 'no-store',
+  });
+}
+
 /** Expires the current user's populated cart read before an explicit retry. */
 export function invalidateCart(userId: string) {
   cartCache.invalidateDetail(userId);

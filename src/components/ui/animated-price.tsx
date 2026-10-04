@@ -32,7 +32,7 @@ function AnimatedDigit({
   return (
     <span
       aria-hidden="true"
-      className="tw:inline-flex tw:h-[1.08em] tw:w-[0.62em] tw:overflow-hidden tw:align-[-0.14em]"
+      className="tw:inline-flex tw:h-[1.08em] tw:w-[0.62em] tw:overflow-hidden tw:align-baseline"
     >
       <motion.span
         initial={{ y: 0 }}
@@ -46,10 +46,13 @@ function AnimatedDigit({
             ? { duration: 1.1, delay: index * 0.07, ease: 'easeInOut', repeat: Infinity }
             : { duration: 0.5, delay: index * 0.035, ease: [0.22, 1, 0.36, 1] }
         }
-        className="tw:flex tw:flex-col tw:leading-[1.08]"
+        className="tw:flex tw:w-full tw:flex-col tw:items-center tw:leading-[1.08]"
       >
         {Array.from(persianDigits).map((value) => (
-          <span key={value} className="tw:h-[1.08em]">
+          <span
+            key={value}
+            className="tw:flex tw:h-[1.08em] tw:w-full tw:items-center tw:justify-center"
+          >
             {value}
           </span>
         ))}
@@ -108,13 +111,13 @@ function AnimatedPrice({
       <bdi
         dir="ltr"
         aria-label={isLoading ? 'در حال دریافت قیمت' : formattedNumber}
-        className="tw:inline-flex"
+        className="tw:inline-flex tw:items-baseline tw:leading-[1.08]"
       >
         {Array.from(formattedNumber).map((character, index) => {
           const digit = persianDigits.indexOf(character);
 
           return digit === -1 ? (
-            <span key={`${character}-${index}`} aria-hidden="true">
+            <span key={`${character}-${index}`} aria-hidden="true" className="tw:leading-[1.08]">
               {character}
             </span>
           ) : (

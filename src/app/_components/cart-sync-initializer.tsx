@@ -1,34 +1,36 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 import { useAuthStore } from '@/entities/auth/auth.store';
+import { routePaths } from '@/configs/route.path';
 import { useCartStore } from '@/stores/cart.store';
 
-/** Refreshes the authenticated cart on app mount and retries pending cart operations when reconnecting. */
+/** Hydrates authenticated carts outside checkout and retries only pending work after reconnecting. */
 export function CartSyncInitializer() {
+  const pathname = usePathname();
   const userIdentity = useAuthStore((state) => state.userIdentity);
   const syncLocalToServer = useCartStore((state) => state.syncLocalToServer);
+  const hasPendingCartSync = useCartStore(
+    (state) => state.needsServerSync || state.pendingAddOperations.length > 0,
+  );
 
   useEffect(() => {
-    if (!userIdentity) return;
+    if (!userIdentity || pathname === routePaths.checkout) return;
 
-    const retry = () => void syncLocalToServer();
-    const retryWhenVisible = () => {
-      if (document.visibilityState === 'visible') retry();
-    };
+    void syncLocalToServer();
+  }, [pathname, syncLocalToServer, userIdentity]);
 
-    retry();
-    window.addEventListener('online', retry);
-    window.addEventListener('focus', retry);
-    document.addEventListener('visibilitychange', retryWhenVisible);
+  useEffect(() => {
+    if (!userIdentity || pathname === routePaths.checkout || !hasPendingCartSync) return;
 
+    const retryPendingSync = () => void syncLocalToServer();
+    window.addEventListener('online', retryPendingSync);
     return () => {
-      window.removeEventListener('online', retry);
-      window.removeEventListener('focus', retry);
-      document.removeEventListener('visibilitychange', retryWhenVisible);
+      window.removeEventListener('online', retryPendingSync);
     };
-  }, [syncLocalToServer, userIdentity]);
+  }, [hasPendingCartSync, pathname, syncLocalToServer, userIdentity]);
 
   return null;
 }
