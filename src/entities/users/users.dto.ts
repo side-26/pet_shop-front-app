@@ -19,6 +19,7 @@ import type {
   UpdateUserAddressInput,
   CreateDeliveryQuoteInput,
   SelectDeliveryWindowInput,
+  CartCheckoutQueryInput,
 } from './users.schema';
 
 export type GetAllPaginatedUsersQueryDTO = GetAllPaginatedUsersInput;
@@ -38,6 +39,7 @@ export type CreateUserAddressDTO = CreateUserAddressInput;
 export type UpdateUserAddressDTO = UpdateUserAddressInput;
 export type CreateDeliveryQuoteDTO = CreateDeliveryQuoteInput;
 export type SelectDeliveryWindowDTO = SelectDeliveryWindowInput;
+export type CartCheckoutQueryDTO = CartCheckoutQueryInput;
 
 export interface AddressDTO {
   _id?: string;
@@ -129,6 +131,15 @@ export interface CartDTO {
   shippingInfo: ShippingInfoDTO;
   paymentType: number;
   instalmentCompany: string | null;
+}
+
+/** Authoritative totals calculated by `GET /cart/checkout`. */
+export interface CartCheckoutDTO {
+  itemsPrice: number;
+  packingPrice: number;
+  discountPrice: number;
+  shippingPrice: number;
+  payableAmount: number;
 }
 
 export interface UserDTO {

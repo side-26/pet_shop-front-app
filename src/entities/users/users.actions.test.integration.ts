@@ -11,6 +11,7 @@ import {
   enableUserByIdAction,
   getCurrentUserAction,
   getCartForSyncAction,
+  getCartCheckoutAction,
   getAllPaginatedUsersAction,
   retryCartAction,
   userGetDetailByIdAction,
@@ -31,6 +32,7 @@ import {
   updateCurrentUserProfile,
   createDeliveryQuote,
   selectDeliveryWindow,
+  getCartCheckout,
 } from './users.service';
 
 const { refreshMock } = vi.hoisted(() => ({ refreshMock: vi.fn() }));
@@ -52,6 +54,7 @@ vi.mock('./users.service', () => ({
   updateCurrentUserProfile: vi.fn(),
   createDeliveryQuote: vi.fn(),
   selectDeliveryWindow: vi.fn(),
+  getCartCheckout: vi.fn(),
 }));
 
 const getSessionMock = vi.mocked(getSession);
@@ -68,6 +71,7 @@ const changeCurrentUserPasswordMock = vi.mocked(changeCurrentUserPassword);
 const userGetDetailByIdMock = vi.mocked(userGetDetailById);
 const createDeliveryQuoteMock = vi.mocked(createDeliveryQuote);
 const selectDeliveryWindowMock = vi.mocked(selectDeliveryWindow);
+const getCartCheckoutMock = vi.mocked(getCartCheckout);
 const invalidateCartMock = vi.mocked(invalidateCart);
 
 const successResponse = {
@@ -131,6 +135,19 @@ function session(role: AuthSessionModel['role']): AuthSessionModel {
 describe('users actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it('validates and requests backend-calculated checkout prices for the signed-in user', async () => {
+    const input = {
+      addressId: '507f1f77bcf86cd799439011',
+      deliveryServiceId: '507f1f77bcf86cd799439012',
+    };
+    const response = { isSuccess: true as const, message: null, data: { payableAmount: 100_000 } };
+    getSessionMock.mockResolvedValue(session(USER_ROLES.CUSTOMER));
+    getCartCheckoutMock.mockResolvedValue(response as never);
+
+    await expect(getCartCheckoutAction(input)).resolves.toBe(response);
+    expect(getCartCheckoutMock).toHaveBeenCalledWith(input);
   });
 
   it('validates delivery quoting and selection for the authenticated customer', async () => {

@@ -30,11 +30,14 @@ import type {
   CreateDeliveryQuoteDTO,
   DeliveryQuoteDTO,
   SelectDeliveryWindowDTO,
+  CartCheckoutDTO,
+  CartCheckoutQueryDTO,
 } from './users.dto';
 import { createUsersListCacheKey, omitNullQueryValues } from './users.helpers';
 import { getAllPaginatedUsersSchema } from './users.schema';
 import { usersCache } from './users.cache';
 import { cartCache } from './cart.cache';
+import { usersApiPaths } from './users.api-paths';
 
 export async function getCurrentUser() {
   'use cache: private';
@@ -44,7 +47,7 @@ export async function getCurrentUser() {
   if (session) usersCache.registerDetail(session.userId);
 
   return customFetcher<CurrentUserDTO>({
-    url: '/users/current',
+    url: usersApiPaths.currentUser,
     method: 'GET',
     auth: true,
     cache: 'no-store',
@@ -54,7 +57,7 @@ export async function getCurrentUser() {
 /** Server-only BFF read for the browser-facing current-user route. */
 export function getCurrentUserForSessionSync() {
   return customFetcher<CurrentUserDTO>({
-    url: '/users/current',
+    url: usersApiPaths.currentUser,
     method: 'GET',
     auth: true,
     cache: 'no-store',
@@ -68,7 +71,7 @@ export async function userGetDetailById(id: UserGetDetailByIdDTO['id']) {
   usersCache.registerDetail(id);
 
   return customFetcher<UserDetailDTO>({
-    url: `/users/${id}`,
+    url: usersApiPaths.userById(id),
     method: 'GET',
     auth: true,
     cache: 'no-store',
@@ -83,7 +86,7 @@ async function fetchAllPaginatedUsers(query: GetAllPaginatedUsersQueryDTO) {
   usersCache.registerList(createUsersListCacheKey(requestQuery));
 
   const res = await customFetcher<AllPaginatedUsersDTO>({
-    url: '/users/paginate',
+    url: usersApiPaths.usersPaginate,
     method: 'GET',
     query: requestQuery,
     auth: true,
@@ -102,7 +105,7 @@ export async function getAllUsers() {
   usersCache.cacheLife({ stale: 600 });
   usersCache.registerList('all');
   return customFetcher<UserDTO[]>({
-    url: '/users/all',
+    url: usersApiPaths.usersList,
     method: 'GET',
     auth: true,
     cache: 'no-store',
@@ -111,7 +114,7 @@ export async function getAllUsers() {
 
 export async function createUser(input: CreateUserDTO) {
   const result = await customFetcher<void, unknown, CreateUserDTO>({
-    url: '/users',
+    url: usersApiPaths.users,
     method: 'POST',
     body: input,
     auth: true,
@@ -136,7 +139,7 @@ export async function updateCurrentUserProfile(userId: string, input: UpdateCurr
   if (input.avatar instanceof File) body.set('avatar', input.avatar);
 
   const result = await customFetcher<CurrentUserDTO, unknown, FormData>({
-    url: '/users/edit-info',
+    url: usersApiPaths.userProfile,
     method: 'PUT',
     body,
     auth: true,
@@ -155,7 +158,7 @@ export async function changeCurrentUserPassword(
   input: ChangeCurrentUserPasswordDTO,
 ) {
   return customFetcher<void, unknown, ChangeCurrentUserPasswordDTO & { userId: string }>({
-    url: '/users/change-password',
+    url: usersApiPaths.userPassword,
     method: 'PUT',
     body: { ...input, userId },
     auth: true,
@@ -165,7 +168,7 @@ export async function changeCurrentUserPassword(
 
 export async function deleteUserById(id: DeleteUserByIdDTO['id']) {
   const result = await customFetcher<void>({
-    url: `/users/${id}`,
+    url: usersApiPaths.userById(id),
     method: 'DELETE',
     auth: true,
     cache: 'no-store',
@@ -181,7 +184,7 @@ export async function deleteUserById(id: DeleteUserByIdDTO['id']) {
 
 async function updateUserStatus(id: UpdateUserStatusByIdDTO['id'], status: 'enable' | 'disable') {
   const result = await customFetcher<void, unknown, undefined>({
-    url: `/users/${status}/${id}`,
+    url: usersApiPaths.userStatus(status, id),
     method: 'PUT',
     body: undefined,
     auth: true,
@@ -208,12 +211,16 @@ export async function getUserAddresses(userId: string) {
   'use cache: private';
   usersCache.cacheLife({ stale: 360 });
   usersCache.registerDetail(userId);
-  return customFetcher<AddressDTO[]>({ url: '/users/addresses', auth: true, cache: 'no-store' });
+  return customFetcher<AddressDTO[]>({
+    url: usersApiPaths.addresses,
+    auth: true,
+    cache: 'no-store',
+  });
 }
 
 export async function addUserAddress(userId: string, input: CreateUserAddressDTO) {
   const result = await customFetcher<AddressDTO, unknown, CreateUserAddressDTO>({
-    url: '/users/addresses',
+    url: usersApiPaths.addresses,
     method: 'POST',
     body: input,
     auth: true,
@@ -229,7 +236,7 @@ export async function updateUserAddress(
   input: UpdateUserAddressDTO,
 ) {
   const result = await customFetcher<AddressDTO, unknown, UpdateUserAddressDTO>({
-    url: `/users/addresses/${addressId}`,
+    url: usersApiPaths.addressById(addressId),
     method: 'PATCH',
     body: input,
     auth: true,
@@ -243,7 +250,7 @@ export async function getCart(userId: string) {
   'use cache: private';
   cartCache.cacheLife({ stale: 120 });
   cartCache.registerDetail(userId);
-  return customFetcher<CartDTO>({ url: '/cart/all', auth: true, cache: 'no-store' });
+  return customFetcher<CartDTO>({ url: usersApiPaths.cart.all, auth: true, cache: 'no-store' });
 }
 
 /** Expires the current user's populated cart read before an explicit retry. */
@@ -257,8 +264,19 @@ export async function getCartItemDetails(userId: string) {
   cartCache.cacheLife({ stale: 120 });
   cartCache.registerDetail(userId);
   return customFetcher<CartItemDetailsDTO[]>({
-    url: '/cart/items',
+    url: usersApiPaths.cart.items,
     method: 'GET',
+    auth: true,
+    cache: 'no-store',
+  });
+}
+
+/** Gets backend-calculated item, discount, delivery, packing, and payable totals. */
+export function getCartCheckout(input: CartCheckoutQueryDTO) {
+  return customFetcher<CartCheckoutDTO>({
+    url: usersApiPaths.cart.checkout,
+    method: 'GET',
+    query: input,
     auth: true,
     cache: 'no-store',
   });
@@ -266,7 +284,7 @@ export async function getCartItemDetails(userId: string) {
 
 export async function addCartItem(userId: string, input: AddCartItemDTO) {
   const result = await customFetcher<CartDTO, unknown, AddCartItemDTO>({
-    url: '/cart/add',
+    url: usersApiPaths.cart.add,
     method: 'POST',
     body: input,
     auth: true,
@@ -278,7 +296,7 @@ export async function addCartItem(userId: string, input: AddCartItemDTO) {
 
 export async function deleteCartItem(userId: string, input: DeleteCartItemDTO) {
   const result = await customFetcher<CartDTO, unknown, Pick<DeleteCartItemDTO, 'idempotencyKey'>>({
-    url: `/cart/delete/${input.id}`,
+    url: usersApiPaths.cart.deleteById(input.id),
     method: 'DELETE',
     body: { idempotencyKey: input.idempotencyKey },
     auth: true,
@@ -290,7 +308,7 @@ export async function deleteCartItem(userId: string, input: DeleteCartItemDTO) {
 
 export async function emptyCart(userId: string, input: EmptyCartDTO) {
   const result = await customFetcher<CartDTO, unknown, EmptyCartDTO>({
-    url: '/cart/empty',
+    url: usersApiPaths.cart.empty,
     method: 'DELETE',
     body: input,
     auth: true,
@@ -302,7 +320,7 @@ export async function emptyCart(userId: string, input: EmptyCartDTO) {
 
 export async function createDeliveryQuote(userId: string, input: CreateDeliveryQuoteDTO) {
   const result = await customFetcher<DeliveryQuoteDTO, unknown, CreateDeliveryQuoteDTO>({
-    url: '/cart/delivery-windows',
+    url: usersApiPaths.cart.deliveryWindows,
     method: 'POST',
     body: input,
     auth: true,
@@ -314,7 +332,7 @@ export async function createDeliveryQuote(userId: string, input: CreateDeliveryQ
 
 export async function selectDeliveryWindow(userId: string, input: SelectDeliveryWindowDTO) {
   const result = await customFetcher<CartDTO, unknown, SelectDeliveryWindowDTO>({
-    url: '/cart/delivery-window',
+    url: usersApiPaths.cart.deliveryWindow,
     method: 'PATCH',
     body: input,
     auth: true,
@@ -328,12 +346,16 @@ export async function getWishlist(userId: string) {
   'use cache: private';
   usersCache.cacheLife({ stale: 360 });
   usersCache.registerDetail(userId);
-  return customFetcher<WishlistItemDTO[]>({ url: '/wishlist/all', auth: true, cache: 'no-store' });
+  return customFetcher<WishlistItemDTO[]>({
+    url: usersApiPaths.wishlist.all,
+    auth: true,
+    cache: 'no-store',
+  });
 }
 
 export async function addWishlistItem(userId: string, input: AddWishlistItemDTO) {
   const result = await customFetcher<WishlistItemDTO, unknown, AddWishlistItemDTO>({
-    url: '/wishlist/add',
+    url: usersApiPaths.wishlist.add,
     method: 'POST',
     body: input,
     auth: true,
@@ -345,7 +367,7 @@ export async function addWishlistItem(userId: string, input: AddWishlistItemDTO)
 
 export async function deleteWishlistItem(userId: string, id: string) {
   const result = await customFetcher<WishlistItemDTO[]>({
-    url: `/wishlist/delete/${id}`,
+    url: usersApiPaths.wishlist.deleteById(id),
     method: 'DELETE',
     auth: true,
     cache: 'no-store',

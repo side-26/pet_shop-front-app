@@ -196,3 +196,9 @@ export const selectDeliveryWindowSchema = object({
   idempotencyKey: string().trim().min(1).max(128).required(),
 });
 export type SelectDeliveryWindowInput = InferType<typeof selectDeliveryWindowSchema>;
+
+export const cartCheckoutQuerySchema = object({
+  addressId: objectIdSchema,
+  deliveryServiceId: objectIdSchema,
+});
+export type CartCheckoutQueryInput = InferType<typeof cartCheckoutQuerySchema>;

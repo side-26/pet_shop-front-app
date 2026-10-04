@@ -19,6 +19,7 @@ import {
   getCart,
   deleteCartItem,
   selectDeliveryWindow,
+  getCartCheckout,
 } from './users.service';
 
 const { cartCacheLifeMock, cartCacheInvalidateDetailMock, cartCacheRegisterDetailMock } =
@@ -176,6 +177,31 @@ describe('getCartItemDetails service', () => {
       cache: 'no-store',
     });
     expect(cartCacheRegisterDetailMock).toHaveBeenCalledWith('user-42');
+  });
+});
+
+describe('getCartCheckout service', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('gets authoritative checkout totals for the selected address and delivery service', async () => {
+    const input = {
+      addressId: '507f1f77bcf86cd799439011',
+      deliveryServiceId: '507f1f77bcf86cd799439012',
+    };
+    const response = { isSuccess: true as const, message: null, data: { payableAmount: 100_000 } };
+    customFetcherMock.mockResolvedValue(response);
+
+    await expect(getCartCheckout(input)).resolves.toBe(response);
+
+    expect(customFetcherMock).toHaveBeenCalledWith({
+      url: '/cart/checkout',
+      method: 'GET',
+      query: input,
+      auth: true,
+      cache: 'no-store',
+    });
   });
 });
 

@@ -26,6 +26,7 @@ import {
   wishlistEntryIdSchema,
   createDeliveryQuoteSchema,
   selectDeliveryWindowSchema,
+  cartCheckoutQuerySchema,
 } from './users.schema';
 import {
   createUser,
@@ -52,6 +53,7 @@ import {
   updateUserAddress,
   createDeliveryQuote,
   selectDeliveryWindow,
+  getCartCheckout,
 } from './users.service';
 
 const ALLOWED_ADMIN_ROLES = new Set<UserRole>([USER_ROLES.ADMIN]);
@@ -342,6 +344,22 @@ export async function getCartItemDetailsAction() {
   return session
     ? getCartItemDetails(session.userId)
     : accessError('برای مشاهده سبد خرید وارد حساب کاربری شوید.');
+}
+
+export async function getCartCheckoutAction(input: unknown) {
+  const session = await getSession();
+  if (!session) return accessError('برای محاسبه مبلغ سفارش وارد حساب کاربری شوید.');
+
+  try {
+    const value = await cartCheckoutQuerySchema.validate(input, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+    return getCartCheckout(value);
+  } catch (error: unknown) {
+    if (error instanceof ValidationError) return validationErrorToFetcherError(error);
+    throw error;
+  }
 }
 
 export async function addCartItemAction(input: unknown) {

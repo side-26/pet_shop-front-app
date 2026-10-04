@@ -9,7 +9,8 @@ export function calculateCartPrices(items: readonly CartItemDetailsDTO[]): CartP
   return items.reduce(
     (totals, item) => ({
       productPrice: totals.productPrice + item.price * item.cartQuantity,
-      discountPrice: totals.discountPrice + item.discountPrice * item.cartQuantity,
+      // The API already calculates the discount for the entire cart line.
+      discountPrice: totals.discountPrice + item.discountPrice,
     }),
     { productPrice: 0, discountPrice: 0 },
   );
