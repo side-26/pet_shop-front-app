@@ -319,6 +319,15 @@ export async function getCartAction() {
     : accessError('برای مشاهده سبد خرید وارد حساب کاربری شوید.');
 }
 
+/** Reads the signed-in cart after expiring its private cache for a client-side merge. */
+export async function getCartForSyncAction() {
+  const session = await getSession();
+  if (!session) return accessError('برای همگام‌سازی سبد خرید وارد حساب کاربری شوید.');
+
+  invalidateCart(session.userId);
+  return getCart(session.userId);
+}
+
 /** Expire only the signed-in user's cart before retrying the cart route. */
 export async function retryCartAction() {
   const session = await getSession();

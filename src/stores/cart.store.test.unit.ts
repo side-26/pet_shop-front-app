@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useAuthStore } from '@/entities/auth/auth.store';
 import type { CartDTO } from '@/entities/users/users.dto';
@@ -7,13 +7,15 @@ import { useCartStore, type CartItemInput } from './cart.store';
 
 const addCartItemActionMock = vi.hoisted(() => vi.fn());
 const deleteCartItemActionMock = vi.hoisted(() => vi.fn());
+const getCartForSyncActionMock = vi.hoisted(() => vi.fn());
 
 vi.mock('@/entities/users/users.actions', () => ({
   addCartItemAction: addCartItemActionMock,
   deleteCartItemAction: deleteCartItemActionMock,
+  getCartForSyncAction: getCartForSyncActionMock,
 }));
 
-const product: CartItemInput = {
+const product: Extract<CartItemInput, { type: 'product' }> = {
   type: 'product',
   productId: '507f1f77bcf86cd799439011',
   weight: {
@@ -43,12 +45,36 @@ const cart: CartDTO = {
   instalmentCompany: null,
 };
 
+function createProductCart(quantity: number, cartEntryId = 'cart-entry-1'): CartDTO {
+  return {
+    ...cart,
+    items: [
+      {
+        _id: cartEntryId,
+        itemType: 'product',
+        quantity,
+        weight: product.weight._id,
+        item: {
+          _id: product.productId,
+          title: 'غذای خشک سگ',
+          mainImage: '/product.jpg',
+          price: 100_000,
+          discountPercentage: 0,
+          weights: [product.weight],
+        },
+      },
+    ],
+  };
+}
+
 function resetStore() {
   useAuthStore.getState().deleteUserIdentity();
   useCartStore.setState({
     items: [],
     serverCart: null,
     needsServerSync: false,
+    cartUserId: null,
+    guestCartUpdatedAt: null,
     pendingAddOperations: [],
     isSyncing: false,
     lastError: null,
@@ -59,6 +85,10 @@ function resetStore() {
 afterEach(() => {
   resetStore();
   vi.clearAllMocks();
+});
+
+beforeEach(() => {
+  getCartForSyncActionMock.mockResolvedValue({ isSuccess: true, message: null, data: cart });
 });
 
 describe('useCartStore', () => {
@@ -84,12 +114,13 @@ describe('useCartStore', () => {
   });
 
   it('uses the server action and keeps its returned cart for an authenticated add', async () => {
+    const updatedCart = createProductCart(1);
     useAuthStore.getState().saveUserIdentity({ userId: 'user-1' } as never);
-    addCartItemActionMock.mockResolvedValue({ isSuccess: true, message: null, data: cart });
+    addCartItemActionMock.mockResolvedValue({ isSuccess: true, message: null, data: updatedCart });
 
     await expect(useCartStore.getState().addToCart(product)).resolves.toEqual({
       isSuccess: true,
-      cart,
+      cart: updatedCart,
     });
 
     expect(addCartItemActionMock).toHaveBeenCalledWith(
@@ -101,7 +132,7 @@ describe('useCartStore', () => {
         idempotencyKey: expect.any(String),
       }),
     );
-    expect(useCartStore.getState().serverCart).toEqual(cart);
+    expect(useCartStore.getState().serverCart).toEqual(updatedCart);
     expect(useCartStore.getState().needsServerSync).toBe(false);
     expect(useCartStore.getState().hasProductWeight(product.productId, product.weight._id!)).toBe(
       true,
@@ -149,12 +180,93 @@ describe('useCartStore', () => {
     const firstSync = useCartStore.getState().syncLocalToServer();
     const secondSync = useCartStore.getState().syncLocalToServer();
 
+    await Promise.resolve();
+    await Promise.resolve();
     expect(addCartItemActionMock).toHaveBeenCalledOnce();
     resolveAdd?.({ isSuccess: true, message: null, data: cart });
 
     await expect(Promise.all([firstSync, secondSync])).resolves.toEqual([
       { isSuccess: true, cart },
       { isSuccess: true, cart },
+    ]);
+  });
+
+  it('merges legacy local cart items after sign-in even when their sync flag is missing', async () => {
+    useCartStore.setState({
+      items: [{ ...product, quantity: 2 }],
+      needsServerSync: false,
+      cartUserId: null,
+      guestCartUpdatedAt: '2026-10-04T00:00:00.000Z',
+    });
+    useAuthStore.getState().saveUserIdentity({ userId: 'user-1' } as never);
+    addCartItemActionMock.mockResolvedValue({ isSuccess: true, message: null, data: cart });
+
+    await expect(useCartStore.getState().syncLocalToServer()).resolves.toEqual({
+      isSuccess: true,
+      cart,
+    });
+
+    expect(getCartForSyncActionMock).toHaveBeenCalledOnce();
+    expect(addCartItemActionMock).toHaveBeenCalledWith(
+      expect.objectContaining({ itemId: product.productId, quantity: 2 }),
+    );
+    expect(useCartStore.getState()).toMatchObject({
+      cartUserId: 'user-1',
+      guestCartUpdatedAt: null,
+      needsServerSync: false,
+    });
+  });
+
+  it('does not merge a persisted cart that belongs to a different signed-in user', async () => {
+    useCartStore.setState({
+      items: [{ ...product, quantity: 2 }],
+      needsServerSync: true,
+      cartUserId: 'user-1',
+      pendingAddOperations: [
+        {
+          item: product,
+          quantity: 2,
+          idempotencyKey: 'user-1-pending-cart-add',
+        },
+      ],
+    });
+    useAuthStore.getState().saveUserIdentity({ userId: 'user-2' } as never);
+
+    await expect(useCartStore.getState().syncLocalToServer()).resolves.toEqual({
+      isSuccess: true,
+      cart,
+    });
+
+    expect(addCartItemActionMock).not.toHaveBeenCalled();
+    expect(useCartStore.getState()).toMatchObject({
+      items: [],
+      cartUserId: 'user-2',
+      pendingAddOperations: [],
+    });
+  });
+
+  it('hydrates local cart items from a populated server cart during an authenticated refresh', async () => {
+    const refreshedCart = createProductCart(3, 'cart-entry-server');
+    useAuthStore.getState().saveUserIdentity({ userId: 'user-1' } as never);
+    useCartStore.setState({ cartUserId: 'user-1' });
+    getCartForSyncActionMock.mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: refreshedCart,
+    });
+
+    await expect(useCartStore.getState().syncLocalToServer()).resolves.toEqual({
+      isSuccess: true,
+      cart: refreshedCart,
+    });
+
+    expect(useCartStore.getState().items).toEqual([
+      expect.objectContaining({
+        type: 'product',
+        productId: product.productId,
+        cartEntryId: 'cart-entry-server',
+        quantity: 3,
+      }),
     ]);
   });
 
@@ -175,18 +287,7 @@ describe('useCartStore', () => {
       quantity: 2,
       cartEntryId: '507f1f77bcf86cd799439014',
     } as const;
-    const cartAfterUpdate: CartDTO = {
-      ...cart,
-      items: [
-        {
-          _id: '507f1f77bcf86cd799439015',
-          item: product.productId,
-          itemType: 'product',
-          weight: product.weight._id,
-          quantity: 1,
-        },
-      ],
-    };
+    const cartAfterUpdate = createProductCart(1, '507f1f77bcf86cd799439015');
     deleteCartItemActionMock.mockResolvedValue({ isSuccess: true, message: null, data: cart });
     addCartItemActionMock.mockResolvedValue({
       isSuccess: true,

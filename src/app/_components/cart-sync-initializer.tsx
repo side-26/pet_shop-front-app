@@ -5,16 +5,13 @@ import { useEffect } from 'react';
 import { useAuthStore } from '@/entities/auth/auth.store';
 import { useCartStore } from '@/stores/cart.store';
 
-/** Retries persisted idempotent cart additions when an authenticated browser can reconnect. */
+/** Refreshes the authenticated cart on app mount and retries pending cart operations when reconnecting. */
 export function CartSyncInitializer() {
   const userIdentity = useAuthStore((state) => state.userIdentity);
-  const hasPendingCartSync = useCartStore(
-    (state) => state.pendingAddOperations.length > 0 || state.needsServerSync,
-  );
   const syncLocalToServer = useCartStore((state) => state.syncLocalToServer);
 
   useEffect(() => {
-    if (!userIdentity || !hasPendingCartSync) return;
+    if (!userIdentity) return;
 
     const retry = () => void syncLocalToServer();
     const retryWhenVisible = () => {
@@ -31,7 +28,7 @@ export function CartSyncInitializer() {
       window.removeEventListener('focus', retry);
       document.removeEventListener('visibilitychange', retryWhenVisible);
     };
-  }, [hasPendingCartSync, syncLocalToServer, userIdentity]);
+  }, [syncLocalToServer, userIdentity]);
 
   return null;
 }
