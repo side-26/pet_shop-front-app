@@ -23,7 +23,7 @@ export function CheckoutPaymentProvider({ children }: Readonly<{ children: React
   const paymentRequestInFlight = useRef(false);
   const isPending = isPreparingOrder || isRequestingPayment;
 
-  usePreventPageLeave({
+  const { allowNextUnload } = usePreventPageLeave({
     force: isPending,
     message: 'درخواست پرداخت در حال انجام است. لطفاً تا انتقال به درگاه بانکی صبر کنید.',
   });
@@ -50,6 +50,7 @@ export function CheckoutPaymentProvider({ children }: Readonly<{ children: React
         deliveryTimeSlotId: deliveryTimeSlot.id,
       });
       const { gatewayUrl } = await requestPaymentMutation({ orderId });
+      allowNextUnload();
       window.location.assign(gatewayUrl);
     } finally {
       paymentRequestInFlight.current = false;

@@ -1,7 +1,7 @@
 'use client';
 
 import { AlertTriangle } from 'lucide-react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { useCommonStore } from '@/stores/common.store';
 
@@ -25,11 +25,20 @@ export function usePreventPageLeave({
   title = 'صفحه را ترک می‌کنید؟',
 }: UsePreventPageLeaveOptions) {
   const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
+  const allowNextUnloadRef = useRef(false);
 
   useEffect(() => {
-    if (!force) return;
+    if (!force) {
+      allowNextUnloadRef.current = false;
+      return;
+    }
 
     const preventUnload = (event: BeforeUnloadEvent) => {
+      if (allowNextUnloadRef.current) {
+        allowNextUnloadRef.current = false;
+        return;
+      }
+
       event.preventDefault();
       event.returnValue = message;
     };
@@ -58,5 +67,13 @@ export function usePreventPageLeave({
     [force, message, showConfirmDialog, title],
   );
 
-  return { isPreventingLeave: force, requestLeave } as const;
+  /**
+   * Lets one deliberate browser unload proceed while the guard is active.
+   * Call immediately before a full-page redirect such as a payment gateway handoff.
+   */
+  const allowNextUnload = useCallback(() => {
+    allowNextUnloadRef.current = true;
+  }, []);
+
+  return { isPreventingLeave: force, requestLeave, allowNextUnload } as const;
 }

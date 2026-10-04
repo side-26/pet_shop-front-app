@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { useCommonStore } from '@/stores/common.store';
@@ -6,6 +6,7 @@ import { useCommonStore } from '@/stores/common.store';
 import { usePreventPageLeave } from './use-prevent-page-leave';
 
 afterEach(() => {
+  cleanup();
   act(() => {
     useCommonStore.getState().hideConfirmDialog();
   });
@@ -55,5 +56,21 @@ describe('usePreventPageLeave', () => {
       await dialog.onSuccess();
     });
     expect(leave).toHaveBeenCalledOnce();
+  });
+
+  it('allows one intentional native unload while the guard is active', () => {
+    const { result } = renderHook(() =>
+      usePreventPageLeave({ force: true, message: 'پرداخت در حال انجام است.' }),
+    );
+
+    act(() => result.current.allowNextUnload());
+    const gatewayUnload = new Event('beforeunload', { cancelable: true });
+    const laterUnload = new Event('beforeunload', { cancelable: true });
+
+    window.dispatchEvent(gatewayUnload);
+    window.dispatchEvent(laterUnload);
+
+    expect(gatewayUnload.defaultPrevented).toBe(false);
+    expect(laterUnload.defaultPrevented).toBe(true);
   });
 });

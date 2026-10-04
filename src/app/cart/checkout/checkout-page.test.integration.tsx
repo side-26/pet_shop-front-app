@@ -21,6 +21,7 @@ vi.mock('@/hooks/use-prevent-page-leave', () => ({ usePreventPageLeave: vi.fn() 
 
 const requestPayment = vi.fn();
 const prepareOrder = vi.fn();
+const allowNextUnload = vi.fn();
 
 afterEach(() => {
   useCheckoutStore.getState().clearCheckout();
@@ -38,6 +39,7 @@ beforeEach(() => {
     isPending: false,
     mutateAsync: prepareOrder,
   } as never);
+  vi.mocked(usePreventPageLeave).mockReturnValue({ allowNextUnload } as never);
   useCartStore.setState({
     syncLocalToServer: vi.fn().mockResolvedValue({ isSuccess: true, cart: null }),
   });
@@ -143,6 +145,7 @@ describe(routePaths.checkout, () => {
       deliveryTimeSlotId: 'delivery-time-1',
     });
     await waitFor(() => expect(requestPayment).toHaveBeenCalledWith({ orderId: 'order-1' }));
+    expect(allowNextUnload).toHaveBeenCalledOnce();
   });
 
   it('defines checkout metadata', () => {
