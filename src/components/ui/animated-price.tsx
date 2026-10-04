@@ -1,13 +1,21 @@
 'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
+import type { ReactNode } from 'react';
 
 import { APP_CURRENCY } from '@/configs/currency';
 import { cn } from '@/lib/utils';
 
 import { Price, type PriceProps } from './price';
 
-export type AnimatedPriceProps = PriceProps;
+export type AnimatedPriceProps = Omit<PriceProps, 'number'> & {
+  /** A non-negative finite amount. Missing or invalid amounts render `emptyValue`. */
+  number?: number | null;
+  /** Content rendered when `number` is missing or invalid. Defaults to `-`. */
+  emptyValue?: ReactNode;
+  /** Continuously rolls the digits while the price is being fetched. */
+  isLoading?: boolean;
+};
 
 const priceFormatter = new Intl.NumberFormat('fa-IR', {
   maximumFractionDigits: 20,
@@ -16,7 +24,11 @@ const priceFormatter = new Intl.NumberFormat('fa-IR', {
 const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
 const digitHeight = 1.08;
 
-function AnimatedDigit({ digit, index }: Readonly<{ digit: number; index: number }>) {
+function AnimatedDigit({
+  digit,
+  index,
+  isLoading,
+}: Readonly<{ digit: number; index: number; isLoading: boolean }>) {
   return (
     <span
       aria-hidden="true"
@@ -24,8 +36,16 @@ function AnimatedDigit({ digit, index }: Readonly<{ digit: number; index: number
     >
       <motion.span
         initial={{ y: 0 }}
-        animate={{ y: `-${digit * digitHeight}em` }}
-        transition={{ duration: 0.5, delay: index * 0.035, ease: [0.22, 1, 0.36, 1] }}
+        animate={
+          isLoading
+            ? { y: ['0em', `-${9 * digitHeight}em`, '0em'] }
+            : { y: `-${digit * digitHeight}em` }
+        }
+        transition={
+          isLoading
+            ? { duration: 1.1, delay: index * 0.07, ease: 'easeInOut', repeat: Infinity }
+            : { duration: 0.5, delay: index * 0.035, ease: [0.22, 1, 0.36, 1] }
+        }
         className="tw:flex tw:flex-col tw:leading-[1.08]"
       >
         {Array.from(persianDigits).map((value) => (
@@ -43,23 +63,53 @@ function AnimatedDigit({ digit, index }: Readonly<{ digit: number; index: number
  * register whenever its value changes. It uses `Price` without animation when
  * the user prefers reduced motion.
  */
-function AnimatedPrice({ number, className, ...props }: AnimatedPriceProps) {
-  const reduceMotion = useReducedMotion();
+function isValidPrice(number: AnimatedPriceProps['number']): number is number {
+  return typeof number === 'number' && Number.isFinite(number) && number >= 0;
+}
 
-  if (reduceMotion) {
+function AnimatedPrice({
+  number,
+  emptyValue = '-',
+  isLoading = false,
+  className,
+  ...props
+}: AnimatedPriceProps) {
+  const reduceMotion = useReducedMotion();
+  const hasPrice = isValidPrice(number);
+
+  if (reduceMotion && hasPrice && !isLoading) {
     return <Price number={number} className={className} {...props} />;
   }
 
-  const formattedNumber = priceFormatter.format(Math.floor(number));
+  if (!hasPrice && !isLoading) {
+    return (
+      <span
+        data-slot="animated-price"
+        data-currency={APP_CURRENCY}
+        className={cn('tw:inline-flex tw:items-baseline tw:gap-1 tw:whitespace-nowrap', className)}
+        {...props}
+      >
+        {emptyValue}
+      </span>
+    );
+  }
+
+  const formattedNumber = priceFormatter.format(Math.floor(hasPrice ? number : 0));
 
   return (
     <span
       data-slot="animated-price"
       data-currency={APP_CURRENCY}
+      data-loading={isLoading || undefined}
+      aria-busy={isLoading || undefined}
       className={cn('tw:inline-flex tw:items-baseline tw:gap-1 tw:whitespace-nowrap', className)}
       {...props}
     >
-      <bdi dir="ltr" aria-label={formattedNumber} className="tw:inline-flex">
+      <bdi
+        dir="ltr"
+        aria-label={isLoading ? 'در حال دریافت قیمت' : formattedNumber}
+        className="tw:inline-flex"
+      >
         {Array.from(formattedNumber).map((character, index) => {
           const digit = persianDigits.indexOf(character);
 
@@ -68,7 +118,7 @@ function AnimatedPrice({ number, className, ...props }: AnimatedPriceProps) {
               {character}
             </span>
           ) : (
-            <AnimatedDigit key={index} digit={digit} index={index} />
+            <AnimatedDigit key={index} digit={digit} index={index} isLoading={isLoading} />
           );
         })}
       </bdi>

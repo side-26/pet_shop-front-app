@@ -20,4 +20,22 @@ describe('AnimatedPrice', () => {
     rerender(<AnimatedPrice number={980_000} aria-label="قیمت متحرک" />);
     expect(screen.getByLabelText('۹۸۰٬۰۰۰')).toBeTruthy();
   });
+
+  it('renders a default or custom fallback instead of a malformed price', () => {
+    const { rerender } = render(<AnimatedPrice aria-label="قیمت ناموجود" />);
+
+    expect(screen.getByLabelText('قیمت ناموجود').textContent).toBe('-');
+
+    rerender(<AnimatedPrice number={Number.NaN} emptyValue="نامشخص" aria-label="قیمت ناموجود" />);
+    expect(screen.getByLabelText('قیمت ناموجود').textContent).toBe('نامشخص');
+  });
+
+  it('marks the rolling amount as busy while loading', () => {
+    render(<AnimatedPrice isLoading aria-label="قیمت در حال دریافت" />);
+
+    const price = screen.getByLabelText('قیمت در حال دریافت');
+    expect(price.getAttribute('aria-busy')).toBe('true');
+    expect(price.dataset.loading).toBe('true');
+    expect(screen.getByLabelText('در حال دریافت قیمت')).toBeTruthy();
+  });
 });
