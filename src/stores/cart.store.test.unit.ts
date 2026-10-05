@@ -7,11 +7,13 @@ import { useCartStore, type CartItemInput } from './cart.store';
 
 const addCartItemActionMock = vi.hoisted(() => vi.fn());
 const deleteCartItemActionMock = vi.hoisted(() => vi.fn());
+const emptyCartActionMock = vi.hoisted(() => vi.fn());
 const getCartForSyncActionMock = vi.hoisted(() => vi.fn());
 
 vi.mock('@/entities/users/users.actions', () => ({
   addCartItemAction: addCartItemActionMock,
   deleteCartItemAction: deleteCartItemActionMock,
+  emptyCartAction: emptyCartActionMock,
   getCartForSyncAction: getCartForSyncActionMock,
 }));
 
@@ -75,6 +77,7 @@ function resetStore() {
     needsServerSync: false,
     cartUserId: null,
     guestCartUpdatedAt: null,
+    itemTombstones: {},
     pendingAddOperations: [],
     isSyncing: false,
     lastError: null,
@@ -206,7 +209,7 @@ describe('useCartStore', () => {
       cart,
     });
 
-    expect(getCartForSyncActionMock).toHaveBeenCalledOnce();
+    expect(getCartForSyncActionMock).toHaveBeenCalledTimes(2);
     expect(addCartItemActionMock).toHaveBeenCalledWith(
       expect.objectContaining({ itemId: product.productId, quantity: 2 }),
     );
@@ -215,6 +218,31 @@ describe('useCartStore', () => {
       guestCartUpdatedAt: null,
       needsServerSync: false,
     });
+  });
+
+  it('syncs a guest-only item even when login made the empty server cart newer', async () => {
+    const serverCartAfterLogin = { ...cart, updatedAt: '2026-10-05T00:00:00.000Z' };
+    const syncedCart = createProductCart(2, 'cart-entry-server');
+    useCartStore.setState({
+      items: [{ ...product, quantity: 2, updatedAt: '2026-10-04T00:00:00.000Z' }],
+      needsServerSync: true,
+      cartUserId: null,
+      guestCartUpdatedAt: '2026-10-04T00:00:00.000Z',
+    });
+    useAuthStore.getState().saveUserIdentity({ userId: 'user-1' } as never);
+    getCartForSyncActionMock
+      .mockResolvedValueOnce({ isSuccess: true, message: null, data: serverCartAfterLogin })
+      .mockResolvedValueOnce({ isSuccess: true, message: null, data: syncedCart });
+    addCartItemActionMock.mockResolvedValue({ isSuccess: true, message: null, data: syncedCart });
+
+    await expect(useCartStore.getState().syncLocalToServer()).resolves.toEqual({
+      isSuccess: true,
+      cart: syncedCart,
+    });
+
+    expect(addCartItemActionMock).toHaveBeenCalledWith(
+      expect.objectContaining({ itemId: product.productId, quantity: 2 }),
+    );
   });
 
   it('does not merge a persisted cart that belongs to a different signed-in user', async () => {
@@ -268,6 +296,134 @@ describe('useCartStore', () => {
         quantity: 3,
       }),
     ]);
+  });
+
+  it('replaces an older server cart with the newer local snapshot', async () => {
+    const olderServerItems = createProductCart(3, 'server-cart-entry').items.map((item) => ({
+      ...item,
+      updatedAt: '2026-10-03T00:00:00.000Z',
+    }));
+    const olderServerCart = {
+      ...createProductCart(3, 'server-cart-entry'),
+      items: olderServerItems,
+      updatedAt: '2026-10-05T00:00:00.000Z',
+    };
+    const emptiedCart = { ...cart, updatedAt: '2026-10-05T00:00:00.000Z' };
+    const syncedCart = createProductCart(2, 'local-cart-entry');
+    useAuthStore.getState().saveUserIdentity({ userId: 'user-1' } as never);
+    useCartStore.setState({
+      items: [{ ...product, quantity: 2 }],
+      needsServerSync: true,
+      cartUserId: null,
+      guestCartUpdatedAt: '2026-10-04T00:00:00.000Z',
+    });
+    getCartForSyncActionMock
+      .mockResolvedValueOnce({ isSuccess: true, message: null, data: olderServerCart })
+      .mockResolvedValueOnce({ isSuccess: true, message: null, data: syncedCart });
+    deleteCartItemActionMock.mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: emptiedCart,
+    });
+    addCartItemActionMock.mockResolvedValue({ isSuccess: true, message: null, data: syncedCart });
+
+    await expect(useCartStore.getState().syncLocalToServer()).resolves.toEqual({
+      isSuccess: true,
+      cart: syncedCart,
+    });
+
+    expect(deleteCartItemActionMock).toHaveBeenCalledWith({
+      id: 'server-cart-entry',
+      idempotencyKey: expect.any(String),
+    });
+    expect(addCartItemActionMock).toHaveBeenCalledWith(
+      expect.objectContaining({ itemId: product.productId, quantity: 2 }),
+    );
+    expect(useCartStore.getState().items).toEqual([
+      expect.objectContaining({ productId: product.productId, quantity: 2 }),
+    ]);
+  });
+
+  it('replaces an older local cart with the newer server snapshot', async () => {
+    const newerServerItems = createProductCart(3, 'server-cart-entry').items.map((item) => ({
+      ...item,
+      updatedAt: '2026-10-05T00:00:00.000Z',
+    }));
+    const newerServerCart = {
+      ...createProductCart(3, 'server-cart-entry'),
+      items: newerServerItems,
+      updatedAt: '2026-10-03T00:00:00.000Z',
+    };
+    useAuthStore.getState().saveUserIdentity({ userId: 'user-1' } as never);
+    useCartStore.setState({
+      items: [{ ...product, quantity: 2 }],
+      needsServerSync: true,
+      cartUserId: null,
+      guestCartUpdatedAt: '2026-10-04T00:00:00.000Z',
+      pendingAddOperations: [
+        { item: product, quantity: 2, idempotencyKey: 'stale-local-cart-add' },
+      ],
+    });
+    getCartForSyncActionMock.mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: newerServerCart,
+    });
+
+    await expect(useCartStore.getState().syncLocalToServer()).resolves.toEqual({
+      isSuccess: true,
+      cart: newerServerCart,
+    });
+
+    expect(emptyCartActionMock).not.toHaveBeenCalled();
+    expect(addCartItemActionMock).not.toHaveBeenCalled();
+    expect(useCartStore.getState()).toMatchObject({
+      items: [expect.objectContaining({ productId: product.productId, quantity: 3 })],
+      guestCartUpdatedAt: null,
+      needsServerSync: false,
+      pendingAddOperations: [],
+    });
+  });
+
+  it('keeps a newer local removal from being resurrected by an older server line', async () => {
+    const olderServerCart = {
+      ...createProductCart(1, 'server-cart-entry'),
+      items: createProductCart(1, 'server-cart-entry').items.map((item) => ({
+        ...item,
+        updatedAt: '2026-10-03T00:00:00.000Z',
+      })),
+      updatedAt: '2026-10-05T00:00:00.000Z',
+    };
+    const emptyServerCart = { ...cart, updatedAt: '2026-10-06T00:00:00.000Z' };
+    useAuthStore.getState().saveUserIdentity({ userId: 'user-1' } as never);
+    useCartStore.setState({
+      items: [],
+      needsServerSync: true,
+      cartUserId: null,
+      guestCartUpdatedAt: '2026-10-04T00:00:00.000Z',
+      itemTombstones: {
+        [`product:${product.productId}:${product.weight._id}`]: '2026-10-04T00:00:00.000Z',
+      },
+    });
+    getCartForSyncActionMock
+      .mockResolvedValueOnce({ isSuccess: true, message: null, data: olderServerCart })
+      .mockResolvedValueOnce({ isSuccess: true, message: null, data: emptyServerCart });
+    deleteCartItemActionMock.mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: emptyServerCart,
+    });
+
+    await expect(useCartStore.getState().syncLocalToServer()).resolves.toEqual({
+      isSuccess: true,
+      cart: emptyServerCart,
+    });
+
+    expect(deleteCartItemActionMock).toHaveBeenCalledWith({
+      id: 'server-cart-entry',
+      idempotencyKey: expect.any(String),
+    });
+    expect(useCartStore.getState().itemTombstones).toEqual({});
   });
 
   it('removes the final guest item when decreasing its quantity', async () => {

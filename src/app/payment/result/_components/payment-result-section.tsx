@@ -6,8 +6,10 @@ import { Price } from '@/components/ui/price';
 import { getGatewayPaymentAction } from '@/entities/payments/payments.actions';
 import type { GatewayPaymentDTO } from '@/entities/payments/payments.dto';
 
-import failedIllustration from '../../../../../public/images/payment-result/payment-failed-image-light.png';
-import successIllustration from '../../../../../public/images/payment-result/payment-success-illustration.svg';
+import failedIllustrationDark from '../../../../../public/images/payment-result/pament-failed-image-dark.png';
+import failedIllustrationLight from '../../../../../public/images/payment-result/payment-failed-image-light.png';
+import successIllustrationDark from '../../../../../public/images/payment-result/payment-success-image-dark.png.png';
+import successIllustrationLight from '../../../../../public/images/payment-result/payment-success-illustration.svg';
 
 import { PaymentResultClientActions } from './payment-result-client-actions';
 
@@ -18,7 +20,10 @@ type PaymentResultViewModel = Readonly<{
   subtitle: string;
   amount?: number;
   companyName?: string;
-  illustration: typeof successIllustration | typeof failedIllustration;
+  illustrations: Readonly<{
+    light: typeof successIllustrationLight | typeof failedIllustrationLight;
+    dark: typeof successIllustrationDark | typeof failedIllustrationDark;
+  }>;
   illustrationAlt: string;
 }>;
 
@@ -35,7 +40,10 @@ export function toPaymentResultViewModel(
       subtitle: 'سفارش شما ثبت شد و به‌زودی برای آماده‌سازی آن اقدام می‌کنیم.',
       amount: payment.finalPrice,
       companyName: payment.companyName,
-      illustration: successIllustration,
+      illustrations: {
+        light: successIllustrationLight,
+        dark: successIllustrationDark,
+      },
       illustrationAlt: 'تصویر موفقیت پرداخت',
     };
   }
@@ -46,7 +54,10 @@ export function toPaymentResultViewModel(
     subtitle: result?.isSuccess
       ? 'پرداخت تأیید نشد. می‌توانید دوباره برای پرداخت سفارش اقدام کنید.'
       : (result?.message ?? 'نتیجه پرداخت قابل دریافت نیست. لطفاً دوباره تلاش کنید.'),
-    illustration: failedIllustration,
+    illustrations: {
+      light: failedIllustrationLight,
+      dark: failedIllustrationDark,
+    },
     illustrationAlt: 'تصویر ناموفق بودن پرداخت',
   };
 }
@@ -67,10 +78,16 @@ function PaymentResultRenderer({
       >
         <CardContent className="tw:flex tw:flex-col tw:items-center tw:gap-6 tw:text-center tw:sm:gap-8">
           <Image
-            src={viewModel.illustration}
+            src={viewModel.illustrations.light}
             alt={isSkeleton ? '' : viewModel.illustrationAlt}
             priority={!isSkeleton}
-            className="tw:h-auto tw:w-44 tw:sm:w-52"
+            className="tw:h-auto tw:w-44 tw:dark:hidden tw:sm:w-52"
+          />
+          <Image
+            src={viewModel.illustrations.dark}
+            alt={isSkeleton ? '' : viewModel.illustrationAlt}
+            priority={!isSkeleton}
+            className="tw:hidden tw:h-auto tw:w-44 tw:dark:block tw:sm:w-52"
           />
           <div className="tw:flex tw:flex-col tw:items-center tw:gap-3">
             <h1 className="tw:text-heading-2 tw:text-foreground">{viewModel.title}</h1>
@@ -103,7 +120,10 @@ const paymentResultSkeleton: PaymentResultViewModel = {
   isSuccess: false,
   title: 'در حال بررسی نتیجه پرداخت',
   subtitle: 'لطفاً چند لحظه صبر کنید.',
-  illustration: successIllustration,
+  illustrations: {
+    light: successIllustrationLight,
+    dark: successIllustrationDark,
+  },
   illustrationAlt: '',
 };
 

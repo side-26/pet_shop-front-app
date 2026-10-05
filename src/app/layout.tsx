@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import Script from 'next/script';
+import { Suspense } from 'react';
 
 import { NavigationPageBar } from '@/components/common/navigation-page-bar';
 import { RtlLayout } from '@/components/layouts/rtl-layout';
@@ -78,7 +79,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <RtlLayout>
           <ReactQueryProvider>
             <AuthSessionInitializer />
-            <CartSyncInitializer />
+            <Suspense fallback={null}>
+              <CartSyncInitializer />
+            </Suspense>
             <Toaster>{children}</Toaster>
           </ReactQueryProvider>
         </RtlLayout>

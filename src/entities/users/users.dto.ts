@@ -75,6 +75,8 @@ export interface CartItemDTO {
   itemType: string;
   quantity: number;
   weight?: string | null;
+  /** Present on `GET /cart/all`; the line's last modification time. */
+  updatedAt?: string;
 }
 
 /** A populated cart line returned by `GET /cart/items`. */
@@ -120,6 +122,8 @@ export interface DeliveryQuoteDTO {
 }
 
 export interface CartDTO {
+  /** Present on `GET /cart/all`; the owning user's last cart-affecting update time. */
+  updatedAt?: string;
   totalPrice: number;
   items: CartItemDTO[];
   discountPrice: number;

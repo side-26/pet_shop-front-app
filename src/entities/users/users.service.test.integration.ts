@@ -101,7 +101,11 @@ describe('cart cache service', () => {
   });
 
   it('caches the populated cart by user and tags the `/cart/all` read', async () => {
-    const response = { isSuccess: true as const, message: null, data: { items: [] } };
+    const response = {
+      isSuccess: true as const,
+      message: null,
+      data: { items: [], updatedAt: '2026-10-04T12:34:56.000Z' },
+    };
     customFetcherMock.mockResolvedValue(response);
 
     await expect(getCart('user-42')).resolves.toBe(response);
@@ -113,6 +117,7 @@ describe('cart cache service', () => {
     });
     expect(cartCacheLifeMock).toHaveBeenCalledWith({ stale: 120 });
     expect(cartCacheRegisterDetailMock).toHaveBeenCalledWith('user-42');
+    expect(response.data.updatedAt).toBe('2026-10-04T12:34:56.000Z');
   });
 
   it('reads the latest cart for background synchronization without cache-tag registration', async () => {

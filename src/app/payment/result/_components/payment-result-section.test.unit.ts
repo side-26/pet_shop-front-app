@@ -21,6 +21,8 @@ describe('toPaymentResultViewModel', () => {
       companyName: 'زرین‌پال',
       title: 'پرداخت شما با موفقیت انجام شد',
     });
+    expect(String(viewModel.illustrations.light)).toContain('Payment%20success%20illustration');
+    expect(String(viewModel.illustrations.dark)).toContain('payment-success-image-dark');
   });
 
   it('maps gateway failures and non-paid statuses to retry-payment content', () => {
@@ -42,5 +44,7 @@ describe('toPaymentResultViewModel', () => {
 
     expect(failedPayment.isSuccess).toBe(false);
     expect(failedRequest).toMatchObject({ isSuccess: false, subtitle: 'پرداخت یافت نشد.' });
+    expect(String(failedPayment.illustrations.light)).toContain('payment-failed-image-light');
+    expect(String(failedPayment.illustrations.dark)).toContain('pament-failed-image-dark');
   });
 });

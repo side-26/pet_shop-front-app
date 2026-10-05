@@ -10,7 +10,7 @@ import {
   emptyCartAction,
   getCartForSyncAction,
 } from '@/entities/users/users.actions';
-import type { CartCatalogItemDTO, CartDTO, CartItemDTO } from '@/entities/users/users.dto';
+import type { CartCatalogItemDTO, CartDTO } from '@/entities/users/users.dto';
 import type { ProductWeightDTO } from '@/entities/products/products.dto';
 
 const CART_STORAGE_KEY = process.env.NEXT_PUBLIC_CART_STORAGE_KEY;
@@ -22,6 +22,8 @@ export type ProductCartItem = Readonly<{
   quantity: number;
   /** The authenticated cart-entry identifier, supplied by the cart API. */
   cartEntryId?: string;
+  /** Last local or server update for this cart line. */
+  updatedAt?: string;
 }>;
 
 export type PetCartItem = Readonly<{
@@ -30,11 +32,14 @@ export type PetCartItem = Readonly<{
   quantity: number;
   /** The authenticated cart-entry identifier, supplied by the cart API. */
   cartEntryId?: string;
+  /** Last local or server update for this cart line. */
+  updatedAt?: string;
 }>;
 
 export type CartItem = ProductCartItem | PetCartItem;
 export type CartItemInput =
-  Omit<ProductCartItem, 'quantity' | 'cartEntryId'> | Omit<PetCartItem, 'quantity' | 'cartEntryId'>;
+  | Omit<ProductCartItem, 'quantity' | 'cartEntryId' | 'updatedAt'>
+  | Omit<PetCartItem, 'quantity' | 'cartEntryId' | 'updatedAt'>;
 
 export type CartOperationError = Readonly<{ message: string }>;
 export type CartOperationResult =
@@ -61,8 +66,10 @@ type CartStore = {
   needsServerSync: boolean;
   /** The account that owns the persisted cart, or null when it is a guest cart awaiting merge. */
   cartUserId: string | null;
-  /** Last guest-cart update, retained to make the pending merge state inspectable and durable. */
+  /** Last local-cart snapshot update, retained for deterministic server reconciliation. */
   guestCartUpdatedAt: string | null;
+  /** Deletion timestamps let a newer local removal win over an older server line. */
+  itemTombstones: Record<string, string>;
   /** Persisted add operations awaiting an idempotent server confirmation. */
   pendingAddOperations: PendingCartAddOperation[];
   isSyncing: boolean;
@@ -116,6 +123,35 @@ function createCartItem(input: CartItemInput, quantity: number): CartItem {
   return { ...input, quantity } as CartItem;
 }
 
+function preserveOrUpdateItemTimestamps(
+  previousItems: readonly CartItem[],
+  nextItems: readonly CartItem[],
+  updatedAt: string,
+): CartItem[] {
+  const previousByKey = new Map(previousItems.map((item) => [getItemKey(item), item]));
+  return nextItems.map((item) => {
+    const previous = previousByKey.get(getItemKey(item));
+    if (!previous || previous.quantity !== item.quantity) return { ...item, updatedAt } as CartItem;
+    return { ...item, updatedAt: previous.updatedAt } as CartItem;
+  });
+}
+
+function createItemTombstones(
+  previousItems: readonly CartItem[],
+  nextItems: readonly CartItem[],
+  currentTombstones: Readonly<Record<string, string>>,
+  updatedAt: string,
+): Record<string, string> {
+  const nextKeys = new Set(nextItems.map(getItemKey));
+  const tombstones = { ...currentTombstones };
+  previousItems.forEach((item) => {
+    const key = getItemKey(item);
+    if (!nextKeys.has(key)) tombstones[key] = updatedAt;
+  });
+  nextItems.forEach((item) => delete tombstones[getItemKey(item)]);
+  return tombstones;
+}
+
 function increaseCartItemQuantity(items: CartItem[], index: number, quantity: number): CartItem[] {
   return items.map((item, itemIndex) =>
     itemIndex === index ? { ...item, quantity: item.quantity + quantity } : item,
@@ -144,7 +180,7 @@ function setItemQuantity(items: CartItem[], target: CartItem, quantity: number):
 }
 
 function toCartItemInput(item: CartItem): CartItemInput {
-  const { cartEntryId: _cartEntryId, quantity: _quantity, ...input } = item;
+  const { cartEntryId: _cartEntryId, quantity: _quantity, updatedAt: _updatedAt, ...input } = item;
   return input;
 }
 
@@ -185,21 +221,15 @@ function createPendingAddOperation(item: CartItemInput, quantity: number): Pendi
   return { item, quantity, idempotencyKey: crypto.randomUUID() };
 }
 
-function getServerItemId(item: CartItemDTO): string | null {
-  if (typeof item.item === 'string') return item.item;
-  if (!item.item || typeof item.item !== 'object') return null;
-
-  const { id, _id } = item.item as { id?: unknown; _id?: unknown };
-  const resolvedId = id ?? _id;
-  return typeof resolvedId === 'string' ? resolvedId : null;
-}
-
-function getServerItemKey(item: CartItemDTO): string | null {
-  const itemId = getServerItemId(item);
-  if (!itemId) return null;
-  if (item.itemType === 'pet') return `pet:${itemId}`;
-  if (item.itemType === 'product' && item.weight) return `product:${itemId}:${item.weight}`;
-  return null;
+function findPendingAddOperation(
+  item: CartItem,
+  pendingOperations: readonly PendingCartAddOperation[],
+): PendingCartAddOperation | undefined {
+  const input = toCartItemInput(item);
+  return pendingOperations.find(
+    (operation) =>
+      getItemKey(operation.item) === getItemKey(input) && operation.quantity === item.quantity,
+  );
 }
 
 function isCartCatalogItem(item: unknown): item is CartCatalogItemDTO {
@@ -215,56 +245,76 @@ function isCartCatalogItem(item: unknown): item is CartCatalogItemDTO {
   );
 }
 
+type ServerCartEntry = CartDTO['items'][number];
+
+function findEntryWeight(entry: ServerCartEntry, item: CartCatalogItemDTO) {
+  return item.weights?.find((candidate) => (candidate.id ?? candidate._id) === entry.weight);
+}
+
+function createPetCartItemFromServer(
+  entry: ServerCartEntry,
+  item: CartCatalogItemDTO,
+  cartUpdatedAt: string | undefined,
+): PetCartItem {
+  return {
+    type: 'pet',
+    petId: item._id,
+    cartEntryId: entry._id,
+    quantity: entry.quantity,
+    updatedAt: entry.updatedAt ?? cartUpdatedAt,
+  };
+}
+
+function createProductCartItemFromServer(
+  entry: ServerCartEntry,
+  item: CartCatalogItemDTO,
+  cartUpdatedAt: string | undefined,
+): ProductCartItem | null {
+  const weight = findEntryWeight(entry, item);
+  if (!weight) return null;
+
+  return {
+    type: 'product',
+    productId: item._id,
+    cartEntryId: entry._id,
+    quantity: entry.quantity,
+    weight,
+    updatedAt: entry.updatedAt ?? cartUpdatedAt,
+  };
+}
+
+function createCartItemFromServer(
+  entry: ServerCartEntry,
+  cartUpdatedAt: string | undefined,
+): CartItem | null {
+  if (!entry._id || !isCartCatalogItem(entry.item)) return null;
+  if (entry.itemType === 'pet')
+    return createPetCartItemFromServer(entry, entry.item, cartUpdatedAt);
+  if (entry.itemType === 'product')
+    return createProductCartItemFromServer(entry, entry.item, cartUpdatedAt);
+  return null;
+}
+
 function createCartItemsFromServer(cart: CartDTO): CartItem[] {
-  return cart.items.flatMap<CartItem>((entry) => {
-    if (!entry._id || !isCartCatalogItem(entry.item)) return [];
-
-    if (entry.itemType === 'pet') {
-      return [
-        {
-          type: 'pet' as const,
-          petId: entry.item._id,
-          cartEntryId: entry._id,
-          quantity: entry.quantity,
-        },
-      ];
-    }
-
-    if (entry.itemType !== 'product') return [];
-    const weight = entry.item.weights?.find((candidate) => {
-      const weightId = candidate.id ?? candidate._id;
-      return weightId === entry.weight;
-    });
-    if (!weight) return [];
-
-    return [
-      {
-        type: 'product' as const,
-        productId: entry.item._id,
-        cartEntryId: entry._id,
-        quantity: entry.quantity,
-        weight,
-      },
-    ];
+  return cart.items.flatMap((entry) => {
+    const item = createCartItemFromServer(entry, cart.updatedAt);
+    return item ? [item] : [];
   });
 }
 
-function createServerItemMap(cart: CartDTO): Map<string, CartItemDTO> {
-  const entries = cart.items.flatMap((item) => {
-    const key = getServerItemKey(item);
-    return key ? [[key, item] as const] : [];
-  });
-  return new Map(entries);
+function timestamp(value: string | null | undefined): number | null {
+  if (!value) return null;
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
-function applyServerItem(item: CartItem, serverItem: CartItemDTO | undefined): CartItem {
-  if (!serverItem) return item;
-  return { ...item, quantity: serverItem.quantity, cartEntryId: serverItem._id };
-}
-
-function applyServerQuantities(items: CartItem[], cart: CartDTO): CartItem[] {
-  const serverItems = createServerItemMap(cart);
-  return items.map((item) => applyServerItem(item, serverItems.get(getItemKey(item))));
+function isLocalCartNewer(
+  localUpdatedAt: string | null | undefined,
+  serverUpdatedAt: string | undefined,
+) {
+  const localTime = timestamp(localUpdatedAt);
+  const serverTime = timestamp(serverUpdatedAt);
+  return localTime !== null && (serverTime === null || localTime > serverTime);
 }
 
 export const useCartStore = create<CartStore>()(
@@ -280,6 +330,9 @@ export const useCartStore = create<CartStore>()(
                 items: createCartItemsFromServer(cart),
                 cartUserId: getAuthenticatedUserId(),
                 guestCartUpdatedAt: null,
+                itemTombstones: {},
+                needsServerSync: false,
+                pendingAddOperations: [],
               }
             : {}),
         }));
@@ -291,13 +344,18 @@ export const useCartStore = create<CartStore>()(
         return { isSuccess: false, error };
       };
       const finishGuestMutation = (updateItems: (items: CartItem[]) => CartItem[]) => {
-        set(({ items }) => ({
-          items: updateItems(items),
-          needsServerSync: true,
-          cartUserId: null,
-          guestCartUpdatedAt: new Date().toISOString(),
-          lastError: null,
-        }));
+        const updatedAt = new Date().toISOString();
+        set(({ items, itemTombstones }) => {
+          const nextItems = updateItems(items);
+          return {
+            items: preserveOrUpdateItemTimestamps(items, nextItems, updatedAt),
+            itemTombstones: createItemTombstones(items, nextItems, itemTombstones, updatedAt),
+            needsServerSync: true,
+            cartUserId: null,
+            guestCartUpdatedAt: updatedAt,
+            lastError: null,
+          };
+        });
         return finishSuccess(null);
       };
 
@@ -307,6 +365,7 @@ export const useCartStore = create<CartStore>()(
         needsServerSync: false,
         cartUserId: null,
         guestCartUpdatedAt: null,
+        itemTombstones: {},
         pendingAddOperations: [],
         isSyncing: false,
         lastError: null,
@@ -318,13 +377,18 @@ export const useCartStore = create<CartStore>()(
             return finishGuestMutation((items) => addOrIncrease(items, item, quantity));
 
           const operation = createPendingAddOperation(item, quantity);
-          set(({ items }) => ({
-            items: addOrIncrease(items, item, quantity),
-            isSyncing: true,
-            lastError: null,
-            cartUserId: getAuthenticatedUserId(),
-            guestCartUpdatedAt: null,
-          }));
+          const updatedAt = new Date().toISOString();
+          set(({ items, itemTombstones }) => {
+            const nextItems = addOrIncrease(items, item, quantity);
+            return {
+              items: preserveOrUpdateItemTimestamps(items, nextItems, updatedAt),
+              itemTombstones: createItemTombstones(items, nextItems, itemTombstones, updatedAt),
+              isSyncing: true,
+              lastError: null,
+              cartUserId: getAuthenticatedUserId(),
+              guestCartUpdatedAt: null,
+            };
+          });
 
           const result = await addCartItemAction(
             toAddPayload(operation.item, operation.quantity, operation.idempotencyKey),
@@ -337,6 +401,7 @@ export const useCartStore = create<CartStore>()(
               pendingAddOperations: [...pendingAddOperations, operation],
               isSyncing: false,
               lastError: error,
+              guestCartUpdatedAt: updatedAt,
             }));
             return { isSuccess: false, error };
           }
@@ -377,8 +442,7 @@ export const useCartStore = create<CartStore>()(
 
         emptyCart: async () => {
           if (!hasAuthenticatedUser()) {
-            get().clearCart();
-            return finishSuccess(null);
+            return finishGuestMutation(() => []);
           }
 
           set({ isSyncing: true, lastError: null });
@@ -460,6 +524,7 @@ export const useCartStore = create<CartStore>()(
                 needsServerSync: false,
                 cartUserId: null,
                 guestCartUpdatedAt: null,
+                itemTombstones: {},
                 pendingAddOperations: [],
               });
             }
@@ -470,52 +535,91 @@ export const useCartStore = create<CartStore>()(
                 getFailedActionMessage(latestServerCart, 'Unable to load the cart.'),
               );
 
-            const hasLocalChangesToMerge =
-              get().pendingAddOperations.length > 0 ||
-              get().needsServerSync ||
-              (get().cartUserId === null && get().items.length > 0);
-            set((state) => ({
-              serverCart: latestServerCart.data,
-              items: hasLocalChangesToMerge
-                ? applyServerQuantities(state.items, latestServerCart.data)
-                : createCartItemsFromServer(latestServerCart.data),
-            }));
+            const serverItems = createCartItemsFromServer(latestServerCart.data);
+            const serverItemsByKey = new Map(serverItems.map((item) => [getItemKey(item), item]));
+            const { guestCartUpdatedAt, itemTombstones, items: localItems } = get();
+            const serverItemsToDelete: CartItem[] = [];
+            const localItemsToAdd: CartItem[] = [];
 
-            const hasGuestCartToMerge = get().cartUserId === null && get().items.length > 0;
-            if (get().needsServerSync || hasGuestCartToMerge) {
-              set(({ items, pendingAddOperations }) => ({
-                needsServerSync: false,
-                pendingAddOperations: [
-                  ...pendingAddOperations,
-                  ...items.map((item) =>
-                    createPendingAddOperation(toCartItemInput(item), item.quantity),
-                  ),
-                ],
-              }));
+            localItems.forEach((localItem) => {
+              const serverItem = serverItemsByKey.get(getItemKey(localItem));
+              // There is no competing server line to win this comparison. The cart-level
+              // timestamp may change during login, so it must not discard a guest-only item.
+              if (!serverItem) {
+                localItemsToAdd.push(localItem);
+                return;
+              }
+              const serverUpdatedAt = serverItem.updatedAt ?? latestServerCart.data.updatedAt;
+              const localUpdatedAt = localItem.updatedAt ?? guestCartUpdatedAt;
+              if (!isLocalCartNewer(localUpdatedAt, serverUpdatedAt)) return;
+
+              if (serverItem.quantity !== localItem.quantity) {
+                serverItemsToDelete.push(serverItem);
+                localItemsToAdd.push(localItem);
+              }
+            });
+
+            Object.entries(itemTombstones).forEach(([itemKey, deletedAt]) => {
+              const serverItem = serverItemsByKey.get(itemKey);
+              if (
+                serverItem &&
+                isLocalCartNewer(deletedAt, serverItem.updatedAt ?? latestServerCart.data.updatedAt)
+              ) {
+                serverItemsToDelete.push(serverItem);
+              }
+            });
+
+            if (serverItemsToDelete.length === 0 && localItemsToAdd.length === 0) {
+              return finishSuccess(latestServerCart.data);
             }
 
-            const pendingOperations = get().pendingAddOperations;
-            if (pendingOperations.length === 0) return finishSuccess(latestServerCart.data);
+            set({ isSyncing: true, lastError: null, serverCart: latestServerCart.data });
+            for (const serverItem of serverItemsToDelete) {
+              if (!serverItem.cartEntryId)
+                return finishError('The server cart entry id is required to sync the cart.');
+              const result = await deleteCartItemAction({
+                id: serverItem.cartEntryId,
+                idempotencyKey: crypto.randomUUID(),
+              });
+              if (!isSuccessfulCartAction(result))
+                return finishError(getFailedActionMessage(result, 'Unable to sync the cart.'));
+            }
 
-            set({ isSyncing: true, lastError: null });
-            let latestCart: CartDTO | null = latestServerCart.data;
-            for (const operation of pendingOperations) {
+            for (const localItem of localItemsToAdd) {
+              const operation =
+                findPendingAddOperation(localItem, get().pendingAddOperations) ??
+                createPendingAddOperation(toCartItemInput(localItem), localItem.quantity);
+              set((state) => ({
+                pendingAddOperations: state.pendingAddOperations.some(
+                  (pendingOperation) =>
+                    pendingOperation.idempotencyKey === operation.idempotencyKey,
+                )
+                  ? state.pendingAddOperations
+                  : [...state.pendingAddOperations, operation],
+              }));
+
               const result = await addCartItemAction(
                 toAddPayload(operation.item, operation.quantity, operation.idempotencyKey),
               );
               if (!isSuccessfulCartAction(result))
                 return finishError(getFailedActionMessage(result, 'Unable to sync the cart.'));
-              latestCart = result.data;
               set((state) => ({
                 pendingAddOperations: state.pendingAddOperations.filter(
                   (pendingOperation) =>
                     pendingOperation.idempotencyKey !== operation.idempotencyKey,
                 ),
-                serverCart: result.data,
-                items: applyServerQuantities(state.items, result.data),
               }));
             }
-            return finishSuccess(latestCart);
+
+            const refreshedServerCart = await getCartForSyncAction();
+            if (!isSuccessfulCartAction(refreshedServerCart))
+              return finishError(
+                getFailedActionMessage(
+                  refreshedServerCart,
+                  'Unable to load the synchronized cart.',
+                ),
+              );
+            return finishSuccess(refreshedServerCart.data);
           })();
 
           try {
@@ -533,6 +637,7 @@ export const useCartStore = create<CartStore>()(
             needsServerSync: false,
             cartUserId: null,
             guestCartUpdatedAt: null,
+            itemTombstones: {},
             pendingAddOperations: [],
             lastError: null,
             isSyncing: false,
@@ -549,6 +654,7 @@ export const useCartStore = create<CartStore>()(
         needsServerSync,
         cartUserId,
         guestCartUpdatedAt,
+        itemTombstones,
         pendingAddOperations,
       }) => ({
         items,
@@ -556,6 +662,7 @@ export const useCartStore = create<CartStore>()(
         needsServerSync,
         cartUserId,
         guestCartUpdatedAt,
+        itemTombstones,
         pendingAddOperations,
       }),
     },

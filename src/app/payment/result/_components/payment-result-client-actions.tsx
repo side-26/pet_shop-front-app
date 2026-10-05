@@ -77,7 +77,7 @@ export function PaymentResultClientActions({ isSuccess }: PaymentResultClientAct
   return (
     <div className="tw:flex tw:w-full tw:flex-col tw:items-center tw:gap-4">
       {canNavigate ? (
-        <p className="tw:text-body-s tw:text-muted-foreground" aria-live="polite">
+        <div className="tw:text-body-s tw:text-muted-foreground" aria-live="polite">
           انتقال خودکار تا
           <Countdown
             seconds={REDIRECT_DELAY_SECONDS}
@@ -86,7 +86,7 @@ export function PaymentResultClientActions({ isSuccess }: PaymentResultClientAct
             className="tw:mx-2 tw:align-middle"
           />
           دیگر
-        </p>
+        </div>
       ) : null}
       {clearError ? (
         <p role="alert" className="tw:text-body-s tw:text-error">
