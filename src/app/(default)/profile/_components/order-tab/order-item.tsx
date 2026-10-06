@@ -40,20 +40,26 @@ export function OrderItem({
       <CardContent>
         <dl className="tw:grid tw:grid-cols-3 tw:gap-3">
           <div className="tw:flex tw:flex-col tw:gap-1">
-            <dt className="tw:text-label-m tw:text-muted-foreground">کد رهگیری</dt>
-            <dd className="tw:text-title-s">
+            <dt className="tw:text-label-s tw:text-muted-foreground tw:lg:text-label-m">
+              کد رهگیری
+            </dt>
+            <dd className="tw:text-label-l tw:lg:text-title-s">
               {order.trackingCode ? <bdi dir="ltr">{order.trackingCode}</bdi> : '—'}
             </dd>
           </div>
           <div className="tw:flex tw:flex-col tw:gap-1">
-            <dt className="tw:text-label-m tw:text-muted-foreground">مبلغ سفارش</dt>
-            <dd className="tw:text-title-s">
+            <dt className="tw:text-label-s tw:text-muted-foreground tw:lg:text-label-m">
+              مبلغ سفارش
+            </dt>
+            <dd className="tw:text-label-l tw:lg:text-title-s">
               <Price number={order.totalPrice} />
             </dd>
           </div>
-          <div className="tw:flex tw:flex-col tw:gap-1">
-            <dt className="tw:text-label-m tw:text-muted-foreground">تعداد کالا</dt>
-            <dd className="tw:text-title-s">{order.items.length} کالا</dd>
+          <div className="tw:flex tw:flex-col tw:items-center tw:gap-1 tw:text-center tw:lg:items-start tw:lg:text-start">
+            <dt className="tw:text-label-s tw:text-muted-foreground tw:lg:text-label-m">
+              تعداد کالا
+            </dt>
+            <dd className="tw:text-label-l tw:lg:text-title-s">{order.items.length} کالا</dd>
           </div>
         </dl>
       </CardContent>
