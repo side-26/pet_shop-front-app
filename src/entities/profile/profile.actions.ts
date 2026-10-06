@@ -147,6 +147,14 @@ export async function retryProfileOrderSummaryAction() {
   refresh();
 }
 
+export async function retryProfileOrdersAction() {
+  const auth = await authorizeCustomer();
+  if ('error' in auth) return auth.error;
+
+  service.invalidateProfileOrderData(auth.session.userId);
+  refresh();
+}
+
 export async function getProfileOrderAction(input: unknown) {
   const auth = await authorizeCustomer();
   if ('error' in auth) return auth.error;

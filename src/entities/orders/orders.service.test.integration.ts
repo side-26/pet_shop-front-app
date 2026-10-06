@@ -88,9 +88,6 @@ describe('orders service', () => {
     });
     expect(invalidateDetailMock).toHaveBeenCalledWith('507f1f77bcf86cd799439011');
     expect(invalidateListMock).toHaveBeenCalledOnce();
-    expect(invalidateProfileOrderDataMock).toHaveBeenCalledWith(
-      'user-1',
-      '507f1f77bcf86cd799439011',
-    );
+    expect(invalidateProfileOrderDataMock).toHaveBeenCalledWith('user-1');
   });
 });

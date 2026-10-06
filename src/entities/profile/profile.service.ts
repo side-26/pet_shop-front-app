@@ -176,19 +176,12 @@ export async function getProfileOrderSummary(userId: string) {
   });
 }
 
-export function invalidateProfileOrderData(userId: string, orderId?: string) {
+export function invalidateProfileOrderData(userId: string) {
   profileCache.invalidateDetail(`${userId}:orders-summary`);
   profileCache.invalidateList();
-
-  if (orderId) profileCache.invalidateDetail(`${userId}:order:${orderId}`);
 }
 
-export async function getProfileOrder(userId: string, orderId: string) {
-  'use cache: private';
-
-  profileCache.cacheLife({ stale: 120 });
-  profileCache.registerDetail(`${userId}:order:${orderId}`);
-
+export async function getProfileOrder(_userId: string, orderId: string) {
   return customFetcher<ProfileOrderDTO>({
     url: `/profile/orders/${orderId}`,
     method: 'GET',

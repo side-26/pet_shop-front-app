@@ -7,14 +7,13 @@ import { useAuthStore } from '@/entities/auth/auth.store';
 import { ProfilePersonalInfoRenderer } from './profile-personal-info-renderer';
 import { profilePersonalInfoSkeletonData } from './profile-personal-info-skeleton-data';
 import { ProfileTabs } from './profile-tabs';
-
 export function ProfileIdentityContent({
-  header,
   addresses,
+  header,
   orders,
 }: {
-  header: ReactNode;
   addresses: ReactNode;
+  header: ReactNode;
   orders: ReactNode;
 }) {
   const userIdentity = useAuthStore((state) => state.userIdentity);

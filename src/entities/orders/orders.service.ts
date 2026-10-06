@@ -69,7 +69,7 @@ export async function updateOrderDeliveryState(input: UpdateOrderDeliveryStateDT
     ordersCache.invalidateList();
 
     const userId = getOrderUserId(result.data);
-    if (userId) invalidateProfileOrderData(userId, id);
+    if (userId) invalidateProfileOrderData(userId);
   }
   return result;
 }

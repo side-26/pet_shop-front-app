@@ -1,9 +1,7 @@
-import { getProfileAccountAction } from '@/entities/profile/profile.actions';
-
 import { ProfileIdentityContent } from './profile-identity-content';
 import { ProfileAddressesWrapper } from './profile-addresses-wrapper';
 import { ProfileHeaderWrapper } from './profile-header-wrapper';
-import { ProfileOrdersWrapper } from './profile-orders-wrapper';
+import { ProfileOrdersWrapper } from './order-tab/profile-orders-wrapper';
 
 export function ProfilePageContent() {
   return (

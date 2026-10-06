@@ -5,7 +5,7 @@ import { routePaths } from '@/configs/route.path';
 import { useAuthStore } from '@/entities/auth/auth.store';
 
 vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
-vi.mock('./_components/profile-orders-wrapper', () => ({
+vi.mock('./_components/order-tab/profile-orders-wrapper', () => ({
   ProfileOrdersWrapper: () => (
     <section aria-labelledby="orders-heading">
       <h2 id="orders-heading">سفارش‌های من</h2>
