@@ -79,7 +79,13 @@ export function PetDetailContent({ pet, isSkeleton = false }: Props) {
                   {pet.title}
                 </h1>
                 <div className="tw:justify-self-end">
-                  <ProductHeaderActions title={pet.title} itemLabel="حیوان" disabled={isSkeleton} />
+                  <ProductHeaderActions
+                    title={pet.title}
+                    itemId={pet.id}
+                    itemLabel="حیوان"
+                    itemType="pet"
+                    disabled={isSkeleton}
+                  />
                 </div>
                 <div className="tw:col-span-3 tw:flex tw:flex-wrap tw:gap-3 tw:text-label-m">
                   <Link

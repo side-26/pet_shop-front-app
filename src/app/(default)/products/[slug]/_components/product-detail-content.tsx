@@ -58,7 +58,12 @@ export function ProductDetailContent({ isSkeleton = false, product }: ProductDet
                 <h1 className="tw:min-w-0 tw:text-title-m tw:leading-8 tw:text-foreground tw:lg:text-title-l">
                   {product.title}
                 </h1>
-                <ProductHeaderActions title={product.title} disabled={isSkeleton} />
+                <ProductHeaderActions
+                  title={product.title}
+                  itemId={product.id}
+                  itemType="product"
+                  disabled={isSkeleton}
+                />
               </div>
 
               <div className="tw:flex tw:flex-wrap tw:gap-3 tw:text-label-m tw:lg:hidden">
@@ -164,7 +169,6 @@ export function ProductDetailContent({ isSkeleton = false, product }: ProductDet
                   ) : (
                     <ProductRatingForm
                       productId={product.id}
-                      slug={product.slug}
                       canVote={product.canVote}
                       hasRated={product.hasRated}
                     />

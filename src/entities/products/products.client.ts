@@ -1,5 +1,6 @@
 'use client';
 
+import { useMutation } from '@tanstack/react-query';
 import { useCallback, useRef, useTransition } from 'react';
 import type { FieldValues, UseFormSetError } from 'react-hook-form';
 
@@ -22,12 +23,14 @@ import {
   updateProductBaseInfoAction,
   updateProductImagesAction,
   replaceProductWeightsAction,
+  updateProductUserRateAction,
 } from './products.actions';
 import type {
   ProductInput,
   UpdateProductBaseInfoInput,
   UpdateProductImagesInput,
   ReplaceProductWeightsInput,
+  UpdateProductUserRateInput,
 } from './products.schema';
 
 async function submit<T extends FieldValues>(
@@ -104,6 +107,12 @@ export async function submitDeleteProduct(id: string) {
   }
   toast.add({ type: 'success', title: result.message });
   return true;
+}
+
+export function useUpdateProductUserRate() {
+  return useMutation({
+    mutationFn: (input: UpdateProductUserRateInput) => updateProductUserRateAction(input),
+  });
 }
 
 export function useCreateProduct(onSuccess: () => void) {

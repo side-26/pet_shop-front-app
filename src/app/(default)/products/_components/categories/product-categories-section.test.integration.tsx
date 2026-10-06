@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
@@ -60,8 +60,11 @@ beforeEach(() => {
 });
 
 describe('ProductCategoriesSection', () => {
-  it('starts the pet-types request and provides a prefetched all-products link', () => {
-    getAllLandingPetTypesMock.mockReturnValue(new Promise(() => undefined));
+  it('starts the pet-types request and provides a prefetched all-products link', async () => {
+    const petTypes = Promise.withResolvers<LandingPetTypeDTO[]>();
+    getAllLandingPetTypesMock.mockReturnValue(
+      petTypes.promise.then((data) => ({ isSuccess: true, message: null, data })),
+    );
 
     render(<ProductCategoriesSection />);
 
@@ -72,6 +75,11 @@ describe('ProductCategoriesSection', () => {
     );
     expect(screen.getByText('بیشتر').className).toContain('tw:sm:hidden');
     expect(screen.getByText('مشاهده محصولات بیشتر').className).toContain('tw:sm:inline');
+
+    await act(async () => {
+      petTypes.resolve([]);
+      await petTypes.promise;
+    });
   });
 
   it('renders a pet-type image, title, and canonical filtered-products link without legacy copy', () => {

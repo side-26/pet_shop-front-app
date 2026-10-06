@@ -1,5 +1,6 @@
 'use client';
 
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback, useRef, useTransition } from 'react';
 import type { UseFormSetError } from 'react-hook-form';
 
@@ -9,17 +10,44 @@ import { useAuthStore } from '@/entities/auth/auth.store';
 import { globalErrorHandler } from '@/utils/helpers';
 
 import {
+  addWishlistItemAction,
   changeCurrentUserPasswordAction,
   createUserAction,
   disableUserByIdAction,
+  deleteWishlistItemAction,
   enableUserByIdAction,
+  getWishlistAction,
   updateCurrentUserProfileAction,
 } from './users.actions';
 import type {
+  AddWishlistItemInput,
   ChangeCurrentUserPasswordInput,
   CreateUserInput,
   UpdateCurrentUserProfileInput,
 } from './users.schema';
+import type { WishlistItemDTO } from './users.dto';
+
+const wishlistQueryKey = ['users', 'wishlist'] as const;
+
+async function fetchWishlist() {
+  const result = await getWishlistAction();
+  if (!result.isSuccess) throw new Error(result.message ?? 'دریافت علاقه‌مندی‌ها ناموفق بود.');
+  return result.data;
+}
+
+export function useWishlist() {
+  return useQuery({ queryKey: wishlistQueryKey, queryFn: fetchWishlist });
+}
+
+export function useAddWishlistItem() {
+  return useMutation({ mutationFn: (input: AddWishlistItemInput) => addWishlistItemAction(input) });
+}
+
+export function useDeleteWishlistItem() {
+  return useMutation({ mutationFn: (id: string) => deleteWishlistItemAction({ id }) });
+}
+
+export { wishlistQueryKey, type WishlistItemDTO };
 
 export async function submitCurrentUserProfile(
   input: UpdateCurrentUserProfileInput,

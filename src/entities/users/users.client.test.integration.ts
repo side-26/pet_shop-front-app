@@ -1,3 +1,6 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { createElement, type ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { toast } from '@/components/ui/toast';
@@ -5,10 +8,13 @@ import { useAuthStore } from '@/entities/auth/auth.store';
 import { globalErrorHandler } from '@/utils/helpers';
 
 import {
+  addWishlistItemAction,
   changeCurrentUserPasswordAction,
   createUserAction,
   disableUserByIdAction,
+  deleteWishlistItemAction,
   enableUserByIdAction,
+  getWishlistAction,
   updateCurrentUserProfileAction,
 } from './users.actions';
 import {
@@ -16,13 +22,19 @@ import {
   submitCurrentUserPassword,
   submitCurrentUserProfile,
   submitUserEnabledUpdate,
+  useAddWishlistItem,
+  useDeleteWishlistItem,
+  useWishlist,
 } from './users.client';
 
 vi.mock('./users.actions', () => ({
+  addWishlistItemAction: vi.fn(),
   changeCurrentUserPasswordAction: vi.fn(),
   createUserAction: vi.fn(),
   disableUserByIdAction: vi.fn(),
+  deleteWishlistItemAction: vi.fn(),
   enableUserByIdAction: vi.fn(),
+  getWishlistAction: vi.fn(),
   updateCurrentUserProfileAction: vi.fn(),
 }));
 vi.mock('@/utils/helpers', () => ({ globalErrorHandler: vi.fn() }));
@@ -33,6 +45,9 @@ const disableUserByIdActionMock = vi.mocked(disableUserByIdAction);
 const enableUserByIdActionMock = vi.mocked(enableUserByIdAction);
 const updateCurrentUserProfileActionMock = vi.mocked(updateCurrentUserProfileAction);
 const changeCurrentUserPasswordActionMock = vi.mocked(changeCurrentUserPasswordAction);
+const getWishlistActionMock = vi.mocked(getWishlistAction);
+const addWishlistItemActionMock = vi.mocked(addWishlistItemAction);
+const deleteWishlistItemActionMock = vi.mocked(deleteWishlistItemAction);
 const globalErrorHandlerMock = vi.mocked(globalErrorHandler);
 const toastAddMock = vi.mocked(toast.add);
 
@@ -42,6 +57,47 @@ const input = {
   confirmPassword: 'password123',
   role: 'customer' as const,
 };
+
+function queryClientWrapper({ children }: Readonly<{ children: ReactNode }>) {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return createElement(QueryClientProvider, { client }, children);
+}
+
+describe('wishlist client queries', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('gets wishlist entries and delegates add/remove mutations to their Server Actions', async () => {
+    getWishlistActionMock.mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: [{ _id: 'wishlist-1', item: 'product-1', itemType: 'product' }],
+    });
+    addWishlistItemActionMock.mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: { _id: 'wishlist-2', item: 'pet-1', itemType: 'pet' },
+    });
+    deleteWishlistItemActionMock.mockResolvedValue({ isSuccess: true, message: null, data: [] });
+
+    const { result } = renderHook(
+      () => ({
+        wishlist: useWishlist(),
+        add: useAddWishlistItem(),
+        remove: useDeleteWishlistItem(),
+      }),
+      { wrapper: queryClientWrapper },
+    );
+
+    await waitFor(() => expect(result.current.wishlist.data).toHaveLength(1));
+    await act(() => result.current.add.mutateAsync({ itemId: 'pet-1', itemType: 'pet' }));
+    await act(() => result.current.remove.mutateAsync('wishlist-1'));
+
+    expect(addWishlistItemActionMock).toHaveBeenCalledWith({ itemId: 'pet-1', itemType: 'pet' });
+    expect(deleteWishlistItemActionMock).toHaveBeenCalledWith({ id: 'wishlist-1' });
+  });
+});
 
 describe('create user client orchestration', () => {
   beforeEach(() => {

@@ -1,13 +1,13 @@
+import { createElement, type ReactNode } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
-import { retryLandingProductDetailAction } from '@/entities/landing/landing.actions';
 import { updateProductUserRateAction } from '@/entities/products/products.actions';
 
 import { ProductRatingForm } from './product-rating-form';
 
 vi.mock('@/entities/products/products.actions', () => ({ updateProductUserRateAction: vi.fn() }));
-vi.mock('@/entities/landing/landing.actions', () => ({ retryLandingProductDetailAction: vi.fn() }));
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -20,14 +20,14 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
-it('submits the eligible customer rating and refreshes the slug detail', async () => {
-  render(
-    <ProductRatingForm
-      productId="6a9fcb6871b632040de16436"
-      slug="product-0de16436"
-      canVote
-      hasRated={false}
-    />,
+function renderWithQueryClient(children: ReactNode) {
+  const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
+  return render(createElement(QueryClientProvider, { client: queryClient }, children));
+}
+
+it('submits the eligible customer rating without refreshing the product detail', async () => {
+  renderWithQueryClient(
+    <ProductRatingForm productId="6a9fcb6871b632040de16436" canVote hasRated={false} />,
   );
 
   fireEvent.click(screen.getByRole('button', { name: '4 ستاره' }));
@@ -39,18 +39,12 @@ it('submits the eligible customer rating and refreshes the slug detail', async (
       userRate: 4,
     }),
   );
-  expect(retryLandingProductDetailAction).toHaveBeenCalledWith('product-0de16436');
   expect(screen.getByText('امتیاز شما برای این محصول ثبت شده است.')).toBeTruthy();
 });
 
 it('explains the API eligibility limit without rendering a form', () => {
-  render(
-    <ProductRatingForm
-      productId="6a9fcb6871b632040de16436"
-      slug="product-0de16436"
-      canVote={false}
-      hasRated={false}
-    />,
+  renderWithQueryClient(
+    <ProductRatingForm productId="6a9fcb6871b632040de16436" canVote={false} hasRated={false} />,
   );
 
   expect(screen.getByText(/مشتریانی فعال است که این محصول را خریداری/)).toBeTruthy();

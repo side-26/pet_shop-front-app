@@ -120,7 +120,7 @@ function RateField<
     >
       <div
         role="group"
-        dir="ltr"
+        dir="rtl"
         aria-label={ariaLabel}
         aria-describedby={descriptionId}
         data-invalid={fieldState.invalid || undefined}

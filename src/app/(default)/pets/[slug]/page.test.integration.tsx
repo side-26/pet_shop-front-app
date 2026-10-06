@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LandingPetDetailDTO } from '@/entities/landing/landing.dto';
+import { ReactQueryProvider } from '@/app/react-query-provider';
 import { routePaths } from '@/configs/route.path';
 import { getLandingPetBySlugAction } from '@/entities/landing/landing.actions';
 import { useCartStore } from '@/stores/cart.store';
@@ -73,10 +74,12 @@ afterEach(() => {
 describe(routePaths.petDetail('max'), () => {
   it('renders API-backed pet details, sticky request pricing, summary, and specification tabs', async () => {
     render(
-      await PetDetailContainer({
-        petPromise: Promise.resolve({ isSuccess: true, message: null, data: pet }),
-        slugPromise: Promise.resolve(pet.slug),
-      }),
+      <ReactQueryProvider>
+        {await PetDetailContainer({
+          petPromise: Promise.resolve({ isSuccess: true, message: null, data: pet }),
+          slugPromise: Promise.resolve(pet.slug),
+        })}
+      </ReactQueryProvider>,
     );
     expect(screen.getByRole('heading', { level: 1, name: pet.title })).toBeTruthy();
     expect(screen.getByRole('article').hasAttribute('data-pet-detail-content')).toBe(true);
@@ -98,10 +101,12 @@ describe(routePaths.petDetail('max'), () => {
 
   it('adds and removes the exact pet through the cart store', async () => {
     render(
-      await PetDetailContainer({
-        petPromise: Promise.resolve({ isSuccess: true, message: null, data: pet }),
-        slugPromise: Promise.resolve(pet.slug),
-      }),
+      <ReactQueryProvider>
+        {await PetDetailContainer({
+          petPromise: Promise.resolve({ isSuccess: true, message: null, data: pet }),
+          slugPromise: Promise.resolve(pet.slug),
+        })}
+      </ReactQueryProvider>,
     );
 
     fireEvent.click(screen.getAllByRole('button', { name: `پیش‌سفارش ${pet.title}` })[0]!);
@@ -116,7 +121,11 @@ describe(routePaths.petDetail('max'), () => {
   });
 
   it('uses the renderer-backed skeleton while route params are pending', () => {
-    render(<PetDetailPage params={new Promise(() => undefined)} />);
+    render(
+      <ReactQueryProvider>
+        <PetDetailPage params={new Promise(() => undefined)} />
+      </ReactQueryProvider>,
+    );
     expect(screen.getByRole('article').getAttribute('aria-busy')).toBe('true');
   });
 

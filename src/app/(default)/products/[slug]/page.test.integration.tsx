@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { LandingProductDetailDTO } from '@/entities/landing/landing.dto';
 import { routePaths } from '@/configs/route.path';
 import { useCartStore } from '@/stores/cart.store';
+import { ReactQueryProvider } from '@/app/react-query-provider';
 import {
   getLandingProductBySlugAction,
   getPublicLandingProductBySlugAction,
@@ -102,7 +103,7 @@ describe('/products/product-0de16436', () => {
       productPromise: Promise.resolve({ isSuccess: true, message: null, data: product }),
       slugPromise: Promise.resolve(product.slug),
     });
-    render(content);
+    render(<ReactQueryProvider>{content}</ReactQueryProvider>);
 
     expect(screen.getByRole('heading', { level: 1, name: product.title })).toBeTruthy();
     expect(screen.getAllByText('سگ')).toHaveLength(2);
