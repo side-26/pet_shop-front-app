@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSyncExternalStore } from 'react';
 
 import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
@@ -13,6 +14,10 @@ type MobileBottomNavigationViewProps = Readonly<{
   accountHref?: string;
   accountLabel?: string;
 }>;
+
+function subscribeToHydration() {
+  return () => undefined;
+}
 
 export function MobileBottomNavigationView({
   pathname,
@@ -68,9 +73,16 @@ export function MobileBottomNavigation({
   accountHref,
   accountLabel,
 }: Omit<MobileBottomNavigationViewProps, 'pathname'>) {
+  const isHydrated = useSyncExternalStore(
+    subscribeToHydration,
+    () => true,
+    () => false,
+  );
+  const pathname = usePathname();
+
   return (
     <MobileBottomNavigationView
-      pathname={usePathname()}
+      pathname={isHydrated ? pathname : undefined}
       accountHref={accountHref}
       accountLabel={accountLabel}
     />

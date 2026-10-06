@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import Script from 'next/script';
 import { Suspense } from 'react';
 
 import { NavigationPageBar } from '@/components/common/navigation-page-bar';
 import { RtlLayout } from '@/components/layouts/rtl-layout';
-import { themeInitScript } from '@/components/ui/theme.helpers';
+import { ThemeProvider } from '@/components/layouts/theme-provider';
 import { Toaster } from '@/components/ui/toast';
 import { appLogo } from '@/configs/app-logo';
 import { cn } from '@/lib/utils';
@@ -72,19 +71,23 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         suppressHydrationWarning
         className="tw:flex tw:min-h-full tw:flex-col tw:bg-background tw:text-foreground"
       >
-        <Script id="theme-init" strategy="beforeInteractive">
-          {themeInitScript}
-        </Script>
-        <NavigationPageBar />
-        <RtlLayout>
-          <ReactQueryProvider>
-            <AuthSessionInitializer />
-            <Suspense fallback={null}>
-              <CartSyncInitializer />
-            </Suspense>
-            <Toaster>{children}</Toaster>
-          </ReactQueryProvider>
-        </RtlLayout>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <NavigationPageBar />
+          <RtlLayout>
+            <ReactQueryProvider>
+              <AuthSessionInitializer />
+              <Suspense fallback={null}>
+                <CartSyncInitializer />
+              </Suspense>
+              <Toaster>{children}</Toaster>
+            </ReactQueryProvider>
+          </RtlLayout>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,7 +1,8 @@
 'use client';
 
 import { Monitor, Moon, Sun } from 'lucide-react';
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useTheme } from 'next-themes';
+import { useState, useSyncExternalStore } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -13,46 +14,15 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { THEME_STORAGE_KEY, type ThemePreference } from '@/components/ui/theme.helpers';
 
 const themeOptions = [
   { value: 'light', label: 'روشن', icon: Sun },
   { value: 'dark', label: 'تیره', icon: Moon },
   { value: 'system', label: 'سیستم', icon: Monitor },
 ] as const;
-const themeChangeEvent = 'petshop-theme-change';
 
-function isThemePreference(value: string | null): value is ThemePreference {
-  return value === 'light' || value === 'dark' || value === 'system';
-}
-
-function applyTheme(theme: ThemePreference, prefersDark: boolean) {
-  const isDark = theme === 'dark' || (theme === 'system' && prefersDark);
-  const root = document.documentElement;
-
-  root.classList.toggle('dark', isDark);
-  root.dataset.theme = theme;
-  root.style.colorScheme = isDark ? 'dark' : 'light';
-}
-
-function getThemeSnapshot(): ThemePreference {
-  const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-  return isThemePreference(storedTheme) ? storedTheme : 'system';
-}
-
-function subscribeToTheme(onStoreChange: () => void) {
-  window.addEventListener('storage', onStoreChange);
-  window.addEventListener(themeChangeEvent, onStoreChange);
-
-  return () => {
-    window.removeEventListener('storage', onStoreChange);
-    window.removeEventListener(themeChangeEvent, onStoreChange);
-  };
-}
-
-function setThemePreference(theme: ThemePreference) {
-  localStorage.setItem(THEME_STORAGE_KEY, theme);
-  window.dispatchEvent(new Event(themeChangeEvent));
+function subscribeToHydration() {
+  return () => undefined;
 }
 
 type ThemeToggleProps = Readonly<{
@@ -60,27 +30,16 @@ type ThemeToggleProps = Readonly<{
 }>;
 
 function ThemeToggle({ variant = 'dropdown' }: ThemeToggleProps) {
-  const theme = useSyncExternalStore<ThemePreference>(
-    subscribeToTheme,
-    getThemeSnapshot,
-    () => 'system',
+  const { setTheme, theme } = useTheme();
+  const isHydrated = useSyncExternalStore(
+    subscribeToHydration,
+    () => true,
+    () => false,
   );
   const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    const colorScheme = window.matchMedia?.('(prefers-color-scheme: dark)');
-    const syncTheme = () => {
-      const prefersDark = colorScheme?.matches ?? false;
-      applyTheme(theme, prefersDark);
-    };
-
-    syncTheme();
-
-    if (theme === 'system') colorScheme?.addEventListener('change', syncTheme);
-    return () => colorScheme?.removeEventListener('change', syncTheme);
-  }, [theme]);
-
-  const activeTheme = themeOptions.find(({ value }) => value === theme) ?? themeOptions[2];
+  const selectedTheme = isHydrated ? theme : 'system';
+  const activeTheme = themeOptions.find(({ value }) => value === selectedTheme) ?? themeOptions[2];
   const ActiveThemeIcon = activeTheme.icon;
   const isIconOnly = variant === 'icon';
   const triggerLabel = `تغییر حالت نمایش: ${activeTheme.label}`;
@@ -113,9 +72,9 @@ function ThemeToggle({ variant = 'dropdown' }: ThemeToggleProps) {
         <DropdownMenuGroup>
           <DropdownMenuLabel>حالت نمایش</DropdownMenuLabel>
           <DropdownMenuRadioGroup
-            value={theme}
+            value={selectedTheme}
             onValueChange={(value) => {
-              setThemePreference(value as ThemePreference);
+              setTheme(value);
               setIsOpen(false);
             }}
           >
