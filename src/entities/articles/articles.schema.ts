@@ -1,6 +1,11 @@
 import { array, mixed, object, string, type InferType } from 'yup';
 
 import '@/configs/yup.config';
+import {
+  MAIN_IMAGE_UPLOAD_MAX_SIZE_BYTES,
+  MAIN_IMAGE_UPLOAD_MIME_TYPES,
+} from '@/configs/main-image-upload';
+import { yupMessage } from '@/configs/yup.config';
 import { isRichTextDocument, type RichTextFormValue } from '@/lib/rich-text';
 
 const objectIdSchema = string()
@@ -16,11 +21,25 @@ const richTextSchema = mixed<RichTextFormValue>()
   .test('structured-json', 'متن اصلی باید به صورت JSON ساخت‌یافته ارسال شود.', isRichTextDocument)
   .required();
 
+const mainImageSchema = mixed<File>()
+  .test(
+    'type',
+    yupMessage('imageType'),
+    (value) =>
+      !value ||
+      MAIN_IMAGE_UPLOAD_MIME_TYPES.includes(
+        value.type as (typeof MAIN_IMAGE_UPLOAD_MIME_TYPES)[number],
+      ),
+  )
+  .test(
+    'size',
+    yupMessage('imageSize'),
+    (value) => !value || value.size <= MAIN_IMAGE_UPLOAD_MAX_SIZE_BYTES,
+  );
+
 const articleDetailsFields = {
   title: string().trim().min(2).max(180),
   subtitle: string().trim().min(1).max(240),
-  mainImage: string().trim().url().max(2048),
-  mainThumbnailImage: string().trim().min(1).max(10240),
   summary: string().trim().max(600),
   petType: objectIdSchema.optional(),
 };
@@ -35,12 +54,16 @@ export const createArticleSchema = object({
   ...articleDetailsFields,
   title: articleDetailsFields.title.required(),
   subtitle: articleDetailsFields.subtitle.required(),
-  mainImage: articleDetailsFields.mainImage.required(),
-  mainThumbnailImage: articleDetailsFields.mainThumbnailImage.required(),
+  mainImage: mainImageSchema
+    .test('required', yupMessage('imageRequired'), (value) => value instanceof File)
+    .required(),
   mainText: richTextSchema,
 });
 
-export const updateArticleSchema = object(articleDetailsFields)
+export const updateArticleSchema = object({
+  ...articleDetailsFields,
+  mainImage: mainImageSchema.optional(),
+})
   .partial()
   .test('at-least-one-field', 'حداقل یک فیلد باید ارسال شود.', (value) =>
     Boolean(value && Object.keys(value).length > 0),

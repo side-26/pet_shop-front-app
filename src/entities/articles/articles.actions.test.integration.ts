@@ -38,8 +38,7 @@ const session = { accessToken: 'access-token', userId: 'user-1', role: 'seller' 
 const input = {
   title: 'راهنمای مراقبت از سگ',
   subtitle: 'آنچه برای شروع باید بدانید',
-  mainImage: 'https://cdn.example.test/articles/dog.webp',
-  mainThumbnailImage: 'data:image/webp;base64,AAAA',
+  mainImage: new File(['image'], 'dog.webp', { type: 'image/webp' }),
   mainText: { type: 'doc' as const, content: [] },
 };
 

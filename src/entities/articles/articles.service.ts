@@ -103,11 +103,21 @@ export function invalidateCurrentUserArticles() {
   articlesCache.invalidateQuery('current-author');
 }
 
+function toArticleFormData(input: CreateArticleDTO | UpdateArticleDTO) {
+  const body = new FormData();
+  for (const [key, value] of Object.entries(input)) {
+    if (value == null) continue;
+    if (key === 'mainImage' && value instanceof File) body.set(key, value);
+    else body.set(key, key === 'mainText' ? JSON.stringify(value) : String(value));
+  }
+  return body;
+}
+
 export async function createArticle(input: CreateArticleDTO) {
-  const result = await customFetcher<ArticleDTO, unknown, CreateArticleDTO>({
+  const result = await customFetcher<ArticleDTO, unknown, FormData>({
     url: '/articles',
     method: 'POST',
-    body: input,
+    body: toArticleFormData(input),
     auth: true,
     cache: 'no-store',
     parseSuccess: toArticleDTO,
@@ -118,10 +128,10 @@ export async function createArticle(input: CreateArticleDTO) {
 }
 
 export async function updateArticle(id: ArticleIdDTO['id'], input: UpdateArticleDTO) {
-  const result = await customFetcher<ArticleDTO, unknown, UpdateArticleDTO>({
+  const result = await customFetcher<ArticleDTO, unknown, FormData>({
     url: `/articles/id/${id}`,
     method: 'PUT',
-    body: input,
+    body: toArticleFormData(input),
     auth: true,
     cache: 'no-store',
     parseSuccess: toArticleDTO,

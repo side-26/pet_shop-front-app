@@ -45,13 +45,14 @@ const id = '507f1f77bcf86cd799439011';
 const input = {
   title: 'راهنمای مراقبت از سگ',
   subtitle: 'آنچه برای شروع باید بدانید',
-  mainImage: 'https://cdn.example.test/articles/dog.webp',
-  mainThumbnailImage: 'data:image/webp;base64,AAAA',
+  mainImage: new File(['image'], 'dog.webp', { type: 'image/webp' }),
   mainText: { type: 'doc' as const, content: [] },
 };
 const tags = [{ title: 'سگ' }];
 const article = {
   ...input,
+  mainImage: 'https://cdn.example.test/articles/dog.webp',
+  mainThumbnailImage: 'data:image/webp;base64,AAAA',
   id,
   summary: '',
   tags,
@@ -155,7 +156,7 @@ describe('article service', () => {
     expect(customFetcher).toHaveBeenNthCalledWith(1, {
       url: '/articles',
       method: 'POST',
-      body: input,
+      body: expect.any(FormData),
       auth: true,
       cache: 'no-store',
       parseSuccess: expect.any(Function),
@@ -163,7 +164,7 @@ describe('article service', () => {
     expect(customFetcher).toHaveBeenNthCalledWith(2, {
       url: `/articles/id/${id}`,
       method: 'PUT',
-      body: { title: 'عنوان تازه' },
+      body: expect.any(FormData),
       auth: true,
       cache: 'no-store',
       parseSuccess: expect.any(Function),
@@ -190,6 +191,11 @@ describe('article service', () => {
       cache: 'no-store',
       parseSuccess: expect.any(Function),
     });
+    const createBody = vi.mocked(customFetcher).mock.calls[0]?.[0].body as FormData;
+    const updateBody = vi.mocked(customFetcher).mock.calls[1]?.[0].body as FormData;
+    expect(createBody.get('mainImage')).toBe(input.mainImage);
+    expect(createBody.get('mainText')).toBe(JSON.stringify(input.mainText));
+    expect(updateBody.get('title')).toBe('عنوان تازه');
     expect(invalidateAllMock).toHaveBeenCalledTimes(5);
   });
 
