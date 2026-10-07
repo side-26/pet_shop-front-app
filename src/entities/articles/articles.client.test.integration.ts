@@ -8,12 +8,14 @@ import {
   deleteArticleAction,
   updateArticleAction,
   updateArticleMainTextAction,
+  replaceArticleTagsAction,
 } from './articles.actions';
 import {
   submitArticleMainTextUpdate,
   submitCreateArticle,
   submitDeleteArticle,
   submitUpdateArticle,
+  submitArticleTagsReplacement,
 } from './articles.client';
 
 vi.mock('./articles.actions', () => ({
@@ -21,6 +23,7 @@ vi.mock('./articles.actions', () => ({
   deleteArticleAction: vi.fn(),
   updateArticleAction: vi.fn(),
   updateArticleMainTextAction: vi.fn(),
+  replaceArticleTagsAction: vi.fn(),
 }));
 vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
 vi.mock('@/utils/helpers', () => ({ globalErrorHandler: vi.fn() }));
@@ -32,7 +35,6 @@ const input = {
   mainImage: 'https://cdn.example.test/articles/dog.webp',
   mainThumbnailImage: 'data:image/webp;base64,AAAA',
   mainText: { type: 'doc' as const, content: [] },
-  tags: [],
 };
 const failure = {
   isSuccess: false as const,
@@ -49,6 +51,7 @@ describe('article client orchestration', () => {
     vi.mocked(updateArticleAction).mockResolvedValue(success);
     vi.mocked(updateArticleMainTextAction).mockResolvedValue(success);
     vi.mocked(deleteArticleAction).mockResolvedValue(success);
+    vi.mocked(replaceArticleTagsAction).mockResolvedValue(success);
 
     await expect(submitCreateArticle(input, vi.fn())).resolves.toBe(true);
     await expect(submitUpdateArticle(id, { summary: 'خلاصه تازه' }, vi.fn())).resolves.toBe(true);
@@ -56,11 +59,15 @@ describe('article client orchestration', () => {
       submitArticleMainTextUpdate(id, { mainText: input.mainText }, vi.fn()),
     ).resolves.toBe(true);
     await expect(submitDeleteArticle(id)).resolves.toBe(true);
+    await expect(
+      submitArticleTagsReplacement(id, { tags: [{ title: 'سگ' }] }, vi.fn()),
+    ).resolves.toBe(true);
 
     expect(updateArticleAction).toHaveBeenCalledWith({ id, summary: 'خلاصه تازه' });
     expect(updateArticleMainTextAction).toHaveBeenCalledWith({ id, mainText: input.mainText });
     expect(deleteArticleAction).toHaveBeenCalledWith({ id });
-    expect(toast.add).toHaveBeenCalledTimes(4);
+    expect(replaceArticleTagsAction).toHaveBeenCalledWith({ id, tags: [{ title: 'سگ' }] });
+    expect(toast.add).toHaveBeenCalledTimes(5);
   });
 
   it('forwards complete errors and never reports false successes', async () => {
@@ -69,6 +76,7 @@ describe('article client orchestration', () => {
     vi.mocked(updateArticleAction).mockResolvedValue(failure);
     vi.mocked(updateArticleMainTextAction).mockResolvedValue(failure);
     vi.mocked(deleteArticleAction).mockResolvedValue(failure);
+    vi.mocked(replaceArticleTagsAction).mockResolvedValue(failure);
 
     await expect(submitCreateArticle(input, setError)).resolves.toBe(false);
     await expect(submitUpdateArticle(id, { summary: 'خلاصه تازه' }, setError)).resolves.toBe(false);
@@ -76,11 +84,15 @@ describe('article client orchestration', () => {
       submitArticleMainTextUpdate(id, { mainText: input.mainText }, setError),
     ).resolves.toBe(false);
     await expect(submitDeleteArticle(id)).resolves.toBe(false);
+    await expect(
+      submitArticleTagsReplacement(id, { tags: [{ title: 'سگ' }] }, setError),
+    ).resolves.toBe(false);
 
     expect(globalErrorHandler).toHaveBeenNthCalledWith(1, failure, { showErrorFields: setError });
     expect(globalErrorHandler).toHaveBeenNthCalledWith(2, failure, { showErrorFields: setError });
     expect(globalErrorHandler).toHaveBeenNthCalledWith(3, failure, { showErrorFields: setError });
     expect(globalErrorHandler).toHaveBeenNthCalledWith(4, failure);
+    expect(globalErrorHandler).toHaveBeenNthCalledWith(5, failure, { showErrorFields: setError });
     expect(toast.add).not.toHaveBeenCalled();
   });
 });

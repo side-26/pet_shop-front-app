@@ -11,6 +11,7 @@ import {
   articleIdSchema,
   articleSlugSchema,
   createArticleSchema,
+  replaceArticleTagsSchema,
   updateArticleMainTextSchema,
   updateArticleSchema,
 } from './articles.schema';
@@ -52,6 +53,21 @@ export async function getCurrentUserArticlesAction() {
   return service.getCurrentUserArticles();
 }
 
+export async function getArticleByIdAction(input: unknown) {
+  const value = await validate(articleIdSchema, input);
+  return 'isSuccess' in value ? value : service.getArticleById(value.id);
+}
+
+export async function getArticleMainTextByIdAction(input: unknown) {
+  const value = await validate(articleIdSchema, input);
+  return 'isSuccess' in value ? value : service.getArticleMainTextById(value.id);
+}
+
+export async function getArticleTagsAction(input: unknown) {
+  const value = await validate(articleIdSchema, input);
+  return 'isSuccess' in value ? value : service.getArticleTags(value.id);
+}
+
 export async function retryCurrentUserArticlesAction() {
   const denied = await authorizeAuthenticated();
   if (denied) return;
@@ -86,6 +102,16 @@ export async function updateArticleMainTextAction(input: unknown) {
   if ('isSuccess' in id) return id;
   const value = await validate(updateArticleMainTextSchema, input);
   return 'isSuccess' in value ? value : service.updateArticleMainText(id.id, value);
+}
+
+export async function replaceArticleTagsAction(input: unknown) {
+  const denied = await authorizeAuthenticated();
+  if (denied) return denied;
+
+  const id = await validate(articleIdSchema, input);
+  if ('isSuccess' in id) return id;
+  const value = await validate(replaceArticleTagsSchema, input);
+  return 'isSuccess' in value ? value : service.replaceArticleTags(id.id, value);
 }
 
 export async function deleteArticleAction(input: unknown) {

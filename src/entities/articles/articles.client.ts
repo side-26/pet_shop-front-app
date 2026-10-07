@@ -10,11 +10,13 @@ import {
   deleteArticleAction,
   updateArticleAction,
   updateArticleMainTextAction,
+  replaceArticleTagsAction,
 } from './articles.actions';
 import type {
   CreateArticleInput,
   UpdateArticleInput,
   UpdateArticleMainTextInput,
+  ReplaceArticleTagsInput,
 } from './articles.schema';
 
 export async function submitCreateArticle(
@@ -50,6 +52,20 @@ export async function submitArticleMainTextUpdate(
   showErrorFields: UseFormSetError<UpdateArticleMainTextInput>,
 ) {
   const result = await updateArticleMainTextAction({ id, ...input });
+  if (!result.isSuccess) {
+    globalErrorHandler(result, { showErrorFields });
+    return false;
+  }
+  toast.add({ type: 'success', title: result.message });
+  return true;
+}
+
+export async function submitArticleTagsReplacement(
+  id: string,
+  input: ReplaceArticleTagsInput,
+  showErrorFields: UseFormSetError<ReplaceArticleTagsInput>,
+) {
+  const result = await replaceArticleTagsAction({ id, ...input });
   if (!result.isSuccess) {
     globalErrorHandler(result, { showErrorFields });
     return false;

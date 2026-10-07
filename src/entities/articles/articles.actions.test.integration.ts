@@ -6,6 +6,10 @@ import {
   createArticleAction,
   getCurrentUserArticlesAction,
   getArticlePreviewBySlugAction,
+  getArticleByIdAction,
+  getArticleMainTextByIdAction,
+  getArticleTagsAction,
+  replaceArticleTagsAction,
   updateArticleAction,
   updateArticleMainTextAction,
 } from './articles.actions';
@@ -20,6 +24,10 @@ vi.mock('./articles.service', () => ({
   getCurrentUserArticles: vi.fn(),
   invalidateCurrentUserArticles: vi.fn(),
   getArticlePreviewBySlug: vi.fn(),
+  getArticleById: vi.fn(),
+  getArticleMainTextById: vi.fn(),
+  getArticleTags: vi.fn(),
+  replaceArticleTags: vi.fn(),
   updateArticle: vi.fn(),
   updateArticleMainText: vi.fn(),
   deleteArticle: vi.fn(),
@@ -33,7 +41,6 @@ const input = {
   mainImage: 'https://cdn.example.test/articles/dog.webp',
   mainThumbnailImage: 'data:image/webp;base64,AAAA',
   mainText: { type: 'doc' as const, content: [] },
-  tags: [],
 };
 
 describe('article actions', () => {
@@ -59,6 +66,20 @@ describe('article actions', () => {
     expect(service.getCurrentUserArticles).toHaveBeenCalledOnce();
   });
 
+  it('validates public ID reads before delegating to their services', async () => {
+    const response = { isSuccess: true as const, message: null, data: {} as never };
+    vi.mocked(service.getArticleById).mockResolvedValue(response);
+    vi.mocked(service.getArticleMainTextById).mockResolvedValue(response);
+    vi.mocked(service.getArticleTags).mockResolvedValue(response);
+
+    await expect(getArticleByIdAction({ id })).resolves.toBe(response);
+    await expect(getArticleMainTextByIdAction({ id })).resolves.toBe(response);
+    await expect(getArticleTagsAction({ id })).resolves.toBe(response);
+    expect(service.getArticleById).toHaveBeenCalledWith(id);
+    expect(service.getArticleMainTextById).toHaveBeenCalledWith(id);
+    expect(service.getArticleTags).toHaveBeenCalledWith(id);
+  });
+
   it('invalidates the current-author collection and refreshes the route on retry', async () => {
     const { retryCurrentUserArticlesAction } = await import('./articles.actions');
 
@@ -82,6 +103,14 @@ describe('article actions', () => {
     expect(service.createArticle).toHaveBeenCalledWith(input);
     expect(service.updateArticle).toHaveBeenCalledWith(id, { summary: 'خلاصه تازه' });
     expect(service.updateArticleMainText).toHaveBeenCalledWith(id, { mainText: input.mainText });
+  });
+
+  it('validates and delegates tag replacements separately', async () => {
+    const response = { isSuccess: true as const, message: 'ok', data: [] as never[] };
+    vi.mocked(service.replaceArticleTags).mockResolvedValue(response);
+
+    await expect(replaceArticleTagsAction({ id, tags: [{ title: 'سگ' }] })).resolves.toBe(response);
+    expect(service.replaceArticleTags).toHaveBeenCalledWith(id, { tags: [{ title: 'سگ' }] });
   });
 
   it('returns validation errors without reaching the service', async () => {

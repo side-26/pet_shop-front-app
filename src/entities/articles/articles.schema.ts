@@ -22,7 +22,6 @@ const articleDetailsFields = {
   mainImage: string().trim().url().max(2048),
   mainThumbnailImage: string().trim().min(1).max(10240),
   summary: string().trim().max(600),
-  tags: array(tagSchema).max(20),
   petType: objectIdSchema.optional(),
 };
 
@@ -38,7 +37,6 @@ export const createArticleSchema = object({
   subtitle: articleDetailsFields.subtitle.required(),
   mainImage: articleDetailsFields.mainImage.required(),
   mainThumbnailImage: articleDetailsFields.mainThumbnailImage.required(),
-  tags: articleDetailsFields.tags.default([]).required(),
   mainText: richTextSchema,
 });
 
@@ -50,8 +48,13 @@ export const updateArticleSchema = object(articleDetailsFields)
 
 export const updateArticleMainTextSchema = object({ mainText: richTextSchema });
 
+export const replaceArticleTagsSchema = object({
+  tags: array(tagSchema).max(20).required(),
+});
+
 export type ArticleIdInput = InferType<typeof articleIdSchema>;
 export type ArticleSlugInput = InferType<typeof articleSlugSchema>;
 export type CreateArticleInput = InferType<typeof createArticleSchema>;
 export type UpdateArticleInput = InferType<typeof updateArticleSchema>;
 export type UpdateArticleMainTextInput = InferType<typeof updateArticleMainTextSchema>;
+export type ReplaceArticleTagsInput = InferType<typeof replaceArticleTagsSchema>;

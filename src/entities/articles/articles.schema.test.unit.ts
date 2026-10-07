@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   articleSlugSchema,
   createArticleSchema,
+  replaceArticleTagsSchema,
   updateArticleMainTextSchema,
   updateArticleSchema,
 } from './articles.schema';
@@ -13,25 +14,27 @@ const article = {
   mainImage: 'https://cdn.example.test/articles/dog.webp',
   mainThumbnailImage: 'data:image/webp;base64,AAAA',
   mainText: { type: 'doc' as const, content: [] },
-  tags: [{ title: 'سگ' }],
 };
 
 describe('article schemas', () => {
-  it('normalizes the create body and supplies empty tags', async () => {
-    await expect(createArticleSchema.validate({ ...article, tags: undefined })).resolves.toEqual({
-      ...article,
-      tags: [],
-    });
+  it('strips tags from the create body because they have a dedicated endpoint', async () => {
+    await expect(
+      createArticleSchema.validate({ ...article, tags: [{ title: 'سگ' }] }, { stripUnknown: true }),
+    ).resolves.toEqual(article);
   });
 
-  it('rejects missing required create fields, invalid tags, and non-structured main text', async () => {
+  it('rejects missing required create fields and non-structured main text', async () => {
     await expect(createArticleSchema.validate({ title: article.title })).rejects.toThrow();
-    await expect(
-      createArticleSchema.validate({ ...article, tags: [{ title: '' }] }),
-    ).rejects.toThrow();
     await expect(
       createArticleSchema.validate({ ...article, mainText: '<p>متن</p>' }),
     ).rejects.toThrow('JSON ساخت‌یافته');
+  });
+
+  it('validates article tag replacement separately from article details', async () => {
+    await expect(replaceArticleTagsSchema.validate({ tags: [{ title: 'سگ' }] })).resolves.toEqual({
+      tags: [{ title: 'سگ' }],
+    });
+    await expect(replaceArticleTagsSchema.validate({ tags: [{ title: '' }] })).rejects.toThrow();
   });
 
   it('permits a partial detail update but requires at least one field', async () => {

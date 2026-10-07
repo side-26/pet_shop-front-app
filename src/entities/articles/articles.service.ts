@@ -2,15 +2,24 @@ import 'server-only';
 
 import { customFetcher } from '@/lib/api/customFetcher';
 import { EntityTag } from '@/utils/entityCache';
-import { toArticleDTO, toArticleDTOs } from './articles.dto';
+import {
+  toArticleDetailsDTO,
+  toArticleDTO,
+  toArticleDTOs,
+  toArticleMainTextDTO,
+  toArticleTagsDTO,
+} from './articles.dto';
 
 import type {
   ArticleDTO,
+  ArticleDetailsDTO,
   ArticleIdDTO,
+  ArticleMainTextDTO,
   ArticleSlugDTO,
   CreateArticleDTO,
   UpdateArticleDTO,
   UpdateArticleMainTextDTO,
+  ReplaceArticleTagsDTO,
 } from './articles.dto';
 
 const articlesCache = new EntityTag('articles');
@@ -42,6 +51,51 @@ export async function getCurrentUserArticles() {
     auth: true,
     cache: 'no-store',
     parseSuccess: toArticleDTOs,
+  });
+}
+
+export async function getArticleById(id: ArticleIdDTO['id']) {
+  'use cache';
+
+  articlesCache.cacheLife({ stale: 600 });
+  articlesCache.registerDetail(`id:${id}`);
+
+  return customFetcher<ArticleDetailsDTO>({
+    url: `/articles/id/${encodeURIComponent(id)}`,
+    method: 'GET',
+    auth: false,
+    cache: 'no-store',
+    parseSuccess: toArticleDetailsDTO,
+  });
+}
+
+export async function getArticleMainTextById(id: ArticleIdDTO['id']) {
+  'use cache';
+
+  articlesCache.cacheLife({ stale: 600 });
+  articlesCache.registerDetail(`main-text:${id}`);
+
+  return customFetcher<ArticleMainTextDTO>({
+    url: `/articles/id/${encodeURIComponent(id)}/main-text`,
+    method: 'GET',
+    auth: false,
+    cache: 'no-store',
+    parseSuccess: toArticleMainTextDTO,
+  });
+}
+
+export async function getArticleTags(id: ArticleIdDTO['id']) {
+  'use cache';
+
+  articlesCache.cacheLife({ stale: 600 });
+  articlesCache.registerDetail(`tags:${id}`);
+
+  return customFetcher({
+    url: `/articles/id/${encodeURIComponent(id)}/tags-list`,
+    method: 'GET',
+    auth: false,
+    cache: 'no-store',
+    parseSuccess: toArticleTagsDTO,
   });
 }
 
@@ -88,6 +142,20 @@ export async function updateArticleMainText(
     auth: true,
     cache: 'no-store',
     parseSuccess: toArticleDTO,
+  });
+
+  if (result.isSuccess) articlesCache.invalidateAll();
+  return result;
+}
+
+export async function replaceArticleTags(id: ArticleIdDTO['id'], input: ReplaceArticleTagsDTO) {
+  const result = await customFetcher({
+    url: `/articles/id/${encodeURIComponent(id)}/range-tags-list`,
+    method: 'PUT',
+    body: input,
+    auth: true,
+    cache: 'no-store',
+    parseSuccess: toArticleTagsDTO,
   });
 
   if (result.isSuccess) articlesCache.invalidateAll();

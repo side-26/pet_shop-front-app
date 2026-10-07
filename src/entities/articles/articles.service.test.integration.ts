@@ -6,10 +6,14 @@ import {
   createArticle,
   deleteArticle,
   getArticlePreviewBySlug,
+  getArticleById,
+  getArticleMainTextById,
+  getArticleTags,
   getCurrentUserArticles,
   invalidateCurrentUserArticles,
   updateArticle,
   updateArticleMainText,
+  replaceArticleTags,
 } from './articles.service';
 
 const {
@@ -44,12 +48,13 @@ const input = {
   mainImage: 'https://cdn.example.test/articles/dog.webp',
   mainThumbnailImage: 'data:image/webp;base64,AAAA',
   mainText: { type: 'doc' as const, content: [] },
-  tags: [{ title: 'سگ' }],
 };
+const tags = [{ title: 'سگ' }];
 const article = {
   ...input,
   id,
   summary: '',
+  tags,
   petType: null,
   author: { avatar: '', placeholderImage: '', firstName: 'سارا', lastName: 'احمدی' },
   slug: 'راهنمای-مراقبت-از-سگ-سگ',
@@ -92,6 +97,46 @@ describe('article service', () => {
     expect(registerListMock).toHaveBeenCalledWith('current-author');
   });
 
+  it('reads public article details, main text, and tags through their dedicated endpoints', async () => {
+    const details = { isSuccess: true as const, message: null, data: article };
+    const mainText = {
+      isSuccess: true as const,
+      message: null,
+      data: { mainText: input.mainText },
+    };
+    const tagResult = { isSuccess: true as const, message: null, data: tags };
+    vi.mocked(customFetcher)
+      .mockResolvedValueOnce(details)
+      .mockResolvedValueOnce(mainText)
+      .mockResolvedValueOnce(tagResult);
+
+    await expect(getArticleById(id)).resolves.toBe(details);
+    await expect(getArticleMainTextById(id)).resolves.toBe(mainText);
+    await expect(getArticleTags(id)).resolves.toBe(tagResult);
+
+    expect(customFetcher).toHaveBeenNthCalledWith(1, {
+      url: `/articles/id/${id}`,
+      method: 'GET',
+      auth: false,
+      cache: 'no-store',
+      parseSuccess: expect.any(Function),
+    });
+    expect(customFetcher).toHaveBeenNthCalledWith(2, {
+      url: `/articles/id/${id}/main-text`,
+      method: 'GET',
+      auth: false,
+      cache: 'no-store',
+      parseSuccess: expect.any(Function),
+    });
+    expect(customFetcher).toHaveBeenNthCalledWith(3, {
+      url: `/articles/id/${id}/tags-list`,
+      method: 'GET',
+      auth: false,
+      cache: 'no-store',
+      parseSuccess: expect.any(Function),
+    });
+  });
+
   it('invalidates only the current-author collection before retrying it', () => {
     invalidateCurrentUserArticles();
 
@@ -105,6 +150,7 @@ describe('article service', () => {
     await updateArticle(id, { title: 'عنوان تازه' });
     await updateArticleMainText(id, { mainText: input.mainText });
     await deleteArticle(id);
+    await replaceArticleTags(id, { tags: [{ title: 'سگ' }] });
 
     expect(customFetcher).toHaveBeenNthCalledWith(1, {
       url: '/articles',
@@ -136,7 +182,15 @@ describe('article service', () => {
       auth: true,
       cache: 'no-store',
     });
-    expect(invalidateAllMock).toHaveBeenCalledTimes(4);
+    expect(customFetcher).toHaveBeenNthCalledWith(5, {
+      url: `/articles/id/${id}/range-tags-list`,
+      method: 'PUT',
+      body: { tags: [{ title: 'سگ' }] },
+      auth: true,
+      cache: 'no-store',
+      parseSuccess: expect.any(Function),
+    });
+    expect(invalidateAllMock).toHaveBeenCalledTimes(5);
   });
 
   it('does not invalidate previews after a failed mutation', async () => {
@@ -150,6 +204,7 @@ describe('article service', () => {
     await updateArticle(id, { summary: 'خلاصه تازه' });
     await updateArticleMainText(id, { mainText: input.mainText });
     await deleteArticle(id);
+    await replaceArticleTags(id, { tags: [{ title: 'سگ' }] });
 
     expect(invalidateAllMock).not.toHaveBeenCalled();
   });
