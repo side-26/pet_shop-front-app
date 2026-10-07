@@ -4,15 +4,21 @@ import { getSession } from '@/utils/session';
 
 import {
   createArticleAction,
+  getCurrentUserArticlesAction,
   getArticlePreviewBySlugAction,
   updateArticleAction,
   updateArticleMainTextAction,
 } from './articles.actions';
 import * as service from './articles.service';
 
+const { refreshMock } = vi.hoisted(() => ({ refreshMock: vi.fn() }));
+
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
+vi.mock('next/cache', () => ({ refresh: refreshMock }));
 vi.mock('./articles.service', () => ({
   createArticle: vi.fn(),
+  getCurrentUserArticles: vi.fn(),
+  invalidateCurrentUserArticles: vi.fn(),
   getArticlePreviewBySlug: vi.fn(),
   updateArticle: vi.fn(),
   updateArticleMainText: vi.fn(),
@@ -43,6 +49,22 @@ describe('article actions', () => {
 
     await expect(getArticlePreviewBySlugAction({ slug: '  dog-care  ' })).resolves.toBe(response);
     expect(service.getArticlePreviewBySlug).toHaveBeenCalledWith('dog-care');
+  });
+
+  it('returns the authenticated user article collection from the service', async () => {
+    const response = { isSuccess: true as const, message: null, data: [] as never[] };
+    vi.mocked(service.getCurrentUserArticles).mockResolvedValue(response);
+
+    await expect(getCurrentUserArticlesAction()).resolves.toBe(response);
+    expect(service.getCurrentUserArticles).toHaveBeenCalledOnce();
+  });
+
+  it('invalidates the current-author collection and refreshes the route on retry', async () => {
+    const { retryCurrentUserArticlesAction } = await import('./articles.actions');
+
+    await expect(retryCurrentUserArticlesAction()).resolves.toBeUndefined();
+    expect(service.invalidateCurrentUserArticles).toHaveBeenCalledOnce();
+    expect(refreshMock).toHaveBeenCalledOnce();
   });
 
   it('validates create and update input before calling their services', async () => {
@@ -76,5 +98,14 @@ describe('article actions', () => {
 
     expect(result.isSuccess).toBe(false);
     expect(service.createArticle).not.toHaveBeenCalled();
+  });
+
+  it('rejects unauthenticated user-article reads before reaching the service', async () => {
+    vi.mocked(getSession).mockResolvedValue(null);
+
+    const result = await getCurrentUserArticlesAction();
+
+    expect(result.isSuccess).toBe(false);
+    expect(service.getCurrentUserArticles).not.toHaveBeenCalled();
   });
 });

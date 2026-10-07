@@ -10,7 +10,7 @@ export const landingSlugSchema = object({
     .trim()
     .min(2)
     .max(160)
-    .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+    .matches(/^[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*$/u)
     .required(),
 });
 

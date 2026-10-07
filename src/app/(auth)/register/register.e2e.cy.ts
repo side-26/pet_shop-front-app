@@ -18,7 +18,9 @@ describe('Register', () => {
     registeredPhoneNumber = undefined;
     cy.clearCookies();
     cy.task('resetE2ERegisterRateLimit', undefined, { log: false });
+    cy.intercept('GET', '/api/auth/session').as('authSession');
     cy.visit(routePaths.register);
+    cy.wait('@authSession');
   });
 
   afterEach(() => {

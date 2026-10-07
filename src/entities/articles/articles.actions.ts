@@ -1,6 +1,7 @@
 'use server';
 
 import { ValidationError } from 'yup';
+import { refresh } from 'next/cache';
 
 import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
 import type { FetcherError } from '@/lib/api/customFetcher';
@@ -42,6 +43,21 @@ async function validate<T>(
 export async function getArticlePreviewBySlugAction(input: unknown) {
   const value = await validate(articleSlugSchema, input);
   return 'isSuccess' in value ? value : service.getArticlePreviewBySlug(value.slug);
+}
+
+export async function getCurrentUserArticlesAction() {
+  const denied = await authorizeAuthenticated();
+  if (denied) return denied;
+
+  return service.getCurrentUserArticles();
+}
+
+export async function retryCurrentUserArticlesAction() {
+  const denied = await authorizeAuthenticated();
+  if (denied) return;
+
+  service.invalidateCurrentUserArticles();
+  refresh();
 }
 
 export async function createArticleAction(input: unknown) {

@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { instant } from '@next/playwright';
 
-const productPath = '/products/product-0de16436';
+const productPath =
+  '/products/%D8%AA%D8%B4%D9%88%DB%8C%D9%82%DB%8C-%D8%A2%D9%85%D9%88%D8%B2%D8%B4%DB%8C-%D8%B3%DA%AF-%D8%A8%D8%A7-%D8%B7%D8%B9%D9%85-%DA%AF%D9%88%D8%B4%D8%AA-%D8%B3%DA%AF-%D8%AA%D8%B4%D9%88%DB%8C%D9%82%DB%8C-%D9%88-%D8%A7%D8%B3%D9%86%DA%A9-%D8%AA%D8%B4%D9%88%DB%8C%D9%82%DB%8C-%D8%A2%D9%85%D9%88%D8%B2%D8%B4%DB%8C';
 const shell = '[data-product-detail-shell]';
 const content = '[data-product-detail-content]';
 

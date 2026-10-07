@@ -22,6 +22,9 @@ describe('landing schemas', () => {
     await expect(landingSlugSchema.validate({ slug: '  persian-cat  ' })).resolves.toEqual({
       slug: 'persian-cat',
     });
+    await expect(
+      landingSlugSchema.validate({ slug: '  تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ  ' }),
+    ).resolves.toEqual({ slug: 'تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ' });
   });
 
   it('normalizes repeated catalogue IDs, accepts isEnable, and removes the legacy available facet', async () => {

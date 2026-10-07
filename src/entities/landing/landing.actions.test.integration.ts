@@ -89,8 +89,12 @@ describe('retryAllLandingPetTypesAction', () => {
     await getPopularLandingPetsAction();
     await getRecentLandingPetsAction();
     await getLandingPetBySlugAction('persian-cat');
-    await getLandingProductBySlugAction('product-0de16436');
-    await getPublicLandingProductBySlugAction('product-0de16436');
+    await getLandingProductBySlugAction(
+      'تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ-تشویقی-و-اسنک-تشویقی-آموزشی',
+    );
+    await getPublicLandingProductBySlugAction(
+      'تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ-تشویقی-و-اسنک-تشویقی-آموزشی',
+    );
 
     expect(getAllLandingPetTypes).toHaveBeenCalledOnce();
     expect(getDiscountedLandingProducts).toHaveBeenCalledWith({ limit: 5 });
@@ -99,8 +103,12 @@ describe('retryAllLandingPetTypesAction', () => {
     expect(getPopularLandingPets).toHaveBeenCalledOnce();
     expect(getRecentLandingPets).toHaveBeenCalledOnce();
     expect(getLandingPetBySlug).toHaveBeenCalledWith('persian-cat');
-    expect(getLandingProductBySlug).toHaveBeenCalledWith('product-0de16436');
-    expect(getPublicLandingProductBySlug).toHaveBeenCalledWith('product-0de16436');
+    expect(getLandingProductBySlug).toHaveBeenCalledWith(
+      'تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ-تشویقی-و-اسنک-تشویقی-آموزشی',
+    );
+    expect(getPublicLandingProductBySlug).toHaveBeenCalledWith(
+      'تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ-تشویقی-و-اسنک-تشویقی-آموزشی',
+    );
   });
 
   it('validates the backend product-list filters and keeps its page size out of the action input', async () => {
@@ -157,9 +165,13 @@ describe('retryAllLandingPetTypesAction', () => {
   });
 
   it('validates and expires one product detail before refreshing it', async () => {
-    await retryLandingProductDetailAction('product-0de16436');
+    await retryLandingProductDetailAction(
+      'تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ-تشویقی-و-اسنک-تشویقی-آموزشی',
+    );
 
-    expect(invalidateLandingProductDetail).toHaveBeenCalledWith('product-0de16436');
+    expect(invalidateLandingProductDetail).toHaveBeenCalledWith(
+      'تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ-تشویقی-و-اسنک-تشویقی-آموزشی',
+    );
     expect(refreshMock).toHaveBeenCalledOnce();
   });
 

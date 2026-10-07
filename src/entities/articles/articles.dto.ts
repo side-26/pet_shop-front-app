@@ -1,7 +1,7 @@
 import { Expose, Type } from 'class-transformer';
 
 import type { RichTextFormValue } from '@/lib/rich-text';
-import { transform } from '@/lib/transform';
+import { transform, transformMany } from '@/lib/transform';
 
 import type {
   ArticleIdInput,
@@ -75,6 +75,11 @@ export class ArticleDTO {
 
 export function toArticleDTO(value: unknown) {
   return transform(ArticleDTO, value);
+}
+
+export function toArticleDTOs(value: unknown) {
+  if (!Array.isArray(value)) throw new TypeError('Expected an article array.');
+  return transformMany(ArticleDTO, value);
 }
 
 export type ArticleIdDTO = ArticleIdInput;

@@ -30,7 +30,7 @@ vi.mock('@/components/ui/rich-text', () => ({
 
 const product = {
   id: '6a9fcb6871b632040de16436',
-  slug: 'product-0de16436',
+  slug: 'تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ-تشویقی-و-اسنک-تشویقی-آموزشی',
   title: 'تشویقی آموزشی سگ با طعم گوشت',
   mainImage: 'https://s3.ir-thr-at1.arvanstorage.ir/pet-shop/products/main/product.webp',
   mainImageThumbnail: 'data:image/webp;base64,AAAA',
@@ -97,7 +97,7 @@ afterEach(() => {
   useCartStore.persist.clearStorage();
 });
 
-describe('/products/product-0de16436', () => {
+describe('/products/[slug]', () => {
   it('streams the API-backed product journey with inventory, taxonomy and specifications', async () => {
     const content = await ProductDetailContainer({
       productPromise: Promise.resolve({ isSuccess: true, message: null, data: product }),
@@ -135,7 +135,7 @@ describe('/products/product-0de16436', () => {
     const metadata = await generateMetadata({ params: Promise.resolve({ slug: product.slug }) });
 
     expect(metadata.title).toBe(`${product.title} | پت شاپ پرشین`);
-    expect(metadata.alternates?.canonical).toBe(`/products/${product.slug}`);
+    expect(metadata.alternates?.canonical).toBe(`/products/${encodeURIComponent(product.slug)}`);
   });
 
   it('only exposes the exact inventory count when stock is low', () => {

@@ -2,7 +2,7 @@ import 'server-only';
 
 import { customFetcher } from '@/lib/api/customFetcher';
 import { EntityTag } from '@/utils/entityCache';
-import { toArticleDTO } from './articles.dto';
+import { toArticleDTO, toArticleDTOs } from './articles.dto';
 
 import type {
   ArticleDTO,
@@ -28,6 +28,25 @@ export async function getArticlePreviewBySlug(slug: ArticleSlugDTO['slug']) {
     cache: 'no-store',
     parseSuccess: toArticleDTO,
   });
+}
+
+export async function getCurrentUserArticles() {
+  'use cache: private';
+
+  articlesCache.cacheLife({ stale: 600 });
+  articlesCache.registerList('current-author');
+
+  return customFetcher<ArticleDTO[]>({
+    url: '/article/all',
+    method: 'GET',
+    auth: true,
+    cache: 'no-store',
+    parseSuccess: toArticleDTOs,
+  });
+}
+
+export function invalidateCurrentUserArticles() {
+  articlesCache.invalidateQuery('current-author');
 }
 
 export async function createArticle(input: CreateArticleDTO) {

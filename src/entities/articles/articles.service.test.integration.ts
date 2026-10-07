@@ -6,14 +6,24 @@ import {
   createArticle,
   deleteArticle,
   getArticlePreviewBySlug,
+  getCurrentUserArticles,
+  invalidateCurrentUserArticles,
   updateArticle,
   updateArticleMainText,
 } from './articles.service';
 
-const { cacheLifeMock, invalidateAllMock, registerDetailMock } = vi.hoisted(() => ({
+const {
+  cacheLifeMock,
+  invalidateAllMock,
+  invalidateQueryMock,
+  registerDetailMock,
+  registerListMock,
+} = vi.hoisted(() => ({
   cacheLifeMock: vi.fn(),
   invalidateAllMock: vi.fn(),
+  invalidateQueryMock: vi.fn(),
   registerDetailMock: vi.fn(),
+  registerListMock: vi.fn(),
 }));
 
 vi.mock('@/lib/api/customFetcher', () => ({ customFetcher: vi.fn() }));
@@ -21,7 +31,9 @@ vi.mock('@/utils/entityCache', () => ({
   EntityTag: vi.fn(function EntityTagMock(this: Record<string, unknown>) {
     this.cacheLife = cacheLifeMock;
     this.invalidateAll = invalidateAllMock;
+    this.invalidateQuery = invalidateQueryMock;
     this.registerDetail = registerDetailMock;
+    this.registerList = registerListMock;
   }),
 }));
 
@@ -62,6 +74,28 @@ describe('article service', () => {
     });
     expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 600 });
     expect(registerDetailMock).toHaveBeenCalledWith('dog care/one');
+  });
+
+  it('gets only the authenticated user articles through a private tagged cache', async () => {
+    const response = { isSuccess: true as const, message: null, data: [article] };
+    vi.mocked(customFetcher).mockResolvedValue(response);
+
+    await expect(getCurrentUserArticles()).resolves.toBe(response);
+    expect(customFetcher).toHaveBeenCalledWith({
+      url: '/article/all',
+      method: 'GET',
+      auth: true,
+      cache: 'no-store',
+      parseSuccess: expect.any(Function),
+    });
+    expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 600 });
+    expect(registerListMock).toHaveBeenCalledWith('current-author');
+  });
+
+  it('invalidates only the current-author collection before retrying it', () => {
+    invalidateCurrentUserArticles();
+
+    expect(invalidateQueryMock).toHaveBeenCalledWith('current-author');
   });
 
   it('uses the exact authenticated bodies and endpoints for every mutation', async () => {

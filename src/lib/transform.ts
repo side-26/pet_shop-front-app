@@ -8,3 +8,9 @@ export function transform<T, V>(cls: ClassConstructor<T>, value: V): T {
   });
   // add new transformer options here if needed
 }
+
+export function transformMany<T, V>(cls: ClassConstructor<T>, value: V[]): T[] {
+  return plainToInstance(cls, value, {
+    excludeExtraneousValues: true,
+  });
+}

@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { ArticleAuthorDTO, ArticleDTO, ArticleTagDTO, toArticleDTO } from './articles.dto';
+import {
+  ArticleAuthorDTO,
+  ArticleDTO,
+  ArticleTagDTO,
+  toArticleDTO,
+  toArticleDTOs,
+} from './articles.dto';
 
 describe('article DTO transformation', () => {
   it('exposes only the public article contract and transforms nested DTOs', () => {
@@ -33,5 +39,21 @@ describe('article DTO transformation', () => {
     expect(dto).not.toHaveProperty('createdBy');
     expect(dto.tags[0]).not.toHaveProperty('internalValue');
     expect(dto.author).not.toHaveProperty('internalValue');
+  });
+
+  it('transforms each response item and rejects a non-list response', () => {
+    const articles = toArticleDTOs([
+      {
+        id: 'article-id',
+        title: 'راهنمای مراقبت از سگ',
+        tags: [],
+        author: {},
+        unexpected: true,
+      },
+    ]);
+
+    expect(articles[0]).toBeInstanceOf(ArticleDTO);
+    expect(articles[0]).not.toHaveProperty('unexpected');
+    expect(() => toArticleDTOs({})).toThrow('Expected an article array');
   });
 });

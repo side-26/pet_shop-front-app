@@ -185,11 +185,15 @@ describe('AdminLayoutShell', () => {
       'زیردسته‌بندی',
       'نژاد',
       'نوع حیوان',
+      'مقاله‌ها',
       'کاربران',
       'تنظیمات',
     ]);
     expect(adminNavigationItems.find(({ label }) => label === 'نوع حیوان')?.href).toBe(
       routePaths.adminPetTypes,
+    );
+    expect(adminNavigationItems.find(({ label }) => label === 'مقاله‌ها')?.href).toBe(
+      routePaths.adminArticles,
     );
     expect(adminNavigationItems.find(({ label }) => label === 'نژاد')?.href).toBe(
       routePaths.adminBreeds,

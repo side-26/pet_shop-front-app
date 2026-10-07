@@ -2,6 +2,7 @@ import {
   CircleHelp,
   CircleUserRound,
   Dog,
+  FileText,
   FolderTree,
   LayoutDashboard,
   LogOut,
@@ -34,6 +35,7 @@ export const adminNavigationItems = [
   { label: 'زیردسته‌بندی', href: routePaths.adminSubCategories, icon: FolderTree },
   { label: 'نژاد', href: routePaths.adminBreeds, icon: Dog },
   { label: 'نوع حیوان', href: routePaths.adminPetTypes, icon: PawPrint },
+  { label: 'مقاله‌ها', href: routePaths.adminArticles, icon: FileText },
   { label: 'کاربران', href: routePaths.adminPage('users'), icon: UsersRound },
   {
     label: 'تنظیمات',

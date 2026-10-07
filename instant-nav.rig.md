@@ -7,4 +7,4 @@
 - DRIFT: authentication cookie, purchase history, prior product rating, catalog seed data, and backend availability.
 - LOOP: local production build → start on port 3101 → Playwright; fully agent-drivable when the backend and system Chrome are available.
 - LIVENESS: not applicable; the rig serves the freshly completed local build.
-- WALLS: Playwright CDN access is unavailable in this location, so the rig uses the installed Google Chrome channel. The backend must contain `product-0de16436`.
+- WALLS: Playwright CDN access is unavailable in this location, so the rig uses the installed Google Chrome channel. The backend must contain the title-derived product fixture configured in `tests/instant-navigation/product-detail.spec.ts`.
