@@ -58,6 +58,7 @@ describe('article service', () => {
       method: 'GET',
       auth: false,
       cache: 'no-store',
+      parseSuccess: expect.any(Function),
     });
     expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 600 });
     expect(registerDetailMock).toHaveBeenCalledWith('dog care/one');
@@ -77,6 +78,7 @@ describe('article service', () => {
       body: input,
       auth: true,
       cache: 'no-store',
+      parseSuccess: expect.any(Function),
     });
     expect(customFetcher).toHaveBeenNthCalledWith(2, {
       url: `/articles/id/${id}`,
@@ -84,6 +86,7 @@ describe('article service', () => {
       body: { title: 'عنوان تازه' },
       auth: true,
       cache: 'no-store',
+      parseSuccess: expect.any(Function),
     });
     expect(customFetcher).toHaveBeenNthCalledWith(3, {
       url: `/articles/id/${id}/main-text`,
@@ -91,6 +94,7 @@ describe('article service', () => {
       body: { mainText: input.mainText },
       auth: true,
       cache: 'no-store',
+      parseSuccess: expect.any(Function),
     });
     expect(customFetcher).toHaveBeenNthCalledWith(4, {
       url: `/articles/id/${id}`,

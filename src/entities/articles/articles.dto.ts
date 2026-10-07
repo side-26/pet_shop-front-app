@@ -1,4 +1,7 @@
+import { Expose, Type } from 'class-transformer';
+
 import type { RichTextFormValue } from '@/lib/rich-text';
+import { transform } from '@/lib/transform';
 
 import type {
   ArticleIdInput,
@@ -8,30 +11,71 @@ import type {
   UpdateArticleMainTextInput,
 } from './articles.schema';
 
-export type ArticleTagDTO = { title: string };
+export class ArticleTagDTO {
+  @Expose()
+  declare title: string;
+}
 
-export type ArticleAuthorDTO = {
-  avatar: string;
-  placeholderImage: string;
-  firstName: string;
-  lastName: string;
-};
+export class ArticleAuthorDTO {
+  @Expose()
+  declare avatar: string;
 
-export type ArticleDTO = {
-  id: string;
-  title: string;
-  subtitle: string;
-  mainImage: string;
-  mainThumbnailImage: string;
-  summary: string;
-  tags: ArticleTagDTO[];
-  petType: string | null;
-  mainText: RichTextFormValue;
-  author: ArticleAuthorDTO;
-  slug: string;
-  createdAt: string;
-  updatedAt: string;
-};
+  @Expose()
+  declare placeholderImage: string;
+
+  @Expose()
+  declare firstName: string;
+
+  @Expose()
+  declare lastName: string;
+}
+
+export class ArticleDTO {
+  @Expose()
+  declare id: string;
+
+  @Expose()
+  declare title: string;
+
+  @Expose()
+  declare subtitle: string;
+
+  @Expose()
+  declare mainImage: string;
+
+  @Expose()
+  declare mainThumbnailImage: string;
+
+  @Expose()
+  declare summary: string;
+
+  @Expose()
+  @Type(() => ArticleTagDTO)
+  declare tags: ArticleTagDTO[];
+
+  @Expose()
+  declare petType: string | null;
+
+  @Expose()
+  declare mainText: RichTextFormValue;
+
+  @Expose()
+  @Type(() => ArticleAuthorDTO)
+  declare author: ArticleAuthorDTO;
+
+  @Expose()
+  declare slug: string;
+
+  @Expose()
+  declare createdAt: string;
+
+  @Expose()
+  declare updatedAt: string;
+}
+
+export function toArticleDTO(value: unknown) {
+  return transform(ArticleDTO, value);
+}
 
 export type ArticleIdDTO = ArticleIdInput;
 export type ArticleSlugDTO = ArticleSlugInput;

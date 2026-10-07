@@ -2,6 +2,7 @@ import 'server-only';
 
 import { customFetcher } from '@/lib/api/customFetcher';
 import { EntityTag } from '@/utils/entityCache';
+import { toArticleDTO } from './articles.dto';
 
 import type {
   ArticleDTO,
@@ -25,6 +26,7 @@ export async function getArticlePreviewBySlug(slug: ArticleSlugDTO['slug']) {
     method: 'GET',
     auth: false,
     cache: 'no-store',
+    parseSuccess: toArticleDTO,
   });
 }
 
@@ -35,6 +37,7 @@ export async function createArticle(input: CreateArticleDTO) {
     body: input,
     auth: true,
     cache: 'no-store',
+    parseSuccess: toArticleDTO,
   });
 
   if (result.isSuccess) articlesCache.invalidateAll();
@@ -48,6 +51,7 @@ export async function updateArticle(id: ArticleIdDTO['id'], input: UpdateArticle
     body: input,
     auth: true,
     cache: 'no-store',
+    parseSuccess: toArticleDTO,
   });
 
   if (result.isSuccess) articlesCache.invalidateAll();
@@ -64,6 +68,7 @@ export async function updateArticleMainText(
     body: input,
     auth: true,
     cache: 'no-store',
+    parseSuccess: toArticleDTO,
   });
 
   if (result.isSuccess) articlesCache.invalidateAll();
