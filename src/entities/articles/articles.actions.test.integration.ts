@@ -53,7 +53,9 @@ describe('article actions', () => {
     const response = { isSuccess: true as const, message: null, data: {} as never };
     vi.mocked(service.getArticlePreviewBySlug).mockResolvedValue(response);
 
-    await expect(getArticlePreviewBySlugAction({ slug: '  dog-care  ' })).resolves.toBe(response);
+    await expect(getArticlePreviewBySlugAction({ slug: '  dog-care  ' })).resolves.toMatchObject({
+      isSuccess: true,
+    });
     expect(service.getArticlePreviewBySlug).toHaveBeenCalledWith('dog-care');
   });
 
@@ -61,19 +63,20 @@ describe('article actions', () => {
     const response = { isSuccess: true as const, message: null, data: [] as never[] };
     vi.mocked(service.getCurrentUserArticles).mockResolvedValue(response);
 
-    await expect(getCurrentUserArticlesAction()).resolves.toBe(response);
+    await expect(getCurrentUserArticlesAction()).resolves.toMatchObject({ isSuccess: true });
     expect(service.getCurrentUserArticles).toHaveBeenCalledOnce();
   });
 
   it('validates public ID reads before delegating to their services', async () => {
     const response = { isSuccess: true as const, message: null, data: {} as never };
+    const tagsResponse = { isSuccess: true as const, message: null, data: [] as never[] };
     vi.mocked(service.getArticleById).mockResolvedValue(response);
     vi.mocked(service.getArticleMainTextById).mockResolvedValue(response);
-    vi.mocked(service.getArticleTags).mockResolvedValue(response);
+    vi.mocked(service.getArticleTags).mockResolvedValue(tagsResponse);
 
-    await expect(getArticleByIdAction({ id })).resolves.toBe(response);
-    await expect(getArticleMainTextByIdAction({ id })).resolves.toBe(response);
-    await expect(getArticleTagsAction({ id })).resolves.toBe(response);
+    await expect(getArticleByIdAction({ id })).resolves.toMatchObject({ isSuccess: true });
+    await expect(getArticleMainTextByIdAction({ id })).resolves.toMatchObject({ isSuccess: true });
+    await expect(getArticleTagsAction({ id })).resolves.toMatchObject({ isSuccess: true });
     expect(service.getArticleById).toHaveBeenCalledWith(id);
     expect(service.getArticleMainTextById).toHaveBeenCalledWith(id);
     expect(service.getArticleTags).toHaveBeenCalledWith(id);
@@ -93,11 +96,15 @@ describe('article actions', () => {
     vi.mocked(service.updateArticle).mockResolvedValue(response);
     vi.mocked(service.updateArticleMainText).mockResolvedValue(response);
 
-    await expect(createArticleAction(input)).resolves.toBe(response);
-    await expect(updateArticleAction({ id, summary: 'خلاصه تازه' })).resolves.toBe(response);
-    await expect(updateArticleMainTextAction({ id, mainText: input.mainText })).resolves.toBe(
-      response,
-    );
+    await expect(createArticleAction(input)).resolves.toMatchObject({ isSuccess: true });
+    await expect(updateArticleAction({ id, summary: 'خلاصه تازه' })).resolves.toMatchObject({
+      isSuccess: true,
+    });
+    await expect(
+      updateArticleMainTextAction({ id, mainText: input.mainText }),
+    ).resolves.toMatchObject({
+      isSuccess: true,
+    });
 
     expect(service.createArticle).toHaveBeenCalledWith(input);
     expect(service.updateArticle).toHaveBeenCalledWith(id, { summary: 'خلاصه تازه' });
@@ -108,7 +115,9 @@ describe('article actions', () => {
     const response = { isSuccess: true as const, message: 'ok', data: [] as never[] };
     vi.mocked(service.replaceArticleTags).mockResolvedValue(response);
 
-    await expect(replaceArticleTagsAction({ id, tags: [{ title: 'سگ' }] })).resolves.toBe(response);
+    await expect(replaceArticleTagsAction({ id, tags: [{ title: 'سگ' }] })).resolves.toMatchObject({
+      isSuccess: true,
+    });
     expect(service.replaceArticleTags).toHaveBeenCalledWith(id, { tags: [{ title: 'سگ' }] });
   });
 

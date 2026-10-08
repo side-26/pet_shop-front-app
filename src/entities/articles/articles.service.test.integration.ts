@@ -76,7 +76,6 @@ describe('article service', () => {
       method: 'GET',
       auth: false,
       cache: 'no-store',
-      parseSuccess: expect.any(Function),
     });
     expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 600 });
     expect(registerDetailMock).toHaveBeenCalledWith('dog care/one');
@@ -92,7 +91,6 @@ describe('article service', () => {
       method: 'GET',
       auth: true,
       cache: 'no-store',
-      parseSuccess: expect.any(Function),
     });
     expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 600 });
     expect(registerListMock).toHaveBeenCalledWith('current-author');
@@ -120,21 +118,18 @@ describe('article service', () => {
       method: 'GET',
       auth: false,
       cache: 'no-store',
-      parseSuccess: expect.any(Function),
     });
     expect(customFetcher).toHaveBeenNthCalledWith(2, {
       url: `/articles/id/${id}/main-text`,
       method: 'GET',
       auth: false,
       cache: 'no-store',
-      parseSuccess: expect.any(Function),
     });
     expect(customFetcher).toHaveBeenNthCalledWith(3, {
       url: `/articles/id/${id}/tags-list`,
       method: 'GET',
       auth: false,
       cache: 'no-store',
-      parseSuccess: expect.any(Function),
     });
   });
 
@@ -159,7 +154,6 @@ describe('article service', () => {
       body: expect.any(FormData),
       auth: true,
       cache: 'no-store',
-      parseSuccess: expect.any(Function),
     });
     expect(customFetcher).toHaveBeenNthCalledWith(2, {
       url: `/articles/id/${id}`,
@@ -167,7 +161,6 @@ describe('article service', () => {
       body: expect.any(FormData),
       auth: true,
       cache: 'no-store',
-      parseSuccess: expect.any(Function),
     });
     expect(customFetcher).toHaveBeenNthCalledWith(3, {
       url: `/articles/id/${id}/main-text`,
@@ -175,7 +168,6 @@ describe('article service', () => {
       body: { mainText: input.mainText },
       auth: true,
       cache: 'no-store',
-      parseSuccess: expect.any(Function),
     });
     expect(customFetcher).toHaveBeenNthCalledWith(4, {
       url: `/articles/id/${id}`,
@@ -189,7 +181,6 @@ describe('article service', () => {
       body: { tags: [{ title: 'سگ' }] },
       auth: true,
       cache: 'no-store',
-      parseSuccess: expect.any(Function),
     });
     const createBody = vi.mocked(customFetcher).mock.calls[0]?.[0].body as FormData;
     const updateBody = vi.mocked(customFetcher).mock.calls[1]?.[0].body as FormData;

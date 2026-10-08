@@ -102,7 +102,7 @@ function FileField<
           aria-label={ariaLabel}
           aria-invalid={fieldState.invalid}
           aria-describedby={descriptionId}
-          className="tw:sr-only"
+          className="tw:sr-only tw:hidden"
           onChange={handleChange}
         />
         {children(file)}

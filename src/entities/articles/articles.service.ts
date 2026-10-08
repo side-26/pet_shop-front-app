@@ -2,19 +2,13 @@ import 'server-only';
 
 import { customFetcher } from '@/lib/api/customFetcher';
 import { EntityTag } from '@/utils/entityCache';
-import {
-  toArticleDetailsDTO,
-  toArticleDTO,
-  toArticleDTOs,
-  toArticleMainTextDTO,
-  toArticleTagsDTO,
-} from './articles.dto';
 
 import type {
   ArticleDTO,
   ArticleDetailsDTO,
   ArticleIdDTO,
   ArticleMainTextDTO,
+  ArticleTagDTO,
   ArticleSlugDTO,
   CreateArticleDTO,
   UpdateArticleDTO,
@@ -35,7 +29,6 @@ export async function getArticlePreviewBySlug(slug: ArticleSlugDTO['slug']) {
     method: 'GET',
     auth: false,
     cache: 'no-store',
-    parseSuccess: toArticleDTO,
   });
 }
 
@@ -44,13 +37,12 @@ export async function getCurrentUserArticles() {
 
   articlesCache.cacheLife({ stale: 600 });
   articlesCache.registerList('current-author');
-
+  
   return customFetcher<ArticleDTO[]>({
     url: '/article/all',
     method: 'GET',
     auth: true,
     cache: 'no-store',
-    parseSuccess: toArticleDTOs,
   });
 }
 
@@ -65,7 +57,6 @@ export async function getArticleById(id: ArticleIdDTO['id']) {
     method: 'GET',
     auth: false,
     cache: 'no-store',
-    parseSuccess: toArticleDetailsDTO,
   });
 }
 
@@ -80,7 +71,6 @@ export async function getArticleMainTextById(id: ArticleIdDTO['id']) {
     method: 'GET',
     auth: false,
     cache: 'no-store',
-    parseSuccess: toArticleMainTextDTO,
   });
 }
 
@@ -90,12 +80,11 @@ export async function getArticleTags(id: ArticleIdDTO['id']) {
   articlesCache.cacheLife({ stale: 600 });
   articlesCache.registerDetail(`tags:${id}`);
 
-  return customFetcher({
+  return customFetcher<ArticleTagDTO[]>({
     url: `/articles/id/${encodeURIComponent(id)}/tags-list`,
     method: 'GET',
     auth: false,
     cache: 'no-store',
-    parseSuccess: toArticleTagsDTO,
   });
 }
 
@@ -120,7 +109,6 @@ export async function createArticle(input: CreateArticleDTO) {
     body: toArticleFormData(input),
     auth: true,
     cache: 'no-store',
-    parseSuccess: toArticleDTO,
   });
 
   if (result.isSuccess) articlesCache.invalidateAll();
@@ -134,7 +122,6 @@ export async function updateArticle(id: ArticleIdDTO['id'], input: UpdateArticle
     body: toArticleFormData(input),
     auth: true,
     cache: 'no-store',
-    parseSuccess: toArticleDTO,
   });
 
   if (result.isSuccess) articlesCache.invalidateAll();
@@ -151,7 +138,6 @@ export async function updateArticleMainText(
     body: input,
     auth: true,
     cache: 'no-store',
-    parseSuccess: toArticleDTO,
   });
 
   if (result.isSuccess) articlesCache.invalidateAll();
@@ -159,13 +145,12 @@ export async function updateArticleMainText(
 }
 
 export async function replaceArticleTags(id: ArticleIdDTO['id'], input: ReplaceArticleTagsDTO) {
-  const result = await customFetcher({
+  const result = await customFetcher<ArticleTagDTO[], unknown, ReplaceArticleTagsDTO>({
     url: `/articles/id/${encodeURIComponent(id)}/range-tags-list`,
     method: 'PUT',
     body: input,
     auth: true,
     cache: 'no-store',
-    parseSuccess: toArticleTagsDTO,
   });
 
   if (result.isSuccess) articlesCache.invalidateAll();

@@ -54,7 +54,7 @@ describe('ArticlesTableContainer', () => {
     expect(screen.getByText('مقاله‌ای برای نمایش وجود ندارد')).toBeTruthy();
   });
 
-  it('renders a normalized request failure', async () => {
+  it('throws a normalized request failure for the error boundary', async () => {
     const result = {
       isSuccess: false as const,
       message: 'دسترسی ممکن نیست',
@@ -62,10 +62,6 @@ describe('ArticlesTableContainer', () => {
     };
     const articlesPromise = Promise.resolve(result);
     usedPromiseValues.set(articlesPromise, result);
-    const view = ArticlesTableContainer({ articlesPromise });
-
-    render(<DirectionProvider direction="rtl">{view}</DirectionProvider>);
-    expect(screen.getByText('دریافت مقاله‌ها انجام نشد')).toBeTruthy();
-    expect(screen.getByText('دسترسی ممکن نیست')).toBeTruthy();
+    expect(() => ArticlesTableContainer({ articlesPromise })).toThrow('دسترسی ممکن نیست');
   });
 });

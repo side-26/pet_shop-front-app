@@ -26,7 +26,12 @@ describe('ArticlesHeaderActions', () => {
       </DirectionProvider>,
     );
 
-    expect(await screen.findByRole('button', { name: 'افزودن مقاله' })).toBeTruthy();
+    const addButton = await screen.findByRole('button', { name: 'افزودن مقاله' });
+    expect(addButton).toBeTruthy();
+    fireEvent.click(addButton);
+    expect(await screen.findByRole('dialog')).toBeTruthy();
+    expect(screen.getByText('ایجاد مقاله جدید')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'انصراف' }));
     fireEvent.click(screen.getByRole('button', { name: 'بارگذاری مجدد' }));
     expect(refresh).toHaveBeenCalledOnce();
   });

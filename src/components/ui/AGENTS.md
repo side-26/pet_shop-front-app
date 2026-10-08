@@ -343,6 +343,12 @@ radio items must be placed inside `DropdownMenuRadioGroup`, as required by Base 
 `DataTable` composes TanStack Table v8 with the shared `Table` renderer and owns
 sorting, pagination, empty state, and stable row IDs.
 
+`EmptyStateBoundary` is the Server Component boundary for an array-backed empty state.
+Pass `data`, `fallback`, and `children`; it renders `fallback` only when `data?.length === 0`.
+Override that condition with its optional zero-argument `isEmpty` predicate when required.
+Use `EmptyStateBoundaryClient` from the same folder only when the boundary itself must run in a
+Client Component. Compose visual fallbacks with the shared `Empty` primitive.
+
 `DataGrid` is the static compound definition-list primitive for label/value specifications. Compose
 `DataGrid.Root`, `DataGrid.Item`, `DataGrid.Label`, and `DataGrid.Value` in that order. Root owns
 the shared divider, border-color, density, and surface treatment: `borderColor` is

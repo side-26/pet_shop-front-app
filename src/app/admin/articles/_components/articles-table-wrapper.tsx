@@ -6,9 +6,12 @@ import { ArticlesTableContainer } from './articles-table-container';
 import { ArticlesTableErrorBoundary } from './articles-table-error-boundary';
 import { articlesTableSkeletonData } from './articles-table-skeleton-data';
 import { ArticlesTable } from './articles-table';
+import { TransformInstanceToPlain } from 'class-transformer';
 
 export function ArticlesTableWrapper() {
   const articlesPromise = getCurrentUserArticlesAction();
+
+  TransformInstanceToPlain();
 
   return (
     <Suspense fallback={<ArticlesTable articles={articlesTableSkeletonData} isLoading />}>

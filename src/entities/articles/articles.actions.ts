@@ -16,7 +16,21 @@ import {
   updateArticleSchema,
 } from './articles.schema';
 import * as service from './articles.service';
+import {
+  transformArticleDetailsResult,
+  transformArticleMainTextResult,
+  transformArticleResult,
+  transformArticleTagsResult,
+} from './articles.transformer';
+import { unwrapResult } from '@/lib/utils';
 
+async function requireAuthenticated(): Promise<void> {
+  const session = await getSession();
+
+  if (!session) {
+    throw new Error('برای مدیریت مقاله وارد حساب شوید.');
+  }
+}
 function accessError(): FetcherError {
   return {
     isSuccess: false,
@@ -43,29 +57,36 @@ async function validate<T>(
 
 export async function getArticlePreviewBySlugAction(input: unknown) {
   const value = await validate(articleSlugSchema, input);
-  return 'isSuccess' in value ? value : service.getArticlePreviewBySlug(value.slug);
+  return 'isSuccess' in value
+    ? value
+    : transformArticleResult(await service.getArticlePreviewBySlug(value.slug));
 }
 
 export async function getCurrentUserArticlesAction() {
-  const denied = await authorizeAuthenticated();
-  if (denied) return denied;
+  await requireAuthenticated();
 
-  return service.getCurrentUserArticles();
+  return unwrapResult(service.getCurrentUserArticles());
 }
 
 export async function getArticleByIdAction(input: unknown) {
   const value = await validate(articleIdSchema, input);
-  return 'isSuccess' in value ? value : service.getArticleById(value.id);
+  return 'isSuccess' in value
+    ? value
+    : transformArticleDetailsResult(await service.getArticleById(value.id));
 }
 
 export async function getArticleMainTextByIdAction(input: unknown) {
   const value = await validate(articleIdSchema, input);
-  return 'isSuccess' in value ? value : service.getArticleMainTextById(value.id);
+  return 'isSuccess' in value
+    ? value
+    : transformArticleMainTextResult(await service.getArticleMainTextById(value.id));
 }
 
 export async function getArticleTagsAction(input: unknown) {
   const value = await validate(articleIdSchema, input);
-  return 'isSuccess' in value ? value : service.getArticleTags(value.id);
+  return 'isSuccess' in value
+    ? value
+    : transformArticleTagsResult(await service.getArticleTags(value.id));
 }
 
 export async function retryCurrentUserArticlesAction() {
@@ -81,7 +102,7 @@ export async function createArticleAction(input: unknown) {
   if (denied) return denied;
 
   const value = await validate(createArticleSchema, input);
-  return 'isSuccess' in value ? value : service.createArticle(value);
+  return 'isSuccess' in value ? value : transformArticleResult(await service.createArticle(value));
 }
 
 export async function updateArticleAction(input: unknown) {
@@ -91,7 +112,9 @@ export async function updateArticleAction(input: unknown) {
   const id = await validate(articleIdSchema, input);
   if ('isSuccess' in id) return id;
   const value = await validate(updateArticleSchema, input);
-  return 'isSuccess' in value ? value : service.updateArticle(id.id, value);
+  return 'isSuccess' in value
+    ? value
+    : transformArticleResult(await service.updateArticle(id.id, value));
 }
 
 export async function updateArticleMainTextAction(input: unknown) {
@@ -101,7 +124,9 @@ export async function updateArticleMainTextAction(input: unknown) {
   const id = await validate(articleIdSchema, input);
   if ('isSuccess' in id) return id;
   const value = await validate(updateArticleMainTextSchema, input);
-  return 'isSuccess' in value ? value : service.updateArticleMainText(id.id, value);
+  return 'isSuccess' in value
+    ? value
+    : transformArticleResult(await service.updateArticleMainText(id.id, value));
 }
 
 export async function replaceArticleTagsAction(input: unknown) {
@@ -111,7 +136,9 @@ export async function replaceArticleTagsAction(input: unknown) {
   const id = await validate(articleIdSchema, input);
   if ('isSuccess' in id) return id;
   const value = await validate(replaceArticleTagsSchema, input);
-  return 'isSuccess' in value ? value : service.replaceArticleTags(id.id, value);
+  return 'isSuccess' in value
+    ? value
+    : transformArticleTagsResult(await service.replaceArticleTags(id.id, value));
 }
 
 export async function deleteArticleAction(input: unknown) {
