@@ -1,4 +1,4 @@
-import { FetchErrorSectionBoundary } from '@/components/common/fetch-error-section-boundary';
+import { FetchErrorSection } from '@/components/common/fetch-error-section';
 import {
   getProfileAddressesAction,
   retryProfileAddressesAction,
@@ -12,7 +12,7 @@ export async function CheckoutAddressDrawerList() {
 
   if (!result?.isSuccess) {
     return (
-      <FetchErrorSectionBoundary
+      <FetchErrorSection
         description={result?.message ?? undefined}
         onRetry={retryProfileAddressesAction}
         title="دریافت نشانی‌ها انجام نشد"

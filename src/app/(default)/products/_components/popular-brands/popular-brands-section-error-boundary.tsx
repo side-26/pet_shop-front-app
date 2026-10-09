@@ -2,7 +2,7 @@
 
 import { catchError, type ErrorInfo } from 'next/error';
 
-import { FetchErrorSectionBoundary } from '@/components/common/fetch-error-section-boundary';
+import { FetchErrorSection } from '@/components/common/fetch-error-section';
 
 function PopularBrandsSectionErrorFallback(_: object, { error, retry }: ErrorInfo) {
   console.error(
@@ -10,7 +10,7 @@ function PopularBrandsSectionErrorFallback(_: object, { error, retry }: ErrorInf
     error,
   );
   return (
-    <FetchErrorSectionBoundary
+    <FetchErrorSection
       description="هنگام نمایش برندهای محبوب خطای غیرمنتظره‌ای رخ داد. دوباره تلاش کنید."
       onRetry={retry}
       title="دریافت برندهای محبوب انجام نشد"

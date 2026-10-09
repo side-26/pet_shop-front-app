@@ -10,7 +10,7 @@ function FailedPopularPetsContent(): never {
 }
 
 describe('PopularPetsSectionErrorBoundary', () => {
-  it('renders FetchErrorSectionBoundary when the popular-pets content fails', () => {
+  it('renders FetchErrorSection when the popular-pets content fails', () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     render(

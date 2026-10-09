@@ -10,7 +10,7 @@ function FailedArticlesTableContent(): never {
 }
 
 describe('ArticlesTableErrorBoundary', () => {
-  it('renders FetchErrorSectionBoundary when article-table rendering fails', () => {
+  it('renders FetchErrorSection when article-table rendering fails', () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     render(

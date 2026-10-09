@@ -37,7 +37,6 @@ export async function getCurrentUserArticles() {
 
   articlesCache.cacheLife({ stale: 600 });
   articlesCache.registerList('current-author');
-  
   return customFetcher<ArticleDTO[]>({
     url: '/article/all',
     method: 'GET',

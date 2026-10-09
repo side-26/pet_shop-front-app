@@ -1,6 +1,6 @@
 import type { getProfileAddressesAction } from '@/entities/profile/profile.actions';
 
-import { FetchErrorSectionBoundary } from '@/components/common/fetch-error-section-boundary';
+import { FetchErrorSection } from '@/components/common/fetch-error-section';
 import { retryProfileAddressesAction } from '@/entities/profile/profile.actions';
 
 import { mapCheckoutAddresses } from './address-selection.mapper';
@@ -13,7 +13,7 @@ export async function DesktopAddressSelectionContainer({
 
   if (!result?.isSuccess) {
     return (
-      <FetchErrorSectionBoundary
+      <FetchErrorSection
         description={result?.message ?? undefined}
         onRetry={retryProfileAddressesAction}
         title="دریافت نشانی‌ها انجام نشد"

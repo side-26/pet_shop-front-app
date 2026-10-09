@@ -10,7 +10,7 @@ function FailedRehomingContent(): never {
 }
 
 describe('RehomingSectionErrorBoundary', () => {
-  it('renders FetchErrorSectionBoundary when the rehoming content fails', () => {
+  it('renders FetchErrorSection when the rehoming content fails', () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     render(

@@ -10,7 +10,7 @@ function FailedPetTypesContent(): never {
 }
 
 describe('PetTypesSectionErrorBoundary', () => {
-  it('renders FetchErrorSectionBoundary when the pet-type content fails', () => {
+  it('renders FetchErrorSection when the pet-type content fails', () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     render(

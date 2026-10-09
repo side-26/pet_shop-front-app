@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-type FetchErrorSectionBoundaryProps = Readonly<{
+type FetchErrorSectionProps = Readonly<{
   className?: string;
   description?: ReactNode;
   icon?: LucideIcon;
@@ -30,15 +30,14 @@ type FetchErrorSectionBoundaryProps = Readonly<{
  * `retry` from an error boundary). The page reload action intentionally performs
  * a hard browser reload to recover from broader stale-client or route failures.
  */
-function FetchErrorSectionBoundary({
+function FetchErrorSection({
   className,
   description = 'دریافت اطلاعات این بخش با مشکل روبه‌رو شد. دوباره تلاش کنید.',
   icon: Icon = RefreshCw,
   onRetry,
   retryCooldownMs = 3_000,
   title = 'بارگذاری اطلاعات انجام نشد',
-}: FetchErrorSectionBoundaryProps) {
-  const [isRetrying, startRetryTransition] = useTransition();
+}: FetchErrorSectionProps) {
   const [isRetryCoolingDown, setIsRetryCoolingDown] = useState(false);
 
   useEffect(() => {
@@ -52,7 +51,7 @@ function FetchErrorSectionBoundary({
     if (isRetryCoolingDown) return;
 
     setIsRetryCoolingDown(true);
-    startRetryTransition(onRetry);
+    onRetry();
   }
 
   function handlePageReload() {
@@ -82,13 +81,7 @@ function FetchErrorSectionBoundary({
       </CardContent>
 
       <CardFooter className="tw:justify-center">
-        <Button
-          type="button"
-          disabled={isRetryCoolingDown}
-          isLoading={isRetrying}
-          loadingText="در حال دریافت اطلاعات..."
-          onClick={handleRetry}
-        >
+        <Button type="button" onClick={handleRetry}>
           <RefreshCw data-icon="inline-start" />
           دریافت دوباره اطلاعات
         </Button>
@@ -101,4 +94,4 @@ function FetchErrorSectionBoundary({
   );
 }
 
-export { FetchErrorSectionBoundary, type FetchErrorSectionBoundaryProps };
+export { FetchErrorSection, type FetchErrorSectionProps };

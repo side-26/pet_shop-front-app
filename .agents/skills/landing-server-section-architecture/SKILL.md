@@ -43,10 +43,10 @@ Do not catch normalized service failures in the error boundary, fetch with `useE
 
 Expected fetch failures and unexpected rendering failures have different recovery paths.
 
-- The `*FetchError` client adapter composes `FetchErrorSectionBoundary`, supplies the section title/message, and passes a section-specific Server Action to `onRetry`.
+- The `*FetchError` client adapter composes `FetchErrorSection`, supplies the section title/message, and passes a section-specific Server Action to `onRetry`.
 - The retry action invalidates only the deterministic query tag(s) used by that section's landing service cache, then calls `refresh()` from `next/cache`. It must not broadly refresh unrelated landing data.
-- The `catchError` boundary surrounds the async container inside the same Suspense boundary. Its fallback logs enough context for diagnosis and renders `FetchErrorSectionBoundary` with `retry` for unexpected rendering failures.
-- `FetchErrorSectionBoundary` owns its client cooldown and hard page-reload control. Do not replace targeted retry with `router.refresh()` or `window.location.reload()`.
+- The `catchError` boundary surrounds the async container inside the same Suspense boundary. Its fallback logs enough context for diagnosis and renders `FetchErrorSection` with `retry` for unexpected rendering failures.
+- `FetchErrorSection` owns its client cooldown and hard page-reload control. Do not replace targeted retry with `router.refresh()` or `window.location.reload()`.
 
 ## Cache alignment
 

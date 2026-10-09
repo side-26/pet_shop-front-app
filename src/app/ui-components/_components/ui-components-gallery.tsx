@@ -35,6 +35,7 @@ import { ToggleGroupShowcase } from './toggle-group-showcase';
 import { TabsShowcase } from './tabs-showcase';
 import { EmptyShowcase } from './empty-showcase';
 import { EmptyStateBoundaryShowcase } from './empty-state-boundary-showcase';
+import { ErrorStateBoundaryShowcase } from './error-state-boundary-showcase';
 import { FormDialogContentShowcase } from './form-dialog-content-showcase';
 import { FilterFormDialogContentShowcase } from './filter-form-dialog-content-showcase';
 import { FileFieldShowcase } from './file-field-showcase';
@@ -102,6 +103,7 @@ const navigation = [
   ['#counters', 'Counter'],
   ['#empty-states', 'Empty'],
   ['#empty-state-boundaries', 'Empty State Boundary'],
+  ['#error-state-boundaries', 'Error State Boundary'],
   ['#fetch-error-section-boundary', 'Fetch Error Section Boundary'],
   ['#neshan-maps', 'Neshan Map'],
   ['#neshan-map-pointer-icons', 'Neshan Map Pointer Icon'],
@@ -192,6 +194,7 @@ export function UiComponentsGallery() {
         <CounterShowcase />
         <EmptyShowcase />
         <EmptyStateBoundaryShowcase />
+        <ErrorStateBoundaryShowcase />
         <FetchErrorSectionBoundaryShowcase />
         <NeshanMapShowcase />
         <NeshanMapPointerIconShowcase />

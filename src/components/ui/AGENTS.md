@@ -349,6 +349,11 @@ Override that condition with its optional zero-argument `isEmpty` predicate when
 Use `EmptyStateBoundaryClient` from the same folder only when the boundary itself must run in a
 Client Component. Compose visual fallbacks with the shared `Empty` primitive.
 
+`ErrorStateBoundary` is a client-side, component-level rendering error boundary powered by Next.js
+`catchError`. Pass `fallback` and `children`; it renders `children` when no descendant rendering
+error is caught and renders the supplied `fallback` otherwise. Use it for local recovery states;
+the fallback owns any retry or reset interaction it needs.
+
 `DataGrid` is the static compound definition-list primitive for label/value specifications. Compose
 `DataGrid.Root`, `DataGrid.Item`, `DataGrid.Label`, and `DataGrid.Value` in that order. Root owns
 the shared divider, border-color, density, and surface treatment: `borderColor` is

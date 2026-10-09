@@ -2,11 +2,11 @@
 
 import { catchError, type ErrorInfo } from 'next/error';
 
-import { FetchErrorSectionBoundary } from '@/components/common/fetch-error-section-boundary';
+import { FetchErrorSection } from '@/components/common/fetch-error-section';
 
 function OrderDetailDialogErrorFallback(_: object, { retry }: ErrorInfo) {
   return (
-    <FetchErrorSectionBoundary
+    <FetchErrorSection
       description="دریافت جزئیات این سفارش ناموفق بود."
       onRetry={retry}
       title="جزئیات سفارش در دسترس نیست"

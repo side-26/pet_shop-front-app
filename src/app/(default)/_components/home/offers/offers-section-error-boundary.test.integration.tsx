@@ -10,7 +10,7 @@ function FailedOffersContent(): never {
 }
 
 describe('OffersSectionErrorBoundary', () => {
-  it('renders FetchErrorSectionBoundary when the offers content fails', () => {
+  it('renders FetchErrorSection when the offers content fails', () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     render(
