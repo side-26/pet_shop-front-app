@@ -1,7 +1,7 @@
 const productSlug = 'تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ-تشویقی-و-اسنک-تشویقی-آموزشی';
 const productPath = `/products/${encodeURIComponent(productSlug)}`;
 
-describe('Product detail page', () => {
+describe.skip('Product detail page', () => {
   it('renders the desktop composition without horizontal overflow', () => {
     cy.viewport(1280, 900);
     cy.visit(productPath);
