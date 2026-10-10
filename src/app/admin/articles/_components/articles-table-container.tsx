@@ -4,7 +4,6 @@ import type { getCurrentUserArticlesAction } from '@/entities/articles/articles.
 import { EmptyStateBoundary } from '@/components/ui/empty-state-boundary';
 
 import { ArticlesTableEmptyState } from './articles-table-empty-state';
-import { mapArticlesTableRows } from './articles-table.mapper';
 import { ArticlesTable } from './articles-table';
 import { transformArticleListResult } from '@/entities/articles/articles.transformer';
 
@@ -19,7 +18,7 @@ export function ArticlesTableContainer({ articlesPromise }: ArticlesTableContain
 
   return (
     <EmptyStateBoundary data={data} fallback={<ArticlesTableEmptyState />}>
-      <ArticlesTable articles={mapArticlesTableRows(data)} />
+      <ArticlesTable articles={data} />
     </EmptyStateBoundary>
   );
 }

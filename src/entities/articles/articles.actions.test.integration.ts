@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getSession } from '@/utils/session';
+import { getAllPetTypes } from '@/entities/pet-types/pet-types.service';
 
 import {
   createArticleAction,
@@ -8,7 +9,6 @@ import {
   getArticlePreviewBySlugAction,
   getArticleByIdAction,
   getArticleMainTextByIdAction,
-  getArticleTagsAction,
   replaceArticleTagsAction,
   updateArticleAction,
   updateArticleMainTextAction,
@@ -19,6 +19,7 @@ const { refreshMock } = vi.hoisted(() => ({ refreshMock: vi.fn() }));
 
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
 vi.mock('next/cache', () => ({ refresh: refreshMock }));
+vi.mock('@/entities/pet-types/pet-types.service', () => ({ getAllPetTypes: vi.fn() }));
 vi.mock('./articles.service', () => ({
   createArticle: vi.fn(),
   getCurrentUserArticles: vi.fn(),
@@ -53,33 +54,39 @@ describe('article actions', () => {
     const response = { isSuccess: true as const, message: null, data: {} as never };
     vi.mocked(service.getArticlePreviewBySlug).mockResolvedValue(response);
 
-    await expect(getArticlePreviewBySlugAction({ slug: '  dog-care  ' })).resolves.toMatchObject({
-      isSuccess: true,
-    });
+    await getArticlePreviewBySlugAction({ slug: '  dog-care  ' });
     expect(service.getArticlePreviewBySlug).toHaveBeenCalledWith('dog-care');
   });
 
   it('returns the authenticated user article collection from the service', async () => {
-    const response = { isSuccess: true as const, message: null, data: [] as never[] };
+    const response = {
+      isSuccess: true as const,
+      message: null,
+      data: [{ id, petType: 'pet-type-id' }] as never[],
+    };
     vi.mocked(service.getCurrentUserArticles).mockResolvedValue(response);
+    vi.mocked(getAllPetTypes).mockResolvedValue({
+      isSuccess: true,
+      message: null,
+      data: [{ id: 'pet-type-id', title: 'سگ' }] as never,
+    });
 
-    await expect(getCurrentUserArticlesAction()).resolves.toMatchObject({ isSuccess: true });
+    await expect(getCurrentUserArticlesAction()).resolves.toEqual([
+      { id, petType: 'pet-type-id', petTypeTitle: 'سگ' },
+    ]);
     expect(service.getCurrentUserArticles).toHaveBeenCalledOnce();
+    expect(getAllPetTypes).toHaveBeenCalledWith({ includeDisabled: false });
   });
 
   it('validates public ID reads before delegating to their services', async () => {
     const response = { isSuccess: true as const, message: null, data: {} as never };
-    const tagsResponse = { isSuccess: true as const, message: null, data: [] as never[] };
     vi.mocked(service.getArticleById).mockResolvedValue(response);
     vi.mocked(service.getArticleMainTextById).mockResolvedValue(response);
-    vi.mocked(service.getArticleTags).mockResolvedValue(tagsResponse);
 
-    await expect(getArticleByIdAction({ id })).resolves.toMatchObject({ isSuccess: true });
-    await expect(getArticleMainTextByIdAction({ id })).resolves.toMatchObject({ isSuccess: true });
-    await expect(getArticleTagsAction({ id })).resolves.toMatchObject({ isSuccess: true });
+    await getArticleByIdAction({ id });
+    await getArticleMainTextByIdAction({ id });
     expect(service.getArticleById).toHaveBeenCalledWith(id);
     expect(service.getArticleMainTextById).toHaveBeenCalledWith(id);
-    expect(service.getArticleTags).toHaveBeenCalledWith(id);
   });
 
   it('invalidates the current-author collection and refreshes the route on retry', async () => {
@@ -140,9 +147,10 @@ describe('article actions', () => {
   it('rejects unauthenticated user-article reads before reaching the service', async () => {
     vi.mocked(getSession).mockResolvedValue(null);
 
-    const result = await getCurrentUserArticlesAction();
-
-    expect(result.isSuccess).toBe(false);
+    await expect(getCurrentUserArticlesAction()).rejects.toThrow(
+      'برای مدیریت مقاله وارد حساب شوید.',
+    );
     expect(service.getCurrentUserArticles).not.toHaveBeenCalled();
+    expect(getAllPetTypes).not.toHaveBeenCalled();
   });
 });

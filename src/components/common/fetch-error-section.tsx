@@ -1,7 +1,7 @@
 'use client';
 
 import { RefreshCw, RotateCcw, type LucideIcon } from 'lucide-react';
-import { useEffect, useState, useTransition, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -81,7 +81,7 @@ function FetchErrorSection({
       </CardContent>
 
       <CardFooter className="tw:justify-center">
-        <Button type="button" onClick={handleRetry}>
+        <Button type="button" onClick={handleRetry} disabled={isRetryCoolingDown}>
           <RefreshCw data-icon="inline-start" />
           دریافت دوباره اطلاعات
         </Button>

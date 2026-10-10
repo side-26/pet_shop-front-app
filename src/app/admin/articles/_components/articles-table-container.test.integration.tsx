@@ -26,6 +26,7 @@ const article = {
   summary: 'خلاصه',
   tags: [],
   petType: null,
+  petTypeTitle: null,
   mainText: { type: 'doc' as const, content: [] },
   author: { avatar: '', placeholderImage: '', firstName: 'سارا', lastName: 'احمدی' },
   slug: 'dog-care',
@@ -35,9 +36,8 @@ const article = {
 
 describe('ArticlesTableContainer', () => {
   it('maps successful article reads into the shared table renderer', async () => {
-    const result = { isSuccess: true as const, message: null, data: [article] };
-    const articlesPromise = Promise.resolve(result);
-    usedPromiseValues.set(articlesPromise, result);
+    const articlesPromise = Promise.resolve([article]);
+    usedPromiseValues.set(articlesPromise, [article]);
     const view = ArticlesTableContainer({ articlesPromise });
 
     render(<DirectionProvider direction="rtl">{view}</DirectionProvider>);
@@ -45,23 +45,11 @@ describe('ArticlesTableContainer', () => {
   });
 
   it('renders a distinct empty state', async () => {
-    const result = { isSuccess: true as const, message: null, data: [] };
-    const articlesPromise = Promise.resolve(result);
-    usedPromiseValues.set(articlesPromise, result);
+    const articlesPromise = Promise.resolve([]);
+    usedPromiseValues.set(articlesPromise, []);
     const view = ArticlesTableContainer({ articlesPromise });
 
     render(<DirectionProvider direction="rtl">{view}</DirectionProvider>);
     expect(screen.getByText('مقاله‌ای برای نمایش وجود ندارد')).toBeTruthy();
-  });
-
-  it('throws a normalized request failure for the error boundary', async () => {
-    const result = {
-      isSuccess: false as const,
-      message: 'دسترسی ممکن نیست',
-      data: { messages: {}, details: {} },
-    };
-    const articlesPromise = Promise.resolve(result);
-    usedPromiseValues.set(articlesPromise, result);
-    expect(() => ArticlesTableContainer({ articlesPromise })).toThrow('دسترسی ممکن نیست');
   });
 });

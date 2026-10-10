@@ -1,4 +1,5 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -18,12 +19,18 @@ afterEach(() => {
 
 describe('ArticlesHeaderActions', () => {
   it('registers visible add and reload controls', async () => {
+    const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
+
     render(
-      <DirectionProvider direction="rtl">
-        <AdminLayoutShellView pathname={routePaths.adminArticles} entityName="مقاله">
-          <ArticlesHeaderActions />
-        </AdminLayoutShellView>
-      </DirectionProvider>,
+      <QueryClientProvider client={queryClient}>
+        <DirectionProvider direction="rtl">
+          <AdminLayoutShellView pathname={routePaths.adminArticles} entityName="مقاله">
+            <ArticlesHeaderActions
+              petTypes={[{ id: 'type-1', image: 'cat.webp', title: 'گربه' }]}
+            />
+          </AdminLayoutShellView>
+        </DirectionProvider>
+      </QueryClientProvider>,
     );
 
     const addButton = await screen.findByRole('button', { name: 'افزودن مقاله' });
@@ -31,6 +38,7 @@ describe('ArticlesHeaderActions', () => {
     fireEvent.click(addButton);
     expect(await screen.findByRole('dialog')).toBeTruthy();
     expect(screen.getByText('ایجاد مقاله جدید')).toBeTruthy();
+    expect(screen.getByRole('combobox', { name: 'نوع حیوان' })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'انصراف' }));
     fireEvent.click(screen.getByRole('button', { name: 'بارگذاری مجدد' }));
     expect(refresh).toHaveBeenCalledOnce();

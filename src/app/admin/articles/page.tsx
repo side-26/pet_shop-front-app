@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { ArticlesHeaderActions } from './_components/articles-header-actions';
+import { ArticlesHeaderActionsWrapper } from './_components/articles-header-actions-wrapper';
 import { ArticlesPageContentWrapper } from './_components/articles-page-content-wrapper';
 
 export const metadata: Metadata = {
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function AdminArticlesPage() {
   return (
     <article className="tw:flex tw:min-h-0 tw:size-full tw:flex-col tw:overflow-hidden tw:p-3 tw:sm:p-4">
-      <ArticlesHeaderActions />
+      <ArticlesHeaderActionsWrapper />
       <ArticlesPageContentWrapper />
     </article>
   );

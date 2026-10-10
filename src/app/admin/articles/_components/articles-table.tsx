@@ -81,10 +81,8 @@ export function ArticlesTable({ articles, isLoading = false }: ArticlesTableProp
                   <div className="tw:line-clamp-2">{displayValue(article.title)}</div>
                 </TableCell>
                 <TableCell className="tw:max-w-40 tw:whitespace-normal">
-                  {article.petType ? (
-                    <bdi dir="ltr" className="tw:block tw:truncate">
-                      {article.petType}
-                    </bdi>
+                  {article.petTypeTitle ? (
+                    <span className="tw:block tw:truncate">{article.petTypeTitle}</span>
                   ) : (
                     <span className="tw:text-muted-foreground">بدون نوع حیوان</span>
                   )}
@@ -93,8 +91,8 @@ export function ArticlesTable({ articles, isLoading = false }: ArticlesTableProp
                   <div className="tw:flex tw:flex-wrap tw:gap-1">
                     {article.tags.length ? (
                       article.tags.map((tag) => (
-                        <Badge key={tag} color="neutral" size="sm" variant="tonal">
-                          {displayValue(tag)}
+                        <Badge key={tag.title} color="neutral" size="sm" variant="tonal">
+                          {displayValue(tag.title)}
                         </Badge>
                       ))
                     ) : (

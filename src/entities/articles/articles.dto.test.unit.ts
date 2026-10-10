@@ -18,7 +18,8 @@ describe('article DTO transformation', () => {
       mainThumbnailImage: 'data:image/webp;base64,AAAA',
       summary: '',
       tags: [{ title: 'سگ', internalValue: 'removed' }],
-      petType: null,
+      petType: 'pet-type-id',
+      petTypeTitle: 'سگ',
       mainText: { type: 'doc', content: [] },
       author: {
         avatar: '',
@@ -38,6 +39,7 @@ describe('article DTO transformation', () => {
     expect(dto.author).toBeInstanceOf(ArticleAuthorDTO);
     expect(dto).not.toHaveProperty('createdBy');
     expect(dto.tags[0]).not.toHaveProperty('internalValue');
+    expect(dto.petTypeTitle).toBe('سگ');
     expect(dto.author).not.toHaveProperty('internalValue');
   });
 

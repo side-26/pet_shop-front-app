@@ -9,8 +9,8 @@ afterEach(cleanup);
 const article = {
   id: 'article-id',
   title: 'راهنمای مراقبت از سگ',
-  petType: '507f1f77bcf86cd799439011',
-  tags: ['سگ', 'سلامت', 'تغذیه'],
+  petTypeTitle: 'سگ',
+  tags: [{ title: 'سگ' }, { title: 'سلامت' }, { title: 'تغذیه' }],
   summary: 'راهنمای کوتاه برای نگهداری بهتر از سگ.',
   mainImage: 'https://cdn.example.test/articles/dog.webp',
   mainThumbnailImage: 'data:image/webp;base64,AAAA',

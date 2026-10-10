@@ -4,6 +4,7 @@ import { ValidationError } from 'yup';
 import { refresh } from 'next/cache';
 
 import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
+import { getAllPetTypes } from '@/entities/pet-types/pet-types.service';
 import type { FetcherError } from '@/lib/api/customFetcher';
 import { getSession } from '@/utils/session';
 
@@ -65,7 +66,16 @@ export async function getArticlePreviewBySlugAction(input: unknown) {
 export async function getCurrentUserArticlesAction() {
   await requireAuthenticated();
 
-  return unwrapResult(service.getCurrentUserArticles());
+  const [articles, petTypes] = await Promise.all([
+    unwrapResult(service.getCurrentUserArticles()),
+    unwrapResult(getAllPetTypes({ includeDisabled: false })),
+  ]);
+  const petTypeTitles = new Map(petTypes.map(({ id, title }) => [id, title]));
+
+  return articles.map((article) => ({
+    ...article,
+    petTypeTitle: article.petType ? (petTypeTitles.get(article.petType) ?? null) : null,
+  }));
 }
 
 export async function getArticleByIdAction(input: unknown) {
@@ -102,7 +112,7 @@ export async function createArticleAction(input: unknown) {
   if (denied) return denied;
 
   const value = await validate(createArticleSchema, input);
-  return 'isSuccess' in value ? value : transformArticleResult(await service.createArticle(value));
+  return 'isSuccess' in value ? value : await service.createArticle(value);
 }
 
 export async function updateArticleAction(input: unknown) {
@@ -112,9 +122,7 @@ export async function updateArticleAction(input: unknown) {
   const id = await validate(articleIdSchema, input);
   if ('isSuccess' in id) return id;
   const value = await validate(updateArticleSchema, input);
-  return 'isSuccess' in value
-    ? value
-    : transformArticleResult(await service.updateArticle(id.id, value));
+  return 'isSuccess' in value ? value : service.updateArticle(id.id, value);
 }
 
 export async function updateArticleMainTextAction(input: unknown) {
@@ -124,9 +132,7 @@ export async function updateArticleMainTextAction(input: unknown) {
   const id = await validate(articleIdSchema, input);
   if ('isSuccess' in id) return id;
   const value = await validate(updateArticleMainTextSchema, input);
-  return 'isSuccess' in value
-    ? value
-    : transformArticleResult(await service.updateArticleMainText(id.id, value));
+  return 'isSuccess' in value ? value : service.updateArticleMainText(id.id, value);
 }
 
 export async function replaceArticleTagsAction(input: unknown) {
@@ -136,9 +142,7 @@ export async function replaceArticleTagsAction(input: unknown) {
   const id = await validate(articleIdSchema, input);
   if ('isSuccess' in id) return id;
   const value = await validate(replaceArticleTagsSchema, input);
-  return 'isSuccess' in value
-    ? value
-    : transformArticleTagsResult(await service.replaceArticleTags(id.id, value));
+  return 'isSuccess' in value ? value : service.replaceArticleTags(id.id, value);
 }
 
 export async function deleteArticleAction(input: unknown) {

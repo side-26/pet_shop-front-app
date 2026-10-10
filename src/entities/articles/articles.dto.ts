@@ -58,6 +58,9 @@ export class ArticleDTO {
   declare petType: string | null;
 
   @Expose()
+  declare petTypeTitle: string | null;
+
+  @Expose()
   declare mainText: RichTextFormValue;
 
   @Expose()
