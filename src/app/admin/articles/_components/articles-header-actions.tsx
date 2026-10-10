@@ -1,36 +1,25 @@
 'use client';
 
-import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+import { useLayoutEffect, useMemo } from 'react';
 import { useRouter } from 'nextjs-toploader/app';
 
 import {
   type AdminHeaderActions,
   useAdminLayoutContext,
 } from '@/contexts/admin/layout/admin-layout-context';
-import { useDialogController } from '@/hooks/use-dialog-controller';
+import { useArticlesTableDialogs } from './articles-table-dialog-provider';
 
-import { CreateArticleDialog } from './create-article-dialog';
-import type { CreateArticleDialogHandle } from './create-article-dialog.types';
-
-export type ArticlePetTypeOption = Readonly<{ id: string; image: string; title: string }>;
-
-export function ArticlesHeaderActions({ petTypes }: { petTypes: readonly ArticlePetTypeOption[] }) {
+export function ArticlesHeaderActions() {
   const router = useRouter();
-  const createArticleDialogRef = useRef<CreateArticleDialogHandle>(null);
   const { resetHeaderActions, setHeaderActions } = useAdminLayoutContext();
-  const { open: openDialog } = useDialogController(
-    useMemo(() => ({ createArticle: { ref: createArticleDialogRef } }), []),
-  );
-  const openCreateDialog = useCallback(() => {
-    openDialog('createArticle');
-  }, [openDialog]);
+  const { openCreateNewArticle } = useArticlesTableDialogs();
   const actions = useMemo<AdminHeaderActions>(
     () => ({
       lastVisibleOrder: 2,
-      'add-new-item': { order: 1, name: 'افزودن مقاله', action: openCreateDialog },
+      'add-new-item': { order: 1, name: 'افزودن مقاله', action: openCreateNewArticle },
       reload: { order: 2, action: router.refresh },
     }),
-    [openCreateDialog, router.refresh],
+    [openCreateNewArticle, router.refresh],
   );
 
   useLayoutEffect(() => {
@@ -38,11 +27,5 @@ export function ArticlesHeaderActions({ petTypes }: { petTypes: readonly Article
     return resetHeaderActions;
   }, [actions, resetHeaderActions, setHeaderActions]);
 
-  return (
-    <CreateArticleDialog
-      ref={createArticleDialogRef}
-      onCreated={router.refresh}
-      petTypes={petTypes}
-    />
-  );
+  return null;
 }

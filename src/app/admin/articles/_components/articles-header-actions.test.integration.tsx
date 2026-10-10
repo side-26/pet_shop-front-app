@@ -7,6 +7,7 @@ import { AdminLayoutShellView } from '@/components/layouts/admin/admin-layout-sh
 import { routePaths } from '@/configs/route.path';
 
 import { ArticlesHeaderActions } from './articles-header-actions';
+import { ArticlesTableDialogProvider } from './articles-table-dialog-provider';
 
 const refresh = vi.fn();
 
@@ -25,9 +26,11 @@ describe('ArticlesHeaderActions', () => {
       <QueryClientProvider client={queryClient}>
         <DirectionProvider direction="rtl">
           <AdminLayoutShellView pathname={routePaths.adminArticles} entityName="مقاله">
-            <ArticlesHeaderActions
+            <ArticlesTableDialogProvider
               petTypes={[{ id: 'type-1', image: 'cat.webp', title: 'گربه' }]}
-            />
+            >
+              <ArticlesHeaderActions />
+            </ArticlesTableDialogProvider>
           </AdminLayoutShellView>
         </DirectionProvider>
       </QueryClientProvider>,

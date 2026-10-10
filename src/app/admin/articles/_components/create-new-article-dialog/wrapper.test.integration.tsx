@@ -4,21 +4,21 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { createRef, type RefObject } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import type { CreateArticleDialogHandle } from './create-article-dialog.types';
-import { CreateArticleDialog } from './create-article-dialog';
+import type { CreateNewArticleDialogHandle } from './types';
+import { CreateNewArticleDialog } from './wrapper';
 
 afterEach(() => {
   cleanup();
   vi.useRealTimers();
 });
 
-function renderDialog(ref: RefObject<CreateArticleDialogHandle | null>, onCreated = vi.fn()) {
+function renderDialog(ref: RefObject<CreateNewArticleDialogHandle | null>, onCreated = vi.fn()) {
   const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
 
   return render(
     <QueryClientProvider client={queryClient}>
       <DirectionProvider direction="rtl">
-        <CreateArticleDialog
+        <CreateNewArticleDialog
           ref={ref}
           onCreated={onCreated}
           petTypes={[{ id: 'type-1', image: 'cat.webp', title: 'گربه' }]}
@@ -28,9 +28,9 @@ function renderDialog(ref: RefObject<CreateArticleDialogHandle | null>, onCreate
   );
 }
 
-describe('CreateArticleDialog', () => {
+describe('CreateNewArticleDialog', () => {
   it('opens through its imperative handle and closes from the cancel action', async () => {
-    const ref = createRef<CreateArticleDialogHandle>();
+    const ref = createRef<CreateNewArticleDialogHandle>();
 
     renderDialog(ref);
 
@@ -42,7 +42,7 @@ describe('CreateArticleDialog', () => {
   });
 
   it('keeps a reopened dialog mounted when a prior close fallback completes', async () => {
-    const ref = createRef<CreateArticleDialogHandle>();
+    const ref = createRef<CreateNewArticleDialogHandle>();
 
     renderDialog(ref);
 

@@ -7,20 +7,20 @@ import { ImageFilePreview } from '@/components/common/image-file-preview';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog } from '@/components/ui/dialog';
-import { TextField } from '@/components/ui/fields/text-field';
-import { TextareaField } from '@/components/ui/fields/textarea-field';
 import { SelectField } from '@/components/ui/fields/select-field';
+import { TextareaField } from '@/components/ui/fields/textarea-field';
+import { TextField } from '@/components/ui/fields/text-field';
 import RichTextField from '@/components/ui/fields/rich-text-field';
 import { Form, type FormHandle } from '@/components/ui/form';
 import { MAIN_IMAGE_UPLOAD_ACCEPT_TYPES } from '@/configs/main-image-upload';
 import { useCreateArticle } from '@/entities/articles/articles.client';
 import { createArticleSchema, type CreateArticleInput } from '@/entities/articles/articles.schema';
 
-import type { ArticlePetTypeOption } from './articles-header-actions';
+import type { ArticlePetTypeOption } from './types';
 
 const FORM_ID = 'create-article-form';
 
-type CreateArticleDialogContentProps = Readonly<{
+type CreateNewArticleDialogContentProps = Readonly<{
   onCreated: () => void;
   onExitComplete: () => void;
   onOpenChange: (open: boolean) => void;
@@ -103,13 +103,13 @@ function ArticleFormBody({
   );
 }
 
-export default function CreateArticleDialogContent({
+export default function CreateNewArticleDialogContent({
   onCreated,
   onExitComplete,
   onOpenChange,
   open,
   petTypes,
-}: CreateArticleDialogContentProps) {
+}: CreateNewArticleDialogContentProps) {
   const { formRef, handleSubmit, isPending } = useCreateArticle(onCreated);
 
   const handleOpenChange = useCallback(
