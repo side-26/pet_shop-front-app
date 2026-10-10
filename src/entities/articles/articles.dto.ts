@@ -31,6 +31,11 @@ export class ArticleAuthorDTO {
   declare lastName: string;
 }
 
+export class ArticlePetTypeDTO {
+  @Expose()
+  declare title: string;
+}
+
 export class ArticleDTO {
   @Expose()
   declare id: string;
@@ -58,7 +63,48 @@ export class ArticleDTO {
   declare petType: string | null;
 
   @Expose()
-  declare petTypeTitle: string | null;
+  declare mainText: RichTextFormValue;
+
+  @Expose()
+  @Type(() => ArticleAuthorDTO)
+  declare author: ArticleAuthorDTO;
+
+  @Expose()
+  declare slug: string;
+
+  @Expose()
+  declare createdAt: string;
+
+  @Expose()
+  declare updatedAt: string;
+}
+
+export class ArticleListDTO {
+  @Expose()
+  declare id: string;
+
+  @Expose()
+  declare title: string;
+
+  @Expose()
+  declare subtitle: string;
+
+  @Expose()
+  declare mainImage: string;
+
+  @Expose()
+  declare mainThumbnailImage: string;
+
+  @Expose()
+  declare summary: string;
+
+  @Expose()
+  @Type(() => ArticleTagDTO)
+  declare tags: ArticleTagDTO[];
+
+  @Expose()
+  @Type(() => ArticlePetTypeDTO)
+  declare petType: ArticlePetTypeDTO | null;
 
   @Expose()
   declare mainText: RichTextFormValue;
@@ -126,9 +172,9 @@ export function toArticleDTO(value: unknown) {
   return transform(ArticleDTO, value);
 }
 
-export function toArticleDTOs(value: unknown) {
+export function toArticleListDTOs(value: unknown) {
   if (!Array.isArray(value)) throw new TypeError('Expected an article array.');
-  return transformMany(ArticleDTO, value);
+  return transformMany(ArticleListDTO, value);
 }
 
 export function toArticleDetailsDTO(value: unknown) {

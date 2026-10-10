@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getSession } from '@/utils/session';
-import { getAllPetTypes } from '@/entities/pet-types/pet-types.service';
 
 import {
   createArticleAction,
@@ -19,7 +18,6 @@ const { refreshMock } = vi.hoisted(() => ({ refreshMock: vi.fn() }));
 
 vi.mock('@/utils/session', () => ({ getSession: vi.fn() }));
 vi.mock('next/cache', () => ({ refresh: refreshMock }));
-vi.mock('@/entities/pet-types/pet-types.service', () => ({ getAllPetTypes: vi.fn() }));
 vi.mock('./articles.service', () => ({
   createArticle: vi.fn(),
   getCurrentUserArticles: vi.fn(),
@@ -62,20 +60,14 @@ describe('article actions', () => {
     const response = {
       isSuccess: true as const,
       message: null,
-      data: [{ id, petType: 'pet-type-id' }] as never[],
+      data: [{ id, petType: { title: 'سگ' } }] as never[],
     };
     vi.mocked(service.getCurrentUserArticles).mockResolvedValue(response);
-    vi.mocked(getAllPetTypes).mockResolvedValue({
-      isSuccess: true,
-      message: null,
-      data: [{ id: 'pet-type-id', title: 'سگ' }] as never,
-    });
 
     await expect(getCurrentUserArticlesAction()).resolves.toEqual([
-      { id, petType: 'pet-type-id', petTypeTitle: 'سگ' },
+      { id, petType: { title: 'سگ' } },
     ]);
     expect(service.getCurrentUserArticles).toHaveBeenCalledOnce();
-    expect(getAllPetTypes).toHaveBeenCalledWith({ includeDisabled: false });
   });
 
   it('validates public ID reads before delegating to their services', async () => {
@@ -151,6 +143,5 @@ describe('article actions', () => {
       'برای مدیریت مقاله وارد حساب شوید.',
     );
     expect(service.getCurrentUserArticles).not.toHaveBeenCalled();
-    expect(getAllPetTypes).not.toHaveBeenCalled();
   });
 });

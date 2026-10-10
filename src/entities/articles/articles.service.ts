@@ -7,6 +7,7 @@ import type {
   ArticleDTO,
   ArticleDetailsDTO,
   ArticleIdDTO,
+  ArticleListDTO,
   ArticleMainTextDTO,
   ArticleTagDTO,
   ArticleSlugDTO,
@@ -37,8 +38,8 @@ export async function getCurrentUserArticles() {
 
   articlesCache.cacheLife({ stale: 600 });
   articlesCache.registerList('current-author');
-  return customFetcher<ArticleDTO[]>({
-    url: '/article/all',
+  return customFetcher<ArticleListDTO[]>({
+    url: '/articles/all',
     method: 'GET',
     auth: true,
     cache: 'no-store',

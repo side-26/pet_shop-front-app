@@ -4,7 +4,6 @@ import { ValidationError } from 'yup';
 import { refresh } from 'next/cache';
 
 import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
-import { getAllPetTypes } from '@/entities/pet-types/pet-types.service';
 import type { FetcherError } from '@/lib/api/customFetcher';
 import { getSession } from '@/utils/session';
 
@@ -65,17 +64,7 @@ export async function getArticlePreviewBySlugAction(input: unknown) {
 
 export async function getCurrentUserArticlesAction() {
   await requireAuthenticated();
-
-  const [articles, petTypes] = await Promise.all([
-    unwrapResult(service.getCurrentUserArticles()),
-    unwrapResult(getAllPetTypes({ includeDisabled: false })),
-  ]);
-  const petTypeTitles = new Map(petTypes.map(({ id, title }) => [id, title]));
-
-  return articles.map((article) => ({
-    ...article,
-    petTypeTitle: article.petType ? (petTypeTitles.get(article.petType) ?? null) : null,
-  }));
+  return unwrapResult(service.getCurrentUserArticles());
 }
 
 export async function getArticleByIdAction(input: unknown) {

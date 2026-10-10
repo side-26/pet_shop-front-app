@@ -1,5 +1,5 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { ArticlesTable } from './articles-table';
@@ -9,7 +9,7 @@ afterEach(cleanup);
 const article = {
   id: 'article-id',
   title: 'راهنمای مراقبت از سگ',
-  petTypeTitle: 'سگ',
+  petType: { title: 'سگ' },
   tags: [{ title: 'سگ' }, { title: 'سلامت' }, { title: 'تغذیه' }],
   summary: 'راهنمای کوتاه برای نگهداری بهتر از سگ.',
   mainImage: 'https://cdn.example.test/articles/dog.webp',
@@ -30,6 +30,9 @@ describe('ArticlesTable', () => {
     expect(screen.getByRole('columnheader', { name: 'خلاصه' })).toBeTruthy();
     expect(screen.getByRole('columnheader', { name: 'تصویر' })).toBeTruthy();
     expect(screen.getByRole('columnheader', { name: 'عملیات' })).toBeTruthy();
+    expect(
+      within(screen.getByRole('cell', { name: 'سگ' })).getByText(article.petType.title),
+    ).toBeTruthy();
     expect(screen.getByLabelText('تصویر راهنمای مراقبت از سگ').style.backgroundImage).toContain(
       article.mainThumbnailImage,
     );

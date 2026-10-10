@@ -81,8 +81,8 @@ export function ArticlesTable({ articles, isLoading = false }: ArticlesTableProp
                   <div className="tw:line-clamp-2">{displayValue(article.title)}</div>
                 </TableCell>
                 <TableCell className="tw:max-w-40 tw:whitespace-normal">
-                  {article.petTypeTitle ? (
-                    <span className="tw:block tw:truncate">{article.petTypeTitle}</span>
+                  {article.petType?.title ? (
+                    <span className="tw:block tw:truncate">{article.petType.title}</span>
                   ) : (
                     <span className="tw:text-muted-foreground">بدون نوع حیوان</span>
                   )}

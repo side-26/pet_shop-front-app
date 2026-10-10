@@ -1,9 +1,9 @@
-import type { ArticleTagDTO } from '@/entities/articles/articles.dto';
+import type { ArticlePetTypeDTO, ArticleTagDTO } from '@/entities/articles/articles.dto';
 
 export type ArticleTableRow = {
   id: string;
   title: string;
-  petTypeTitle: string | null;
+  petType: ArticlePetTypeDTO | null;
   tags: ArticleTagDTO[];
   summary: string;
   mainImage: string;

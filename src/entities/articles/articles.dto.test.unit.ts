@@ -3,9 +3,11 @@ import { describe, expect, it } from 'vitest';
 import {
   ArticleAuthorDTO,
   ArticleDTO,
+  ArticleListDTO,
+  ArticlePetTypeDTO,
   ArticleTagDTO,
   toArticleDTO,
-  toArticleDTOs,
+  toArticleListDTOs,
 } from './articles.dto';
 
 describe('article DTO transformation', () => {
@@ -19,7 +21,6 @@ describe('article DTO transformation', () => {
       summary: '',
       tags: [{ title: 'سگ', internalValue: 'removed' }],
       petType: 'pet-type-id',
-      petTypeTitle: 'سگ',
       mainText: { type: 'doc', content: [] },
       author: {
         avatar: '',
@@ -39,23 +40,26 @@ describe('article DTO transformation', () => {
     expect(dto.author).toBeInstanceOf(ArticleAuthorDTO);
     expect(dto).not.toHaveProperty('createdBy');
     expect(dto.tags[0]).not.toHaveProperty('internalValue');
-    expect(dto.petTypeTitle).toBe('سگ');
     expect(dto.author).not.toHaveProperty('internalValue');
   });
 
-  it('transforms each response item and rejects a non-list response', () => {
-    const articles = toArticleDTOs([
+  it('transforms populated list pet types and rejects a non-list response', () => {
+    const articles = toArticleListDTOs([
       {
         id: 'article-id',
         title: 'راهنمای مراقبت از سگ',
         tags: [],
+        petType: { title: 'سگ', internalValue: 'removed' },
         author: {},
         unexpected: true,
       },
     ]);
 
-    expect(articles[0]).toBeInstanceOf(ArticleDTO);
+    expect(articles[0]).toBeInstanceOf(ArticleListDTO);
+    expect(articles[0]?.petType).toBeInstanceOf(ArticlePetTypeDTO);
+    expect(articles[0]?.petType?.title).toBe('سگ');
+    expect(articles[0]?.petType).not.toHaveProperty('internalValue');
     expect(articles[0]).not.toHaveProperty('unexpected');
-    expect(() => toArticleDTOs({})).toThrow('Expected an article array');
+    expect(() => toArticleListDTOs({})).toThrow('Expected an article array');
   });
 });

@@ -87,7 +87,7 @@ describe('article service', () => {
 
     await expect(getCurrentUserArticles()).resolves.toBe(response);
     expect(customFetcher).toHaveBeenCalledWith({
-      url: '/article/all',
+      url: '/articles/all',
       method: 'GET',
       auth: true,
       cache: 'no-store',

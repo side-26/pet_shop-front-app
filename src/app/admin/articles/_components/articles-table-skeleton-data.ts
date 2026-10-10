@@ -7,7 +7,7 @@ export const articlesTableSkeletonData: ArticleTableRow[] = Array.from(
   (_, index) => ({
     id: `skeleton-article-${index + 1}`,
     title: 'عنوان مقاله',
-    petTypeTitle: 'نوع حیوان',
+    petType: { title: 'نوع حیوان' },
     tags: [{ title: 'برچسب' }],
     summary: 'خلاصه مقاله',
     mainImage: SKELETON_THUMBNAIL,
