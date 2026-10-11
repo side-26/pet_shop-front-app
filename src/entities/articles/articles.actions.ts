@@ -57,6 +57,16 @@ export async function getArticlePreviewBySlugAction(input: unknown) {
     : transformArticleResult(await service.getArticlePreviewBySlug(value.slug));
 }
 
+export async function getArticlePreviewByIdAction(input: unknown) {
+  const denied = await authorizeAuthenticated();
+  if (denied) return denied;
+
+  const value = await validate(articleIdSchema, input);
+  return 'isSuccess' in value
+    ? value
+    : transformArticleResult(await service.getArticlePreviewById(value.id));
+}
+
 export async function getCurrentUserArticlesAction() {
   await requireAuthenticated();
   return unwrapResult(service.getCurrentUserArticles());

@@ -31,6 +31,15 @@ export async function getArticlePreviewBySlug(slug: ArticleSlugDTO['slug']) {
   });
 }
 
+export async function getArticlePreviewById(id: ArticleIdDTO['id']) {
+  return customFetcher<ArticleDTO>({
+    url: `/articles/id/${encodeURIComponent(id)}`,
+    method: 'GET',
+    auth: true,
+    cache: 'no-store',
+  });
+}
+
 export async function getCurrentUserArticles() {
   'use cache: private';
 

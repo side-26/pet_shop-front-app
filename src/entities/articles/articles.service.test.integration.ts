@@ -6,6 +6,7 @@ import {
   createArticle,
   deleteArticle,
   getArticlePreviewBySlug,
+  getArticlePreviewById,
   getCurrentUserArticles,
   invalidateCurrentUserArticles,
   updateArticle,
@@ -76,6 +77,20 @@ describe('article service', () => {
     });
     expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 600 });
     expect(registerDetailMock).toHaveBeenCalledWith('dog care/one');
+  });
+
+  it('gets an authenticated by-ID preview without entering the shared cache', async () => {
+    const response = { isSuccess: true as const, message: null, data: article };
+    vi.mocked(customFetcher).mockResolvedValue(response);
+
+    await expect(getArticlePreviewById(id)).resolves.toBe(response);
+    expect(customFetcher).toHaveBeenCalledWith({
+      url: `/articles/id/${id}`,
+      method: 'GET',
+      auth: true,
+      cache: 'no-store',
+    });
+    expect(registerDetailMock).not.toHaveBeenCalled();
   });
 
   it('gets only the authenticated user articles through a private tagged cache', async () => {

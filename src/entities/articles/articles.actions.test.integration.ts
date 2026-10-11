@@ -7,6 +7,7 @@ import {
   deleteArticleAction,
   getCurrentUserArticlesAction,
   getArticlePreviewBySlugAction,
+  getArticlePreviewByIdAction,
   replaceArticleTagsAction,
   updateArticleAction,
   updateArticleMainTextAction,
@@ -22,6 +23,7 @@ vi.mock('./articles.service', () => ({
   getCurrentUserArticles: vi.fn(),
   invalidateCurrentUserArticles: vi.fn(),
   getArticlePreviewBySlug: vi.fn(),
+  getArticlePreviewById: vi.fn(),
   replaceArticleTags: vi.fn(),
   updateArticle: vi.fn(),
   updateArticleMainText: vi.fn(),
@@ -50,6 +52,15 @@ describe('article actions', () => {
 
     await getArticlePreviewBySlugAction({ slug: '  dog-care  ' });
     expect(service.getArticlePreviewBySlug).toHaveBeenCalledWith('dog-care');
+  });
+
+  it('gets an authenticated preview by article ID', async () => {
+    const response = { isSuccess: true as const, message: null, data: {} as never };
+    vi.mocked(service.getArticlePreviewById).mockResolvedValue(response);
+
+    await getArticlePreviewByIdAction({ id });
+
+    expect(service.getArticlePreviewById).toHaveBeenCalledWith(id);
   });
 
   it('returns the authenticated user article collection from the service', async () => {
