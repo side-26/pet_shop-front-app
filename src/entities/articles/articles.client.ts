@@ -23,7 +23,13 @@ import type {
   UpdateArticleInput,
   UpdateArticleMainTextInput,
 } from './articles.schema';
-import { ArticleDetailsDTO, type ArticleDetailsResponse, type ArticleIdDTO } from './articles.dto';
+import {
+  ArticleDetailsDTO,
+  ArticleMainTextDTO,
+  type ArticleDetailsResponse,
+  type ArticleIdDTO,
+  type ArticleMainTextResponse,
+} from './articles.dto';
 import { articlesClientService } from './articles.client-service';
 
 type ArticleMutationOptions = Readonly<{
@@ -47,10 +53,13 @@ export type DeleteArticleVariables = { id: string };
 export const articlesQueryKeys = {
   all: ['articles'] as const,
   mainInfo: (id: ArticleIdDTO['id']) => [...articlesQueryKeys.all, 'main-info', id] as const,
+  mainText: (id: ArticleIdDTO['id']) => [...articlesQueryKeys.all, 'main-text', id] as const,
 };
 
 const selectArticleMainInfo = (article: ArticleDetailsResponse) =>
   transformData(ArticleDetailsDTO, article);
+const selectArticleMainText = (article: ArticleMainTextResponse) =>
+  transformData(ArticleMainTextDTO, article);
 
 export function useArticleMainInfoQuery() {
   const { id } = useUpdateMainInfoDialogParams();
@@ -59,6 +68,15 @@ export function useArticleMainInfoQuery() {
     queryKey: articlesQueryKeys.mainInfo(id),
     queryFn: ({ signal }) => articlesClientService.getById(id, signal),
     select: selectArticleMainInfo,
+    retry: false,
+  });
+}
+
+export function useArticleMainTextQuery(id: ArticleIdDTO['id']) {
+  return useSuspenseQuery({
+    queryKey: articlesQueryKeys.mainText(id),
+    queryFn: ({ signal }) => articlesClientService.getMainTextById(id, signal),
+    select: selectArticleMainText,
     retry: false,
   });
 }
@@ -114,7 +132,15 @@ export function useUpdateArticleMutation(options?: ArticleMutationOptions) {
 }
 
 export function useUpdateArticleMainTextMutation(options?: ArticleMutationOptions) {
-  return useArticleMutation<UpdateArticleMainTextVariables>(updateArticleMainTextAction, options);
+  const queryClient = useQueryClient();
+
+  return useArticleMutation<UpdateArticleMainTextVariables>(
+    updateArticleMainTextAction,
+    options,
+    async (_result, { id }) => {
+      await queryClient.invalidateQueries({ queryKey: articlesQueryKeys.mainText(id) });
+    },
+  );
 }
 
 export function useReplaceArticleTagsMutation(options?: ArticleMutationOptions) {

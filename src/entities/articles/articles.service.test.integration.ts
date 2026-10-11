@@ -6,7 +6,6 @@ import {
   createArticle,
   deleteArticle,
   getArticlePreviewBySlug,
-  getArticleMainTextById,
   getArticleTags,
   getCurrentUserArticles,
   invalidateCurrentUserArticles,
@@ -95,25 +94,13 @@ describe('article service', () => {
     expect(registerListMock).toHaveBeenCalledWith('current-author');
   });
 
-  it('reads public article main text and tags through their dedicated endpoints', async () => {
-    const mainText = {
-      isSuccess: true as const,
-      message: null,
-      data: { mainText: input.mainText },
-    };
+  it('reads public article tags through their dedicated endpoint', async () => {
     const tagResult = { isSuccess: true as const, message: null, data: tags };
-    vi.mocked(customFetcher).mockResolvedValueOnce(mainText).mockResolvedValueOnce(tagResult);
+    vi.mocked(customFetcher).mockResolvedValue(tagResult);
 
-    await expect(getArticleMainTextById(id)).resolves.toBe(mainText);
     await expect(getArticleTags(id)).resolves.toBe(tagResult);
 
-    expect(customFetcher).toHaveBeenNthCalledWith(1, {
-      url: `/articles/id/${id}/main-text`,
-      method: 'GET',
-      auth: false,
-      cache: 'no-store',
-    });
-    expect(customFetcher).toHaveBeenNthCalledWith(2, {
+    expect(customFetcher).toHaveBeenCalledWith({
       url: `/articles/id/${id}/tags-list`,
       method: 'GET',
       auth: false,

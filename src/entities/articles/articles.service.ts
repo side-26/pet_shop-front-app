@@ -7,7 +7,6 @@ import type {
   ArticleDTO,
   ArticleIdDTO,
   ArticleListDTO,
-  ArticleMainTextDTO,
   ArticleTagDTO,
   ArticleSlugDTO,
   CreateArticleDTO,
@@ -41,20 +40,6 @@ export async function getCurrentUserArticles() {
     url: '/articles/all',
     method: 'GET',
     auth: true,
-    cache: 'no-store',
-  });
-}
-
-export async function getArticleMainTextById(id: ArticleIdDTO['id']) {
-  'use cache';
-
-  articlesCache.cacheLife({ stale: 600 });
-  articlesCache.registerDetail(`main-text:${id}`);
-
-  return customFetcher<ArticleMainTextDTO>({
-    url: `/articles/id/${encodeURIComponent(id)}/main-text`,
-    method: 'GET',
-    auth: false,
     cache: 'no-store',
   });
 }

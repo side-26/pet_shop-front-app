@@ -20,4 +20,18 @@ describe('article client service', () => {
       signal,
     });
   });
+
+  it('reads article main text through the same-origin internal API and forwards cancellation', async () => {
+    const signal = new AbortController().signal;
+    const id = '507f1f77bcf86cd799439011';
+    const articleMainText = { mainText: { type: 'doc' as const, content: [] } };
+    vi.mocked(internalFetcher).mockResolvedValue(articleMainText);
+
+    await expect(articlesClientService.getMainTextById(id, signal)).resolves.toBe(articleMainText);
+    expect(internalFetcher).toHaveBeenCalledWith({
+      url: `/api/articles/${id}/main-text`,
+      method: 'GET',
+      signal,
+    });
+  });
 });

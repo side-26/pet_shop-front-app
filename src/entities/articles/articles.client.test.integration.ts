@@ -17,6 +17,7 @@ import {
 import {
   articlesQueryKeys,
   useArticleMainInfoQuery,
+  useArticleMainTextQuery,
   useCreateArticleMutation,
   useDeleteArticleMutation,
   useReplaceArticleTagsMutation,
@@ -24,7 +25,7 @@ import {
   useUpdateArticleMutation,
 } from './articles.client';
 import { articlesClientService } from './articles.client-service';
-import { ArticleDetailsDTO } from './articles.dto';
+import { ArticleDetailsDTO, ArticleMainTextDTO } from './articles.dto';
 
 vi.mock('./articles.actions', () => ({
   createArticleAction: vi.fn(),
@@ -34,7 +35,7 @@ vi.mock('./articles.actions', () => ({
   replaceArticleTagsAction: vi.fn(),
 }));
 vi.mock('./articles.client-service', () => ({
-  articlesClientService: { getById: vi.fn() },
+  articlesClientService: { getById: vi.fn(), getMainTextById: vi.fn() },
 }));
 vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
 vi.mock('@/utils/helpers', () => ({ globalErrorHandler: vi.fn() }));
@@ -160,6 +161,23 @@ describe('article client mutations', () => {
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey });
     queryClient.clear();
   });
+
+  it('refreshes only the matching main-text cache entry after an update', async () => {
+    vi.mocked(updateArticleMainTextAction).mockResolvedValue(success);
+    const { queryClient, wrapper } = createWrapper();
+    const queryKey = articlesQueryKeys.mainText(id);
+    const invalidateQueries = vi.spyOn(queryClient, 'invalidateQueries');
+    const mainText = { type: 'doc' as const, content: [] };
+
+    const { result } = renderHook(() => useUpdateArticleMainTextMutation(), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({ id, mainText });
+    });
+
+    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey });
+    queryClient.clear();
+  });
 });
 
 describe('article main-info query', () => {
@@ -185,6 +203,34 @@ describe('article main-info query', () => {
     expect(articlesClientService.getById).toHaveBeenCalledWith(id, expect.any(AbortSignal));
     expect(queryClient.getQueryData(['articles', 'main-info', id])).toMatchObject({
       id,
+      internalOnly: 'do not expose to the editor',
+    });
+    queryClient.clear();
+  });
+});
+
+describe('article main-text query', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('uses the entity client service, keys by ID, and projects only the editor field', async () => {
+    const mainText = { type: 'doc' as const, content: [] };
+    vi.mocked(articlesClientService.getMainTextById).mockResolvedValue({
+      mainText,
+      internalOnly: 'do not expose to the editor',
+    } as never);
+    const { queryClient, wrapper: QueryProvider } = createWrapper();
+    const { result } = renderHook(() => useArticleMainTextQuery(id), {
+      wrapper: ({ children }) =>
+        createElement(QueryProvider, null, createElement(Suspense, { fallback: null }, children)),
+    });
+
+    await waitFor(() => expect(result.current.data).toBeInstanceOf(ArticleMainTextDTO));
+
+    expect(result.current.data).toMatchObject({ mainText });
+    expect(result.current.data).not.toHaveProperty('internalOnly');
+    expect(articlesClientService.getMainTextById).toHaveBeenCalledWith(id, expect.any(AbortSignal));
+    expect(queryClient.getQueryData(articlesQueryKeys.mainText(id))).toMatchObject({
+      mainText,
       internalOnly: 'do not expose to the editor',
     });
     queryClient.clear();

@@ -157,6 +157,10 @@ export class ArticleMainTextDTO {
   declare mainText: RichTextFormValue;
 }
 
+export type ArticleMainTextResponse = Readonly<{
+  mainText: RichTextFormValue;
+}>;
+
 export function toArticleDTO(value: unknown) {
   return transform(ArticleDTO, value);
 }

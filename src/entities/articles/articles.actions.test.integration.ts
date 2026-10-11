@@ -6,7 +6,6 @@ import {
   createArticleAction,
   getCurrentUserArticlesAction,
   getArticlePreviewBySlugAction,
-  getArticleMainTextByIdAction,
   replaceArticleTagsAction,
   updateArticleAction,
   updateArticleMainTextAction,
@@ -22,7 +21,6 @@ vi.mock('./articles.service', () => ({
   getCurrentUserArticles: vi.fn(),
   invalidateCurrentUserArticles: vi.fn(),
   getArticlePreviewBySlug: vi.fn(),
-  getArticleMainTextById: vi.fn(),
   getArticleTags: vi.fn(),
   replaceArticleTags: vi.fn(),
   updateArticle: vi.fn(),
@@ -66,14 +64,6 @@ describe('article actions', () => {
       { id, petType: { title: 'سگ' } },
     ]);
     expect(service.getCurrentUserArticles).toHaveBeenCalledOnce();
-  });
-
-  it('validates public article-text reads before delegating to their services', async () => {
-    const response = { isSuccess: true as const, message: null, data: {} as never };
-    vi.mocked(service.getArticleMainTextById).mockResolvedValue(response);
-
-    await getArticleMainTextByIdAction({ id });
-    expect(service.getArticleMainTextById).toHaveBeenCalledWith(id);
   });
 
   it('invalidates the current-author collection and refreshes the route on retry', async () => {
