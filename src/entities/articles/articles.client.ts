@@ -1,12 +1,14 @@
 'use client';
 
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useCallback, useRef } from 'react';
 
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
 import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
 import { globalErrorHandler } from '@/utils/helpers';
+import { useUpdateMainInfoDialogParams } from '@/app/admin/articles/_components/update-main-info-dialog/context';
+import { innerFetcher } from '@/lib/api/innerFetcher';
 
 import {
   createArticleAction,
@@ -21,6 +23,7 @@ import type {
   UpdateArticleInput,
   UpdateArticleMainTextInput,
 } from './articles.schema';
+import type { ArticleDetailsDTO } from './articles.dto';
 
 type ArticleMutationOptions = Readonly<{
   onError?: (error: FetcherError) => void;
@@ -35,6 +38,26 @@ export type UpdateArticleVariables = UpdateArticleInput & { id: string };
 export type UpdateArticleMainTextVariables = UpdateArticleMainTextInput & { id: string };
 export type ReplaceArticleTagsVariables = ReplaceArticleTagsInput & { id: string };
 export type DeleteArticleVariables = { id: string };
+
+const articleMainInfoQueryKey = (id: string) => ['articles', 'main-info', id] as const;
+
+async function getArticleMainInfo(id: string): Promise<ArticleDetailsDTO> {
+  const result = await innerFetcher<ArticleDetailsDTO>({
+    url: `/api/articles/${encodeURIComponent(id)}`,
+  });
+  if (result.isSuccess) return result.data;
+  throw result;
+}
+
+export function useArticleMainInfoQuery() {
+  const { id } = useUpdateMainInfoDialogParams();
+
+  return useSuspenseQuery({
+    queryKey: articleMainInfoQueryKey(id),
+    queryFn: () => getArticleMainInfo(id),
+    retry: false,
+  });
+}
 
 function useArticleMutation<TVariables>(
   action: ArticleMutationAction<TVariables>,
@@ -93,6 +116,32 @@ export function useCreateArticle(onCreated: () => void) {
       }
     },
     [isPending, mutateAsync, onCreated],
+  );
+
+  return { formRef, handleSubmit, isPending } as const;
+}
+
+export function useUpdateArticle(id: string, onUpdated: () => void) {
+  const formRef = useRef<FormHandle<UpdateArticleInput>>(null);
+  const mutation = useUpdateArticleMutation({
+    onError: (error) => {
+      const form = formRef.current;
+      globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
+    },
+  });
+  const { isPending, mutateAsync } = mutation;
+
+  const handleSubmit = useCallback(
+    async (input: UpdateArticleInput) => {
+      if (isPending) return;
+      try {
+        await mutateAsync({ id, ...input });
+        onUpdated();
+      } catch {
+        // The mutation callback reports normalized errors.
+      }
+    },
+    [id, isPending, mutateAsync, onUpdated],
   );
 
   return { formRef, handleSubmit, isPending } as const;

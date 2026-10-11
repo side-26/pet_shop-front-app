@@ -1,3 +1,5 @@
+import { InternalApiError } from './InternalFetchError';
+
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export interface FetchErrorMessageDTO {
@@ -196,4 +198,16 @@ export function parseResponseError<TBackendError>(
   return isErrorEnvelope(value)
     ? parseError(value, parser)
     : transportError<TBackendError>(getResponseMessage(value) ?? DEFAULT_ERROR_MESSAGE);
+}
+
+export function throwNewCustomError<E = unknown>(
+  message?: string,
+  errorBody?: FetcherError<E>,
+  status?: number,
+): never {
+  throw new InternalApiError<E>(
+    message ?? errorBody?.message ?? 'خطا در اتصال به سرور',
+    errorBody?.data,
+    status,
+  );
 }

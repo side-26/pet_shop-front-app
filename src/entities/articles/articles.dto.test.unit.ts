@@ -7,6 +7,7 @@ import {
   ArticlePetTypeDTO,
   ArticleTagDTO,
   toArticleDTO,
+  toArticleDetailsDTO,
   toArticleListDTOs,
 } from './articles.dto';
 
@@ -61,5 +62,33 @@ describe('article DTO transformation', () => {
     expect(articles[0]?.petType).not.toHaveProperty('internalValue');
     expect(articles[0]).not.toHaveProperty('unexpected');
     expect(() => toArticleListDTOs({})).toThrow('Expected an article array');
+  });
+
+  it('exposes only the article-details fields needed by the main-info editor', () => {
+    const details = toArticleDetailsDTO({
+      id: 'article-id',
+      title: 'راهنمای مراقبت از سگ',
+      subtitle: 'آنچه برای شروع باید بدانید',
+      mainImage: 'https://cdn.example.test/articles/dog.webp',
+      mainThumbnailImage: 'data:image/webp;base64,AAAA',
+      petTypeId: 'pet-type-id',
+      summary: 'removed',
+      tags: [{ title: 'سگ' }],
+      author: { firstName: 'سارا' },
+      slug: 'dog-care',
+    });
+
+    expect(details).toMatchObject({
+      id: 'article-id',
+      title: 'راهنمای مراقبت از سگ',
+      subtitle: 'آنچه برای شروع باید بدانید',
+      mainImage: 'https://cdn.example.test/articles/dog.webp',
+      mainThumbnailImage: 'data:image/webp;base64,AAAA',
+      petTypeId: 'pet-type-id',
+    });
+    expect(details).not.toHaveProperty('summary');
+    expect(details).not.toHaveProperty('tags');
+    expect(details).not.toHaveProperty('author');
+    expect(details).not.toHaveProperty('slug');
   });
 });

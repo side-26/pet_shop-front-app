@@ -12,7 +12,10 @@ vi.mock('react', async (importOriginal) => {
     use: <T,>(promise: Promise<T>) => usedPromiseValues.get(promise) as T,
   };
 });
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('./articles-row-actions', () => ({ ArticlesRowActions: () => null }));
 
+import { ArticlesTableDialogProvider } from './articles-table-dialog-provider';
 import { ArticlesTableContainer } from './articles-table-container';
 
 afterEach(cleanup);
@@ -39,7 +42,11 @@ describe('ArticlesTableContainer', () => {
     usedPromiseValues.set(articlesPromise, [article]);
     const view = ArticlesTableContainer({ articlesPromise });
 
-    render(<DirectionProvider direction="rtl">{view}</DirectionProvider>);
+    render(
+      <DirectionProvider direction="rtl">
+        <ArticlesTableDialogProvider petTypes={[]}>{view}</ArticlesTableDialogProvider>
+      </DirectionProvider>,
+    );
     expect(screen.getByText(article.title)).toBeTruthy();
   });
 
@@ -48,7 +55,11 @@ describe('ArticlesTableContainer', () => {
     usedPromiseValues.set(articlesPromise, []);
     const view = ArticlesTableContainer({ articlesPromise });
 
-    render(<DirectionProvider direction="rtl">{view}</DirectionProvider>);
+    render(
+      <DirectionProvider direction="rtl">
+        <ArticlesTableDialogProvider petTypes={[]}>{view}</ArticlesTableDialogProvider>
+      </DirectionProvider>,
+    );
     expect(screen.getByText('مقاله‌ای برای نمایش وجود ندارد')).toBeTruthy();
   });
 });

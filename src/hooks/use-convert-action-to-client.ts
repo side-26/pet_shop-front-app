@@ -1,10 +1,8 @@
 'use client';
-import { useTransition, use } from 'react';
+import { useCallback } from 'react';
 
-export const useConvertActionToQueryFn = async <TData>(
-  serverAction: () => Promise<TData>,
-): (() => Promise<TData>) => {
-  const request = serverAction();
-
-  return request;
-};
+export function useConvertActionToQueryFn<TData>(
+  action: () => Promise<TData>,
+): () => Promise<TData> {
+  return useCallback(() => action(), [action]);
+}

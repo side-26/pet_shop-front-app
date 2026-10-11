@@ -11,12 +11,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+import { useArticlesTableDialogs } from './articles-table-dialog-provider';
+
 type ArticlesRowActionsProps = {
+  articleId: string;
   articleTitle: string;
   disabled?: boolean;
 };
 
-export function ArticlesRowActions({ articleTitle, disabled = false }: ArticlesRowActionsProps) {
+export function ArticlesRowActions({
+  articleId,
+  articleTitle,
+  disabled = false,
+}: ArticlesRowActionsProps) {
+  const { openUpdateMainInfo } = useArticlesTableDialogs();
   return (
     <div className="tw:flex tw:items-center tw:justify-end tw:gap-1">
       <Button
@@ -48,7 +56,7 @@ export function ArticlesRowActions({ articleTitle, disabled = false }: ArticlesR
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuGroup>
-            <DropdownMenuItem disabled>
+            <DropdownMenuItem disabled={disabled} onClick={() => openUpdateMainInfo(articleId)}>
               <PencilIcon aria-hidden="true" />
               ویرایش اطلاعات اصلی
             </DropdownMenuItem>

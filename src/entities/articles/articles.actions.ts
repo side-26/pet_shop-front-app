@@ -69,6 +69,7 @@ export async function getCurrentUserArticlesAction() {
 
 export async function getArticleByIdAction(input: unknown) {
   const value = await validate(articleIdSchema, input);
+
   return 'isSuccess' in value
     ? value
     : transformArticleDetailsResult(await service.getArticleById(value.id));

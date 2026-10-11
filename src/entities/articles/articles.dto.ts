@@ -140,27 +140,7 @@ export class ArticleDetailsDTO {
   declare mainThumbnailImage: string;
 
   @Expose()
-  declare summary: string;
-
-  @Expose()
-  @Type(() => ArticleTagDTO)
-  declare tags: ArticleTagDTO[];
-
-  @Expose()
-  declare petType: string | null;
-
-  @Expose()
-  @Type(() => ArticleAuthorDTO)
-  declare author: ArticleAuthorDTO;
-
-  @Expose()
-  declare slug: string;
-
-  @Expose()
-  declare createdAt: string;
-
-  @Expose()
-  declare updatedAt: string;
+  declare petTypeId: string | null;
 }
 
 export class ArticleMainTextDTO {

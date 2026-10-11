@@ -104,7 +104,11 @@ export function ArticlesTable({ articles, isLoading = false }: ArticlesTableProp
                   <div className="tw:line-clamp-2">{displayValue(article.summary)}</div>
                 </TableCell>
                 <TableCell>
-                  <ArticlesRowActions articleTitle={article.title} disabled={isLoading} />
+                  <ArticlesRowActions
+                    articleId={article.id}
+                    articleTitle={article.title}
+                    disabled={isLoading}
+                  />
                 </TableCell>
               </TableRow>
             ))}

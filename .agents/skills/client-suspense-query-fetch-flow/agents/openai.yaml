@@ -1,0 +1,4 @@
+interface:
+  display_name: "Client Suspense Query Fetch Flow"
+  short_description: "Build client queries via secure internal APIs"
+  default_prompt: "Use $client-suspense-query-fetch-flow to add a Suspense-backed entity query through an internal API route."

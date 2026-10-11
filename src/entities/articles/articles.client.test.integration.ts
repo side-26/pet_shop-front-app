@@ -27,6 +27,7 @@ vi.mock('./articles.actions', () => ({
   updateArticleAction: vi.fn(),
   updateArticleMainTextAction: vi.fn(),
   replaceArticleTagsAction: vi.fn(),
+  getArticleByIdAction: vi.fn(),
 }));
 vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
 vi.mock('@/utils/helpers', () => ({ globalErrorHandler: vi.fn() }));

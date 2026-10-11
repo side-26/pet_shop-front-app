@@ -1,8 +1,11 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { ArticlesTableDialogProvider } from './articles-table-dialog-provider';
 import { ArticlesTable } from './articles-table';
+
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 
 afterEach(cleanup);
 
@@ -20,7 +23,9 @@ describe('ArticlesTable', () => {
   it('renders the requested columns, thumbnail-backed image, and action controls', () => {
     render(
       <DirectionProvider direction="rtl">
-        <ArticlesTable articles={[article]} />
+        <ArticlesTableDialogProvider petTypes={[]}>
+          <ArticlesTable articles={[article]} />
+        </ArticlesTableDialogProvider>
       </DirectionProvider>,
     );
 
@@ -41,7 +46,7 @@ describe('ArticlesTable', () => {
     fireEvent.click(screen.getByRole('button', { name: 'عملیات راهنمای مراقبت از سگ' }));
     expect(
       screen.getByRole('menuitem', { name: 'ویرایش اطلاعات اصلی' }).getAttribute('data-disabled'),
-    ).toBe('');
+    ).toBeNull();
     expect(screen.getByRole('menuitem', { name: 'ویرایش متن مقاله' })).toBeTruthy();
     expect(screen.getByRole('menuitem', { name: 'حذف مقاله' })).toBeTruthy();
   });
@@ -49,7 +54,9 @@ describe('ArticlesTable', () => {
   it('marks skeleton rows busy and disables their interaction controls', () => {
     render(
       <DirectionProvider direction="rtl">
-        <ArticlesTable articles={[article]} isLoading />
+        <ArticlesTableDialogProvider petTypes={[]}>
+          <ArticlesTable articles={[article]} isLoading />
+        </ArticlesTableDialogProvider>
       </DirectionProvider>,
     );
 
