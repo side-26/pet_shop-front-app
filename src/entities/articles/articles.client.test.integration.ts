@@ -12,6 +12,7 @@ import {
 import { globalErrorHandler } from '@/utils/helpers';
 import { UpdateMainInfoDialogContext } from '@/app/admin/articles/_components/update-main-info-dialog/context';
 import { UpdateMainTextDialogContext } from '@/app/admin/articles/_components/update-main-text-dialog/context';
+import { UpdateTagsDialogContext } from '@/app/admin/articles/_components/update-tags-dialog/context';
 
 import {
   createArticleAction,
@@ -24,6 +25,7 @@ import {
   articlesQueryKeys,
   useArticleMainInfoQuery,
   useArticleMainTextQuery,
+  useArticleTagsQuery,
   useCreateArticle,
   useCreateArticleMutation,
   useDeleteArticleMutation,
@@ -33,7 +35,7 @@ import {
   useUpdateArticleMutation,
 } from './articles.client';
 import { articlesClientService } from './articles.client-service';
-import { ArticleDetailsDTO, ArticleMainTextDTO } from './articles.dto';
+import { ArticleDetailsDTO, ArticleMainTextDTO, ArticleTagDTO } from './articles.dto';
 
 vi.mock('./articles.actions', () => ({
   createArticleAction: vi.fn(),
@@ -43,7 +45,7 @@ vi.mock('./articles.actions', () => ({
   replaceArticleTagsAction: vi.fn(),
 }));
 vi.mock('./articles.client-service', () => ({
-  articlesClientService: { getById: vi.fn(), getMainTextById: vi.fn() },
+  articlesClientService: { getById: vi.fn(), getMainTextById: vi.fn(), getTagsById: vi.fn() },
 }));
 vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
 vi.mock('@/entities/images/images.client', () => ({
@@ -210,6 +212,21 @@ describe('article client mutations', () => {
     queryClient.clear();
   });
 
+  it('refreshes only the matching tags cache entry after replacement', async () => {
+    vi.mocked(replaceArticleTagsAction).mockResolvedValue(success);
+    const { queryClient, wrapper } = createWrapper();
+    const queryKey = articlesQueryKeys.tags(id);
+    const invalidateQueries = vi.spyOn(queryClient, 'invalidateQueries');
+    const { result } = renderHook(() => useReplaceArticleTagsMutation(), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({ id, tags: [{ title: 'سگ' }] });
+    });
+
+    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey });
+    queryClient.clear();
+  });
+
   it('uploads embedded images before creating an article and persists them after success', async () => {
     const mainText = {
       type: 'doc' as const,
@@ -305,6 +322,36 @@ describe('article main-text query', () => {
       mainText,
       internalOnly: 'do not expose to the editor',
     });
+    queryClient.clear();
+  });
+});
+
+describe('article tags query', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('uses the entity client service, keys by ID, and projects tag fields', async () => {
+    const tags = [{ title: 'سگ', internalOnly: 'do not expose to the editor' }];
+    vi.mocked(articlesClientService.getTagsById).mockResolvedValue(tags as never);
+    const { queryClient, wrapper: QueryProvider } = createWrapper();
+    const { result } = renderHook(() => useArticleTagsQuery(), {
+      wrapper: ({ children }) =>
+        createElement(
+          QueryProvider,
+          null,
+          createElement(
+            UpdateTagsDialogContext,
+            { value: { id } },
+            createElement(Suspense, { fallback: null }, children),
+          ),
+        ),
+    });
+
+    await waitFor(() => expect(result.current.data[0]).toBeInstanceOf(ArticleTagDTO));
+
+    expect(result.current.data).toMatchObject([{ title: 'سگ' }]);
+    expect(result.current.data[0]).not.toHaveProperty('internalOnly');
+    expect(articlesClientService.getTagsById).toHaveBeenCalledWith(id, expect.any(AbortSignal));
+    expect(queryClient.getQueryData(articlesQueryKeys.tags(id))).toEqual(tags);
     queryClient.clear();
   });
 });

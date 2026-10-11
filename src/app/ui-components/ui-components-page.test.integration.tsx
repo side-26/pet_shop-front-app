@@ -100,6 +100,7 @@ describe(routePaths.uiComponents, () => {
         'MultipleImageUploaderField',
         'Input OTP Field',
         'Rate Field',
+        'Badge Group Field',
         'Countdown',
         'Counter',
         'Empty',

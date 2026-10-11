@@ -17,6 +17,7 @@ import { globalErrorHandler } from '@/utils/helpers';
 import { transformData } from '@/app/core/transformer/transform';
 import { useUpdateMainInfoDialogParams } from '@/app/admin/articles/_components/update-main-info-dialog/context';
 import { useUpdateMainTextDialogParams } from '@/app/admin/articles/_components/update-main-text-dialog/context';
+import { useUpdateTagsDialogParams } from '@/app/admin/articles/_components/update-tags-dialog/context';
 
 import {
   createArticleAction,
@@ -34,9 +35,11 @@ import type {
 import {
   ArticleDetailsDTO,
   ArticleMainTextDTO,
+  ArticleTagDTO,
   type ArticleDetailsResponse,
   type ArticleIdDTO,
   type ArticleMainTextResponse,
+  type ArticleTagResponse,
 } from './articles.dto';
 import { articlesClientService } from './articles.client-service';
 
@@ -79,12 +82,15 @@ export const articlesQueryKeys = {
   all: ['articles'] as const,
   mainInfo: (id: ArticleIdDTO['id']) => [...articlesQueryKeys.all, 'main-info', id] as const,
   mainText: (id: ArticleIdDTO['id']) => [...articlesQueryKeys.all, 'main-text', id] as const,
+  tags: (id: ArticleIdDTO['id']) => [...articlesQueryKeys.all, 'tags', id] as const,
 };
 
 const selectArticleMainInfo = (article: ArticleDetailsResponse) =>
   transformData(ArticleDetailsDTO, article);
 const selectArticleMainText = (article: ArticleMainTextResponse) =>
   transformData(ArticleMainTextDTO, article);
+const selectArticleTags = (tags: ArticleTagResponse[]): ArticleTagDTO[] =>
+  transformData(ArticleTagDTO, tags as object[]);
 
 export function useArticleMainInfoQuery() {
   const { id } = useUpdateMainInfoDialogParams();
@@ -104,6 +110,16 @@ export function useArticleMainTextQuery() {
     queryKey: articlesQueryKeys.mainText(id),
     queryFn: ({ signal }) => articlesClientService.getMainTextById(id, signal),
     select: selectArticleMainText,
+    retry: false,
+  });
+}
+
+export function useArticleTagsQuery() {
+  const { id } = useUpdateTagsDialogParams();
+  return useSuspenseQuery({
+    queryKey: articlesQueryKeys.tags(id),
+    queryFn: ({ signal }) => articlesClientService.getTagsById(id, signal),
+    select: selectArticleTags,
     retry: false,
   });
 }
@@ -171,7 +187,15 @@ export function useUpdateArticleMainTextMutation(options?: ArticleMutationOption
 }
 
 export function useReplaceArticleTagsMutation(options?: ArticleMutationOptions) {
-  return useArticleMutation<ReplaceArticleTagsVariables>(replaceArticleTagsAction, options);
+  const queryClient = useQueryClient();
+
+  return useArticleMutation<ReplaceArticleTagsVariables>(
+    replaceArticleTagsAction,
+    options,
+    async (_result, { id }) => {
+      await queryClient.invalidateQueries({ queryKey: articlesQueryKeys.tags(id) });
+    },
+  );
 }
 
 export function useDeleteArticleMutation(options?: ArticleMutationOptions) {
@@ -269,5 +293,29 @@ export function useUpdateArticleMainText(id: string, onUpdated: () => void) {
     [id, isPending, mutateAsync, onUpdated],
   );
 
+  return { formRef, handleSubmit, isPending } as const;
+}
+
+export function useUpdateArticleTags(id: string, onUpdated: () => void) {
+  const formRef = useRef<FormHandle<ReplaceArticleTagsInput>>(null);
+  const mutation = useReplaceArticleTagsMutation({
+    onError: (error) => {
+      const form = formRef.current;
+      globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
+    },
+  });
+  const { isPending, mutateAsync } = mutation;
+  const handleSubmit = useCallback(
+    async (input: ReplaceArticleTagsInput) => {
+      if (isPending) return;
+      try {
+        await mutateAsync({ id, ...input });
+        onUpdated();
+      } catch {
+        // The mutation callback reports normalized errors.
+      }
+    },
+    [id, isPending, mutateAsync, onUpdated],
+  );
   return { formRef, handleSubmit, isPending } as const;
 }

@@ -6,7 +6,6 @@ import {
   createArticle,
   deleteArticle,
   getArticlePreviewBySlug,
-  getArticleTags,
   getCurrentUserArticles,
   invalidateCurrentUserArticles,
   updateArticle,
@@ -92,20 +91,6 @@ describe('article service', () => {
     });
     expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 600 });
     expect(registerListMock).toHaveBeenCalledWith('current-author');
-  });
-
-  it('reads public article tags through their dedicated endpoint', async () => {
-    const tagResult = { isSuccess: true as const, message: null, data: tags };
-    vi.mocked(customFetcher).mockResolvedValue(tagResult);
-
-    await expect(getArticleTags(id)).resolves.toBe(tagResult);
-
-    expect(customFetcher).toHaveBeenCalledWith({
-      url: `/articles/id/${id}/tags-list`,
-      method: 'GET',
-      auth: false,
-      cache: 'no-store',
-    });
   });
 
   it('invalidates only the current-author collection before retrying it', () => {

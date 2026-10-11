@@ -14,11 +14,14 @@ import { UpdateMainInfoDialogWrapper } from './update-main-info-dialog/wrapper';
 import type { UpdateMainInfoDialogHandle } from './update-main-info-dialog/types';
 import { UpdateMainTextDialogWrapper } from './update-main-text-dialog/wrapper';
 import type { UpdateMainTextDialogHandle } from './update-main-text-dialog/types';
+import { UpdateTagsDialogWrapper } from './update-tags-dialog/wrapper';
+import type { UpdateTagsDialogHandle } from './update-tags-dialog/types';
 
 type ArticlesTableDialogActions = Readonly<{
   openCreateNewArticle: () => void;
   openUpdateMainInfo: (id: string) => void;
   openUpdateMainText: (id: string) => void;
+  openUpdateTags: (id: string) => void;
 }>;
 
 const ArticlesTableDialogContext = createContext<ArticlesTableDialogActions | null>(null);
@@ -42,12 +45,14 @@ export function ArticlesTableDialogProvider({
   const createNewArticleRef = useRef<CreateNewArticleDialogHandle>(null);
   const updateMainInfoRef = useRef<UpdateMainInfoDialogHandle>(null);
   const updateMainTextRef = useRef<UpdateMainTextDialogHandle>(null);
+  const updateTagsRef = useRef<UpdateTagsDialogHandle>(null);
   const { open } = useDialogController(
     useMemo(
       () => ({
         createNewArticle: { ref: createNewArticleRef },
         updateMainInfo: { ref: updateMainInfoRef },
         updateMainText: { ref: updateMainTextRef },
+        updateTags: { ref: updateTagsRef },
       }),
       [],
     ),
@@ -57,6 +62,7 @@ export function ArticlesTableDialogProvider({
       openCreateNewArticle: () => open('createNewArticle'),
       openUpdateMainInfo: (id) => open('updateMainInfo', { id }),
       openUpdateMainText: (id) => open('updateMainText', { id }),
+      openUpdateTags: (id) => open('updateTags', { id }),
     }),
     [open],
   );
@@ -75,6 +81,7 @@ export function ArticlesTableDialogProvider({
         petTypes={petTypes}
       />
       <UpdateMainTextDialogWrapper ref={updateMainTextRef} onUpdated={router.refresh} />
+      <UpdateTagsDialogWrapper ref={updateTagsRef} onUpdated={router.refresh} />
     </ArticlesTableDialogContext>
   );
 }

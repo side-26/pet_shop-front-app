@@ -34,4 +34,18 @@ describe('article client service', () => {
       signal,
     });
   });
+
+  it('reads article tags through the same-origin internal API and forwards cancellation', async () => {
+    const signal = new AbortController().signal;
+    const id = '507f1f77bcf86cd799439011';
+    const tags = [{ title: 'سگ' }];
+    vi.mocked(internalFetcher).mockResolvedValue(tags);
+
+    await expect(articlesClientService.getTagsById(id, signal)).resolves.toBe(tags);
+    expect(internalFetcher).toHaveBeenCalledWith({
+      url: `/api/articles/${id}/tags`,
+      method: 'GET',
+      signal,
+    });
+  });
 });

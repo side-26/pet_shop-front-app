@@ -53,6 +53,7 @@ import { RateFieldShowcase } from './rate-field-showcase';
 import { NeshanMapShowcase } from './neshan-map-showcase';
 import { NeshanMapPointerIconShowcase } from './neshan-map-pointer-icon-showcase';
 import { FitTextShowcase } from './fit-text-showcase';
+import { BadgeGroupFieldShowcase } from './badge-group-field-showcase';
 
 const navigation = [
   ['#avatars', 'Avatar'],
@@ -99,6 +100,7 @@ const navigation = [
   ['#rich-text', 'Rich Text'],
   ['#input-otp-fields', 'Input OTP Field'],
   ['#rate-fields', 'Rate Field'],
+  ['#badge-group-fields', 'Badge Group Field'],
   ['#countdowns', 'Countdown'],
   ['#counters', 'Counter'],
   ['#empty-states', 'Empty'],
@@ -149,6 +151,7 @@ export function UiComponentsGallery() {
         <AvatarShowcase />
         <ButtonShowcase />
         <BadgeShowcase />
+        <BadgeGroupFieldShowcase />
         <CardShowcase />
         <ChartShowcase />
         <CalendarShowcase />

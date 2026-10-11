@@ -48,6 +48,7 @@ describe('ArticlesTable', () => {
       screen.getByRole('menuitem', { name: 'ویرایش اطلاعات اصلی' }).getAttribute('data-disabled'),
     ).toBeNull();
     expect(screen.getByRole('menuitem', { name: 'ویرایش متن مقاله' })).toBeTruthy();
+    expect(screen.getByRole('menuitem', { name: 'ویرایش برچسب‌ها' })).toBeTruthy();
     expect(screen.getByRole('menuitem', { name: 'حذف مقاله' })).toBeTruthy();
   });
 

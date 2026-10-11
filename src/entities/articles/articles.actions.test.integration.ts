@@ -21,7 +21,6 @@ vi.mock('./articles.service', () => ({
   getCurrentUserArticles: vi.fn(),
   invalidateCurrentUserArticles: vi.fn(),
   getArticlePreviewBySlug: vi.fn(),
-  getArticleTags: vi.fn(),
   replaceArticleTags: vi.fn(),
   updateArticle: vi.fn(),
   updateArticleMainText: vi.fn(),

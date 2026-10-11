@@ -44,20 +44,6 @@ export async function getCurrentUserArticles() {
   });
 }
 
-export async function getArticleTags(id: ArticleIdDTO['id']) {
-  'use cache';
-
-  articlesCache.cacheLife({ stale: 600 });
-  articlesCache.registerDetail(`tags:${id}`);
-
-  return customFetcher<ArticleTagDTO[]>({
-    url: `/articles/id/${encodeURIComponent(id)}/tags-list`,
-    method: 'GET',
-    auth: false,
-    cache: 'no-store',
-  });
-}
-
 export function invalidateCurrentUserArticles() {
   articlesCache.invalidateQuery('current-author');
 }

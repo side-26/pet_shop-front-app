@@ -1,6 +1,13 @@
 'use client';
 
-import { EyeIcon, FilePenLineIcon, MoreHorizontalIcon, PencilIcon, Trash2Icon } from 'lucide-react';
+import {
+  EyeIcon,
+  FilePenLineIcon,
+  MoreHorizontalIcon,
+  PencilIcon,
+  TagsIcon,
+  Trash2Icon,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -24,7 +31,7 @@ export function ArticlesRowActions({
   articleTitle,
   disabled = false,
 }: ArticlesRowActionsProps) {
-  const { openUpdateMainInfo, openUpdateMainText } = useArticlesTableDialogs();
+  const { openUpdateMainInfo, openUpdateMainText, openUpdateTags } = useArticlesTableDialogs();
   return (
     <div className="tw:flex tw:items-center tw:justify-end tw:gap-1">
       <Button
@@ -63,6 +70,10 @@ export function ArticlesRowActions({
             <DropdownMenuItem disabled={disabled} onClick={() => openUpdateMainText(articleId)}>
               <FilePenLineIcon aria-hidden="true" />
               ویرایش متن مقاله
+            </DropdownMenuItem>
+            <DropdownMenuItem disabled={disabled} onClick={() => openUpdateTags(articleId)}>
+              <TagsIcon aria-hidden="true" />
+              ویرایش برچسب‌ها
             </DropdownMenuItem>
             <DropdownMenuItem disabled variant="destructive">
               <Trash2Icon aria-hidden="true" />

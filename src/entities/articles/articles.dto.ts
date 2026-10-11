@@ -17,6 +17,10 @@ export class ArticleTagDTO {
   declare title: string;
 }
 
+export type ArticleTagResponse = Readonly<{
+  title: string;
+}>;
+
 export class ArticleAuthorDTO {
   @Expose()
   declare avatar: string;
@@ -176,11 +180,6 @@ export function toArticleDetailsDTO(value: unknown) {
 
 export function toArticleMainTextDTO(value: unknown) {
   return transform(ArticleMainTextDTO, value);
-}
-
-export function toArticleTagsDTO(value: unknown) {
-  if (!Array.isArray(value)) throw new TypeError('Expected an article tag array.');
-  return transformMany(ArticleTagDTO, value);
 }
 
 export type ArticleIdDTO = ArticleIdInput;
