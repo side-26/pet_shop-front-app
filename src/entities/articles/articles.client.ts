@@ -103,7 +103,7 @@ export function useUpdateArticleMutation(options?: ArticleMutationOptions) {
           ...article,
           ...(input.title === undefined ? {} : { title: input.title }),
           ...(input.subtitle === undefined ? {} : { subtitle: input.subtitle }),
-          ...(input.petType === undefined ? {} : { petTypeId: input.petType }),
+          ...(input.petType === undefined ? {} : { petType: input.petType }),
         };
       });
 

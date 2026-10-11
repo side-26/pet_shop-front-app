@@ -140,7 +140,7 @@ export class ArticleDetailsDTO {
   declare mainThumbnailImage: string;
 
   @Expose()
-  declare petTypeId: string | null;
+  declare petType: string | null;
 }
 
 export type ArticleDetailsResponse = Readonly<{
@@ -149,7 +149,7 @@ export type ArticleDetailsResponse = Readonly<{
   subtitle: string;
   mainImage: string;
   mainThumbnailImage: string;
-  petTypeId: string | null;
+  petType: string | null;
 }>;
 
 export class ArticleMainTextDTO {

@@ -21,7 +21,7 @@ describe('GET /api/articles/[id]', () => {
         subtitle: 'آنچه برای شروع باید بدانید',
         mainImage: 'https://cdn.example.test/articles/dog.webp',
         mainThumbnailImage: 'data:image/webp;base64,AAAA',
-        petTypeId: null,
+        petType: null,
       },
     });
 
@@ -36,7 +36,7 @@ describe('GET /api/articles/[id]', () => {
       subtitle: 'آنچه برای شروع باید بدانید',
       mainImage: 'https://cdn.example.test/articles/dog.webp',
       mainThumbnailImage: 'data:image/webp;base64,AAAA',
-      petTypeId: null,
+      petType: null,
     });
     expect(customFetcher).toHaveBeenCalledWith({
       url: `/articles/id/${id}`,

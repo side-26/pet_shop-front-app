@@ -50,7 +50,7 @@ function ArticleMainInfoForm(props: ArticleMainInfoFormProps) {
         defaultValues: {
           title: article?.title ?? 'عنوان مقاله',
           subtitle: article?.subtitle ?? 'زیرعنوان مقاله',
-          petType: article?.petTypeId ?? undefined,
+          petType: article?.petType ?? undefined,
           mainImage: undefined,
         },
       }}

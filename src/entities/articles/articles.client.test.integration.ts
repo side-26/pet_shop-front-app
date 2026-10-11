@@ -139,7 +139,7 @@ describe('article client mutations', () => {
       subtitle: 'زیرعنوان قبلی',
       mainImage: 'https://cdn.example.test/articles/old.webp',
       mainThumbnailImage: 'data:image/webp;base64,AAAA',
-      petTypeId: null,
+      petType: null,
     });
 
     const { result } = renderHook(() => useUpdateArticleMutation(), { wrapper });
@@ -155,7 +155,7 @@ describe('article client mutations', () => {
     expect(queryClient.getQueryData(queryKey)).toMatchObject({
       title: 'عنوان جدید',
       subtitle: 'زیرعنوان قبلی',
-      petTypeId: '507f1f77bcf86cd799439012',
+      petType: '507f1f77bcf86cd799439012',
     });
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey });
     queryClient.clear();
@@ -172,7 +172,7 @@ describe('article main-info query', () => {
       subtitle: 'آنچه برای شروع باید بدانید',
       mainImage: 'https://cdn.example.test/articles/dog.webp',
       mainThumbnailImage: 'data:image/webp;base64,AAAA',
-      petTypeId: null,
+      petType: null,
       internalOnly: 'do not expose to the editor',
     } as never);
     const { queryClient, wrapper } = createSuspenseWrapper();

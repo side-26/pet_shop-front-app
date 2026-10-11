@@ -71,7 +71,7 @@ describe('article DTO transformation', () => {
       subtitle: 'آنچه برای شروع باید بدانید',
       mainImage: 'https://cdn.example.test/articles/dog.webp',
       mainThumbnailImage: 'data:image/webp;base64,AAAA',
-      petTypeId: 'pet-type-id',
+      petType: 'pet-type-id',
       summary: 'removed',
       tags: [{ title: 'سگ' }],
       author: { firstName: 'سارا' },
@@ -84,7 +84,7 @@ describe('article DTO transformation', () => {
       subtitle: 'آنچه برای شروع باید بدانید',
       mainImage: 'https://cdn.example.test/articles/dog.webp',
       mainThumbnailImage: 'data:image/webp;base64,AAAA',
-      petTypeId: 'pet-type-id',
+      petType: 'pet-type-id',
     });
     expect(details).not.toHaveProperty('summary');
     expect(details).not.toHaveProperty('tags');
