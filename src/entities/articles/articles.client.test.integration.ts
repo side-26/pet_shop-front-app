@@ -4,8 +4,14 @@ import { createElement, Suspense, type ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { toast } from '@/components/ui/toast';
+import {
+  hasPendingRichTextImageOperations,
+  persistRichTextDraftImages,
+  uploadRichTextImages,
+} from '@/entities/images/images.client';
 import { globalErrorHandler } from '@/utils/helpers';
 import { UpdateMainInfoDialogContext } from '@/app/admin/articles/_components/update-main-info-dialog/context';
+import { UpdateMainTextDialogContext } from '@/app/admin/articles/_components/update-main-text-dialog/context';
 
 import {
   createArticleAction,
@@ -18,10 +24,12 @@ import {
   articlesQueryKeys,
   useArticleMainInfoQuery,
   useArticleMainTextQuery,
+  useCreateArticle,
   useCreateArticleMutation,
   useDeleteArticleMutation,
   useReplaceArticleTagsMutation,
   useUpdateArticleMainTextMutation,
+  useUpdateArticleMainText,
   useUpdateArticleMutation,
 } from './articles.client';
 import { articlesClientService } from './articles.client-service';
@@ -38,6 +46,11 @@ vi.mock('./articles.client-service', () => ({
   articlesClientService: { getById: vi.fn(), getMainTextById: vi.fn() },
 }));
 vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
+vi.mock('@/entities/images/images.client', () => ({
+  hasPendingRichTextImageOperations: vi.fn(),
+  persistRichTextDraftImages: vi.fn(),
+  uploadRichTextImages: vi.fn(),
+}));
 vi.mock('@/utils/helpers', () => ({ globalErrorHandler: vi.fn() }));
 
 const id = '507f1f77bcf86cd799439011';
@@ -76,8 +89,26 @@ function createSuspenseWrapper() {
   return { queryClient, wrapper };
 }
 
+function createMainTextSuspenseWrapper() {
+  const { queryClient, wrapper: QueryProvider } = createWrapper();
+  const wrapper = ({ children }: { children: ReactNode }) =>
+    createElement(
+      QueryProvider,
+      null,
+      createElement(
+        UpdateMainTextDialogContext,
+        { value: { id } },
+        createElement(Suspense, { fallback: null }, children),
+      ),
+    );
+  return { queryClient, wrapper };
+}
+
 describe('article client mutations', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(hasPendingRichTextImageOperations).mockReturnValue(false);
+  });
 
   it.each([
     ['creates an article', useCreateArticleMutation, createArticleAction, createInput],
@@ -178,6 +209,50 @@ describe('article client mutations', () => {
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey });
     queryClient.clear();
   });
+
+  it('uploads embedded images before creating an article and persists them after success', async () => {
+    const mainText = {
+      type: 'doc' as const,
+      content: [{ type: 'image', attrs: { src: 'https://cdn.example.test/article.webp' } }],
+    };
+    const onCreated = vi.fn();
+    vi.mocked(uploadRichTextImages).mockResolvedValue(mainText);
+    vi.mocked(createArticleAction).mockResolvedValue(success);
+    const { queryClient, wrapper } = createWrapper();
+    const { result } = renderHook(() => useCreateArticle(onCreated), { wrapper });
+
+    await act(async () => {
+      await result.current.handleSubmit(createInput);
+    });
+
+    expect(uploadRichTextImages).toHaveBeenCalledWith(createInput.mainText);
+    expect(createArticleAction).toHaveBeenCalledWith({ ...createInput, mainText });
+    expect(persistRichTextDraftImages).toHaveBeenCalledWith(mainText);
+    expect(onCreated).toHaveBeenCalledOnce();
+    queryClient.clear();
+  });
+
+  it('uploads embedded images before updating article main text and persists them after success', async () => {
+    const mainText = {
+      type: 'doc' as const,
+      content: [{ type: 'image', attrs: { src: 'https://cdn.example.test/article.webp' } }],
+    };
+    const onUpdated = vi.fn();
+    vi.mocked(uploadRichTextImages).mockResolvedValue(mainText);
+    vi.mocked(updateArticleMainTextAction).mockResolvedValue(success);
+    const { queryClient, wrapper } = createWrapper();
+    const { result } = renderHook(() => useUpdateArticleMainText(id, onUpdated), { wrapper });
+
+    await act(async () => {
+      await result.current.handleSubmit({ mainText: createInput.mainText });
+    });
+
+    expect(uploadRichTextImages).toHaveBeenCalledWith(createInput.mainText);
+    expect(updateArticleMainTextAction).toHaveBeenCalledWith({ id, mainText });
+    expect(persistRichTextDraftImages).toHaveBeenCalledWith(mainText);
+    expect(onUpdated).toHaveBeenCalledOnce();
+    queryClient.clear();
+  });
 });
 
 describe('article main-info query', () => {
@@ -218,11 +293,8 @@ describe('article main-text query', () => {
       mainText,
       internalOnly: 'do not expose to the editor',
     } as never);
-    const { queryClient, wrapper: QueryProvider } = createWrapper();
-    const { result } = renderHook(() => useArticleMainTextQuery(id), {
-      wrapper: ({ children }) =>
-        createElement(QueryProvider, null, createElement(Suspense, { fallback: null }, children)),
-    });
+    const { queryClient, wrapper } = createMainTextSuspenseWrapper();
+    const { result } = renderHook(() => useArticleMainTextQuery(), { wrapper });
 
     await waitFor(() => expect(result.current.data).toBeInstanceOf(ArticleMainTextDTO));
 

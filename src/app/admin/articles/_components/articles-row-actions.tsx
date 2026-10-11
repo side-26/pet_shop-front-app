@@ -24,7 +24,7 @@ export function ArticlesRowActions({
   articleTitle,
   disabled = false,
 }: ArticlesRowActionsProps) {
-  const { openUpdateMainInfo } = useArticlesTableDialogs();
+  const { openUpdateMainInfo, openUpdateMainText } = useArticlesTableDialogs();
   return (
     <div className="tw:flex tw:items-center tw:justify-end tw:gap-1">
       <Button
@@ -60,7 +60,7 @@ export function ArticlesRowActions({
               <PencilIcon aria-hidden="true" />
               ویرایش اطلاعات اصلی
             </DropdownMenuItem>
-            <DropdownMenuItem disabled>
+            <DropdownMenuItem disabled={disabled} onClick={() => openUpdateMainText(articleId)}>
               <FilePenLineIcon aria-hidden="true" />
               ویرایش متن مقاله
             </DropdownMenuItem>

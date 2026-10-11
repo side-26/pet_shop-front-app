@@ -5,10 +5,18 @@ import { useCallback, useRef } from 'react';
 
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
+import { imageOperationMessages } from '@/configs/image-operation-messages';
+import {
+  hasPendingRichTextImageOperations,
+  persistRichTextDraftImages,
+  uploadRichTextImages,
+} from '@/entities/images/images.client';
 import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
+import type { RichTextDocument } from '@/lib/rich-text';
 import { globalErrorHandler } from '@/utils/helpers';
 import { transformData } from '@/app/core/transformer/transform';
 import { useUpdateMainInfoDialogParams } from '@/app/admin/articles/_components/update-main-info-dialog/context';
+import { useUpdateMainTextDialogParams } from '@/app/admin/articles/_components/update-main-text-dialog/context';
 
 import {
   createArticleAction,
@@ -45,6 +53,23 @@ function reportMutationError(error: FetcherError) {
   globalErrorHandler(error);
 }
 
+async function finalizeArticleMainText(
+  mainText: UpdateArticleMainTextInput['mainText'],
+  onError: (error: FetcherError) => void,
+) {
+  if (hasPendingRichTextImageOperations()) {
+    toast.add({ type: 'warning', title: imageOperationMessages.pendingOperations });
+    return;
+  }
+
+  try {
+    return await uploadRichTextImages(mainText as RichTextDocument);
+  } catch (error) {
+    onError(error as FetcherError);
+    return;
+  }
+}
+
 export type UpdateArticleVariables = UpdateArticleInput & { id: string };
 export type UpdateArticleMainTextVariables = UpdateArticleMainTextInput & { id: string };
 export type ReplaceArticleTagsVariables = ReplaceArticleTagsInput & { id: string };
@@ -72,7 +97,9 @@ export function useArticleMainInfoQuery() {
   });
 }
 
-export function useArticleMainTextQuery(id: ArticleIdDTO['id']) {
+export function useArticleMainTextQuery() {
+  const { id } = useUpdateMainTextDialogParams();
+
   return useSuspenseQuery({
     queryKey: articlesQueryKeys.mainText(id),
     queryFn: ({ signal }) => articlesClientService.getMainTextById(id, signal),
@@ -164,8 +191,16 @@ export function useCreateArticle(onCreated: () => void) {
   const handleSubmit = useCallback(
     async (input: CreateArticleInput) => {
       if (isPending) return;
+      const form = formRef.current;
+      const mainText = await finalizeArticleMainText(input.mainText, (error) =>
+        globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined),
+      );
+      if (!mainText) return;
+      form?.setValue('mainText', mainText);
+
       try {
-        await mutateAsync(input);
+        await mutateAsync({ ...input, mainText });
+        persistRichTextDraftImages(mainText);
         onCreated();
       } catch {
         // The mutation callback reports normalized errors.
@@ -192,6 +227,40 @@ export function useUpdateArticle(id: string, onUpdated: () => void) {
       if (isPending) return;
       try {
         await mutateAsync({ id, ...input });
+        onUpdated();
+      } catch {
+        // The mutation callback reports normalized errors.
+      }
+    },
+    [id, isPending, mutateAsync, onUpdated],
+  );
+
+  return { formRef, handleSubmit, isPending } as const;
+}
+
+export function useUpdateArticleMainText(id: string, onUpdated: () => void) {
+  const formRef = useRef<FormHandle<UpdateArticleMainTextInput>>(null);
+  const mutation = useUpdateArticleMainTextMutation({
+    onError: (error) => {
+      const form = formRef.current;
+      globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
+    },
+  });
+  const { isPending, mutateAsync } = mutation;
+
+  const handleSubmit = useCallback(
+    async (input: UpdateArticleMainTextInput) => {
+      if (isPending) return;
+      const form = formRef.current;
+      const mainText = await finalizeArticleMainText(input.mainText, (error) =>
+        globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined),
+      );
+      if (!mainText) return;
+      form?.setValue('mainText', mainText);
+
+      try {
+        await mutateAsync({ id, ...input, mainText });
+        persistRichTextDraftImages(mainText);
         onUpdated();
       } catch {
         // The mutation callback reports normalized errors.

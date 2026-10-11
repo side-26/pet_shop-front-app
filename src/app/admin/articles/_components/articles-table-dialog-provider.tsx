@@ -12,10 +12,13 @@ import type {
 } from './create-new-article-dialog/types';
 import { UpdateMainInfoDialogWrapper } from './update-main-info-dialog/wrapper';
 import type { UpdateMainInfoDialogHandle } from './update-main-info-dialog/types';
+import { UpdateMainTextDialogWrapper } from './update-main-text-dialog/wrapper';
+import type { UpdateMainTextDialogHandle } from './update-main-text-dialog/types';
 
 type ArticlesTableDialogActions = Readonly<{
   openCreateNewArticle: () => void;
   openUpdateMainInfo: (id: string) => void;
+  openUpdateMainText: (id: string) => void;
 }>;
 
 const ArticlesTableDialogContext = createContext<ArticlesTableDialogActions | null>(null);
@@ -38,11 +41,13 @@ export function ArticlesTableDialogProvider({
   const router = useRouter();
   const createNewArticleRef = useRef<CreateNewArticleDialogHandle>(null);
   const updateMainInfoRef = useRef<UpdateMainInfoDialogHandle>(null);
+  const updateMainTextRef = useRef<UpdateMainTextDialogHandle>(null);
   const { open } = useDialogController(
     useMemo(
       () => ({
         createNewArticle: { ref: createNewArticleRef },
         updateMainInfo: { ref: updateMainInfoRef },
+        updateMainText: { ref: updateMainTextRef },
       }),
       [],
     ),
@@ -51,6 +56,7 @@ export function ArticlesTableDialogProvider({
     () => ({
       openCreateNewArticle: () => open('createNewArticle'),
       openUpdateMainInfo: (id) => open('updateMainInfo', { id }),
+      openUpdateMainText: (id) => open('updateMainText', { id }),
     }),
     [open],
   );
@@ -68,6 +74,7 @@ export function ArticlesTableDialogProvider({
         onUpdated={router.refresh}
         petTypes={petTypes}
       />
+      <UpdateMainTextDialogWrapper ref={updateMainTextRef} onUpdated={router.refresh} />
     </ArticlesTableDialogContext>
   );
 }
