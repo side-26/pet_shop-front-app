@@ -8,6 +8,7 @@ import {
   TagsIcon,
   Trash2Icon,
 } from 'lucide-react';
+import { useRouter } from 'nextjs-toploader/app';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -17,6 +18,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useDeleteArticle } from '@/entities/articles/articles.client';
+import { useCommonStore } from '@/stores/common.store';
 
 import { useArticlesTableDialogs } from './articles-table-dialog-provider';
 
@@ -31,7 +34,25 @@ export function ArticlesRowActions({
   articleTitle,
   disabled = false,
 }: ArticlesRowActionsProps) {
+  const router = useRouter();
+  const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
+  const { deleteArticle } = useDeleteArticle(router.refresh);
   const { openUpdateMainInfo, openUpdateMainText, openUpdateTags } = useArticlesTableDialogs();
+
+  function confirmDeletion() {
+    if (disabled) return;
+
+    showConfirmDialog({
+      title: 'مقاله حذف شود؟',
+      message: `مقاله «${articleTitle}» به‌صورت دائمی حذف خواهد شد. این عمل قابل بازگشت نیست.`,
+      icon: Trash2Icon,
+      variant: 'error',
+      onSuccess: async () => {
+        await deleteArticle(articleId);
+      },
+    });
+  }
+
   return (
     <div className="tw:flex tw:items-center tw:justify-end tw:gap-1">
       <Button
@@ -75,7 +96,7 @@ export function ArticlesRowActions({
               <TagsIcon aria-hidden="true" />
               ویرایش برچسب‌ها
             </DropdownMenuItem>
-            <DropdownMenuItem disabled variant="destructive">
+            <DropdownMenuItem disabled={disabled} variant="destructive" onClick={confirmDeletion}>
               <Trash2Icon aria-hidden="true" />
               حذف مقاله
             </DropdownMenuItem>

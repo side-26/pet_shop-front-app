@@ -4,6 +4,7 @@ import { getSession } from '@/utils/session';
 
 import {
   createArticleAction,
+  deleteArticleAction,
   getCurrentUserArticlesAction,
   getArticlePreviewBySlugAction,
   replaceArticleTagsAction,
@@ -102,6 +103,16 @@ describe('article actions', () => {
       isSuccess: true,
     });
     expect(service.replaceArticleTags).toHaveBeenCalledWith(id, { tags: [{ title: 'سگ' }] });
+  });
+
+  it('deletes an article and invalidates the authenticated articles collection after success', async () => {
+    const response = { isSuccess: true as const, message: 'ok', data: undefined };
+    vi.mocked(service.deleteArticle).mockResolvedValue(response);
+
+    await expect(deleteArticleAction({ id })).resolves.toEqual(response);
+
+    expect(service.deleteArticle).toHaveBeenCalledWith(id);
+    expect(service.invalidateCurrentUserArticles).toHaveBeenCalledOnce();
   });
 
   it('returns validation errors without reaching the service', async () => {

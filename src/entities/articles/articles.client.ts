@@ -202,6 +202,20 @@ export function useDeleteArticleMutation(options?: ArticleMutationOptions) {
   return useArticleMutation<DeleteArticleVariables>(deleteArticleAction, options);
 }
 
+export function useDeleteArticle(onDeleted: () => void) {
+  const { isPending, mutateAsync } = useDeleteArticleMutation();
+
+  const deleteArticle = useCallback(
+    async (id: string) => {
+      await mutateAsync({ id });
+      onDeleted();
+    },
+    [mutateAsync, onDeleted],
+  );
+
+  return { deleteArticle, isPending } as const;
+}
+
 export function useCreateArticle(onCreated: () => void) {
   const formRef = useRef<FormHandle<CreateArticleInput>>(null);
   const mutation = useCreateArticleMutation({

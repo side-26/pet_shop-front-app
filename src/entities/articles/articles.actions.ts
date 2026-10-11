@@ -113,5 +113,9 @@ export async function deleteArticleAction(input: unknown) {
   if (denied) return denied;
 
   const value = await validate(articleIdSchema, input);
-  return 'isSuccess' in value ? value : service.deleteArticle(value.id);
+  if ('isSuccess' in value) return value;
+
+  const result = await service.deleteArticle(value.id);
+  if (result.isSuccess) service.invalidateCurrentUserArticles();
+  return result;
 }
