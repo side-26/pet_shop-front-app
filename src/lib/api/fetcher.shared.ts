@@ -10,6 +10,7 @@ export interface FetchErrorMessageDTO {
 export type FetcherError<TBackendError = unknown> = {
   isSuccess: false;
   message: string | null;
+  status?: number;
   data: {
     messages: FetchErrorMessageDTO[] | Record<string, never>;
     details: TBackendError | Record<string, never>;
@@ -125,8 +126,14 @@ export function isExplicitErrorResponse(value: unknown): boolean {
 
 export function transportError<TBackendError = never>(
   message: string,
+  status?: number,
 ): FetcherError<TBackendError> {
-  return { isSuccess: false, message, data: { messages: {}, details: {} } };
+  return {
+    isSuccess: false,
+    message,
+    ...(status === undefined ? {} : { status }),
+    data: { messages: {}, details: {} },
+  };
 }
 
 export function parseResponseText(text: string): unknown | undefined {
@@ -141,6 +148,7 @@ export function parseResponseText(text: string): unknown | undefined {
 export function parseSuccess<TSuccess, TBackendError>(
   envelope: FetcherSuccess<unknown>,
   parser?: ResponseParser<TSuccess>,
+  parserFailureStatus?: number,
 ): FetcherResult<TSuccess, TBackendError> {
   try {
     return {
@@ -149,7 +157,7 @@ export function parseSuccess<TSuccess, TBackendError>(
       data: parser ? parser(envelope.data) : (envelope.data as TSuccess),
     };
   } catch {
-    return transportError<TBackendError>(DEFAULT_ERROR_MESSAGE);
+    return transportError<TBackendError>(DEFAULT_ERROR_MESSAGE, parserFailureStatus);
   }
 }
 
@@ -174,10 +182,12 @@ export function normalizeSuccessResponse(value: unknown): FetcherSuccess<unknown
 function parseError<TBackendError>(
   envelope: FetcherError<unknown>,
   parser?: ResponseParser<TBackendError>,
+  status?: number,
 ): FetcherError<TBackendError> {
   const errorWithMessage = {
     ...envelope,
     message: getNonEmptyMessage(envelope.message) ?? DEFAULT_ERROR_MESSAGE,
+    ...(status === undefined ? {} : { status }),
   };
   if (!parser || isEmptyRecord(envelope.data.details))
     return errorWithMessage as FetcherError<TBackendError>;
@@ -194,10 +204,11 @@ function parseError<TBackendError>(
 export function parseResponseError<TBackendError>(
   value: unknown,
   parser?: ResponseParser<TBackendError>,
+  status?: number,
 ): FetcherError<TBackendError> {
   return isErrorEnvelope(value)
-    ? parseError(value, parser)
-    : transportError<TBackendError>(getResponseMessage(value) ?? DEFAULT_ERROR_MESSAGE);
+    ? parseError(value, parser, status)
+    : transportError<TBackendError>(getResponseMessage(value) ?? DEFAULT_ERROR_MESSAGE, status);
 }
 
 export function throwNewCustomError<E = unknown>(

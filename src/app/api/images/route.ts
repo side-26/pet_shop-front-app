@@ -1,4 +1,5 @@
 import { customFetcher } from '@/lib/api/customFetcher';
+import { HTTP_STATUS } from '@/lib/api/http-status';
 
 export async function POST(request: Request) {
   try {
@@ -11,7 +12,9 @@ export async function POST(request: Request) {
       cache: 'no-store',
     });
 
-    return Response.json(result, { status: result.isSuccess ? 201 : 400 });
+    return Response.json(result, {
+      status: result.isSuccess ? HTTP_STATUS.CREATED : HTTP_STATUS.BAD_REQUEST,
+    });
   } catch {
     return Response.json(
       {
@@ -19,7 +22,7 @@ export async function POST(request: Request) {
         message: 'بارگذاری تصویر ناموفق بود.',
         data: { messages: {}, details: {} },
       },
-      { status: 400 },
+      { status: HTTP_STATUS.BAD_REQUEST },
     );
   }
 }

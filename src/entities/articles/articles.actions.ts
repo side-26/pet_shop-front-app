@@ -17,7 +17,6 @@ import {
 } from './articles.schema';
 import * as service from './articles.service';
 import {
-  transformArticleDetailsResult,
   transformArticleMainTextResult,
   transformArticleResult,
   transformArticleTagsResult,
@@ -65,14 +64,6 @@ export async function getArticlePreviewBySlugAction(input: unknown) {
 export async function getCurrentUserArticlesAction() {
   await requireAuthenticated();
   return unwrapResult(service.getCurrentUserArticles());
-}
-
-export async function getArticleByIdAction(input: unknown) {
-  const value = await validate(articleIdSchema, input);
-
-  return 'isSuccess' in value
-    ? value
-    : transformArticleDetailsResult(await service.getArticleById(value.id));
 }
 
 export async function getArticleMainTextByIdAction(input: unknown) {

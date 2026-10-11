@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 
 import { InternalApiError } from './InternalFetchError';
 import type { FetcherError } from './fetcher.shared';
+import { HTTP_STATUS } from './http-status';
 
 type ApiHandler<TContext = unknown> = (request: Request, context: TContext) => Promise<Response>;
 
@@ -22,7 +23,7 @@ export function withApiHandler<TContext = unknown>(
             data: error.data,
           } satisfies FetcherError<unknown>,
           {
-            status: error.status ?? 500,
+            status: error.status ?? HTTP_STATUS.INTERNAL_SERVER_ERROR,
           },
         );
       }
@@ -38,7 +39,7 @@ export function withApiHandler<TContext = unknown>(
             details: {},
           },
         } satisfies FetcherError<unknown>,
-        { status: 500 },
+        { status: HTTP_STATUS.INTERNAL_SERVER_ERROR },
       );
     }
   };

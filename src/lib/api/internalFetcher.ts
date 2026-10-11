@@ -7,6 +7,7 @@ import {
 } from './fetcher.shared';
 
 import { InternalApiError } from './InternalFetchError';
+import { HTTP_STATUS } from './http-status';
 
 type InternalFetcherOptions<TBody = never> = {
   url: string;
@@ -49,7 +50,9 @@ export async function internalFetcher<TSuccess, TBackendError = unknown, TBody =
       signal: AbortSignal.any([AbortSignal.timeout(timeoutMs), ...(signal ? [signal] : [])]),
     });
 
-    const responseBody = parseResponseText(response.status === 204 ? '' : await response.text());
+    const responseBody = parseResponseText(
+      response.status === HTTP_STATUS.NO_CONTENT ? '' : await response.text(),
+    );
 
     if (!response.ok) {
       const errorBody = responseBody as FetcherError<TBackendError>;

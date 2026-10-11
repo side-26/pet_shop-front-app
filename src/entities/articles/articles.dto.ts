@@ -143,6 +143,15 @@ export class ArticleDetailsDTO {
   declare petTypeId: string | null;
 }
 
+export type ArticleDetailsResponse = Readonly<{
+  id: string;
+  title: string;
+  subtitle: string;
+  mainImage: string;
+  mainThumbnailImage: string;
+  petTypeId: string | null;
+}>;
+
 export class ArticleMainTextDTO {
   @Expose()
   declare mainText: RichTextFormValue;

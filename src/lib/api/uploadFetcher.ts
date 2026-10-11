@@ -13,6 +13,7 @@ import {
   type QueryParams,
   type ResponseParser,
 } from './fetcher.shared';
+import { HTTP_STATUS } from './http-status';
 
 export type UploadProgress = {
   loaded: number;
@@ -83,7 +84,11 @@ export function uploadFetcher<TSuccess, TBackendError = unknown, TBody = FormDat
       };
       request.onload = () => {
         const response = parseResponseText(request.responseText);
-        if (request.status < 200 || request.status >= 300 || isExplicitErrorResponse(response)) {
+        if (
+          request.status < HTTP_STATUS.OK ||
+          request.status >= HTTP_STATUS.MULTIPLE_CHOICES ||
+          isExplicitErrorResponse(response)
+        ) {
           finish(parseResponseError(response, options.parseErrorDetails));
           return;
         }

@@ -148,26 +148,33 @@ describe('customFetcher', () => {
     expect(result).toEqual({
       isSuccess: false,
       message: fetcherMessages.authenticationRequired,
+      status: 401,
       data: { messages: {}, details: {} },
     });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it.each([200, 422])('preserves the backend error envelope with HTTP %s', async (status) => {
-    const backendError = {
-      isSuccess: false,
-      message: 'Validation failed.',
-      data: {
-        messages: [{ value: 'title', label: 'Title is required.' }],
-        details: { code: 'VALIDATION_ERROR' },
-      },
-    } as const;
-    fetchMock.mockResolvedValueOnce(jsonResponse(backendError, status));
+  it.each([
+    [200, 502],
+    [422, 422],
+  ])(
+    'preserves the backend error envelope with an effective HTTP %s status',
+    async (responseStatus, status) => {
+      const backendError = {
+        isSuccess: false,
+        message: 'Validation failed.',
+        data: {
+          messages: [{ value: 'title', label: 'Title is required.' }],
+          details: { code: 'VALIDATION_ERROR' },
+        },
+      } as const;
+      fetchMock.mockResolvedValueOnce(jsonResponse(backendError, responseStatus));
 
-    const result = await customFetcher<never, { code: string }>({ url: '/products' });
+      const result = await customFetcher<never, { code: string }>({ url: '/products' });
 
-    expect(result).toEqual(backendError);
-  });
+      expect(result).toEqual({ ...backendError, status });
+    },
+  );
 
   it('uses a backend message from a partial error response', async () => {
     fetchMock.mockResolvedValueOnce(
@@ -179,6 +186,7 @@ describe('customFetcher', () => {
     expect(result).toEqual({
       isSuccess: false,
       message: 'This phone number is already registered.',
+      status: 409,
       data: { messages: {}, details: {} },
     });
   });
@@ -193,6 +201,7 @@ describe('customFetcher', () => {
     expect(result).toEqual({
       isSuccess: false,
       message: fetcherMessages.invalidResponse,
+      status: 500,
       data: { messages: {}, details: {} },
     });
   });
@@ -221,6 +230,7 @@ describe('customFetcher', () => {
     expect(error).toEqual({
       isSuccess: false,
       message: 'Invalid value.',
+      status: 502,
       data: { messages: {}, details: 'invalid' },
     });
   });
@@ -241,9 +251,15 @@ describe('customFetcher', () => {
     expect(malformed).toEqual({
       isSuccess: false,
       message: fetcherMessages.invalidResponse,
+      status: 500,
       data: { messages: {}, details: {} },
     });
-    expect(parserFailure).toEqual(malformed);
+    expect(parserFailure).toEqual({
+      isSuccess: false,
+      message: fetcherMessages.invalidResponse,
+      status: 502,
+      data: { messages: {}, details: {} },
+    });
   });
 
   it('normalizes network and timeout failures into the error envelope', async () => {
@@ -260,8 +276,16 @@ describe('customFetcher', () => {
     const network = await customFetcher({ url: '/network' });
     const timeout = await customFetcher({ url: '/timeout', timeoutMs: 1 });
 
-    expect(network).toMatchObject({ isSuccess: false, message: fetcherMessages.serverUnavailable });
-    expect(timeout).toMatchObject({ isSuccess: false, message: fetcherMessages.requestTimedOut });
+    expect(network).toMatchObject({
+      isSuccess: false,
+      message: fetcherMessages.serverUnavailable,
+      status: 502,
+    });
+    expect(timeout).toMatchObject({
+      isSuccess: false,
+      message: fetcherMessages.requestTimedOut,
+      status: 504,
+    });
   });
 
   it('supports successful empty 204 responses', async () => {

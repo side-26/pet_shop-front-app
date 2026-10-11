@@ -6,7 +6,6 @@ import {
   createArticleAction,
   getCurrentUserArticlesAction,
   getArticlePreviewBySlugAction,
-  getArticleByIdAction,
   getArticleMainTextByIdAction,
   replaceArticleTagsAction,
   updateArticleAction,
@@ -23,7 +22,6 @@ vi.mock('./articles.service', () => ({
   getCurrentUserArticles: vi.fn(),
   invalidateCurrentUserArticles: vi.fn(),
   getArticlePreviewBySlug: vi.fn(),
-  getArticleById: vi.fn(),
   getArticleMainTextById: vi.fn(),
   getArticleTags: vi.fn(),
   replaceArticleTags: vi.fn(),
@@ -70,14 +68,11 @@ describe('article actions', () => {
     expect(service.getCurrentUserArticles).toHaveBeenCalledOnce();
   });
 
-  it('validates public ID reads before delegating to their services', async () => {
+  it('validates public article-text reads before delegating to their services', async () => {
     const response = { isSuccess: true as const, message: null, data: {} as never };
-    vi.mocked(service.getArticleById).mockResolvedValue(response);
     vi.mocked(service.getArticleMainTextById).mockResolvedValue(response);
 
-    await getArticleByIdAction({ id });
     await getArticleMainTextByIdAction({ id });
-    expect(service.getArticleById).toHaveBeenCalledWith(id);
     expect(service.getArticleMainTextById).toHaveBeenCalledWith(id);
   });
 

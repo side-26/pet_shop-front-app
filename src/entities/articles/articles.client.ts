@@ -1,14 +1,14 @@
 'use client';
 
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { useCallback, useRef } from 'react';
 
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
 import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
 import { globalErrorHandler } from '@/utils/helpers';
+import { transformData } from '@/app/core/transformer/transform';
 import { useUpdateMainInfoDialogParams } from '@/app/admin/articles/_components/update-main-info-dialog/context';
-import { innerFetcher } from '@/lib/api/innerFetcher';
 
 import {
   createArticleAction,
@@ -23,12 +23,17 @@ import type {
   UpdateArticleInput,
   UpdateArticleMainTextInput,
 } from './articles.schema';
-import type { ArticleDetailsDTO } from './articles.dto';
+import { ArticleDetailsDTO, type ArticleDetailsResponse, type ArticleIdDTO } from './articles.dto';
+import { articlesClientService } from './articles.client-service';
 
 type ArticleMutationOptions = Readonly<{
   onError?: (error: FetcherError) => void;
 }>;
 type ArticleMutationAction<TVariables> = (variables: TVariables) => Promise<FetcherResult<unknown>>;
+type ArticleMutationSuccessHandler<TVariables> = (
+  result: FetcherResult<unknown>,
+  variables: TVariables,
+) => void | Promise<void>;
 
 function reportMutationError(error: FetcherError) {
   globalErrorHandler(error);
@@ -39,22 +44,21 @@ export type UpdateArticleMainTextVariables = UpdateArticleMainTextInput & { id: 
 export type ReplaceArticleTagsVariables = ReplaceArticleTagsInput & { id: string };
 export type DeleteArticleVariables = { id: string };
 
-const articleMainInfoQueryKey = (id: string) => ['articles', 'main-info', id] as const;
+export const articlesQueryKeys = {
+  all: ['articles'] as const,
+  mainInfo: (id: ArticleIdDTO['id']) => [...articlesQueryKeys.all, 'main-info', id] as const,
+};
 
-async function getArticleMainInfo(id: string): Promise<ArticleDetailsDTO> {
-  const result = await innerFetcher<ArticleDetailsDTO>({
-    url: `/api/articles/${encodeURIComponent(id)}`,
-  });
-  if (result.isSuccess) return result.data;
-  throw result;
-}
+const selectArticleMainInfo = (article: ArticleDetailsResponse) =>
+  transformData(ArticleDetailsDTO, article);
 
 export function useArticleMainInfoQuery() {
   const { id } = useUpdateMainInfoDialogParams();
 
   return useSuspenseQuery({
-    queryKey: articleMainInfoQueryKey(id),
-    queryFn: () => getArticleMainInfo(id),
+    queryKey: articlesQueryKeys.mainInfo(id),
+    queryFn: ({ signal }) => articlesClientService.getById(id, signal),
+    select: selectArticleMainInfo,
     retry: false,
   });
 }
@@ -62,6 +66,7 @@ export function useArticleMainInfoQuery() {
 function useArticleMutation<TVariables>(
   action: ArticleMutationAction<TVariables>,
   { onError = reportMutationError }: ArticleMutationOptions = {},
+  onSuccess?: ArticleMutationSuccessHandler<TVariables>,
 ) {
   return useMutation<FetcherResult<unknown>, FetcherError, TVariables>({
     mutationFn: async (variables) => {
@@ -70,7 +75,10 @@ function useArticleMutation<TVariables>(
       return result;
     },
     retry: 0,
-    onSuccess: (result) => toast.add({ type: 'success', title: result.message }),
+    onSuccess: async (result, variables) => {
+      toast.add({ type: 'success', title: result.message });
+      await onSuccess?.(result, variables);
+    },
     onError,
   });
 }
@@ -80,7 +88,29 @@ export function useCreateArticleMutation(options?: ArticleMutationOptions) {
 }
 
 export function useUpdateArticleMutation(options?: ArticleMutationOptions) {
-  return useArticleMutation<UpdateArticleVariables>(updateArticleAction, options);
+  const queryClient = useQueryClient();
+
+  return useArticleMutation<UpdateArticleVariables>(
+    updateArticleAction,
+    options,
+    async (_result, input) => {
+      const queryKey = articlesQueryKeys.mainInfo(input.id);
+
+      queryClient.setQueryData<ArticleDetailsResponse>(queryKey, (article) => {
+        if (!article) return article;
+
+        return {
+          ...article,
+          ...(input.title === undefined ? {} : { title: input.title }),
+          ...(input.subtitle === undefined ? {} : { subtitle: input.subtitle }),
+          ...(input.petType === undefined ? {} : { petTypeId: input.petType }),
+        };
+      });
+
+      // The backend owns the resulting image URL, so reconcile this query after the local patch.
+      await queryClient.invalidateQueries({ queryKey });
+    },
+  );
 }
 
 export function useUpdateArticleMainTextMutation(options?: ArticleMutationOptions) {

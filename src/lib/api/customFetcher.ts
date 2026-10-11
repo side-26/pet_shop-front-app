@@ -16,6 +16,7 @@ import {
   type QueryParams,
   type ResponseParser,
 } from './fetcher.shared';
+import { HTTP_STATUS } from './http-status';
 
 export type {
   FetcherError,
@@ -74,7 +75,10 @@ export async function customFetcher<TSuccess, TBackendError = unknown, TBody = n
   else if (auth) {
     const session = await getSession();
     if (!session?.accessToken)
-      return transportError<TBackendError>(fetcherMessages.authenticationRequired);
+      return transportError<TBackendError>(
+        fetcherMessages.authenticationRequired,
+        HTTP_STATUS.UNAUTHORIZED,
+      );
     headers.set('Authorization', `Bearer ${session.accessToken}`);
   }
 
@@ -93,17 +97,33 @@ export async function customFetcher<TSuccess, TBackendError = unknown, TBody = n
       next,
       signal: controller.signal,
     });
-    const responseBody = parseResponseText(response.status === 204 ? '' : await response.text());
+    const responseBody = parseResponseText(
+      response.status === HTTP_STATUS.NO_CONTENT ? '' : await response.text(),
+    );
     if (!response.ok || isExplicitErrorResponse(responseBody)) {
-      return parseResponseError(responseBody, parseErrorDetails);
+      return parseResponseError(
+        responseBody,
+        parseErrorDetails,
+        response.ok ? HTTP_STATUS.BAD_GATEWAY : response.status,
+      );
     }
-    return parseSuccess(normalizeSuccessResponse(responseBody), successParser);
+    return parseSuccess(
+      normalizeSuccessResponse(responseBody),
+      successParser,
+      HTTP_STATUS.BAD_GATEWAY,
+    );
   } catch (error: unknown) {
     if (controller.signal.aborted)
-      return transportError<TBackendError>(fetcherMessages.requestTimedOut);
+      return transportError<TBackendError>(
+        fetcherMessages.requestTimedOut,
+        HTTP_STATUS.GATEWAY_TIMEOUT,
+      );
     if (error instanceof TypeError)
-      return transportError<TBackendError>(fetcherMessages.serverUnavailable);
-    return transportError<TBackendError>(fetcherMessages.unexpectedError);
+      return transportError<TBackendError>(
+        fetcherMessages.serverUnavailable,
+        HTTP_STATUS.BAD_GATEWAY,
+      );
+    return transportError<TBackendError>(fetcherMessages.unexpectedError, HTTP_STATUS.BAD_GATEWAY);
   } finally {
     clearTimeout(timeout);
   }

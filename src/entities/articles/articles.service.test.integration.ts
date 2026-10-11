@@ -6,7 +6,6 @@ import {
   createArticle,
   deleteArticle,
   getArticlePreviewBySlug,
-  getArticleById,
   getArticleMainTextById,
   getArticleTags,
   getCurrentUserArticles,
@@ -96,36 +95,25 @@ describe('article service', () => {
     expect(registerListMock).toHaveBeenCalledWith('current-author');
   });
 
-  it('reads public article details, main text, and tags through their dedicated endpoints', async () => {
-    const details = { isSuccess: true as const, message: null, data: article };
+  it('reads public article main text and tags through their dedicated endpoints', async () => {
     const mainText = {
       isSuccess: true as const,
       message: null,
       data: { mainText: input.mainText },
     };
     const tagResult = { isSuccess: true as const, message: null, data: tags };
-    vi.mocked(customFetcher)
-      .mockResolvedValueOnce(details)
-      .mockResolvedValueOnce(mainText)
-      .mockResolvedValueOnce(tagResult);
+    vi.mocked(customFetcher).mockResolvedValueOnce(mainText).mockResolvedValueOnce(tagResult);
 
-    await expect(getArticleById(id)).resolves.toBe(details);
     await expect(getArticleMainTextById(id)).resolves.toBe(mainText);
     await expect(getArticleTags(id)).resolves.toBe(tagResult);
 
     expect(customFetcher).toHaveBeenNthCalledWith(1, {
-      url: `/articles/id/${id}`,
-      method: 'GET',
-      auth: false,
-      cache: 'no-store',
-    });
-    expect(customFetcher).toHaveBeenNthCalledWith(2, {
       url: `/articles/id/${id}/main-text`,
       method: 'GET',
       auth: false,
       cache: 'no-store',
     });
-    expect(customFetcher).toHaveBeenNthCalledWith(3, {
+    expect(customFetcher).toHaveBeenNthCalledWith(2, {
       url: `/articles/id/${id}/tags-list`,
       method: 'GET',
       auth: false,

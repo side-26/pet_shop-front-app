@@ -5,7 +5,6 @@ import { EntityTag } from '@/utils/entityCache';
 
 import type {
   ArticleDTO,
-  ArticleDetailsDTO,
   ArticleIdDTO,
   ArticleListDTO,
   ArticleMainTextDTO,
@@ -42,20 +41,6 @@ export async function getCurrentUserArticles() {
     url: '/articles/all',
     method: 'GET',
     auth: true,
-    cache: 'no-store',
-  });
-}
-
-export async function getArticleById(id: ArticleIdDTO['id']) {
-  'use cache';
-
-  articlesCache.cacheLife({ stale: 600 });
-  articlesCache.registerDetail(`id:${id}`);
-
-  return customFetcher<ArticleDetailsDTO>({
-    url: `/articles/id/${encodeURIComponent(id)}`,
-    method: 'GET',
-    auth: false,
     cache: 'no-store',
   });
 }
