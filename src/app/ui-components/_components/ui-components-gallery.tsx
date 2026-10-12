@@ -41,6 +41,7 @@ import { FilterFormDialogContentShowcase } from './filter-form-dialog-content-sh
 import { FileFieldShowcase } from './file-field-showcase';
 import { MultipleImageUploaderFieldShowcase } from './multiple-image-uploader-field-showcase';
 import { RichTextShowcase } from './rich-text-showcase';
+import { RichTextPreviewerShowcase } from './rich-text-previewer-showcase';
 import { ChartShowcase } from './chart-showcase';
 import { CalendarShowcase } from './calendar-showcase';
 import { DatePickerShowcase } from './date-picker-showcase';
@@ -98,6 +99,7 @@ const navigation = [
   ['#file-fields', 'FileField'],
   ['#multiple-image-uploader-fields', 'Multiple Image Uploader Field'],
   ['#rich-text', 'Rich Text'],
+  ['#rich-text-previewer', 'Rich Text Previewer'],
   ['#input-otp-fields', 'Input OTP Field'],
   ['#rate-fields', 'Rate Field'],
   ['#badge-group-fields', 'Badge Group Field'],
@@ -191,6 +193,7 @@ export function UiComponentsGallery() {
         <FileFieldShowcase />
         <MultipleImageUploaderFieldShowcase />
         <RichTextShowcase />
+        <RichTextPreviewerShowcase />
         <InputOtpShowcase />
         <RateFieldShowcase />
         <CountdownShowcase />
