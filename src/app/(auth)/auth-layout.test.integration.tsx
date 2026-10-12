@@ -1,6 +1,8 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
+import { routePaths } from '@/configs/route.path';
+
 import AuthLayout from './layout';
 
 afterEach(cleanup);
@@ -19,6 +21,9 @@ describe('AuthLayout', () => {
     expect(screen.getByRole('img', { name: 'توله‌سگ گلدن رتریور' })).toBeTruthy();
     expect(screen.getByRole('region', { name: 'محتوای احراز هویت' })).toBeTruthy();
     expect(screen.getByText('محتوای صفحه ورود')).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'بازگشت به خانه' }).getAttribute('href')).toBe(
+      routePaths.home,
+    );
   });
 
   it('shows the three trust benefits', () => {
