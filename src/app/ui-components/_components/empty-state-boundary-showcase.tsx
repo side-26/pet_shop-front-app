@@ -21,7 +21,7 @@ export function EmptyStateBoundaryShowcase() {
     <ShowcaseSection
       id="empty-state-boundaries"
       title="Empty State Boundary"
-      description="نمایش جایگزین برای داده‌های آرایه‌ای خالی در کامپوننت‌های سرور و کلاینت."
+      description="نمایش جایگزین برای داده‌های خالی در کامپوننت‌های سرور و کلاینت."
     >
       <div className="tw:grid tw:gap-6 tw:md:grid-cols-2">
         <EmptyStateBoundary data={[]} fallback={<EmptyArticlesFallback />}>

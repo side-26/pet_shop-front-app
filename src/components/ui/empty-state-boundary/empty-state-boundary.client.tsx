@@ -6,7 +6,7 @@ export function EmptyStateBoundaryClient<TData extends EmptyStateData>({
   data,
   fallback,
   children,
-  isEmpty = () => data?.length === 0,
+  isEmpty = () => data == null || (Array.isArray(data) && data.length === 0),
 }: EmptyStateBoundaryProps<TData>) {
   return isEmpty() ? fallback : children;
 }

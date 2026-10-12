@@ -50,28 +50,37 @@ async function validate<T>(
   }
 }
 
+async function unwrapValidate<T extends object>(
+  promise: Promise<T | FetcherError>,
+  defaultErrorMessage = 'ورودی نامعتبر است.',
+): Promise<T> {
+  const result = await promise;
+
+  if ('isSuccess' in result) {
+    throw new Error(result.message ?? defaultErrorMessage);
+  }
+
+  return result;
+}
+
 export async function getArticlePreviewBySlugAction(input: unknown) {
-  const value = await validate(articleSlugSchema, input);
-  return 'isSuccess' in value
-    ? value
-    : transformArticleResult(await service.getArticlePreviewBySlug(value.slug));
+  const value = await unwrapValidate(validate(articleSlugSchema, input));
+  return transformArticleResult(await service.getArticlePreviewBySlug(value.slug));
 }
 
 export async function getArticlePreviewByIdAction(input: unknown) {
-  const denied = await authorizeAuthenticated();
-  if (denied) return denied;
+  await requireAuthenticated();
 
-  const value = await validate(articleIdSchema, input);
-  return 'isSuccess' in value
-    ? value
-    : transformArticleResult(await service.getArticlePreviewById(value.id));
+  const value = await unwrapValidate(validate(articleIdSchema, input), 'شناسه مقاله نامعتبر است.');
+
+  return unwrapResult(service.getArticlePreviewById(value.id));
 }
 
 export async function getCurrentUserArticlesAction() {
   await requireAuthenticated();
   return unwrapResult(service.getCurrentUserArticles());
 }
-
+// no need this action
 export async function retryCurrentUserArticlesAction() {
   const denied = await authorizeAuthenticated();
   if (denied) return;
@@ -84,46 +93,42 @@ export async function createArticleAction(input: unknown) {
   const denied = await authorizeAuthenticated();
   if (denied) return denied;
 
-  const value = await validate(createArticleSchema, input);
-  return 'isSuccess' in value ? value : await service.createArticle(value);
+  const value = await unwrapValidate(validate(createArticleSchema, input));
+  return service.createArticle(value);
 }
 
 export async function updateArticleAction(input: unknown) {
   const denied = await authorizeAuthenticated();
   if (denied) return denied;
 
-  const id = await validate(articleIdSchema, input);
-  if ('isSuccess' in id) return id;
-  const value = await validate(updateArticleSchema, input);
-  return 'isSuccess' in value ? value : service.updateArticle(id.id, value);
+  const id = await unwrapValidate(validate(articleIdSchema, input));
+  const value = await unwrapValidate(validate(updateArticleSchema, input));
+  return service.updateArticle(id.id, value);
 }
 
 export async function updateArticleMainTextAction(input: unknown) {
   const denied = await authorizeAuthenticated();
   if (denied) return denied;
 
-  const id = await validate(articleIdSchema, input);
-  if ('isSuccess' in id) return id;
-  const value = await validate(updateArticleMainTextSchema, input);
-  return 'isSuccess' in value ? value : service.updateArticleMainText(id.id, value);
+  const id = await unwrapValidate(validate(articleIdSchema, input));
+  const value = await unwrapValidate(validate(updateArticleMainTextSchema, input));
+  return service.updateArticleMainText(id.id, value);
 }
 
 export async function replaceArticleTagsAction(input: unknown) {
   const denied = await authorizeAuthenticated();
   if (denied) return denied;
 
-  const id = await validate(articleIdSchema, input);
-  if ('isSuccess' in id) return id;
-  const value = await validate(replaceArticleTagsSchema, input);
-  return 'isSuccess' in value ? value : service.replaceArticleTags(id.id, value);
+  const id = await unwrapValidate(validate(articleIdSchema, input));
+  const value = await unwrapValidate(validate(replaceArticleTagsSchema, input));
+  return service.replaceArticleTags(id.id, value);
 }
 
 export async function deleteArticleAction(input: unknown) {
   const denied = await authorizeAuthenticated();
   if (denied) return denied;
 
-  const value = await validate(articleIdSchema, input);
-  if ('isSuccess' in value) return value;
+  const value = await unwrapValidate(validate(articleIdSchema, input));
 
   const result = await service.deleteArticle(value.id);
   if (result.isSuccess) service.invalidateCurrentUserArticles();

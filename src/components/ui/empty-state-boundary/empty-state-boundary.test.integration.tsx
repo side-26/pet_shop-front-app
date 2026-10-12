@@ -40,7 +40,7 @@ describe('EmptyStateBoundary', () => {
   ] as const)('uses the custom empty predicate for %s data', (_, Boundary) => {
     render(
       <Boundary
-        data={['article']}
+        data={{ id: '' }}
         fallback={<p>فهرست موردی برای نمایش ندارد</p>}
         isEmpty={() => true}
       >

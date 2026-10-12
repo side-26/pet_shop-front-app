@@ -58,9 +58,21 @@ describe('article actions', () => {
     const response = { isSuccess: true as const, message: null, data: {} as never };
     vi.mocked(service.getArticlePreviewById).mockResolvedValue(response);
 
-    await getArticlePreviewByIdAction({ id });
+    await expect(getArticlePreviewByIdAction({ id })).resolves.toEqual(response.data);
 
     expect(service.getArticlePreviewById).toHaveBeenCalledWith(id);
+  });
+
+  it('throws an article-preview service failure for the section error boundary', async () => {
+    vi.mocked(service.getArticlePreviewById).mockResolvedValue({
+      isSuccess: false,
+      message: 'نمایش پیش‌نمایش مقاله انجام نشد.',
+      data: { messages: {}, details: {} },
+    });
+
+    await expect(getArticlePreviewByIdAction({ id })).rejects.toThrow(
+      'نمایش پیش‌نمایش مقاله انجام نشد.',
+    );
   });
 
   it('returns the authenticated user article collection from the service', async () => {
@@ -126,10 +138,8 @@ describe('article actions', () => {
     expect(service.invalidateCurrentUserArticles).toHaveBeenCalledOnce();
   });
 
-  it('returns validation errors without reaching the service', async () => {
-    const result = await updateArticleAction({ id });
-
-    expect(result.isSuccess).toBe(false);
+  it('throws validation errors without reaching the service', async () => {
+    await expect(updateArticleAction({ id })).rejects.toThrow('ورودی نامعتبر است.');
     expect(service.updateArticle).not.toHaveBeenCalled();
   });
 
