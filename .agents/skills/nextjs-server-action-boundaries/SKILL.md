@@ -47,12 +47,14 @@ const dataPromise = getSectionAction(input);
 
 return (
   <Suspense fallback={<SectionRenderer data={skeletonData} isSkeleton />}>
-    <ErrorStateBoundary fallbackRender={({ retry }) => <SectionErrorFallback onRetry={retry} />}>
+    <SectionErrorBoundary>
       <SectionContent dataPromise={dataPromise} />
-    </ErrorStateBoundary>
+    </SectionErrorBoundary>
   </Suspense>
 );
 ```
+
+`ErrorStateBoundary` is a Client Component. When its fallback needs the boundary-provided `retry` callback, create a feature-local `*ErrorBoundary` Client Component that owns `fallbackRender` and composes `FetchErrorSection`. A Server Component must not pass a function through `fallbackRender` or `onRetry`; those props cannot cross the Server-to-Client boundary.
 
 The renderer must support `isSkeleton`, apply `.skeleton` to the outer visual region, set `aria-busy`, and make any skeleton interactions unavailable. Do not duplicate the renderer’s layout in loading markup.
 

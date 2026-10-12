@@ -1,10 +1,9 @@
 import { Suspense } from 'react';
 
-import { FetchErrorSection } from '@/components/common/fetch-error-section';
-import { ErrorStateBoundary } from '@/components/ui/error-state-boundary';
 import type { getArticlePreviewByIdAction } from '@/entities/articles/articles.actions';
 
 import { ArticlePreviewContent } from './article-preview-content';
+import { ArticlePreviewErrorBoundary } from './article-preview-error-boundary';
 import { ArticlePreviewRenderer } from './article-preview-renderer';
 
 export function ArticlePreviewSection({
@@ -12,17 +11,9 @@ export function ArticlePreviewSection({
 }: Readonly<{ articlePromise: ReturnType<typeof getArticlePreviewByIdAction> }>) {
   return (
     <Suspense fallback={<ArticlePreviewRenderer isSkeleton />}>
-      <ErrorStateBoundary
-        fallbackRender={({ retry }) => (
-          <FetchErrorSection
-            title="نمایش پیش‌نمایش مقاله انجام نشد"
-            description="هنگام نمایش پیش‌نمایش خطای غیرمنتظره‌ای رخ داد. دوباره تلاش کنید."
-            onRetry={retry}
-          />
-        )}
-      >
+      <ArticlePreviewErrorBoundary>
         <ArticlePreviewContent articlePromise={articlePromise} />
-      </ErrorStateBoundary>
+      </ArticlePreviewErrorBoundary>
     </Suspense>
   );
 }

@@ -65,6 +65,8 @@ export const routePaths = {
   uiComponents: PATHS.UI_COMPONENTS,
   admin: PATHS.ADMIN,
   adminArticles: PATHS.ADMIN_ARTICLES,
+  adminArticlePreview: (articleId: string) =>
+    `${PATHS.ADMIN_ARTICLES}/${encodeURIComponent(articleId)}/preview`,
   adminUsers: PATHS.ADMIN_USERS,
   adminPetTypes: PATHS.ADMIN_PET_TYPES,
   adminCategories: PATHS.ADMIN_CATEGORIES,

@@ -4,15 +4,18 @@ import { act, cleanup, fireEvent, render, screen, within } from '@testing-librar
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ConfirmDialog } from '@/components/common/confirm-dialog/main';
+import { routePaths } from '@/configs/route.path';
 import { deleteArticleAction } from '@/entities/articles/articles.actions';
 import { useCommonStore } from '@/stores/common.store';
 import { ArticlesTableDialogProvider } from './articles-table-dialog-provider';
 import { ArticlesTable } from './articles-table';
 
-const mocks = vi.hoisted(() => ({ refresh: vi.fn() }));
+const mocks = vi.hoisted(() => ({ push: vi.fn(), refresh: vi.fn() }));
 const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
 
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: mocks.refresh }) }));
+vi.mock('nextjs-toploader/app', () => ({
+  useRouter: () => ({ push: mocks.push, refresh: mocks.refresh }),
+}));
 vi.mock('@/entities/articles/articles.actions', () => ({ deleteArticleAction: vi.fn() }));
 
 afterEach(() => {
@@ -57,6 +60,9 @@ describe('ArticlesTable', () => {
       article.mainThumbnailImage,
     );
     expect(screen.getByRole('button', { name: 'پیش‌نمایش راهنمای مراقبت از سگ' })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'پیش‌نمایش راهنمای مراقبت از سگ' }));
+    expect(mocks.push).toHaveBeenCalledWith(routePaths.adminArticlePreview(article.id));
 
     fireEvent.click(screen.getByRole('button', { name: 'عملیات راهنمای مراقبت از سگ' }));
     expect(

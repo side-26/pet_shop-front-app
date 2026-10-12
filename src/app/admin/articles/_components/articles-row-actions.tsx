@@ -18,6 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { routePaths } from '@/configs/route.path';
 import { useDeleteArticle } from '@/entities/articles/articles.client';
 import { useCommonStore } from '@/stores/common.store';
 
@@ -53,6 +54,11 @@ export function ArticlesRowActions({
     });
   }
 
+  function previewArticle() {
+    if (disabled) return;
+    router.push(routePaths.adminArticlePreview(articleId));
+  }
+
   return (
     <div className="tw:flex tw:items-center tw:justify-end tw:gap-1">
       <Button
@@ -63,6 +69,7 @@ export function ArticlesRowActions({
         color="secondary"
         disabled={disabled}
         aria-label={`پیش‌نمایش ${articleTitle}`}
+        onClick={previewArticle}
       >
         <EyeIcon aria-hidden="true" />
       </Button>
