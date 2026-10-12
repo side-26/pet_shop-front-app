@@ -1,22 +1,11 @@
-'use client';
-
-import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
-
-import {
-  type ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart';
+import { LineChart } from '@/components/ui/charts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-const data = [
-  { month: 'فروردین', orders: 48 },
-  { month: 'اردیبهشت', orders: 62 },
-  { month: 'خرداد', orders: 55 },
+const lineData = [
+  { month: 'فروردین', primary: 48, secondary: 36, white: 64, neutral: 28, success: 52 },
+  { month: 'اردیبهشت', primary: 62, secondary: 45, white: 58, neutral: 40, success: 68 },
+  { month: 'خرداد', primary: 55, secondary: 51, white: 72, neutral: 46, success: 61 },
 ];
-
-const config = { orders: { label: 'سفارش‌ها', color: 'var(--chart-1)' } } satisfies ChartConfig;
 
 export function ChartShowcase() {
   return (
@@ -24,17 +13,23 @@ export function ChartShowcase() {
       <Card>
         <CardHeader>
           <CardTitle id="charts-title">Chart</CardTitle>
-          <CardDescription>نمونه نمودار ستونی با Tooltip سازگار با پوسته.</CardDescription>
+          <CardDescription>
+            نمونه نمودار خطی با رنگ‌های معنایی و Tooltip سازگار با پوسته.
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={config} className="tw:min-h-56 tw:w-full">
-            <BarChart accessibilityLayer data={data}>
-              <CartesianGrid vertical={false} />
-              <XAxis dataKey="month" tickLine={false} axisLine={false} />
-              <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar dataKey="orders" fill="var(--color-orders)" radius={8} />
-            </BarChart>
-          </ChartContainer>
+          <LineChart
+            ariaLabel="روند رنگ‌های نمودار خطی"
+            data={lineData}
+            xAxisDataKey="month"
+            series={[
+              { color: 'primary', dataKey: 'primary', label: 'اصلی' },
+              { color: 'secondary', dataKey: 'secondary', label: 'ثانویه' },
+              { color: 'white', dataKey: 'white', label: 'سفید' },
+              { color: 'neutral', dataKey: 'neutral', label: 'خنثی' },
+              { color: 'success', dataKey: 'success', label: 'موفق' },
+            ]}
+          />
         </CardContent>
       </Card>
     </section>
