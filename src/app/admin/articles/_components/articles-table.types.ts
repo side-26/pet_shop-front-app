@@ -2,6 +2,7 @@ import type { ArticlePetTypeDTO, ArticleTagDTO } from '@/entities/articles/artic
 
 export type ArticleTableRow = {
   id: string;
+  slug: string;
   title: string;
   petType: ArticlePetTypeDTO | null;
   tags: ArticleTagDTO[];

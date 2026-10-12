@@ -26,12 +26,14 @@ import { useArticlesTableDialogs } from './articles-table-dialog-provider';
 
 type ArticlesRowActionsProps = {
   articleId: string;
+  articleSlug: string;
   articleTitle: string;
   disabled?: boolean;
 };
 
 export function ArticlesRowActions({
   articleId,
+  articleSlug,
   articleTitle,
   disabled = false,
 }: ArticlesRowActionsProps) {
@@ -56,7 +58,7 @@ export function ArticlesRowActions({
 
   function previewArticle() {
     if (disabled) return;
-    router.push(routePaths.adminArticlePreview(articleId));
+    router.push(routePaths.adminArticlePreview(articleSlug));
   }
 
   return (

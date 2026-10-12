@@ -106,6 +106,7 @@ export function ArticlesTable({ articles, isLoading = false }: ArticlesTableProp
                 <TableCell>
                   <ArticlesRowActions
                     articleId={article.id}
+                    articleSlug={article.slug}
                     articleTitle={article.title}
                     disabled={isLoading}
                   />

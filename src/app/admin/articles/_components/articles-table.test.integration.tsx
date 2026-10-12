@@ -27,6 +27,7 @@ afterEach(() => {
 
 const article = {
   id: 'article-id',
+  slug: 'dog-care-guide',
   title: 'راهنمای مراقبت از سگ',
   petType: { title: 'سگ' },
   tags: [{ title: 'سگ' }, { title: 'سلامت' }, { title: 'تغذیه' }],
@@ -62,7 +63,7 @@ describe('ArticlesTable', () => {
     expect(screen.getByRole('button', { name: 'پیش‌نمایش راهنمای مراقبت از سگ' })).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: 'پیش‌نمایش راهنمای مراقبت از سگ' }));
-    expect(mocks.push).toHaveBeenCalledWith(routePaths.adminArticlePreview(article.id));
+    expect(mocks.push).toHaveBeenCalledWith(routePaths.adminArticlePreview(article.slug));
 
     fireEvent.click(screen.getByRole('button', { name: 'عملیات راهنمای مراقبت از سگ' }));
     expect(

@@ -1,13 +1,13 @@
 import { use } from 'react';
 
 import { EmptyStateBoundary } from '@/components/ui/empty-state-boundary';
-import type { getArticlePreviewByIdAction } from '@/entities/articles/articles.actions';
+import type { getArticlePreviewBySlugAction } from '@/entities/articles/articles.actions';
 
 import { ArticlePreviewEmptyFetchSection } from './article-preview-empty-fetch-section';
 import { ArticlePreviewRenderer } from './article-preview-renderer';
 
 type Props = Readonly<{
-  articlePromise: ReturnType<typeof getArticlePreviewByIdAction>;
+  articlePromise: ReturnType<typeof getArticlePreviewBySlugAction>;
 }>;
 
 export function ArticlePreviewContent({ articlePromise }: Props) {

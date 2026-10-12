@@ -95,7 +95,37 @@ Use a feature-local `*EmptyFetch` component composed from the shared `Empty` pri
 ## Recovery
 
 - Use `ErrorStateBoundary` with a feature-specific `FetchErrorSection` composition and its provided retry/reset callback.
+- In that feature-local Client error boundary, show a meaningful non-empty `error.message` in `FetchErrorSection.description`. If the boundary error has no usable message, show a feature-specific fallback instead. Keep this normalization at the boundary: the shared `FetchErrorSection` remains presentation-only, and Server Components do not pass error callbacks or functions to Client Components.
+- Never expose stacks, raw error objects, credentials, backend URLs, or serialized backend payloads. Server Actions should throw user-safe messages for expected failures.
 - Do not assume an error-boundary reset alone refetches Server Component data; copy the nearest proven retry pattern.
+
+```tsx
+'use client';
+
+const fallbackDescription = 'نمایش اطلاعات انجام نشد. دوباره تلاش کنید.';
+
+function getErrorDescription(error: unknown) {
+  return error instanceof Error && error.message.trim()
+    ? error.message
+    : fallbackDescription;
+}
+
+export function SectionErrorBoundary({ children }: { children: ReactNode }) {
+  return (
+    <ErrorStateBoundary
+      fallbackRender={({ error, retry }) => (
+        <FetchErrorSection
+          title="نمایش اطلاعات انجام نشد"
+          description={getErrorDescription(error)}
+          onRetry={retry}
+        />
+      )}
+    >
+      {children}
+    </ErrorStateBoundary>
+  );
+}
+```
 
 ## Cache and safety
 
@@ -103,4 +133,4 @@ Preserve the service’s cache policy. Public shareable content may use `'use ca
 
 ## Verify
 
-Test the action’s unwrapped rejection contract, renderer skeleton behavior, valid data, semantic empty data, and the error-boundary fallback. Confirm retries target only the section’s cache scope. Run focused tests, lint, typecheck, and the applicable build checks.
+Test the action’s unwrapped rejection contract, renderer skeleton behavior, valid data, semantic empty data, and the error-boundary fallback. Verify that a thrown, user-safe message is shown and that a missing or blank message uses the feature fallback. Confirm retries target only the section’s cache scope. Run focused tests, lint, typecheck, and the applicable build checks.

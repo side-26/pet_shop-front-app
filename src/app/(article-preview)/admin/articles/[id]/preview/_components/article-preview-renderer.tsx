@@ -8,6 +8,8 @@ import { ArticlePreviewHeroSection } from './article-preview-hero-section';
 import { ArticlePreviewProfile } from './article-preview-profile';
 import { ArticlePreviewShareButton } from './article-preview-share-button';
 import { articlePreviewSkeletonMainText } from './article-preview-skeleton-data';
+import { ArticlePreviewSummarySection } from './article-preview-summary-section';
+import { ArticlePreviewTagsSection } from './article-preview-tags-section';
 
 type ArticlePreviewRendererProps = Readonly<{
   article?: ArticleDTO;
@@ -44,6 +46,7 @@ export function ArticlePreviewRenderer({
           <ArticlePreviewShareButton disabled={isSkeleton} title={article?.title ?? 'مقاله'} />
         </div>
       </section>
+      <ArticlePreviewSummarySection summary={article?.summary} isSkeleton={isSkeleton} />
       {mainText ? (
         <section aria-label="متن مقاله">
           <RichTextPreviewer>
@@ -51,6 +54,7 @@ export function ArticlePreviewRenderer({
           </RichTextPreviewer>
         </section>
       ) : null}
+      <ArticlePreviewTagsSection tags={article?.tags} isSkeleton={isSkeleton} />
     </article>
   );
 }

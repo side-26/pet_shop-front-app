@@ -24,7 +24,7 @@ export async function getArticlePreviewBySlug(slug: ArticleSlugDTO['slug']) {
   articlesCache.registerDetail(slug);
 
   return customFetcher<ArticleDTO>({
-    url: `/articles/${encodeURIComponent(slug)}`,
+    url: `/articles/${slug}`,
     method: 'GET',
     auth: false,
     cache: 'no-store',

@@ -16,7 +16,6 @@ import {
   updateArticleSchema,
 } from './articles.schema';
 import * as service from './articles.service';
-import { transformArticleResult } from './articles.transformer';
 import { unwrapResult } from '@/lib/utils';
 
 async function requireAuthenticated(): Promise<void> {
@@ -65,7 +64,7 @@ async function unwrapValidate<T extends object>(
 
 export async function getArticlePreviewBySlugAction(input: unknown) {
   const value = await unwrapValidate(validate(articleSlugSchema, input));
-  return transformArticleResult(await service.getArticlePreviewBySlug(value.slug));
+  return unwrapResult(service.getArticlePreviewBySlug(value.slug));
 }
 
 export async function getArticlePreviewByIdAction(input: unknown) {
