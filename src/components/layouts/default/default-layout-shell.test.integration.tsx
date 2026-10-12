@@ -51,8 +51,8 @@ describe('DefaultLayoutShell', () => {
     expect(screen.getAllByRole('link', { name: 'محصولات' })[0].getAttribute('href')).toBe(
       routePaths.products,
     );
-    expect(screen.getAllByRole('link', { name: 'خدمات ما' })[0].getAttribute('href')).toBe(
-      routePaths.services,
+    expect(screen.getAllByRole('link', { name: 'مقالات' })[0].getAttribute('href')).toBe(
+      routePaths.articles,
     );
     expect(screen.getAllByRole('link', { name: 'درباره ما' })[0].getAttribute('href')).toBe(
       routePaths.about,
@@ -83,8 +83,8 @@ describe('DefaultLayoutShell', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'باز کردن منوی بیشتر' }));
 
-    expect((await screen.findByRole('menuitem', { name: 'خدمات ما' })).getAttribute('href')).toBe(
-      routePaths.services,
+    expect((await screen.findByRole('menuitem', { name: 'مقالات' })).getAttribute('href')).toBe(
+      routePaths.articles,
     );
     expect(screen.getByRole('menuitem', { name: 'درباره ما' }).getAttribute('href')).toBe(
       routePaths.about,

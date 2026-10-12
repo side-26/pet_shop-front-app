@@ -14,9 +14,7 @@ describe('MobileHeaderMenu', () => {
 
     cy.get('button[aria-label="باز کردن منوی بیشتر"]').click();
     cy.get('[role="menu"]').should('be.visible');
-    cy.get('[role="menuitem"]')
-      .contains('خدمات ما')
-      .should('have.attr', 'href', routePaths.services);
+    cy.get('[role="menuitem"]').contains('مقالات').should('have.attr', 'href', routePaths.articles);
     cy.get('[role="menuitem"]').contains('درباره ما').should('have.attr', 'href', routePaths.about);
     cy.get('button[aria-label="باز کردن منوی بیشتر"]').type('{esc}');
     cy.get('[role="menu"]').should('not.exist');

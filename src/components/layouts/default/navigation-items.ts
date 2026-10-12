@@ -1,7 +1,7 @@
 import {
-  HeartHandshake,
   House,
   Info,
+  Newspaper,
   PawPrint,
   ShoppingBag,
   ShoppingCart,
@@ -14,7 +14,7 @@ export const desktopNavigationItems = [
   { label: 'خانه', href: routePaths.home },
   { label: 'حیوانات', href: routePaths.pets },
   { label: 'محصولات', href: routePaths.products },
-  { label: 'خدمات ما', href: routePaths.services },
+  { label: 'مقالات', href: routePaths.articles },
   { label: 'درباره ما', href: routePaths.about },
 ] as const;
 
@@ -27,7 +27,7 @@ export const mobileNavigationItems = [
 ] as const;
 
 export const mobileOverflowNavigationItems = [
-  { label: 'خدمات ما', href: routePaths.services, icon: HeartHandshake },
+  { label: 'مقالات', href: routePaths.articles, icon: Newspaper },
   { label: 'درباره ما', href: routePaths.about, icon: Info },
 ] as const;
 
