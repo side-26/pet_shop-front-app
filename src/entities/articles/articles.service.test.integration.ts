@@ -70,7 +70,7 @@ describe('article service', () => {
 
     await expect(getArticlePreviewBySlug('dog care/one')).resolves.toBe(response);
     expect(customFetcher).toHaveBeenCalledWith({
-      url: '/articles/dog%20care%2Fone',
+      url: '/articles/dog care/one',
       method: 'GET',
       auth: false,
       cache: 'no-store',
