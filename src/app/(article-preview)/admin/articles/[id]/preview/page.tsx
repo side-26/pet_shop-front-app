@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import { getArticlePreviewBySlugAction } from '@/entities/articles/articles.actions';
 
 import { ArticlePreviewContent } from './_components/article-preview-content';
+import { ArticlePreviewBackButton } from './_components/article-preview-back-button';
 import { ArticlePreviewErrorBoundary } from './_components/article-preview-error-boundary';
 import { ArticlePreviewRenderer } from './_components/article-preview-renderer';
 
@@ -19,10 +20,13 @@ async function ArticlePreviewRouteContent({ params }: ArticlePreviewPageProps) {
 
 export default function ArticlePreviewPage({ params }: ArticlePreviewPageProps) {
   return (
-    <ArticlePreviewErrorBoundary>
-      <Suspense fallback={<ArticlePreviewRenderer isSkeleton />}>
-        <ArticlePreviewRouteContent params={params} />
-      </Suspense>
-    </ArticlePreviewErrorBoundary>
+    <>
+      <ArticlePreviewBackButton />
+      <ArticlePreviewErrorBoundary>
+        <Suspense fallback={<ArticlePreviewRenderer isSkeleton />}>
+          <ArticlePreviewRouteContent params={params} />
+        </Suspense>
+      </ArticlePreviewErrorBoundary>
+    </>
   );
 }
