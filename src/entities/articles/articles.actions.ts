@@ -16,7 +16,7 @@ import {
   updateArticleSchema,
 } from './articles.schema';
 import * as service from './articles.service';
-import { unwrapResult } from '@/lib/utils';
+import { unwrapResult, unwrapValidate } from '@/lib/utils';
 
 async function requireAuthenticated(): Promise<void> {
   const session = await getSession();
@@ -47,19 +47,6 @@ async function validate<T>(
     if (error instanceof ValidationError) return validationErrorToFetcherError(error);
     throw error;
   }
-}
-
-async function unwrapValidate<T extends object>(
-  promise: Promise<T | FetcherError>,
-  defaultErrorMessage = 'ورودی نامعتبر است.',
-): Promise<T> {
-  const result = await promise;
-
-  if ('isSuccess' in result) {
-    throw new Error(result.message ?? defaultErrorMessage);
-  }
-
-  return result;
 }
 
 export async function getArticlePreviewBySlugAction(input: unknown) {

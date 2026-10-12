@@ -26,7 +26,7 @@ type LineChartSeries = Readonly<{
   label: string;
 }>;
 
-type LineChartProps<TData extends Record<string, unknown>> = Readonly<{
+type LineChartProps<TData extends object> = Readonly<{
   ariaLabel: string;
   className?: string;
   data: readonly TData[];
@@ -34,7 +34,7 @@ type LineChartProps<TData extends Record<string, unknown>> = Readonly<{
   xAxisDataKey: string;
 }>;
 
-function LineChart<TData extends Record<string, unknown>>({
+function LineChart<TData extends object>({
   ariaLabel,
   className,
   data,

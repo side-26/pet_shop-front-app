@@ -3,8 +3,9 @@ import { Suspense } from 'react';
 import { getDashboardMetricsAction } from '@/entities/dashboard/dashboard.actions';
 import type { DashboardMetricsQueryInput } from '@/entities/dashboard/dashboard.schema';
 
-import { DashboardContentContainer } from './dashboard-content-container';
+import { DashboardContent } from './dashboard-content';
 import { DashboardContentRenderer } from './dashboard-content-renderer';
+import { DashboardErrorBoundary } from './dashboard-error-boundary';
 import { dashboardSkeletonData } from './dashboard-skeleton-data';
 
 type DashboardContentWrapperProps = {
@@ -20,7 +21,9 @@ export function DashboardContentWrapper({ query }: DashboardContentWrapperProps)
       key={suspenseKey}
       fallback={<DashboardContentRenderer dashboard={dashboardSkeletonData} isSkeleton />}
     >
-      <DashboardContentContainer dashboardMetricsPromise={dashboardMetricsPromise} />
+      <DashboardErrorBoundary>
+        <DashboardContent dashboardMetricsPromise={dashboardMetricsPromise} />
+      </DashboardErrorBoundary>
     </Suspense>
   );
 }

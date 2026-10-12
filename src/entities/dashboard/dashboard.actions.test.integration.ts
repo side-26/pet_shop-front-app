@@ -36,7 +36,7 @@ describe('getDashboardMetricsAction', () => {
 
     await expect(
       getDashboardMetricsAction({ groupBy: 'month', lowStockThreshold: 0, ignored: true }),
-    ).resolves.toBe(response);
+    ).resolves.toBe(response.data);
 
     expect(getDashboardMetricsMock).toHaveBeenCalledWith({
       groupBy: 'month',
@@ -50,7 +50,9 @@ describe('getDashboardMetricsAction', () => {
   it('rejects non-admin users before calling the service', async () => {
     getSessionMock.mockResolvedValue(session(USER_ROLES.SELLER));
 
-    await expect(getDashboardMetricsAction()).resolves.toMatchObject({ isSuccess: false });
+    await expect(getDashboardMetricsAction()).rejects.toThrow(
+      'شما اجازه مشاهده آمار داشبورد را ندارید.',
+    );
 
     expect(getDashboardMetricsMock).not.toHaveBeenCalled();
   });
@@ -61,8 +63,18 @@ describe('getDashboardMetricsAction', () => {
         fromDate: '2026-09-05T00:00:00.000Z',
         toDate: '2026-09-01T00:00:00.000Z',
       }),
-    ).resolves.toMatchObject({ isSuccess: false });
+    ).rejects.toThrow();
 
     expect(getDashboardMetricsMock).not.toHaveBeenCalled();
+  });
+
+  it('unwraps a failed service result into its safe error message', async () => {
+    getDashboardMetricsMock.mockResolvedValue({
+      isSuccess: false,
+      message: 'دریافت آمار از سرور انجام نشد.',
+      data: { messages: {}, details: {} },
+    });
+
+    await expect(getDashboardMetricsAction()).rejects.toThrow('دریافت آمار از سرور انجام نشد.');
   });
 });
