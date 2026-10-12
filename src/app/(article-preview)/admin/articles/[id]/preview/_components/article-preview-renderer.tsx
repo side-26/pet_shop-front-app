@@ -25,6 +25,9 @@ export function ArticlePreviewRenderer({
     : isRichTextDocument(article?.mainText)
       ? article.mainText
       : null;
+  const richTextImageAlt = [article?.title, article?.summary]
+    .filter((value): value is string => Boolean(value?.trim()))
+    .join(' ');
 
   return (
     <article
@@ -50,7 +53,7 @@ export function ArticlePreviewRenderer({
       {mainText ? (
         <section aria-label="متن مقاله">
           <RichTextPreviewer>
-            <RichTextPreviewer.Content content={mainText} />
+            <RichTextPreviewer.Content content={mainText} fallbackImageAlt={richTextImageAlt} />
           </RichTextPreviewer>
         </section>
       ) : null}

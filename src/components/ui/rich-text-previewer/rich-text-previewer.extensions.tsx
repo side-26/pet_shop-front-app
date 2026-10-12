@@ -1,8 +1,8 @@
-import Image from 'next/image';
 import { createElement, type CSSProperties } from 'react';
 
 import { cn } from '@/lib/utils';
 
+import { RichTextPreviewerImage } from './rich-text-previewer-image';
 import type {
   RichTextPreviewerExtensions,
   RichTextPreviewerMarkProps,
@@ -97,28 +97,30 @@ function BlockquoteNode({ children }: RichTextPreviewerNodeProps) {
   );
 }
 
-function ImageNode({ node }: RichTextPreviewerNodeProps) {
+function imageDimension(value: unknown): number | undefined {
+  const dimension = typeof value === 'string' ? Number(value) : value;
+  return typeof dimension === 'number' && Number.isFinite(dimension) && dimension > 0
+    ? dimension
+    : undefined;
+}
+
+function ImageNode({ fallbackImageAlt, node }: RichTextPreviewerNodeProps) {
   const src = typeof node.attrs?.src === 'string' ? node.attrs.src : undefined;
   const isSupportedSource = src?.startsWith('/') || /^https:\/\//.test(src ?? '');
   if (!isSupportedSource || !src) return null;
 
   const caption = typeof node.attrs?.caption === 'string' ? node.attrs.caption : undefined;
   const alt =
-    typeof node.attrs?.alt === 'string' && node.attrs.alt.trim()
-      ? node.attrs.alt
-      : caption || 'تصویر مرتبط با متن';
+    fallbackImageAlt?.trim() ||
+    (typeof node.attrs?.alt === 'string' && node.attrs.alt.trim()) ||
+    caption ||
+    'تصویر مرتبط با متن';
+  const width = imageDimension(node.attrs?.width);
+  const height = imageDimension(node.attrs?.height);
 
   return (
     <figure className="tw:my-6">
-      <div className="tw:relative tw:aspect-video tw:overflow-hidden tw:rounded-2xl tw:bg-muted">
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          sizes="(min-width: 1024px) 896px, (min-width: 768px) 640px, 100vw"
-          className="tw:object-contain"
-        />
-      </div>
+      <RichTextPreviewerImage alt={alt} height={height} src={src} width={width} />
       {caption ? (
         <figcaption className="tw:mt-2 tw:text-caption tw:text-muted-foreground">
           {caption}

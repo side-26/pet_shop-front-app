@@ -6,6 +6,7 @@ import type { ArticleDTO } from '@/entities/articles/articles.dto';
 import { ArticlePreviewHeroSection } from './article-preview-hero-section';
 
 const article = {
+  mainImage: '/article-hero.webp',
   title: 'راهنمای انتخاب غذای گربه',
   subtitle: 'آنچه برای انتخاب آگاهانه باید بدانید',
 } as ArticleDTO;
@@ -16,7 +17,9 @@ describe('ArticlePreviewHeroSection', () => {
 
     const title = screen.getByRole('heading', { level: 1, name: article.title });
     const subtitle = screen.getByText(article.subtitle);
+    const image = screen.getByRole('img', { name: article.title });
 
+    expect(image.getAttribute('loading')).toBe('eager');
     expect(title.className).toContain('tw:text-heading-3');
     expect(title.className).toContain('tw:md:text-heading-2');
     expect(title.className).toContain('tw:lg:text-heading-1');

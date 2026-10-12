@@ -26,6 +26,7 @@ function createExtensionMap<TExtension extends { type: string }>(
 
 type RichTextPreviewerComposerProps = Readonly<{
   extensions: Required<RichTextPreviewerExtensions>;
+  fallbackImageAlt?: string;
   nodes?: readonly RichTextNode[];
 }>;
 
@@ -53,6 +54,7 @@ function renderMarks(
 function renderNodes(
   nodes: readonly RichTextNode[] | undefined,
   registry: RichTextPreviewerRegistry,
+  fallbackImageAlt: string | undefined,
 ) {
   return nodes?.map((node, index) => {
     const extension = registry.nodes.get(node.type);
@@ -61,20 +63,25 @@ function renderNodes(
     return (
       <Node
         key={`${node.type}-${index}`}
+        fallbackImageAlt={fallbackImageAlt}
         node={node}
         renderMarks={(content, marks) => renderMarks(content, marks, registry)}
       >
-        {renderNodes(node.content, registry)}
+        {renderNodes(node.content, registry, fallbackImageAlt)}
       </Node>
     );
   });
 }
 
-export function RichTextPreviewerComposer({ extensions, nodes }: RichTextPreviewerComposerProps) {
+export function RichTextPreviewerComposer({
+  extensions,
+  fallbackImageAlt,
+  nodes,
+}: RichTextPreviewerComposerProps) {
   const registry = {
     marks: createExtensionMap(extensions.marks),
     nodes: createExtensionMap(extensions.nodes),
   };
 
-  return renderNodes(nodes, registry);
+  return renderNodes(nodes, registry, fallbackImageAlt);
 }

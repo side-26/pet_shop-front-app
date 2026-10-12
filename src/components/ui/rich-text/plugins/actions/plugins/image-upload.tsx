@@ -15,6 +15,25 @@ type TipTapImageUploadActionProps = {
   onUpload?: (file: File, context: ImageUploadContext) => Promise<string> | string;
 };
 
+type ImageDimensions = Readonly<{ height: number; width: number }>;
+
+async function getImageDimensions(file: File): Promise<ImageDimensions | undefined> {
+  if (typeof createImageBitmap !== 'function') return undefined;
+
+  try {
+    const image = await createImageBitmap(file);
+    try {
+      return image.width > 0 && image.height > 0
+        ? { height: image.height, width: image.width }
+        : undefined;
+    } finally {
+      image.close();
+    }
+  } catch {
+    return undefined;
+  }
+}
+
 function TipTapImageUploadAction({ accept = 'image/*', onUpload }: TipTapImageUploadActionProps) {
   const { color, editable, editor } = useTipTapActionsContext();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -54,16 +73,19 @@ function TipTapImageUploadAction({ accept = 'image/*', onUpload }: TipTapImageUp
           const controller = new AbortController();
           abortControllerRef.current = controller;
           try {
-            const src = await onUpload(file, {
-              signal: controller.signal,
-              onProgress: setUploadProgress,
-            });
+            const [src, dimensions] = await Promise.all([
+              onUpload(file, {
+                signal: controller.signal,
+                onProgress: setUploadProgress,
+              }),
+              getImageDimensions(file),
+            ]);
             if (controller.signal.aborted || !editor || position === undefined) return;
             editor
               .chain()
               .focus()
               .setTextSelection(position)
-              .setImage({ alt: file.name, src })
+              .setImage({ alt: file.name, src, ...dimensions })
               .run();
           } catch {
             if (!controller.signal.aborted)

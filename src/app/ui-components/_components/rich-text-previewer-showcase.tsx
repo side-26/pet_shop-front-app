@@ -33,7 +33,7 @@ export function RichTextPreviewerShowcase() {
     <ShowcaseSection
       id="rich-text-previewer"
       title="Rich Text Previewer"
-      description="پیش‌نمایش سمت‌سرور محتوای JSON با ساختار معنایی، تایپوگرافی واکنش‌گرا و تصویرهای قابل‌دسترس."
+      description="پیش‌نمایش سمت‌سرور محتوای JSON با ساختار معنایی RTL-first، تایپوگرافی واکنش‌گرا و تصویرهای قابل‌دسترس با کیفیت متناسب با اندازهٔ نمایشگر."
     >
       <RichTextPreviewer>
         <RichTextPreviewer.Content content={content} />

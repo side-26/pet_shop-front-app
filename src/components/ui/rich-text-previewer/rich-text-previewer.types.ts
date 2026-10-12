@@ -4,6 +4,7 @@ import type { RichTextNode } from '@/lib/rich-text';
 
 export type RichTextPreviewerNodeProps = Readonly<{
   children: ReactNode;
+  fallbackImageAlt?: string;
   node: RichTextNode;
   renderMarks: (content: ReactNode, marks: unknown) => ReactNode;
 }>;

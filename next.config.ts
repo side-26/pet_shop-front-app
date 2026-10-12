@@ -35,6 +35,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   images: {
+    qualities: [65, 70, 75, 85],
     remotePatterns: [
       { protocol: 'https', hostname: 'flagpedia.net', pathname: '/data/flags/**' },
       {

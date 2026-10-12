@@ -16,9 +16,10 @@ type RichTextPreviewerProps = Readonly<{
 type RichTextPreviewerContentProps = Readonly<{
   content: RichTextDocument;
   extensions?: RichTextPreviewerExtensions;
+  fallbackImageAlt?: string;
 }>;
 
-function RichTextPreviewerRoot({ children, className, dir = 'auto' }: RichTextPreviewerProps) {
+function RichTextPreviewerRoot({ children, className, dir = 'rtl' }: RichTextPreviewerProps) {
   return (
     <div
       data-slot="rich-text-previewer"
@@ -30,13 +31,18 @@ function RichTextPreviewerRoot({ children, className, dir = 'auto' }: RichTextPr
   );
 }
 
-function RichTextPreviewerContent({ content, extensions = {} }: RichTextPreviewerContentProps) {
+function RichTextPreviewerContent({
+  content,
+  extensions = {},
+  fallbackImageAlt,
+}: RichTextPreviewerContentProps) {
   return (
     <RichTextPreviewerComposer
       extensions={{
         marks: [...defaultRichTextPreviewerExtensions.marks, ...(extensions.marks ?? [])],
         nodes: [...defaultRichTextPreviewerExtensions.nodes, ...(extensions.nodes ?? [])],
       }}
+      fallbackImageAlt={fallbackImageAlt}
       nodes={content.content}
     />
   );

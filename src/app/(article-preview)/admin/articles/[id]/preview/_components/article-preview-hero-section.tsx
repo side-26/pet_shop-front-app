@@ -24,7 +24,7 @@ export function ArticlePreviewHeroSection({
           src={article.mainImage}
           alt={title}
           fill
-          preload
+          loading="eager"
           sizes="(min-width: 1024px) 1024px, 100vw"
           placeholder={article.mainThumbnailImage ? 'blur' : 'empty'}
           blurDataURL={article.mainThumbnailImage}
