@@ -44,6 +44,31 @@ const defaultFont = localFont({
       weight: '800',
       style: 'normal',
     },
+    {
+      path: '../../public/fonts/iran-yekan/light-italic.ttf',
+      weight: '300',
+      style: 'italic',
+    },
+    {
+      path: '../../public/fonts/iran-yekan/regular-italic.ttf',
+      weight: '400',
+      style: 'italic',
+    },
+    {
+      path: '../../public/fonts/iran-yekan/medium-italic.ttf',
+      weight: '500',
+      style: 'italic',
+    },
+    {
+      path: '../../public/fonts/iran-yekan/bold-italic.ttf',
+      weight: '700',
+      style: 'italic',
+    },
+    {
+      path: '../../public/fonts/iran-yekan/extra-bold-italic.ttf',
+      weight: '800',
+      style: 'italic',
+    },
   ],
   variable: '--font-default',
   display: 'swap',

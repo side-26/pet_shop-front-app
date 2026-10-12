@@ -9,6 +9,67 @@
   font-family: var(--font-default);
 }
 
+/* Opt-in italic counterparts for the semantic typography scale. */
+@utility text-display-xl-italic {
+  @apply tw:text-display-xl tw:italic;
+}
+
+@utility text-display-l-italic {
+  @apply tw:text-display-l tw:italic;
+}
+
+@utility text-heading-1-italic {
+  @apply tw:text-heading-1 tw:italic;
+}
+
+@utility text-heading-2-italic {
+  @apply tw:text-heading-2 tw:italic;
+}
+
+@utility text-heading-3-italic {
+  @apply tw:text-heading-3 tw:italic;
+}
+
+@utility text-title-l-italic {
+  @apply tw:text-title-l tw:italic;
+}
+
+@utility text-title-m-italic {
+  @apply tw:text-title-m tw:italic;
+}
+
+@utility text-title-s-italic {
+  @apply tw:text-title-s tw:italic;
+}
+
+@utility text-body-l-italic {
+  @apply tw:text-body-l tw:italic;
+}
+
+@utility text-body-m-italic {
+  @apply tw:text-body-m tw:italic;
+}
+
+@utility text-body-s-italic {
+  @apply tw:text-body-s tw:italic;
+}
+
+@utility text-label-l-italic {
+  @apply tw:text-label-l tw:italic;
+}
+
+@utility text-label-m-italic {
+  @apply tw:text-label-m tw:italic;
+}
+
+@utility text-label-s-italic {
+  @apply tw:text-label-s tw:italic;
+}
+
+@utility text-caption-italic {
+  @apply tw:text-caption tw:italic;
+}
+
 @utility default-layout-container {
   @apply tw:mx-auto tw:w-full tw:max-w-[1440px] tw:px-4 tw:sm:px-6 tw:md:px-8;
 }
