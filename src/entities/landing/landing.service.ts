@@ -20,13 +20,15 @@ import type {
   LandingProductDTO,
   LandingSlugDTO,
   LandingSearchQueryDTO,
-  LandingSearchResultDTO,
+  LandingSearchPageDTO,
+  LandingSearchRequestDTO,
 } from './landing.dto';
 import {
   landingDiscountLimitSchema,
   landingProductListQuerySchema,
   DEFAULT_LANDING_PRODUCT_LIST_PAGE_SIZE,
   DEFAULT_LANDING_PET_LIST_PAGE_SIZE,
+  DEFAULT_LANDING_SEARCH_PAGE_SIZE,
   landingPetListQuerySchema,
   landingSlugSchema,
   landingSearchQuerySchema,
@@ -41,7 +43,8 @@ const popularProductsCacheKey = 'products:popular';
 const popularBrandsCacheKey = 'brands:popular';
 const popularPetsCacheKey = 'pets:popular';
 const recentPetsCacheKey = 'pets:recent';
-const landingSearchCacheKey = (search: string) => `search:${search}`;
+const landingSearchCacheKey = ({ limit, page, search }: LandingSearchQueryDTO) =>
+  `search:${search}:${page}:${limit}`;
 const landingProductListCacheKey = (query: LandingProductListRequestDTO & { limit: number }) =>
   `products:list:v3:${new URLSearchParams(
     Object.entries(query)
@@ -143,12 +146,15 @@ export function getFeaturedLandingProducts() {
   );
 }
 
-export async function getLandingSearch(input: LandingSearchQueryDTO) {
-  const { search } = await landingSearchQuerySchema.validate(input, { stripUnknown: true });
-  return fetchLandingList<LandingSearchResultDTO[]>(
+export async function getLandingSearch(input: LandingSearchRequestDTO) {
+  const query = await landingSearchQuerySchema.validate(
+    { ...input, limit: DEFAULT_LANDING_SEARCH_PAGE_SIZE },
+    { stripUnknown: true },
+  );
+  return fetchLandingList<LandingSearchPageDTO>(
     '/landing/search',
-    landingSearchCacheKey(search),
-    { search },
+    landingSearchCacheKey(query),
+    query,
   );
 }
 

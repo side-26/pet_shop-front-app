@@ -4,6 +4,7 @@ import { BadgeShowcase } from './badge-showcase';
 import { AvatarShowcase } from './avatar-showcase';
 import { ButtonShowcase } from './button-showcase';
 import { CardShowcase } from './card-showcase';
+import { ItemShowcase } from './item-showcase';
 import { AlertDialogShowcase } from './alert-dialog-showcase';
 import { ConfirmDialogShowcase } from './confirm-dialog-showcase';
 import { PopoverShowcase } from './popover-showcase';
@@ -61,6 +62,7 @@ const navigation = [
   ['#buttons', 'Button'],
   ['#badges', 'Badge'],
   ['#cards', 'Card'],
+  ['#items', 'Item'],
   ['#charts', 'Chart'],
   ['#calendar', 'Calendar'],
   ['#date-picker', 'Date Picker'],
@@ -155,6 +157,7 @@ export function UiComponentsGallery() {
         <BadgeShowcase />
         <BadgeGroupFieldShowcase />
         <CardShowcase />
+        <ItemShowcase />
         <ChartShowcase />
         <CalendarShowcase />
         <DatePickerShowcase />

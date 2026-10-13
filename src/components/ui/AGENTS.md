@@ -168,6 +168,13 @@ inherit the surrounding foreground or use an unrelated neutral text color.
 `variant="elevated|filled|outlined|glass"`. Compose it with `CardHeader`,
 `CardTitle`, `CardDescription`, `CardAction`, `CardContent`, and `CardFooter`.
 
+`Item` is the compact, domain-neutral list-row primitive. Compose an `ItemGroup`
+with list-item `Item` roots, then use `ItemMedia`, `ItemContent`, `ItemTitle`, and
+optional `ItemActions`. It supports
+`variant="default|tonal|fill|glassy"` and
+`color="primary|secondary|foreground|success|error"`; default/foreground preserves
+the standard opaque list-row hover treatment.
+
 `ExpandableCard` is the client-side compound composition for vertically clipped
 card content. Compose `ExpandableCard.Root`, `ExpandableCard.Content`, and
 `ExpandableCard.Trigger` together; content and trigger must remain inside the

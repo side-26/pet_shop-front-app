@@ -152,9 +152,9 @@ describe('retryAllLandingPetTypesAction', () => {
   });
 
   it('normalizes a catalogue search query before requesting results', async () => {
-    await getLandingSearchAction({ search: '  غذای گربه  ', unknown: 'removed' });
+    await getLandingSearchAction({ page: '2', search: '  غذای گربه  ', unknown: 'removed' });
 
-    expect(getLandingSearch).toHaveBeenCalledWith({ search: 'غذای گربه' });
+    expect(getLandingSearch).toHaveBeenCalledWith({ search: 'غذای گربه', page: 2 });
   });
 
   it('expires only the landing pet-type cache before refreshing the client router', async () => {

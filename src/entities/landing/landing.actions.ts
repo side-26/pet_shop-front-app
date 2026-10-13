@@ -29,7 +29,7 @@ import {
   landingDiscountLimitSchema,
   landingPetListRequestSchema,
   landingProductListRequestSchema,
-  landingSearchQuerySchema,
+  landingSearchRequestSchema,
   landingSlugSchema,
 } from './landing.schema';
 
@@ -69,7 +69,7 @@ export async function getLandingPetListAction(input: unknown = {}) {
 }
 
 export async function getLandingSearchAction(input: unknown) {
-  const query = await landingSearchQuerySchema.validate(input, { stripUnknown: true });
+  const query = await landingSearchRequestSchema.validate(input, { stripUnknown: true });
   return getLandingSearch(query);
 }
 
