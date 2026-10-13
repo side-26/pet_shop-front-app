@@ -4,22 +4,25 @@ import { ArrowDownUpIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import type { ArticleListSortOptionDTO } from '@/entities/articles/articles.dto';
+import { useArticleCatalogControls } from '../../_hooks/use-article-catalog-controls';
 
 type ArticlesSortSectionProps = Readonly<{
   current: string;
   disabled?: boolean;
   options: readonly ArticleListSortOptionDTO[];
+  query: Readonly<Record<string, string>>;
   totalItems: number;
-  onSortChange: (sort: string) => void;
 }>;
 
 export function ArticlesSortSection({
   current,
   disabled = false,
   options,
+  query,
   totalItems,
-  onSortChange,
 }: ArticlesSortSectionProps) {
+  const { changeSort } = useArticleCatalogControls(query);
+
   return (
     <div className="tw:flex tw:flex-wrap tw:items-center tw:justify-between tw:gap-3 tw:rounded-2xl tw:border tw:border-border/70 tw:bg-card tw:p-3">
       <div className="tw:flex tw:flex-wrap tw:items-center tw:gap-2">
@@ -39,7 +42,7 @@ export function ArticlesSortSection({
                 disabled={disabled || isSelected}
                 size="xs"
                 variant={isSelected ? 'tonal' : 'flat'}
-                onClick={() => onSortChange(option.value)}
+                onClick={() => changeSort(option.value)}
               >
                 {option.label}
               </Button>

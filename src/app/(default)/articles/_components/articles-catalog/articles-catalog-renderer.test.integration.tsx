@@ -126,6 +126,20 @@ describe('ArticlesCatalogRenderer', () => {
     );
   });
 
+  it('provides a compact sort select and filter dialog for mobile and tablet', () => {
+    const { container } = renderCatalog(<ArticlesCatalogRenderer data={data} query={{}} />);
+
+    expect(screen.getByRole('combobox', { name: 'مرتب‌سازی مقاله‌ها' }).textContent).toContain(
+      'جدیدترین‌ها',
+    );
+    expect(container.querySelector('.tw\\:sticky.tw\\:lg\\:hidden')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'فیلتر مقاله‌ها' }));
+
+    expect(screen.getByRole('dialog', { name: 'فیلتر مقاله‌ها' })).toBeTruthy();
+    expect(screen.getByText('موضوع یا نوع حیوان موردنظر را انتخاب کنید.')).toBeTruthy();
+  });
+
   it('keeps each filter group independently collapsible', () => {
     renderCatalog(<ArticlesCatalogRenderer data={data} query={{}} />);
 

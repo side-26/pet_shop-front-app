@@ -8,20 +8,23 @@ import { Field } from '@/components/ui/field/default';
 import { FieldLabel } from '@/components/ui/field/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/fields/radio-group';
 import type { ArticleCatalogPetTypeDTO } from '@/entities/articles/articles.dto';
+import { useArticleCatalogControls } from '../../_hooks/use-article-catalog-controls';
 
 type ArticlesPetTypeFilterSectionProps = Readonly<{
   disabled?: boolean;
   petTypes: readonly ArticleCatalogPetTypeDTO[];
+  query: Readonly<Record<string, string>>;
   value?: string;
-  onValueChange: (value?: string) => void;
 }>;
 
 export function ArticlesPetTypeFilterSection({
   disabled = false,
   petTypes,
+  query,
   value,
-  onValueChange,
 }: ArticlesPetTypeFilterSectionProps) {
+  const { changePetType } = useArticleCatalogControls(query);
+
   return (
     <Collapsible defaultOpen className="tw:flex tw:flex-col tw:gap-3">
       <CollapsibleTrigger
@@ -46,7 +49,7 @@ export function ArticlesPetTypeFilterSection({
           aria-label="فیلتر نوع حیوان"
           disabled={disabled}
           value={value ?? 'all'}
-          onValueChange={(nextValue) => onValueChange(nextValue === 'all' ? undefined : nextValue)}
+          onValueChange={(nextValue) => changePetType(nextValue === 'all' ? undefined : nextValue)}
         >
           <Field className="tw:flex-row tw:items-center">
             <RadioGroupItem id="article-pet-type-all" size="sm" value="all" />

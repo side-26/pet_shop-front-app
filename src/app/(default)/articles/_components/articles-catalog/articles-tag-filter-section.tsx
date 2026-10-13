@@ -5,20 +5,23 @@ import { ChevronDownIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import type { ArticleTagResponse } from '@/entities/articles/articles.dto';
+import { useArticleCatalogControls } from '../../_hooks/use-article-catalog-controls';
 
 type ArticlesTagFilterSectionProps = Readonly<{
   disabled?: boolean;
+  query: Readonly<Record<string, string>>;
   selectedTags: ReadonlySet<string>;
   tags: readonly ArticleTagResponse[];
-  onToggle: (tag: string) => void;
 }>;
 
 export function ArticlesTagFilterSection({
   disabled = false,
+  query,
   selectedTags,
   tags,
-  onToggle,
 }: ArticlesTagFilterSectionProps) {
+  const { toggleTag } = useArticleCatalogControls(query);
+
   return (
     <Collapsible defaultOpen className="tw:flex tw:flex-col tw:gap-3">
       <CollapsibleTrigger
@@ -52,7 +55,7 @@ export function ArticlesTagFilterSection({
                   disabled={disabled}
                   size="xs"
                   variant={isSelected ? 'tonal' : 'flat'}
-                  onClick={() => onToggle(tag.title)}
+                  onClick={() => toggleTag(tag.title)}
                 >
                   {tag.title}
                 </Button>
