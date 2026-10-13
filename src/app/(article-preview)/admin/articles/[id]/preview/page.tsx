@@ -1,11 +1,11 @@
 import { Suspense } from 'react';
 
+import { ArticlePreviewContent } from '@/components/articles/article-preview/article-preview-content';
+import { ArticlePreviewErrorBoundary } from '@/components/articles/article-preview/article-preview-error-boundary';
+import { ArticlePreviewRenderer } from '@/components/articles/article-preview/article-preview-renderer';
 import { getArticlePreviewBySlugAction } from '@/entities/articles/articles.actions';
 
-import { ArticlePreviewContent } from './_components/article-preview-content';
 import { ArticlePreviewBackButton } from './_components/article-preview-back-button';
-import { ArticlePreviewErrorBoundary } from './_components/article-preview-error-boundary';
-import { ArticlePreviewRenderer } from './_components/article-preview-renderer';
 
 type ArticlePreviewPageProps = Readonly<{
   params: Promise<{ id: string }>;

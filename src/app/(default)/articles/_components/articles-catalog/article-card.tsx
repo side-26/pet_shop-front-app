@@ -1,8 +1,10 @@
 import { UserRoundIcon } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { routePaths } from '@/configs/route.path';
 import type { ArticleListDTO } from '@/entities/articles/articles.dto';
 import { cn } from '@/lib/utils';
 
@@ -14,13 +16,14 @@ type ArticleCardProps = Readonly<{
 export function ArticleCard({ article, isSkeleton = false }: ArticleCardProps) {
   const name = article.author.fullName || 'نویسنده پت‌شاپ';
   const avatar = article.author.image || article.author.thumbnailImage;
-
-  return (
+  const card = (
     <Card
       size="xs"
       className={cn(
-        'tw:h-full tw:cursor-pointer tw:hover:-translate-y-0.5 tw:hover:shadow-xl',
-        isSkeleton && 'tw:cursor-default',
+        'tw:h-full',
+        isSkeleton
+          ? 'tw:cursor-default'
+          : 'tw:cursor-pointer tw:hover:-translate-y-0.5 tw:hover:shadow-xl',
       )}
       variant="elevated"
     >
@@ -64,5 +67,13 @@ export function ArticleCard({ article, isSkeleton = false }: ArticleCardProps) {
         </div>
       </CardFooter>
     </Card>
+  );
+
+  return isSkeleton ? (
+    card
+  ) : (
+    <Link href={routePaths.articleDetail(article.slug)} prefetch>
+      {card}
+    </Link>
   );
 }

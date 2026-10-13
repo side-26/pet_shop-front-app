@@ -33,7 +33,7 @@ const articlesCache = new EntityTag('articles');
 export async function getArticlePreviewBySlug(slug: ArticleSlugDTO['slug']) {
   'use cache';
 
-  articlesCache.cacheLife({ stale: 600 });
+  articlesCache.cacheLife({ stale: 300, revalidate: 21_600, expire: 86_400 });
   articlesCache.registerDetail(slug);
 
   return customFetcher<ArticleDTO>({

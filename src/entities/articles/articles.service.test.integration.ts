@@ -80,7 +80,7 @@ describe('article service', () => {
       cache: 'no-store',
       parseSuccess: expect.any(Function),
     });
-    expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 600 });
+    expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 300, revalidate: 21_600, expire: 86_400 });
     expect(registerDetailMock).toHaveBeenCalledWith('dog care/one');
   });
 

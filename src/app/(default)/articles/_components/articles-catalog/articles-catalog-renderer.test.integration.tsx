@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { routePaths } from '@/configs/route.path';
 import type { ArticlePaginatedResponse } from '@/entities/articles/articles.dto';
 
 import { ArticlesCatalogRenderer } from './articles-catalog-renderer';
@@ -97,6 +98,9 @@ describe('ArticlesCatalogRenderer', () => {
     expect(screen.getByRole('button', { name: 'قدیمی‌ترین‌ها' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'تغذیه' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: data.result[0].title })).toBeTruthy();
+    expect(
+      screen.getByRole('link', { name: new RegExp(data.result[0].title) }).getAttribute('href'),
+    ).toBe(routePaths.articleDetail(data.result[0].slug));
     expect(screen.getByText('سارا احمدی')).toBeTruthy();
     expect(screen.getByAltText(`تصویر مقاله ${data.result[0].title}`)).toBeTruthy();
   });
