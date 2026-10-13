@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 
 import { ArticlePreviewTagsSection } from './article-preview-tags-section';
 
@@ -17,5 +17,18 @@ describe('ArticlePreviewTagsSection', () => {
     const { container } = render(<ArticlePreviewTagsSection />);
 
     expect(container.firstChild).toBeNull();
+  });
+
+  it('makes tags interactive only when an optional click handler is provided', () => {
+    const onClick = vi.fn();
+
+    render(<ArticlePreviewTagsSection tags={[{ title: 'گربه' }]} onClick={onClick} />);
+
+    const tagButton = screen.getByRole('button', { name: 'گربه' });
+
+    expect(tagButton.className).toContain('tw:cursor-pointer');
+    fireEvent.click(tagButton);
+
+    expect(onClick).toHaveBeenCalledWith('گربه');
   });
 });

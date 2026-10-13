@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { RichTextPreviewer } from '@/components/ui/rich-text-previewer';
 import type { ArticleDTO } from '@/entities/articles/articles.dto';
 import { isRichTextDocument } from '@/lib/rich-text';
@@ -14,11 +16,13 @@ import { ArticlePreviewTagsSection } from './article-preview-tags-section';
 type ArticlePreviewRendererProps = Readonly<{
   article?: ArticleDTO;
   isSkeleton?: boolean;
+  tagsSection?: ReactNode;
 }>;
 
 export function ArticlePreviewRenderer({
   article,
   isSkeleton = false,
+  tagsSection,
 }: ArticlePreviewRendererProps) {
   const mainText = isSkeleton
     ? articlePreviewSkeletonMainText
@@ -57,7 +61,7 @@ export function ArticlePreviewRenderer({
           </RichTextPreviewer>
         </section>
       ) : null}
-      <ArticlePreviewTagsSection tags={article?.tags} isSkeleton={isSkeleton} />
+      {tagsSection ?? <ArticlePreviewTagsSection tags={article?.tags} isSkeleton={isSkeleton} />}
     </article>
   );
 }
