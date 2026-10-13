@@ -37,16 +37,16 @@ describe('HeaderProductSearchResultsStream', () => {
       ],
     } as never);
     render(
-      <HeaderProductSearchProvider onCloseHoverCard={() => undefined}>
-        <ReactQueryProvider>
+      <ReactQueryProvider>
+        <HeaderProductSearchProvider onCloseHoverCard={() => undefined}>
           <HeaderProductSearchResultsStream query="غذای" />
-        </ReactQueryProvider>
-      </HeaderProductSearchProvider>,
+        </HeaderProductSearchProvider>
+      </ReactQueryProvider>,
     );
 
     expect(await screen.findByText('غذای خشک سگ بالغ')).toBeTruthy();
     expect(screen.getAllByRole('link', { name: 'مشاهده جزئیات' })).toHaveLength(2);
-    expect(screen.getByRole('link', { name: 'مشاهده بیشتر' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'مشاهده بیشتر' })).toBeTruthy();
     expect(
       screen
         .getAllByRole('link', { name: 'مشاهده جزئیات' })
@@ -76,9 +76,11 @@ describe('HeaderProductSearchResultsStream', () => {
 
   it('uses the Item group renderer for a non-interactive skeleton', () => {
     render(
-      <HeaderProductSearchProvider onCloseHoverCard={() => undefined}>
-        <HeaderProductSearchSuggestionItemGroup isSkeleton />
-      </HeaderProductSearchProvider>,
+      <ReactQueryProvider>
+        <HeaderProductSearchProvider onCloseHoverCard={() => undefined}>
+          <HeaderProductSearchSuggestionItemGroup isSkeleton />
+        </HeaderProductSearchProvider>
+      </ReactQueryProvider>,
     );
 
     expect(screen.getByRole('list', { busy: true })).toBeTruthy();

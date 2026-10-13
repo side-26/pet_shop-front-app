@@ -1,16 +1,12 @@
 'use client';
 
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
-import { Search } from 'lucide-react';
-import Link from 'next/link';
 import { Suspense } from 'react';
 
-import { buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { EmptyStateBoundary } from '@/components/ui/empty-state-boundary';
 import { ErrorStateBoundary } from '@/components/ui/error-state-boundary';
-import { routePaths } from '@/configs/route.path';
 import { useSuspenseLandingSearchQuery } from '@/entities/landing/landing.client';
-import { cn } from '@/lib/utils';
 
 import { HeaderProductSearchEmptyFallback } from './header-product-search-empty-fallback';
 import { useHeaderProductSearchContext } from './header-product-search-context';
@@ -37,7 +33,7 @@ function HeaderProductSearchResults({ query }: HeaderProductSearchResultsStreamP
     page: 1,
     limit: 3,
   });
-  const { onCloseHoverCard } = useHeaderProductSearchContext();
+  const { openSearchSuggestionsDialog } = useHeaderProductSearchContext();
 
   return (
     <EmptyStateBoundary
@@ -56,18 +52,17 @@ function HeaderProductSearchResults({ query }: HeaderProductSearchResultsStreamP
           پیشنهادهای جستجو
         </h2>
         <HeaderProductSearchSuggestionItemGroup data={suggestions} />
-        <Link
-          href={routePaths.productsSearch(query)}
-          prefetch
-          onClick={onCloseHoverCard}
-          className={cn(
-            buttonVariants({ block: true, color: 'secondary', size: 'sm', variant: 'outlined' }),
-            'tw:mt-2',
-          )}
+        <Button
+          type="button"
+          block
+          color="secondary"
+          size="sm"
+          variant="outlined"
+          className="tw:mt-2"
+          onClick={() => openSearchSuggestionsDialog({ initialSuggestions: suggestions, query })}
         >
-          <Search data-icon="inline-start" aria-hidden="true" />
           مشاهده بیشتر
-        </Link>
+        </Button>
       </section>
     </EmptyStateBoundary>
   );

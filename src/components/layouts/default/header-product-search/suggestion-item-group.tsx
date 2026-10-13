@@ -16,7 +16,7 @@ export function HeaderProductSearchSuggestionItemGroup({
   data = [],
   isSkeleton = false,
 }: HeaderProductSearchSuggestionItemGroupProps) {
-  const { onCloseHoverCard } = useHeaderProductSearchContext();
+  const { onNavigateToDetail } = useHeaderProductSearchContext();
   const items: Array<LandingSearchResultDTO | undefined> = isSkeleton
     ? Array.from({ length: skeletonItemCount }, () => undefined)
     : data;
@@ -31,7 +31,7 @@ export function HeaderProductSearchSuggestionItemGroup({
           key={item ? `${item.itemType}-${item.slug}` : index}
           item={item}
           isSkeleton={isSkeleton}
-          onCloseHoverCard={onCloseHoverCard}
+          onNavigateToDetail={onNavigateToDetail}
         />
       ))}
     </ItemGroup>

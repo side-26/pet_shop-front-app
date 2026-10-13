@@ -1,9 +1,22 @@
 'use client';
 
-import { createContext, use, type ReactNode } from 'react';
+import { createContext, use, useMemo, useRef, type ReactNode } from 'react';
+
+import type { LandingSearchResultDTO } from '@/entities/landing/landing.dto';
+import { useDialogController } from '@/hooks/use-dialog-controller';
+
+import {
+  HeaderProductSearchSuggestionsDialog,
+  type HeaderProductSearchSuggestionsDialogHandle,
+} from './search-suggestions-dialog';
 
 type HeaderProductSearchContextValue = Readonly<{
+  onNavigateToDetail: () => void;
   onCloseHoverCard: () => void;
+  openSearchSuggestionsDialog: (params: {
+    initialSuggestions: LandingSearchResultDTO[];
+    query: string;
+  }) => void;
 }>;
 
 const HeaderProductSearchContext = createContext<HeaderProductSearchContextValue | null>(null);
@@ -11,9 +24,28 @@ const HeaderProductSearchContext = createContext<HeaderProductSearchContextValue
 export function HeaderProductSearchProvider({
   children,
   onCloseHoverCard,
-}: Readonly<HeaderProductSearchContextValue & { children: ReactNode }>) {
+}: Readonly<Pick<HeaderProductSearchContextValue, 'onCloseHoverCard'> & { children: ReactNode }>) {
+  const searchSuggestionsDialogRef = useRef<HeaderProductSearchSuggestionsDialogHandle>(null);
+  const { close, open } = useDialogController(
+    useMemo(() => ({ searchSuggestions: { ref: searchSuggestionsDialogRef } }), []),
+  );
+  const value = useMemo<HeaderProductSearchContextValue>(
+    () => ({
+      onCloseHoverCard,
+      onNavigateToDetail: () => {
+        onCloseHoverCard();
+        close();
+      },
+      openSearchSuggestionsDialog: (params) => open('searchSuggestions', params),
+    }),
+    [close, onCloseHoverCard, open],
+  );
+
   return (
-    <HeaderProductSearchContext value={{ onCloseHoverCard }}>{children}</HeaderProductSearchContext>
+    <HeaderProductSearchContext value={value}>
+      {children}
+      <HeaderProductSearchSuggestionsDialog ref={searchSuggestionsDialogRef} />
+    </HeaderProductSearchContext>
   );
 }
 

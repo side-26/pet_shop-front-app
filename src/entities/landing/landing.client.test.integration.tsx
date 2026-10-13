@@ -4,7 +4,12 @@ import { createElement, Suspense, type ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { landingClientService } from './landing.client-service';
-import { landingQueryKeys, useSuspenseLandingSearchQuery } from './landing.client';
+import {
+  landingSearchDialogQuery,
+  landingQueryKeys,
+  useSuspenseLandingSearchInfiniteQuery,
+  useSuspenseLandingSearchQuery,
+} from './landing.client';
 
 vi.mock('./landing.client-service', () => ({
   landingClientService: { getSearch: vi.fn() },
@@ -86,5 +91,82 @@ describe('landing search suspense query', () => {
     await waitFor(() => expect(remountedQuery.result.current.data).toEqual(page.result));
     expect(landingClientService.getSearch).toHaveBeenCalledTimes(1);
     queryClient.clear();
+  });
+
+  it('loads subsequent dialog pages and exposes one transformed suggestion list', async () => {
+    const query = { search: 'غذای گربه', limit: 20 };
+    const firstPage = {
+      result: [
+        {
+          itemType: 'product' as const,
+          title: 'غذای گربه',
+          slug: 'cat-food',
+          mainImage: '/images/cat-food.jpg',
+          thumbnailImage: '/images/cat-food-thumb.jpg',
+        },
+      ],
+      pagination: {
+        currentPage: 1,
+        totalPages: 2,
+        totalItems: 2,
+        itemsPerPage: 20,
+        hasNextPage: true,
+        hasPrevPage: false,
+        nextPage: 2,
+        prevPage: null,
+      },
+    };
+    const secondPage = {
+      result: [
+        {
+          itemType: 'pet' as const,
+          title: 'گربه بالغ',
+          slug: 'adult-cat',
+          mainImage: '/images/adult-cat.jpg',
+          thumbnailImage: '/images/adult-cat-thumb.jpg',
+        },
+      ],
+      pagination: {
+        currentPage: 2,
+        totalPages: 2,
+        totalItems: 2,
+        itemsPerPage: 20,
+        hasNextPage: false,
+        hasPrevPage: true,
+        nextPage: null,
+        prevPage: 1,
+      },
+    };
+    vi.mocked(landingClientService.getSearch)
+      .mockResolvedValueOnce(firstPage)
+      .mockResolvedValueOnce(secondPage);
+    const { queryClient, wrapper } = createWrapper();
+    const { result } = renderHook(() => useSuspenseLandingSearchInfiniteQuery(query), { wrapper });
+
+    await waitFor(() => expect(result.current.suggestions).toEqual(firstPage.result));
+    await result.current.fetchNextPage();
+
+    await waitFor(() =>
+      expect(result.current.suggestions).toEqual([...firstPage.result, ...secondPage.result]),
+    );
+    expect(landingClientService.getSearch).toHaveBeenNthCalledWith(
+      2,
+      { ...query, page: 2 },
+      expect.any(AbortSignal),
+    );
+    queryClient.clear();
+  });
+
+  it('keeps the dialog cache key distinct from the hover-card result key', () => {
+    expect(landingSearchDialogQuery({ search: 'غذای گربه', limit: 20 })).toEqual([
+      'landing',
+      'search',
+      'غذای گربه',
+      1,
+      20,
+    ]);
+    expect(landingSearchDialogQuery({ search: 'غذای گربه', limit: 20 })).not.toEqual(
+      landingQueryKeys.search({ search: 'غذای گربه', page: 1, limit: 3 }),
+    );
   });
 });

@@ -10,13 +10,13 @@ import { cn } from '@/lib/utils';
 type HeaderProductSearchSuggestionItemProps = Readonly<{
   item?: LandingSearchResultDTO;
   isSkeleton?: boolean;
-  onCloseHoverCard?: () => void;
+  onNavigateToDetail?: () => void;
 }>;
 
 export function HeaderProductSearchSuggestionItem({
   item,
   isSkeleton = false,
-  onCloseHoverCard,
+  onNavigateToDetail,
 }: HeaderProductSearchSuggestionItemProps) {
   const detailHref =
     item?.itemType === 'pet'
@@ -43,7 +43,7 @@ export function HeaderProductSearchSuggestionItem({
           <Link
             href={detailHref}
             prefetch
-            onClick={onCloseHoverCard}
+            onClick={onNavigateToDetail}
             className={buttonVariants({ color: 'primary', size: 'sm', variant: 'text' })}
           >
             مشاهده جزئیات
