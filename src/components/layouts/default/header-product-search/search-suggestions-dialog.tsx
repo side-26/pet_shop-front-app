@@ -1,8 +1,8 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { forwardRef, useCallback, useContext, useImperativeHandle, useRef, useState } from 'react';
+import { QueryClientContext } from '@tanstack/react-query';
 
 import type { DialogHandle } from '@/_types';
 import { landingSearchDialogQuery } from '@/entities/landing/landing.client';
@@ -27,7 +27,7 @@ export const HeaderProductSearchSuggestionsDialog = forwardRef<
   HeaderProductSearchSuggestionsDialogHandle,
   object
 >(function HeaderProductSearchSuggestionsDialog(_, ref) {
-  const queryClient = useQueryClient();
+  const queryClient = useContext(QueryClientContext);
   const [params, setParams] = useState<HeaderProductSearchSuggestionsDialogParams | null>(null);
   const [open, setOpen] = useState(false);
   const exitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -44,7 +44,7 @@ export const HeaderProductSearchSuggestionsDialog = forwardRef<
     clearExitTimer();
     const version = ++versionRef.current;
     setOpen(false);
-    if (dialogQuery) {
+    if (dialogQuery && queryClient) {
       void queryClient.cancelQueries({ queryKey: dialogQuery, exact: true });
       queryClient.removeQueries({ queryKey: dialogQuery, exact: true });
     }
