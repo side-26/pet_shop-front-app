@@ -1,4 +1,4 @@
-import { array, mixed, object, string, type InferType } from 'yup';
+import { array, mixed, number, object, string, type InferType } from 'yup';
 
 import '@/configs/yup.config';
 import {
@@ -44,10 +44,30 @@ const articleDetailsFields = {
   petType: objectIdSchema.optional(),
 };
 
+export const ARTICLE_LIST_SORTS = ['newest', 'oldest'] as const;
+export type ArticleListSort = (typeof ARTICLE_LIST_SORTS)[number];
+
 export const articleIdSchema = object({ id: objectIdSchema });
 
 export const articleSlugSchema = object({
   slug: string().trim().min(1).max(300).required(),
+});
+
+export const articlePaginationSchema = object({
+  tags: array(string().trim().min(1).max(60).required())
+    .transform((_value, originalValue) => {
+      if (Array.isArray(originalValue)) return originalValue;
+      if (typeof originalValue === 'string')
+        return originalValue.split(',').map((tag) => tag.trim());
+      return originalValue;
+    })
+    .min(1)
+    .max(20)
+    .optional(),
+  petType: objectIdSchema.optional(),
+  sort: string().oneOf(ARTICLE_LIST_SORTS).default('newest').required(),
+  page: number().integer().min(1).default(1).required(),
+  limit: number().integer().min(1).max(100).default(10).required(),
 });
 
 export const createArticleSchema = object({
@@ -77,6 +97,7 @@ export const replaceArticleTagsSchema = object({
 
 export type ArticleIdInput = InferType<typeof articleIdSchema>;
 export type ArticleSlugInput = InferType<typeof articleSlugSchema>;
+export type ArticlePaginationInput = InferType<typeof articlePaginationSchema>;
 export type CreateArticleInput = InferType<typeof createArticleSchema>;
 export type UpdateArticleInput = InferType<typeof updateArticleSchema>;
 export type UpdateArticleMainTextInput = InferType<typeof updateArticleMainTextSchema>;

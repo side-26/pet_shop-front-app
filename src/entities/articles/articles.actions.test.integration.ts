@@ -7,7 +7,11 @@ import {
   deleteArticleAction,
   getCurrentUserArticlesAction,
   getArticlePreviewBySlugAction,
-  getArticlePreviewByIdAction,
+  getArticleByIdAction,
+  getArticleMainTextByIdAction,
+  getArticleRelatedBySlugAction,
+  getArticleTagsByIdAction,
+  getPaginatedArticlesAction,
   replaceArticleTagsAction,
   updateArticleAction,
   updateArticleMainTextAction,
@@ -23,7 +27,11 @@ vi.mock('./articles.service', () => ({
   getCurrentUserArticles: vi.fn(),
   invalidateCurrentUserArticles: vi.fn(),
   getArticlePreviewBySlug: vi.fn(),
-  getArticlePreviewById: vi.fn(),
+  getArticleById: vi.fn(),
+  getArticleMainTextById: vi.fn(),
+  getArticleRelatedBySlug: vi.fn(),
+  getArticleTagsById: vi.fn(),
+  getPaginatedArticles: vi.fn(),
   replaceArticleTags: vi.fn(),
   updateArticle: vi.fn(),
   updateArticleMainText: vi.fn(),
@@ -54,25 +62,62 @@ describe('article actions', () => {
     expect(service.getArticlePreviewBySlug).toHaveBeenCalledWith('dog-care');
   });
 
-  it('gets an authenticated preview by article ID', async () => {
+  it('gets public article detail by article ID', async () => {
+    vi.mocked(getSession).mockResolvedValue(null);
     const response = { isSuccess: true as const, message: null, data: {} as never };
-    vi.mocked(service.getArticlePreviewById).mockResolvedValue(response);
+    vi.mocked(service.getArticleById).mockResolvedValue(response);
 
-    await expect(getArticlePreviewByIdAction({ id })).resolves.toEqual(response.data);
+    await expect(getArticleByIdAction({ id })).resolves.toEqual(response.data);
 
-    expect(service.getArticlePreviewById).toHaveBeenCalledWith(id);
+    expect(service.getArticleById).toHaveBeenCalledWith(id);
   });
 
-  it('throws an article-preview service failure for the section error boundary', async () => {
-    vi.mocked(service.getArticlePreviewById).mockResolvedValue({
+  it('throws an article-detail service failure for the section error boundary', async () => {
+    vi.mocked(service.getArticleById).mockResolvedValue({
       isSuccess: false,
       message: 'نمایش پیش‌نمایش مقاله انجام نشد.',
       data: { messages: {}, details: {} },
     });
 
-    await expect(getArticlePreviewByIdAction({ id })).rejects.toThrow(
-      'نمایش پیش‌نمایش مقاله انجام نشد.',
-    );
+    await expect(getArticleByIdAction({ id })).rejects.toThrow('نمایش پیش‌نمایش مقاله انجام نشد.');
+  });
+
+  it('validates and delegates the other public article reads', async () => {
+    const response = { isSuccess: true as const, message: null, data: {} as never };
+    vi.mocked(service.getArticleMainTextById).mockResolvedValue(response);
+    vi.mocked(service.getArticleTagsById).mockResolvedValue(response);
+    vi.mocked(service.getArticleRelatedBySlug).mockResolvedValue(response);
+    vi.mocked(service.getPaginatedArticles).mockResolvedValue(response);
+
+    await getArticleMainTextByIdAction({ id });
+    await getArticleTagsByIdAction({ id });
+    await getArticleRelatedBySlugAction({ slug: '  dog-care  ' });
+    await getPaginatedArticlesAction({
+      tags: ['تغذیه', 'سلامت'],
+      sort: 'oldest',
+      page: 2,
+      limit: 20,
+    });
+
+    expect(service.getArticleMainTextById).toHaveBeenCalledWith(id);
+    expect(service.getArticleTagsById).toHaveBeenCalledWith(id);
+    expect(service.getArticleRelatedBySlug).toHaveBeenCalledWith('dog-care');
+    expect(service.getPaginatedArticles).toHaveBeenCalledWith({
+      tags: ['تغذیه', 'سلامت'],
+      sort: 'oldest',
+      page: 2,
+      limit: 20,
+    });
+  });
+
+  it('throws a paginated-read service failure for its section error boundary', async () => {
+    vi.mocked(service.getPaginatedArticles).mockResolvedValue({
+      isSuccess: false,
+      message: 'دریافت فهرست مقاله‌ها انجام نشد.',
+      data: { messages: {}, details: {} },
+    });
+
+    await expect(getPaginatedArticlesAction()).rejects.toThrow('دریافت فهرست مقاله‌ها انجام نشد.');
   });
 
   it('returns the authenticated user article collection from the service', async () => {
@@ -128,14 +173,14 @@ describe('article actions', () => {
     expect(service.replaceArticleTags).toHaveBeenCalledWith(id, { tags: [{ title: 'سگ' }] });
   });
 
-  it('deletes an article and invalidates the authenticated articles collection after success', async () => {
+  it('deletes an article without duplicating service-owned cache invalidation', async () => {
     const response = { isSuccess: true as const, message: 'ok', data: undefined };
     vi.mocked(service.deleteArticle).mockResolvedValue(response);
 
     await expect(deleteArticleAction({ id })).resolves.toEqual(response);
 
     expect(service.deleteArticle).toHaveBeenCalledWith(id);
-    expect(service.invalidateCurrentUserArticles).toHaveBeenCalledOnce();
+    expect(service.invalidateCurrentUserArticles).not.toHaveBeenCalled();
   });
 
   it('throws validation errors without reaching the service', async () => {

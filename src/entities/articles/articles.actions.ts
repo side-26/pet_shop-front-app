@@ -9,6 +9,7 @@ import { getSession } from '@/utils/session';
 
 import {
   articleIdSchema,
+  articlePaginationSchema,
   articleSlugSchema,
   createArticleSchema,
   replaceArticleTagsSchema,
@@ -54,12 +55,30 @@ export async function getArticlePreviewBySlugAction(input: unknown) {
   return unwrapResult(service.getArticlePreviewBySlug(value.slug));
 }
 
-export async function getArticlePreviewByIdAction(input: unknown) {
-  await requireAuthenticated();
-
+export async function getArticleByIdAction(input: unknown) {
   const value = await unwrapValidate(validate(articleIdSchema, input), 'شناسه مقاله نامعتبر است.');
 
-  return unwrapResult(service.getArticlePreviewById(value.id));
+  return unwrapResult(service.getArticleById(value.id));
+}
+
+export async function getArticleMainTextByIdAction(input: unknown) {
+  const value = await unwrapValidate(validate(articleIdSchema, input), 'شناسه مقاله نامعتبر است.');
+  return unwrapResult(service.getArticleMainTextById(value.id));
+}
+
+export async function getArticleTagsByIdAction(input: unknown) {
+  const value = await unwrapValidate(validate(articleIdSchema, input), 'شناسه مقاله نامعتبر است.');
+  return unwrapResult(service.getArticleTagsById(value.id));
+}
+
+export async function getArticleRelatedBySlugAction(input: unknown) {
+  const value = await unwrapValidate(validate(articleSlugSchema, input));
+  return unwrapResult(service.getArticleRelatedBySlug(value.slug));
+}
+
+export async function getPaginatedArticlesAction(input: unknown = {}) {
+  const value = await unwrapValidate(validate(articlePaginationSchema, input));
+  return unwrapResult(service.getPaginatedArticles(value));
 }
 
 export async function getCurrentUserArticlesAction() {
@@ -117,6 +136,5 @@ export async function deleteArticleAction(input: unknown) {
   const value = await unwrapValidate(validate(articleIdSchema, input));
 
   const result = await service.deleteArticle(value.id);
-  if (result.isSuccess) service.invalidateCurrentUserArticles();
   return result;
 }

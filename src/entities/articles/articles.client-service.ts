@@ -4,10 +4,23 @@ import type {
   ArticleDetailsResponse,
   ArticleIdDTO,
   ArticleMainTextResponse,
+  ArticlePaginatedResponse,
+  ArticlePaginationDTO,
   ArticleTagResponse,
 } from './articles.dto';
 
 export const articlesClientService = {
+  getPaginated(
+    query: Partial<ArticlePaginationDTO>,
+    signal?: AbortSignal,
+  ): Promise<ArticlePaginatedResponse> {
+    return internalFetcher<ArticlePaginatedResponse>({
+      url: '/api/articles/paginate',
+      method: 'GET',
+      query,
+      signal,
+    });
+  },
   getById(id: ArticleIdDTO['id'], signal?: AbortSignal): Promise<ArticleDetailsResponse> {
     return internalFetcher<ArticleDetailsResponse>({
       url: `/api/articles/${encodeURIComponent(id)}`,

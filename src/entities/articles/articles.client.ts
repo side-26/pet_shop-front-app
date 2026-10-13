@@ -1,7 +1,12 @@
 'use client';
 
-import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { useCallback, useRef } from 'react';
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseInfiniteQuery,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
+import { useCallback, useMemo, useRef } from 'react';
 
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
@@ -36,9 +41,12 @@ import {
   ArticleDetailsDTO,
   ArticleMainTextDTO,
   ArticleTagDTO,
+  type ArticleListDTO,
+  type ArticlePaginatedResponse,
   type ArticleDetailsResponse,
   type ArticleIdDTO,
   type ArticleMainTextResponse,
+  type ArticlePaginationDTO,
   type ArticleTagResponse,
 } from './articles.dto';
 import { articlesClientService } from './articles.client-service';
@@ -83,8 +91,67 @@ export const articlesQueryKeys = {
   mainInfo: (id: ArticleIdDTO['id']) => [...articlesQueryKeys.all, 'main-info', id] as const,
   mainText: (id: ArticleIdDTO['id']) => [...articlesQueryKeys.all, 'main-text', id] as const,
   tags: (id: ArticleIdDTO['id']) => [...articlesQueryKeys.all, 'tags', id] as const,
+  catalog: (query: Readonly<Record<string, string>>) =>
+    [
+      ...articlesQueryKeys.all,
+      'catalog',
+      new URLSearchParams(Object.entries(query).sort()).toString(),
+    ] as const,
 };
 
+function toArticleCatalogRequest(
+  query: Readonly<Record<string, string>>,
+  page: number,
+  limit: number,
+): Partial<ArticlePaginationDTO> {
+  return {
+    page,
+    limit,
+    ...(query.sort ? { sort: query.sort as ArticlePaginationDTO['sort'] } : {}),
+    ...(query.petType ? { petType: query.petType } : {}),
+    ...(query.tags
+      ? {
+          tags: query.tags
+            .split(',')
+            .map((tag) => tag.trim())
+            .filter(Boolean),
+        }
+      : {}),
+  };
+}
+
+export function useSuspenseArticleCatalogInfiniteQuery(
+  initialPage: ArticlePaginatedResponse,
+  query: Readonly<Record<string, string>>,
+) {
+  const infiniteQuery = useSuspenseInfiniteQuery({
+    queryKey: articlesQueryKeys.catalog(query),
+    queryFn: ({ pageParam, signal }) =>
+      articlesClientService.getPaginated(
+        toArticleCatalogRequest(query, pageParam, initialPage.pagination.itemsPerPage),
+        signal,
+      ),
+    initialPageParam: initialPage.pagination.currentPage,
+    initialData: {
+      pages: [initialPage],
+      pageParams: [initialPage.pagination.currentPage],
+    },
+    getNextPageParam: (page) => page?.pagination.nextPage ?? undefined,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+  const articles = useMemo(() => {
+    const uniqueArticles = new Map<string, ArticleListDTO>();
+    infiniteQuery.data.pages
+      .flatMap((page) => page.result)
+      .forEach((article) => uniqueArticles.set(article.id, article));
+    return [...uniqueArticles.values()];
+  }, [infiniteQuery.data.pages]);
+
+  return { ...infiniteQuery, articles };
+}
 const selectArticleMainInfo = (article: ArticleDetailsResponse) =>
   transformData(ArticleDetailsDTO, article);
 const selectArticleMainText = (article: ArticleMainTextResponse) =>

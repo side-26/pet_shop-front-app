@@ -9,12 +9,12 @@ type ArticlePreviewProfileProps = Readonly<{
 }>;
 
 export function ArticlePreviewProfile({ author, children }: ArticlePreviewProfileProps) {
-  const authorName = author ? `${author.firstName} ${author.lastName}`.trim() : 'نام نویسنده';
+  const authorName = author?.fullName || 'نام نویسنده';
 
   return (
     <>
       <Avatar size="lg">
-        {author?.avatar ? <AvatarImage src={author.avatar} alt={authorName} /> : null}
+        {author?.image ? <AvatarImage src={author.image} alt={authorName} /> : null}
         <AvatarFallback>{authorName.at(0) ?? 'ن'}</AvatarFallback>
       </Avatar>
       <div className="tw:flex tw:min-w-0 tw:flex-col tw:gap-0.5">

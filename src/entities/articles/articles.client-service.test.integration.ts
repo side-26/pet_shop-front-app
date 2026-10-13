@@ -7,6 +7,21 @@ import { articlesClientService } from './articles.client-service';
 vi.mock('@/lib/api/internalFetcher', () => ({ internalFetcher: vi.fn() }));
 
 describe('article client service', () => {
+  it('reads paginated articles through the same-origin internal API and forwards cancellation', async () => {
+    const signal = new AbortController().signal;
+    const query = { tags: ['سگ', 'تغذیه'], sort: 'newest' as const, page: 2, limit: 12 };
+    const page = { result: [], pagination: {}, metadata: {} };
+    vi.mocked(internalFetcher).mockResolvedValue(page);
+
+    await expect(articlesClientService.getPaginated(query, signal)).resolves.toBe(page);
+    expect(internalFetcher).toHaveBeenCalledWith({
+      url: '/api/articles/paginate',
+      method: 'GET',
+      query,
+      signal,
+    });
+  });
+
   it('reads an article through the same-origin internal API and forwards cancellation', async () => {
     const signal = new AbortController().signal;
     const id = '507f1f77bcf86cd799439011';

@@ -5,8 +5,13 @@ import { EntityTag } from '@/utils/entityCache';
 
 import type {
   ArticleDTO,
+  ArticleDetailsDTO,
   ArticleIdDTO,
   ArticleListDTO,
+  ArticleMainTextDTO,
+  ArticlePaginatedResponse,
+  ArticlePaginationDTO,
+  ArticleRelatedResponse,
   ArticleTagDTO,
   ArticleSlugDTO,
   CreateArticleDTO,
@@ -14,6 +19,14 @@ import type {
   UpdateArticleMainTextDTO,
   ReplaceArticleTagsDTO,
 } from './articles.dto';
+import {
+  toArticleDetailsResponse,
+  toArticleListResponses,
+  toArticlePaginatedResponse,
+  toArticleRelatedResponse,
+  toArticleResponse,
+} from './articles.dto';
+import { articlePaginationSchema } from './articles.schema';
 
 const articlesCache = new EntityTag('articles');
 
@@ -28,15 +41,94 @@ export async function getArticlePreviewBySlug(slug: ArticleSlugDTO['slug']) {
     method: 'GET',
     auth: false,
     cache: 'no-store',
+    parseSuccess: toArticleResponse,
   });
 }
 
-export async function getArticlePreviewById(id: ArticleIdDTO['id']) {
-  return customFetcher<ArticleDTO>({
-    url: `/articles/id/${encodeURIComponent(id)}`,
+export async function getArticleById(id: ArticleIdDTO['id']) {
+  'use cache';
+
+  articlesCache.cacheLife({ stale: 600 });
+  articlesCache.registerDetail(id);
+
+  return customFetcher<ArticleDetailsDTO>({
+    url: `/articles/id/${id}`,
     method: 'GET',
-    auth: true,
+    auth: false,
     cache: 'no-store',
+    parseSuccess: toArticleDetailsResponse,
+  });
+}
+
+export async function getArticleMainTextById(id: ArticleIdDTO['id']) {
+  'use cache';
+
+  articlesCache.cacheLife({ stale: 600 });
+  articlesCache.registerDetail(id);
+
+  return customFetcher<ArticleMainTextDTO>({
+    url: `/articles/id/${id}/main-text`,
+    method: 'GET',
+    auth: false,
+    cache: 'no-store',
+  });
+}
+
+export async function getArticleTagsById(id: ArticleIdDTO['id']) {
+  'use cache';
+
+  articlesCache.cacheLife({ stale: 600 });
+  articlesCache.registerDetail(id);
+
+  return customFetcher<ArticleTagDTO[]>({
+    url: `/articles/id/${id}/tags-list`,
+    method: 'GET',
+    auth: false,
+    cache: 'no-store',
+  });
+}
+
+export async function getArticleRelatedBySlug(slug: ArticleSlugDTO['slug']) {
+  'use cache';
+
+  articlesCache.cacheLife({ stale: 600 });
+  articlesCache.registerDetail(slug);
+
+  return customFetcher<ArticleRelatedResponse>({
+    url: `/articles/${slug}/tags-list/matched-articles`,
+    method: 'GET',
+    auth: false,
+    cache: 'no-store',
+    parseSuccess: toArticleRelatedResponse,
+  });
+}
+
+export async function getPaginatedArticles(input: Partial<ArticlePaginationDTO> = {}) {
+  const query = await articlePaginationSchema.validate(input, { stripUnknown: true });
+  return fetchPaginatedArticles(query);
+}
+
+async function fetchPaginatedArticles(query: ArticlePaginationDTO) {
+  'use cache';
+
+  const queryEntries: [string, string][] = [
+    ['limit', String(query.limit)],
+    ['page', String(query.page)],
+    ['sort', query.sort],
+  ];
+  for (const tag of [...(query.tags ?? [])].sort()) queryEntries.push(['tags', tag]);
+  if (query.petType) queryEntries.push(['petType', query.petType]);
+  const queryKey = new URLSearchParams(queryEntries).toString();
+  articlesCache.cacheLife({ stale: 600 });
+  articlesCache.registerList(`public:${queryKey}`);
+
+  return customFetcher<ArticlePaginatedResponse>({
+    url: '/articles/paginate',
+    method: 'GET',
+    query,
+    auth: false,
+    cache: 'no-store',
+    parseSuccess: toArticlePaginatedResponse,
   });
 }
 
@@ -50,6 +142,7 @@ export async function getCurrentUserArticles() {
     method: 'GET',
     auth: true,
     cache: 'no-store',
+    parseSuccess: toArticleListResponses,
   });
 }
 

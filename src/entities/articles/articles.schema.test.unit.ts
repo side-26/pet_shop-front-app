@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   articleSlugSchema,
+  articlePaginationSchema,
   createArticleSchema,
   replaceArticleTagsSchema,
   updateArticleMainTextSchema,
@@ -52,5 +53,30 @@ describe('article schemas', () => {
     ).resolves.toEqual({
       mainText: article.mainText,
     });
+  });
+
+  it('normalizes public catalog filters, sort, and pagination within backend bounds', async () => {
+    await expect(articlePaginationSchema.validate({})).resolves.toEqual({
+      page: 1,
+      limit: 10,
+      sort: 'newest',
+    });
+    await expect(
+      articlePaginationSchema.validate({
+        tags: '  تغذیه , سلامت  ',
+        petType: '507f1f77bcf86cd799439011',
+        sort: 'oldest',
+        page: 2,
+        limit: 100,
+      }),
+    ).resolves.toEqual({
+      tags: ['تغذیه', 'سلامت'],
+      petType: '507f1f77bcf86cd799439011',
+      sort: 'oldest',
+      page: 2,
+      limit: 100,
+    });
+    await expect(articlePaginationSchema.validate({ sort: 'title' })).rejects.toThrow();
+    await expect(articlePaginationSchema.validate({ page: 0, limit: 101 })).rejects.toThrow();
   });
 });

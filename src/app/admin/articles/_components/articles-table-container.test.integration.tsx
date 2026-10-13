@@ -30,7 +30,7 @@ const article = {
   tags: [],
   petType: { title: 'سگ' },
   mainText: { type: 'doc' as const, content: [] },
-  author: { avatar: '', placeholderImage: '', firstName: 'سارا', lastName: 'احمدی' },
+  author: { image: '', thumbnailImage: '', fullName: 'سارا احمدی' },
   slug: 'dog-care',
   createdAt: '2026-10-07T00:00:00.000Z',
   updatedAt: '2026-10-07T00:00:00.000Z',

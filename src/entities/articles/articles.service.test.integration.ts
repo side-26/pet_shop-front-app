@@ -6,7 +6,11 @@ import {
   createArticle,
   deleteArticle,
   getArticlePreviewBySlug,
-  getArticlePreviewById,
+  getArticleById,
+  getArticleMainTextById,
+  getArticleRelatedBySlug,
+  getArticleTagsById,
+  getPaginatedArticles,
   getCurrentUserArticles,
   invalidateCurrentUserArticles,
   updateArticle,
@@ -74,23 +78,81 @@ describe('article service', () => {
       method: 'GET',
       auth: false,
       cache: 'no-store',
+      parseSuccess: expect.any(Function),
     });
     expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 600 });
     expect(registerDetailMock).toHaveBeenCalledWith('dog care/one');
   });
 
-  it('gets an authenticated by-ID preview without entering the shared cache', async () => {
+  it('gets public article detail by ID without rich text through the tagged shared cache', async () => {
     const response = { isSuccess: true as const, message: null, data: article };
     vi.mocked(customFetcher).mockResolvedValue(response);
 
-    await expect(getArticlePreviewById(id)).resolves.toBe(response);
+    await expect(getArticleById(id)).resolves.toBe(response);
     expect(customFetcher).toHaveBeenCalledWith({
       url: `/articles/id/${id}`,
       method: 'GET',
-      auth: true,
+      auth: false,
+      cache: 'no-store',
+      parseSuccess: expect.any(Function),
+    });
+    expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 600 });
+    expect(registerDetailMock).toHaveBeenCalledWith(id);
+  });
+
+  it('gets the remaining public article read contracts through their backend endpoints', async () => {
+    const response = { isSuccess: true as const, message: null, data: article };
+    vi.mocked(customFetcher).mockResolvedValue(response);
+
+    await getArticleMainTextById(id);
+    await getArticleTagsById(id);
+    await getArticleRelatedBySlug('dog-care');
+    await getPaginatedArticles({
+      tags: ['تغذیه', 'سلامت'],
+      petType: id,
+      sort: 'oldest',
+      page: 2,
+      limit: 20,
+    });
+
+    expect(customFetcher).toHaveBeenNthCalledWith(1, {
+      url: `/articles/id/${id}/main-text`,
+      method: 'GET',
+      auth: false,
       cache: 'no-store',
     });
-    expect(registerDetailMock).not.toHaveBeenCalled();
+    expect(customFetcher).toHaveBeenNthCalledWith(2, {
+      url: `/articles/id/${id}/tags-list`,
+      method: 'GET',
+      auth: false,
+      cache: 'no-store',
+    });
+    expect(customFetcher).toHaveBeenNthCalledWith(3, {
+      url: '/articles/dog-care/tags-list/matched-articles',
+      method: 'GET',
+      auth: false,
+      cache: 'no-store',
+      parseSuccess: expect.any(Function),
+    });
+    expect(customFetcher).toHaveBeenNthCalledWith(4, {
+      url: '/articles/paginate',
+      method: 'GET',
+      query: {
+        tags: ['تغذیه', 'سلامت'],
+        petType: id,
+        sort: 'oldest',
+        page: 2,
+        limit: 20,
+      },
+      auth: false,
+      cache: 'no-store',
+      parseSuccess: expect.any(Function),
+    });
+    expect(registerDetailMock).toHaveBeenCalledWith(id);
+    expect(registerDetailMock).toHaveBeenCalledWith('dog-care');
+    expect(registerListMock).toHaveBeenCalledWith(
+      `public:limit=20&page=2&sort=oldest&tags=%D8%AA%D8%BA%D8%B0%DB%8C%D9%87&tags=%D8%B3%D9%84%D8%A7%D9%85%D8%AA&petType=${id}`,
+    );
   });
 
   it('gets only the authenticated user articles through a private tagged cache', async () => {
@@ -103,6 +165,7 @@ describe('article service', () => {
       method: 'GET',
       auth: true,
       cache: 'no-store',
+      parseSuccess: expect.any(Function),
     });
     expect(cacheLifeMock).toHaveBeenCalledWith({ stale: 600 });
     expect(registerListMock).toHaveBeenCalledWith('current-author');

@@ -29,13 +29,19 @@ import {
   useCreateArticle,
   useCreateArticleMutation,
   useDeleteArticleMutation,
+  useSuspenseArticleCatalogInfiniteQuery,
   useReplaceArticleTagsMutation,
   useUpdateArticleMainTextMutation,
   useUpdateArticleMainText,
   useUpdateArticleMutation,
 } from './articles.client';
 import { articlesClientService } from './articles.client-service';
-import { ArticleDetailsDTO, ArticleMainTextDTO, ArticleTagDTO } from './articles.dto';
+import {
+  ArticleDetailsDTO,
+  ArticleMainTextDTO,
+  ArticleTagDTO,
+  type ArticlePaginatedResponse,
+} from './articles.dto';
 
 vi.mock('./articles.actions', () => ({
   createArticleAction: vi.fn(),
@@ -45,7 +51,12 @@ vi.mock('./articles.actions', () => ({
   replaceArticleTagsAction: vi.fn(),
 }));
 vi.mock('./articles.client-service', () => ({
-  articlesClientService: { getById: vi.fn(), getMainTextById: vi.fn(), getTagsById: vi.fn() },
+  articlesClientService: {
+    getById: vi.fn(),
+    getMainTextById: vi.fn(),
+    getTagsById: vi.fn(),
+    getPaginated: vi.fn(),
+  },
 }));
 vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
 vi.mock('@/entities/images/images.client', () => ({
@@ -68,6 +79,20 @@ const failure = {
   data: { messages: {}, details: {} },
 };
 const success = { isSuccess: true as const, message: 'موفق', data: {} as never };
+const initialCatalogPage: ArticlePaginatedResponse = {
+  result: [],
+  pagination: {
+    currentPage: 1,
+    totalPages: 2,
+    totalItems: 12,
+    itemsPerPage: 10,
+    hasNextPage: true,
+    hasPrevPage: false,
+    nextPage: 2,
+    prevPage: null,
+  },
+  metadata: { tags: [], petTypes: [], sort: { current: 'newest', options: [] } },
+};
 
 function createWrapper() {
   const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
@@ -352,6 +377,55 @@ describe('article tags query', () => {
     expect(result.current.data[0]).not.toHaveProperty('internalOnly');
     expect(articlesClientService.getTagsById).toHaveBeenCalledWith(id, expect.any(AbortSignal));
     expect(queryClient.getQueryData(articlesQueryKeys.tags(id))).toEqual(tags);
+    queryClient.clear();
+  });
+});
+
+describe('article catalogue infinite query', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('seeds the server page and loads following pages through the internal API service', async () => {
+    vi.mocked(articlesClientService.getPaginated).mockImplementation((request) =>
+      Promise.resolve(
+        request.page === 2
+          ? {
+              ...initialCatalogPage,
+              pagination: {
+                ...initialCatalogPage.pagination,
+                currentPage: 2,
+                hasNextPage: false,
+                nextPage: null,
+              },
+            }
+          : initialCatalogPage,
+      ),
+    );
+    const { queryClient, wrapper: QueryProvider } = createWrapper();
+    const wrapper = ({ children }: { children: ReactNode }) =>
+      createElement(QueryProvider, null, createElement(Suspense, { fallback: null }, children));
+    const query = { tags: 'سگ,گربه', petType: '507f1f77bcf86cd799439011', sort: 'newest' };
+    const { result } = renderHook(
+      () => useSuspenseArticleCatalogInfiniteQuery(initialCatalogPage, query),
+      { wrapper },
+    );
+
+    expect(articlesClientService.getPaginated).not.toHaveBeenCalled();
+    expect(result.current.data.pages).toEqual([initialCatalogPage]);
+
+    await act(async () => {
+      await result.current.fetchNextPage();
+    });
+
+    expect(articlesClientService.getPaginated).toHaveBeenLastCalledWith(
+      {
+        tags: ['سگ', 'گربه'],
+        petType: '507f1f77bcf86cd799439011',
+        sort: 'newest',
+        page: 2,
+        limit: 10,
+      },
+      expect.any(AbortSignal),
+    );
     queryClient.clear();
   });
 });
