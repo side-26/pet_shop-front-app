@@ -26,6 +26,17 @@ describe('landing schemas', () => {
     await expect(
       landingSlugSchema.validate({ slug: '  تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ  ' }),
     ).resolves.toEqual({ slug: 'تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ' });
+    await expect(landingSlugSchema.validate({ slug: 'a'.repeat(300) })).resolves.toEqual({
+      slug: 'a'.repeat(300),
+    });
+    await expect(landingSlugSchema.validate({ slug: 'a'.repeat(301) })).rejects.toBeDefined();
+    await expect(
+      landingSlugSchema.validate({
+        slug: encodeURIComponent('پوره-تشویقی-گربه-با-طعم-مرغ-گربه-تشویقی-و-اسنک-تشویقی-آموزشی'),
+      }),
+    ).resolves.toEqual({
+      slug: 'پوره-تشویقی-گربه-با-طعم-مرغ-گربه-تشویقی-و-اسنک-تشویقی-آموزشی',
+    });
   });
 
   it('normalizes repeated catalogue IDs, accepts isEnable, and removes the legacy available facet', async () => {

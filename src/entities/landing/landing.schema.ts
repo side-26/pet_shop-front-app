@@ -8,9 +8,18 @@ export const DEFAULT_LANDING_SEARCH_PAGE_SIZE = 20;
 
 export const landingSlugSchema = object({
   slug: string()
+    .transform((value, originalValue) => {
+      if (typeof originalValue !== 'string') return value;
+
+      try {
+        return decodeURIComponent(originalValue);
+      } catch {
+        return originalValue;
+      }
+    })
     .trim()
     .min(2)
-    .max(160)
+    .max(300)
     .matches(/^[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*$/u)
     .required(),
 });
