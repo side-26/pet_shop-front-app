@@ -87,6 +87,8 @@ function SelectorWheel({
   const activeIndexRef = useRef(initialIndex);
   const colors = selectorColorVariants({ color });
   const getScrollElement = useCallback(() => scrollRef.current, []);
+  // TanStack Virtual intentionally returns a stateful API whose methods are not compiler-memoizable.
+  // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
     count: items.length,
     getScrollElement,
