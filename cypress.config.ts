@@ -81,12 +81,12 @@ process.env.PETSHOP_CYPRESS_COMPONENT_TEST = 'true';
 
 export default defineConfig({
   allowCypressEnv: false,
-  defaultCommandTimeout: 300_000,
-  pageLoadTimeout: 300_000,
-  requestTimeout: 300_000,
-  responseTimeout: 300_000,
-  taskTimeout: 300_000,
-  execTimeout: 300_000,
+  defaultCommandTimeout: 30_000,
+  pageLoadTimeout: 30_000,
+  requestTimeout: 30_000,
+  responseTimeout: 30_000,
+  taskTimeout: 30_000,
+  execTimeout: 30_000,
   component: {
     devServer: {
       framework: 'next',
@@ -97,12 +97,12 @@ export default defineConfig({
   },
   e2e: {
     baseUrl: 'http://localhost:3000',
-    defaultCommandTimeout: 600_000,
-    pageLoadTimeout: 600_000,
-    requestTimeout: 600_000,
-    responseTimeout: 600_000,
-    taskTimeout: 600_000,
-    execTimeout: 600_000,
+    defaultCommandTimeout: 30_000,
+    pageLoadTimeout: 30_000,
+    requestTimeout: 30_000,
+    responseTimeout: 30_000,
+    taskTimeout: 30_000,
+    execTimeout: 30_000,
     specPattern: '**/**/**.cy.ts',
     excludeSpecPattern: ['node_modules/**', '.next/**'],
     supportFile: 'cypress/support/e2e.ts',

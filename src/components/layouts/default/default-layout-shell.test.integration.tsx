@@ -73,9 +73,10 @@ describe('DefaultLayoutShell', () => {
     render(<DefaultLayoutShell>صفحه</DefaultLayoutShell>);
 
     expect(screen.getByRole('button', { name: 'باز کردن منوی بیشتر' })).toBeTruthy();
-    expect(screen.getByRole('searchbox', { name: 'جستجو سریع' })).toBeTruthy();
+    expect(screen.getByRole('searchbox', { name: 'جستجو سریع' }).getAttribute('type')).toBe(
+      'search',
+    );
     expect(screen.getByRole('button', { name: 'باز کردن جستجوی سریع' })).toBeTruthy();
-    expect(screen.getByRole('search').getAttribute('action')).toBeNull();
     expect(screen.getAllByRole('link', { name: 'سبد خرید' })[0].getAttribute('href')).toBe(
       routePaths.cart,
     );
