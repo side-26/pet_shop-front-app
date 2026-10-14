@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowRight, Search, X } from 'lucide-react';
+import { useRouter } from 'nextjs-toploader/app';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/fi
 import { Form } from '@/components/ui/form';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Spinner } from '@/components/ui/spinner';
+import { routePaths } from '@/configs/route.path';
 import { useDebounce } from '@/hooks/use-debounce';
 import { cn } from '@/lib/utils';
 
@@ -28,6 +30,7 @@ type HeaderProductSearchProps = Readonly<{
 }>;
 
 export function HeaderProductSearch({ className }: HeaderProductSearchProps) {
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [desktopOpen, setDesktopOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -38,7 +41,14 @@ export function HeaderProductSearch({ className }: HeaderProductSearchProps) {
     setMobileOpen(false);
   };
 
-  const handleSubmit = () => undefined;
+  const handleSubmit = () => {
+    const normalizedQuery = query.trim();
+
+    if (!normalizedQuery) return;
+
+    closeSearch();
+    router.push(routePaths.productsSearch(normalizedQuery));
+  };
 
   return (
     <HeaderProductSearchProvider onCloseHoverCard={closeSearch}>
