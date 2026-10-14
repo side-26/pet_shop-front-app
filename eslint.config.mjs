@@ -14,6 +14,9 @@ const eslintConfig = defineConfig([
     'playwright-report/**',
     'test-results/**',
     'next-env.d.ts',
+    // Agent skill snapshots are reference material, not application source.
+    '.agents/**',
+    '.claude/**',
   ]),
 ]);
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { CalendarDays } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup } from '@/components/ui/fields/radio-group';
 import { useCheckoutStore } from '@/stores/checkout.store';
@@ -10,8 +10,13 @@ import { DeliveryTimeDayItem } from './delivery-time-day-item';
 import { DeliveryTimeEmpty } from './delivery-time-empty';
 
 export function DeliveryTime() {
-  const availability =
-    useCheckoutStore((state) => state.checkoutInformation.deliveryServiceAvailability) ?? [];
+  const deliveryServiceAvailability = useCheckoutStore(
+    (state) => state.checkoutInformation.deliveryServiceAvailability,
+  );
+  const availability = useMemo(
+    () => deliveryServiceAvailability ?? [],
+    [deliveryServiceAvailability],
+  );
   const selectedDate = useCheckoutStore((state) => state.checkoutInformation.deliveryDate);
   const selectedTime = useCheckoutStore((state) => state.checkoutInformation.deliveryTimeSlot);
   const save = useCheckoutStore((state) => state.saveCheckoutInformation);
