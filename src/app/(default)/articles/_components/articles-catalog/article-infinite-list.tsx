@@ -1,7 +1,6 @@
 'use client';
 
-import InfiniteScroll from 'react-infinite-scroll-component';
-
+import { CustomInfiniteScroll } from '@/components/templates/custom-infinite-scroll';
 import { useSuspenseArticleCatalogInfiniteQuery } from '@/entities/articles/articles.client';
 import type { ArticlePaginatedResponse } from '@/entities/articles/articles.dto';
 
@@ -15,28 +14,25 @@ type ArticleInfiniteListProps = Readonly<{
 }>;
 
 export function ArticleInfiniteList({ data, query }: ArticleInfiniteListProps) {
-  const { articles, error, fetchNextPage, hasNextPage } = useSuspenseArticleCatalogInfiniteQuery(
-    data,
-    query,
-  );
+  const { articles, error, fetchNextPage, hasNextPage, isFetchingNextPage, isFetchNextPageError } =
+    useSuspenseArticleCatalogInfiniteQuery(data, query);
 
   return (
-    <InfiniteScroll
+    <CustomInfiniteScroll
       dataLength={articles.length}
       endMessage={articles.length > 0 ? <EndListMessage /> : null}
-      hasMore={hasNextPage ?? false}
+      error={error}
+      errorFallback={({ error: nextPageError, retry }) => (
+        <ArticlesCatalogErrorFallback error={nextPageError} refreshOnRetry={false} retry={retry} />
+      )}
+      fetchNextPage={fetchNextPage}
+      hasNextPage={hasNextPage ?? false}
+      isFetchingNextPage={isFetchingNextPage}
+      isFetchNextPageError={isFetchNextPageError}
       loader={<ArticleGrid articles={articlesCatalogSkeletonItems} isSkeleton />}
-      next={() => void fetchNextPage()}
     >
       <ArticleGrid articles={articles} />
-      {error ? (
-        <ArticlesCatalogErrorFallback
-          error={error}
-          refreshOnRetry={false}
-          retry={() => void fetchNextPage()}
-        />
-      ) : null}
-    </InfiniteScroll>
+    </CustomInfiniteScroll>
   );
 }
 
