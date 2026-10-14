@@ -3,8 +3,8 @@
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { Search, X } from 'lucide-react';
 import { Suspense, useState, type ReactNode } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
+import { CustomInfiniteScroll } from '@/components/templates/custom-infinite-scroll';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -40,6 +40,29 @@ export function HeaderProductSearchSuggestionsDialogContent({
   open,
   query,
 }: HeaderProductSearchSuggestionsDialogContentProps) {
+  return (
+    <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
+      <DialogContent
+        size="xl"
+        className="tw:flex tw:max-h-[calc(100svh-2rem)] tw:flex-col tw:gap-0 tw:overflow-hidden tw:p-0"
+      >
+        <DialogHeader className="tw:flex-none tw:border-b tw:border-border tw:px-6 tw:py-4">
+          <DialogTitle>نتایج جستجو</DialogTitle>
+          <DialogDescription>نتایج مرتبط با «{query.trim()}»</DialogDescription>
+        </DialogHeader>
+        <HeaderProductSearchSuggestionsContent
+          initialSuggestions={initialSuggestions}
+          query={query}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function HeaderProductSearchSuggestionsContent({
+  initialSuggestions,
+  query,
+}: Pick<HeaderProductSearchSuggestionsDialogContentProps, 'initialSuggestions' | 'query'>) {
   const [search, setSearch] = useState(query);
   const debouncedSearch = useDebounce(search);
   const normalizedSearch = search.trim();
@@ -53,58 +76,49 @@ export function HeaderProductSearchSuggestionsDialogContent({
     );
 
   return (
-    <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
-      <DialogContent
-        size="xl"
-        className="tw:flex tw:max-h-[calc(100svh-2rem)] tw:flex-col tw:gap-0 tw:overflow-hidden tw:p-0"
+    <>
+      <Form
+        handleSubmit={() => undefined}
+        className="tw:flex-none tw:border-b tw:border-border tw:p-4"
       >
-        <DialogHeader className="tw:flex-none tw:border-b tw:border-border tw:px-6 tw:py-4">
-          <DialogTitle>نتایج جستجو</DialogTitle>
-          <DialogDescription>نتایج مرتبط با «{normalizedSearch}»</DialogDescription>
-        </DialogHeader>
-        <Form
-          handleSubmit={() => undefined}
-          className="tw:flex-none tw:border-b tw:border-border tw:p-4"
-        >
-          <InputGroup className="tw:h-11 tw:border-border/70 tw:bg-muted/75 tw:shadow-none">
-            <InputGroupAddon>
-              <Search aria-hidden="true" />
-            </InputGroupAddon>
-            <InputGroupInput
-              type="search"
-              value={search}
-              autoFocus
-              aria-label="جستجو سریع"
-              placeholder="جستجو سریع..."
-              onChange={(event) => setSearch(event.target.value)}
-              className="tw:[&::-webkit-search-cancel-button]:hidden"
-            />
-            {search ? (
-              <InputGroupAddon className="tw:px-1.5">
-                <Button
-                  type="button"
-                  iconOnly
-                  size="sm"
-                  variant="flat"
-                  color="secondary"
-                  aria-label="پاک کردن جستجو"
-                  onClick={() => setSearch('')}
-                >
-                  <X aria-hidden="true" />
-                </Button>
-              </InputGroupAddon>
-            ) : null}
-          </InputGroup>
-        </Form>
-        <div id={scrollableTargetId} className="tw:min-h-0 tw:flex-auto tw:overflow-y-auto">
-          <HeaderProductSearchSuggestionsDialogSearchResults
-            initialSuggestionsFallback={initialSuggestionsFallback}
-            isDebouncing={isDebouncing}
-            query={normalizedDebouncedSearch}
+        <InputGroup className="tw:h-11 tw:border-border/70 tw:bg-muted/75 tw:shadow-none">
+          <InputGroupAddon>
+            <Search aria-hidden="true" />
+          </InputGroupAddon>
+          <InputGroupInput
+            type="search"
+            value={search}
+            autoFocus
+            aria-label="جستجو سریع"
+            placeholder="جستجو سریع..."
+            onChange={(event) => setSearch(event.target.value)}
+            className="tw:[&::-webkit-search-cancel-button]:hidden"
           />
-        </div>
-      </DialogContent>
-    </Dialog>
+          {search ? (
+            <InputGroupAddon className="tw:px-1.5">
+              <Button
+                type="button"
+                iconOnly
+                size="sm"
+                variant="flat"
+                color="secondary"
+                aria-label="پاک کردن جستجو"
+                onClick={() => setSearch('')}
+              >
+                <X aria-hidden="true" />
+              </Button>
+            </InputGroupAddon>
+          ) : null}
+        </InputGroup>
+      </Form>
+      <div id={scrollableTargetId} className="tw:min-h-0 tw:flex-auto tw:overflow-y-auto">
+        <HeaderProductSearchSuggestionsDialogSearchResults
+          initialSuggestionsFallback={initialSuggestionsFallback}
+          isDebouncing={isDebouncing}
+          query={normalizedDebouncedSearch}
+        />
+      </div>
+    </>
   );
 }
 
@@ -128,20 +142,36 @@ function HeaderProductSearchSuggestionsDialogSearchResults({
 
   return (
     <QueryErrorResetBoundary>
-      <ErrorStateBoundary fallback={<HeaderProductSearchErrorFallback />}>
-        <Suspense fallback={initialSuggestionsFallback}>
-          <HeaderProductSearchSuggestionsDialogResults query={query} />
-        </Suspense>
-      </ErrorStateBoundary>
+      {({ reset }) => (
+        <ErrorStateBoundary
+          key={query}
+          fallbackRender={({ retry }) => (
+            <HeaderProductSearchErrorFallback
+              onRetry={() => {
+                reset();
+                retry();
+              }}
+            />
+          )}
+        >
+          <Suspense fallback={initialSuggestionsFallback}>
+            <HeaderProductSearchSuggestionsDialogResults query={query} />
+          </Suspense>
+        </ErrorStateBoundary>
+      )}
     </QueryErrorResetBoundary>
   );
 }
 
 function HeaderProductSearchSuggestionsDialogResults({ query }: Readonly<{ query: string }>) {
-  const { error, fetchNextPage, hasNextPage, suggestions } = useSuspenseLandingSearchInfiniteQuery({
-    search: query,
-    limit: 20,
-  });
+  const {
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetchNextPageError,
+    suggestions,
+  } = useSuspenseLandingSearchInfiniteQuery({ search: query, limit: 20 });
 
   return (
     <EmptyStateBoundary
@@ -152,16 +182,19 @@ function HeaderProductSearchSuggestionsDialogResults({ query }: Readonly<{ query
         />
       }
     >
-      <InfiniteScroll
+      <CustomInfiniteScroll
         dataLength={suggestions.length}
-        hasMore={hasNextPage ?? false}
+        error={error}
+        errorFallback={({ retry }) => <HeaderProductSearchErrorFallback onRetry={retry} />}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage ?? false}
+        isFetchingNextPage={isFetchingNextPage}
+        isFetchNextPageError={isFetchNextPageError}
         loader={<HeaderProductSearchSuggestionItemGroup isSkeleton />}
-        next={() => void fetchNextPage()}
         scrollableTarget={scrollableTargetId}
       >
         <HeaderProductSearchSuggestionItemGroup data={suggestions} />
-        {error ? <HeaderProductSearchErrorFallback /> : null}
-      </InfiniteScroll>
+      </CustomInfiniteScroll>
     </EmptyStateBoundary>
   );
 }

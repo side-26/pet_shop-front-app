@@ -132,21 +132,22 @@ describe('HeaderProductSearch', () => {
     restoreClock();
   });
 
-  it('uses a modal overlay with the same search, result, and close behavior on tablet', () => {
+  it('uses a lazy bottom navigation drawer with the same search, result, and close behavior on tablet', () => {
     cy.viewport(768, 1024);
     cy.clock();
     mountSearch();
 
     cy.get('input[aria-label="باز کردن جستجوی سریع"]').click();
-    cy.get('[role="dialog"]').should('be.visible');
-    cy.contains('برای دیدن پیشنهادها، نام آیتم را وارد کنید.').should('be.visible');
+    cy.get('[data-slot="drawer-content"]').should('be.visible');
+    cy.contains('برای دیدن نتایج، نام آیتم را وارد کنید.').should('be.visible');
     typeSearch('خاک');
-    cy.get('[role="dialog"]').contains('خاک گربه کربن‌دار').should('be.visible');
-    cy.get('button[aria-label="پاک کردن جستجو"]:visible').click();
-    cy.contains('برای دیدن پیشنهادها، نام آیتم را وارد کنید.').should('be.visible');
+    cy.get('[data-slot="drawer-content"]').contains('خاک گربه کربن‌دار').should('be.visible');
+    cy.get('[data-slot="drawer-content"] button[aria-label="پاک کردن جستجو"]').click();
+    cy.tick(500);
+    cy.contains('برای دیدن نتایج، نام آیتم را وارد کنید.').should('be.visible');
     restoreClock();
-    cy.get('button[aria-label="بازگشت از جستجو"]').click();
-    cy.get('[role="dialog"]').should('not.exist');
+    cy.get('button[aria-label="بستن جستجو"]').click();
+    cy.get('[data-slot="drawer-content"]').should('not.exist');
   });
 
   it('navigates to a suggestion and closes the desktop search surface', () => {

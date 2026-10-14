@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ReactQueryProvider } from '@/app/react-query-provider';
@@ -72,6 +72,15 @@ describe('HeaderProductSearchResultsStream', () => {
 
     expect(screen.getByText('نمایش نتایج ممکن نیست')).toBeTruthy();
     expect(screen.queryByRole('button')).toBeNull();
+  });
+
+  it('offers the supplied retry action for a recoverable query error', () => {
+    const onRetry = vi.fn();
+    render(<HeaderProductSearchErrorFallback onRetry={onRetry} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'تلاش مجدد' }));
+
+    expect(onRetry).toHaveBeenCalledOnce();
   });
 
   it('uses the Item group renderer for a non-interactive skeleton', () => {

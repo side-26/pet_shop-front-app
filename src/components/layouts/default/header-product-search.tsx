@@ -1,29 +1,26 @@
 'use client';
 
-import { ArrowRight, Search, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { useRouter } from 'nextjs-toploader/app';
-import { useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/fields/input-group';
 import { Form } from '@/components/ui/form';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Spinner } from '@/components/ui/spinner';
 import { routePaths } from '@/configs/route.path';
+import { useDialogController } from '@/hooks/use-dialog-controller';
 import { useDebounce } from '@/hooks/use-debounce';
 import { cn } from '@/lib/utils';
 
 import { HeaderProductSearchEmptyFallback } from './header-product-search/header-product-search-empty-fallback';
 import { HeaderProductSearchProvider } from './header-product-search/header-product-search-context';
 import { HeaderProductSearchResultsStream } from './header-product-search/header-product-search-results-stream';
+import {
+  HeaderProductSearchNavigationDrawer,
+  type HeaderProductSearchNavigationDrawerHandle,
+} from './header-product-search/search-suggestions-navigation-drawer';
 
 type HeaderProductSearchProps = Readonly<{
   className?: string;
@@ -31,14 +28,17 @@ type HeaderProductSearchProps = Readonly<{
 
 export function HeaderProductSearch({ className }: HeaderProductSearchProps) {
   const router = useRouter();
+  const mobileSearchDrawerRef = useRef<HeaderProductSearchNavigationDrawerHandle>(null);
+  const { open: openMobileSearchDrawer } = useDialogController(
+    useMemo(() => ({ mobileSearch: { ref: mobileSearchDrawerRef } }), []),
+  );
   const [query, setQuery] = useState('');
   const [desktopOpen, setDesktopOpen] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const debouncedQuery = useDebounce(query);
 
   const closeSearch = () => {
     setDesktopOpen(false);
-    setMobileOpen(false);
+    mobileSearchDrawerRef.current?.close();
   };
 
   const handleSubmit = () => {
@@ -74,61 +74,33 @@ export function HeaderProductSearch({ className }: HeaderProductSearchProps) {
             </HoverCardContent>
           </HoverCard>
         </div>
-
         <div className="tw:lg:hidden">
-          <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>
-            <InputGroup className="tw:h-11 tw:border-border/70 tw:bg-muted/75 tw:shadow-none">
-              <InputGroupAddon>
-                <Search aria-hidden="true" />
-              </InputGroupAddon>
-              <DialogTrigger
-                nativeButton={false}
-                render={
-                  <InputGroupInput
-                    type="search"
-                    readOnly
-                    aria-label="باز کردن جستجوی سریع"
-                    placeholder="جستجو سریع..."
-                    value={query}
-                    className="tw:cursor-pointer tw:text-body-s"
-                  />
-                }
-              />
-            </InputGroup>
+          <InputGroup className="tw:h-11 tw:border-border/70 tw:bg-muted/75 tw:shadow-none">
+            <InputGroupAddon>
+              <Search aria-hidden="true" />
+            </InputGroupAddon>
+            <InputGroupInput
+              type="search"
+              readOnly
+              role="button"
+              aria-label="باز کردن جستجوی سریع"
+              placeholder="جستجو سریع..."
+              value={query}
+              onClick={() =>
+                openMobileSearchDrawer('mobileSearch', { initialSuggestions: [], query })
+              }
+              onKeyDown={(event) => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
 
-            <DialogContent
-              size="xl"
-              showCloseButton={false}
-              className="tw:max-h-[calc(100svh-2rem)] tw:gap-0 tw:overflow-hidden tw:p-0"
-            >
-              <DialogTitle className="tw:sr-only">جستجو سریع</DialogTitle>
-              <DialogDescription className="tw:sr-only">
-                آیتم‌های مرتبط با عبارت واردشده را انتخاب کنید.
-              </DialogDescription>
-
-              <div className="tw:flex tw:items-center tw:gap-2 tw:border-b tw:border-border tw:p-4">
-                <DialogClose
-                  render={<Button iconOnly variant="flat" aria-label="بازگشت از جستجو" />}
-                >
-                  <ArrowRight aria-hidden="true" />
-                </DialogClose>
-                <SearchForm
-                  query={query}
-                  onQueryChange={setQuery}
-                  onClear={() => setQuery('')}
-                  onSubmit={handleSubmit}
-                  autoFocus
-                  className="tw:flex-1"
-                />
-              </div>
-
-              <div className="tw:overflow-y-auto">
-                <SearchPanelContent query={query} debouncedQuery={debouncedQuery} />
-              </div>
-            </DialogContent>
-          </Dialog>
+                event.preventDefault();
+                openMobileSearchDrawer('mobileSearch', { initialSuggestions: [], query });
+              }}
+              className="tw:cursor-pointer tw:text-body-s"
+            />
+          </InputGroup>
         </div>
       </div>
+      <HeaderProductSearchNavigationDrawer ref={mobileSearchDrawerRef} />
     </HeaderProductSearchProvider>
   );
 }
