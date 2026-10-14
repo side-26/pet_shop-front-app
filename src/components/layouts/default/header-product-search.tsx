@@ -27,7 +27,6 @@ type HeaderProductSearchProps = Readonly<{
 }>;
 
 export function HeaderProductSearch({ className }: HeaderProductSearchProps) {
-  const router = useRouter();
   const mobileSearchDrawerRef = useRef<HeaderProductSearchNavigationDrawerHandle>(null);
   const { open: openMobileSearchDrawer } = useDialogController(
     useMemo(() => ({ mobileSearch: { ref: mobileSearchDrawerRef } }), []),
@@ -41,15 +40,6 @@ export function HeaderProductSearch({ className }: HeaderProductSearchProps) {
     mobileSearchDrawerRef.current?.close();
   };
 
-  const handleSubmit = () => {
-    const normalizedQuery = query.trim();
-
-    if (!normalizedQuery) return;
-
-    closeSearch();
-    router.push(routePaths.productsSearch(normalizedQuery));
-  };
-
   return (
     <HeaderProductSearchProvider onCloseHoverCard={closeSearch}>
       <div className={cn('tw:min-w-0 tw:w-full tw:lg:w-72', className)}>
@@ -61,7 +51,6 @@ export function HeaderProductSearch({ className }: HeaderProductSearchProps) {
                 onQueryChange={setQuery}
                 onFocus={() => setDesktopOpen(true)}
                 onClear={() => setQuery('')}
-                onSubmit={handleSubmit}
               />
             </HoverCardTrigger>
             <HoverCardContent
@@ -109,7 +98,6 @@ type SearchFormProps = Readonly<{
   query: string;
   onQueryChange: (value: string) => void;
   onClear: () => void;
-  onSubmit: () => void;
   onFocus?: () => void;
   autoFocus?: boolean;
   className?: string;
@@ -119,46 +107,45 @@ function SearchForm({
   query,
   onQueryChange,
   onClear,
-  onSubmit,
   onFocus,
   autoFocus,
   className,
 }: SearchFormProps) {
   return (
-    <Form role="search" className={className} handleSubmit={onSubmit}>
-      <InputGroup className="tw:h-11 tw:border-border/70 tw:bg-muted/75 tw:shadow-none">
-        <InputGroupAddon>
-          <Search aria-hidden="true" />
+    // <Form role="search" className={className} >
+    <InputGroup className="tw:h-11 tw:border-border/70 tw:bg-muted/75 tw:shadow-none">
+      <InputGroupAddon>
+        <Search aria-hidden="true" />
+      </InputGroupAddon>
+      <InputGroupInput
+        type="search"
+        name="q"
+        value={query}
+        aria-label="جستجو سریع"
+        placeholder="جستجو سریع..."
+        autoComplete="off"
+        autoFocus={autoFocus}
+        onFocus={onFocus}
+        onChange={(event) => onQueryChange(event.target.value)}
+        className="tw:text-body-s tw:[&::-webkit-search-cancel-button]:hidden"
+      />
+      {query ? (
+        <InputGroupAddon className="tw:px-1.5">
+          <Button
+            type="button"
+            iconOnly
+            size="sm"
+            variant="flat"
+            color="secondary"
+            aria-label="پاک کردن جستجو"
+            onClick={onClear}
+          >
+            <X aria-hidden="true" />
+          </Button>
         </InputGroupAddon>
-        <InputGroupInput
-          type="search"
-          name="q"
-          value={query}
-          aria-label="جستجو سریع"
-          placeholder="جستجو سریع..."
-          autoComplete="off"
-          autoFocus={autoFocus}
-          onFocus={onFocus}
-          onChange={(event) => onQueryChange(event.target.value)}
-          className="tw:text-body-s tw:[&::-webkit-search-cancel-button]:hidden"
-        />
-        {query ? (
-          <InputGroupAddon className="tw:px-1.5">
-            <Button
-              type="button"
-              iconOnly
-              size="sm"
-              variant="flat"
-              color="secondary"
-              aria-label="پاک کردن جستجو"
-              onClick={onClear}
-            >
-              <X aria-hidden="true" />
-            </Button>
-          </InputGroupAddon>
-        ) : null}
-      </InputGroup>
-    </Form>
+      ) : null}
+    </InputGroup>
+    // </Form>
   );
 }
 
