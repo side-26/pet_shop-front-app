@@ -1,7 +1,7 @@
 import type { CustomerPetDetailDTO, CustomerPetListItemDTO } from '@/entities/pets/pets.dto';
 import type { PaginateDataDTO } from '@/entities/pagination/pagination.dto';
 import type { FilterDTO, SortDTO } from '@/entities/pagination/pagination.types';
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import type {
   CustomerProductDetailDTO,
   ProductRelationDTO,
@@ -58,10 +58,47 @@ export type LandingPopularProductDTO = LandingProductDTO & {
   slug: string;
 };
 
-/** Product card returned by the filtered public landing catalogue. */
-export type LandingProductListItemDTO = LandingPopularProductDTO;
+/**
+ * The public catalogue-card projection consumed by `/products/list`.
+ * Keep it deliberately narrow so client queries do not retain unrelated backend fields.
+ */
+export class LandingProductListItemDTO {
+  @Expose()
+  declare id: string;
+
+  @Expose()
+  declare title: string;
+
+  @Expose()
+  declare slug: string;
+
+  @Expose()
+  declare mainImage: string;
+
+  @Expose()
+  declare mainImageThumbnail?: string;
+
+  @Expose()
+  declare price: number;
+
+  @Expose()
+  declare discountPercentage: number;
+
+  @Expose()
+  declare discountPrice: number;
+
+  @Expose()
+  declare minimumQuantity?: number;
+
+  /** A catalogue card is purchasable only when at least one weight remains in stock. */
+  @Expose()
+  @Transform(({ obj }) => (obj.minimumQuantity ?? 0) > 0, { toClassOnly: true })
+  declare available: boolean;
+}
+/** Raw wire item returned by the public landing catalogue endpoint. */
+export type LandingProductListWireDTO = LandingPopularProductDTO;
 export type LandingProductListPageDTO = PaginateDataDTO<
-  LandingProductListItemDTO,
+  LandingProductListWireDTO,
   FilterDTO,
   SortDTO
 >;

@@ -7,7 +7,10 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
-import type { LandingProductListItemDTO } from '@/entities/landing/landing.dto';
+import type {
+  LandingProductListItemDTO,
+  LandingProductListWireDTO,
+} from '@/entities/landing/landing.dto';
 import { cn } from '@/lib/utils';
 
 import { ProductCard, type ProductCardViewModel } from './product-card';
@@ -52,9 +55,14 @@ export function ProductGrid({ isSkeleton = false, products }: ProductGridProps) 
   );
 }
 
-export function toProductCardViewModel(product: LandingProductListItemDTO): ProductCardViewModel {
+export function toProductCardViewModel(
+  product: LandingProductListItemDTO | LandingProductListWireDTO,
+): ProductCardViewModel {
   return {
-    available: true,
+    available:
+      'available' in product
+        ? product.available
+        : (product.minimumQuantity ?? Number.POSITIVE_INFINITY) > 0,
     discountPrice: product.discountPrice,
     discountPercentage: product.discountPercentage,
     id: product.id,

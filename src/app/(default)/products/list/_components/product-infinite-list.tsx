@@ -5,8 +5,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { getLandingProductListAction } from '@/entities/landing/landing.actions';
 import type {
-  LandingProductListItemDTO,
   LandingProductListPageDTO,
+  LandingProductListWireDTO,
 } from '@/entities/landing/landing.dto';
 import { globalErrorHandler } from '@/utils/helpers';
 
@@ -22,7 +22,7 @@ type ProductInfiniteListProps = Readonly<{
 }>;
 
 export function ProductInfiniteList({ data, isSkeleton = false, query }: ProductInfiniteListProps) {
-  const [products, setProducts] = useState<readonly LandingProductListItemDTO[]>(
+  const [products, setProducts] = useState<readonly LandingProductListWireDTO[]>(
     () => data?.result ?? [],
   );
   const [hasMore, setHasMore] = useState(data?.pagination.hasNextPage ?? false);

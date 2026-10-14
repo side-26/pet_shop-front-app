@@ -7,12 +7,13 @@ import { landingClientService } from './landing.client-service';
 import {
   landingSearchDialogQuery,
   landingQueryKeys,
+  useSuspenseLandingProductsInfiniteQuery,
   useSuspenseLandingSearchInfiniteQuery,
   useSuspenseLandingSearchQuery,
 } from './landing.client';
 
 vi.mock('./landing.client-service', () => ({
-  landingClientService: { getSearch: vi.fn() },
+  landingClientService: { getProducts: vi.fn(), getSearch: vi.fn() },
 }));
 
 function createWrapper() {
@@ -168,5 +169,95 @@ describe('landing search suspense query', () => {
     expect(landingSearchDialogQuery({ search: 'غذای گربه', limit: 20 })).not.toEqual(
       landingQueryKeys.search({ search: 'غذای گربه', page: 1, limit: 3 }),
     );
+  });
+});
+
+describe('landing product suspense infinite query', () => {
+  it('seeds the server page, then requests the backend-provided next page with filters and cancellation', async () => {
+    const query = { brand: '507f1f77bcf86cd799439011', sort: 'less-valued' };
+    const firstPage = {
+      result: [
+        {
+          id: 'product-1',
+          title: 'غذای خشک گربه',
+          mainImage: '/cat-food.webp',
+          price: 200_000,
+          discountPercentage: 0,
+          discountPrice: 200_000,
+          slug: 'cat-food',
+          minimumQuantity: 3,
+          ignoredByCatalogueCard: 'not exposed',
+        },
+      ],
+      pagination: {
+        currentPage: 1,
+        totalPages: 2,
+        totalItems: 2,
+        itemsPerPage: 12,
+        hasNextPage: true,
+        hasPrevPage: false,
+        nextPage: 2,
+        prevPage: null,
+      },
+    };
+    const secondPage = {
+      ...firstPage,
+      result: [
+        ...firstPage.result,
+        {
+          ...firstPage.result[0],
+          id: 'product-2',
+          minimumQuantity: 0,
+          slug: 'dog-food',
+          title: 'غذای خشک سگ',
+        },
+      ],
+      pagination: {
+        ...firstPage.pagination,
+        currentPage: 2,
+        hasNextPage: false,
+        nextPage: null,
+        prevPage: 1,
+      },
+    };
+    vi.mocked(landingClientService.getProducts).mockResolvedValue(secondPage);
+    const { queryClient, wrapper } = createWrapper();
+    const { result } = renderHook(() => useSuspenseLandingProductsInfiniteQuery(firstPage, query), {
+      wrapper,
+    });
+
+    await waitFor(() =>
+      expect(result.current.products).toEqual([
+        {
+          available: true,
+          discountPercentage: 0,
+          discountPrice: 200_000,
+          id: 'product-1',
+          mainImage: '/cat-food.webp',
+          minimumQuantity: 3,
+          price: 200_000,
+          slug: 'cat-food',
+          title: 'غذای خشک گربه',
+        },
+      ]),
+    );
+    expect(landingClientService.getProducts).not.toHaveBeenCalled();
+
+    await result.current.fetchNextPage();
+
+    await waitFor(() => expect(result.current.products).toHaveLength(2));
+    expect(result.current.products[1]).toMatchObject({
+      available: false,
+      id: 'product-2',
+      title: 'غذای خشک سگ',
+    });
+    expect(landingClientService.getProducts).toHaveBeenCalledWith(
+      { brand: query.brand, sort: 'less-valued', page: 2, limit: 12 },
+      expect.any(AbortSignal),
+    );
+    expect(landingQueryKeys.products(query, 12)).not.toEqual(
+      landingQueryKeys.products({ ...query, brand: '507f1f77bcf86cd799439012' }, 12),
+    );
+    queryClient.clear();
   });
 });
