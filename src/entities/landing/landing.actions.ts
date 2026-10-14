@@ -23,13 +23,11 @@ import {
   getLandingPetList,
   getPublicLandingProductBySlug,
   getRecentLandingPets,
-  getLandingSearch,
 } from './landing.service';
 import {
   landingDiscountLimitSchema,
   landingPetListRequestSchema,
   landingProductListRequestSchema,
-  landingSearchRequestSchema,
   landingSlugSchema,
 } from './landing.schema';
 
@@ -66,11 +64,6 @@ export async function getLandingProductListAction(input: unknown = {}) {
 export async function getLandingPetListAction(input: unknown = {}) {
   const query = await landingPetListRequestSchema.validate(input, { stripUnknown: true });
   return getLandingPetList(query);
-}
-
-export async function getLandingSearchAction(input: unknown) {
-  const query = await landingSearchRequestSchema.validate(input, { stripUnknown: true });
-  return getLandingSearch(query);
 }
 
 export async function getLandingPetBySlugAction(input: unknown) {

@@ -19,19 +19,14 @@ import type {
   LandingProductDetailDTO,
   LandingProductDTO,
   LandingSlugDTO,
-  LandingSearchQueryDTO,
-  LandingSearchPageDTO,
-  LandingSearchRequestDTO,
 } from './landing.dto';
 import {
   landingDiscountLimitSchema,
   landingProductListQuerySchema,
   DEFAULT_LANDING_PRODUCT_LIST_PAGE_SIZE,
   DEFAULT_LANDING_PET_LIST_PAGE_SIZE,
-  DEFAULT_LANDING_SEARCH_PAGE_SIZE,
   landingPetListQuerySchema,
   landingSlugSchema,
-  landingSearchQuerySchema,
 } from './landing.schema';
 
 const landingCache = new EntityTag('landing');
@@ -43,8 +38,6 @@ const popularProductsCacheKey = 'products:popular';
 const popularBrandsCacheKey = 'brands:popular';
 const popularPetsCacheKey = 'pets:popular';
 const recentPetsCacheKey = 'pets:recent';
-const landingSearchCacheKey = ({ limit, page, search }: LandingSearchQueryDTO) =>
-  `search:${search}:${page}:${limit}`;
 const landingProductListCacheKey = (query: LandingProductListRequestDTO & { limit: number }) =>
   `products:list:v3:${new URLSearchParams(
     Object.entries(query)
@@ -143,18 +136,6 @@ export function getFeaturedLandingProducts() {
   return fetchLandingList<LandingFeaturedProductDTO[]>(
     '/landing/products/featured',
     featuredProductsCacheKey,
-  );
-}
-
-export async function getLandingSearch(input: LandingSearchRequestDTO) {
-  const query = await landingSearchQuerySchema.validate(
-    { ...input, limit: DEFAULT_LANDING_SEARCH_PAGE_SIZE },
-    { stripUnknown: true },
-  );
-  return fetchLandingList<LandingSearchPageDTO>(
-    '/landing/search',
-    landingSearchCacheKey(query),
-    query,
   );
 }
 

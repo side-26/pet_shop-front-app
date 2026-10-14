@@ -10,7 +10,6 @@ import type {
   LandingProductListPageDTO,
   LandingPetListPageDTO,
   LandingProductDTO,
-  LandingSearchPageDTO,
 } from './landing.dto';
 import {
   getAllLandingPetTypes,
@@ -25,7 +24,6 @@ import {
   getLandingPetList,
   getLandingProductBySlug,
   getPublicLandingProductBySlug,
-  getLandingSearch,
   getPopularLandingPets,
   getPopularLandingBrands,
   getPopularLandingProducts,
@@ -149,28 +147,6 @@ const petList: LandingPetListPageDTO = {
     prevPage: null,
   },
   sort: { current: 'most-sales', options: [] },
-};
-
-const searchPage: LandingSearchPageDTO = {
-  result: [
-    {
-      itemType: 'product',
-      title: 'غذای گربه',
-      slug: 'cat-food',
-      mainImage: 'https://cdn.example.com/cat-food.webp',
-      thumbnailImage: 'data:image/webp;base64,AAAA',
-    },
-  ],
-  pagination: {
-    currentPage: 1,
-    totalPages: 1,
-    totalItems: 1,
-    itemsPerPage: 20,
-    hasNextPage: false,
-    hasPrevPage: false,
-    nextPage: null,
-    prevPage: null,
-  },
 };
 
 describe('landing service', () => {
@@ -340,27 +316,6 @@ describe('landing service', () => {
       isSuccess: true,
       message: null,
       data: [popularBrand],
-    });
-  });
-
-  it('uses the paginated public search contract', async () => {
-    fetcher.mockResolvedValue({ isSuccess: true, message: null, data: searchPage });
-    await getLandingSearch({ page: 2, search: '  غذای گربه  ' });
-    getSessionMock.mockResolvedValue({ userId: 'user-1' } as never);
-    await getLandingProductBySlug('cat-food');
-
-    expect(fetcher).toHaveBeenCalledWith(
-      expect.objectContaining({
-        url: '/landing/search',
-        query: { search: 'غذای گربه', page: 2, limit: 20 },
-        auth: false,
-      }),
-    );
-    expect(fetcher).toHaveBeenCalledWith({
-      url: '/landing/products/cat-food',
-      method: 'GET',
-      auth: true,
-      cache: 'no-store',
     });
   });
 

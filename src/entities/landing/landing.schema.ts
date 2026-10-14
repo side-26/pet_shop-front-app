@@ -28,12 +28,12 @@ export const landingDiscountLimitSchema = object({
   limit: number().integer().min(1).max(100).default(4).required(),
 });
 
-export const landingSearchRequestSchema = object({
+const landingSearchBaseSchema = object({
   search: string().trim().min(1).max(100).required(),
   page: number().integer().min(1).default(1).required(),
 });
 
-export const landingSearchQuerySchema = landingSearchRequestSchema.shape({
+export const landingSearchQuerySchema = landingSearchBaseSchema.shape({
   limit: number().integer().min(1).max(100).default(DEFAULT_LANDING_SEARCH_PAGE_SIZE).required(),
 });
 
@@ -92,7 +92,6 @@ export const landingPetListQuerySchema = landingPetListRequestSchema.shape({
 
 export type LandingSlugInput = InferType<typeof landingSlugSchema>;
 export type LandingDiscountLimitInput = InferType<typeof landingDiscountLimitSchema>;
-export type LandingSearchRequestInput = InferType<typeof landingSearchRequestSchema>;
 export type LandingSearchQueryInput = InferType<typeof landingSearchQuerySchema>;
 export type LandingProductListRequestInput = InferType<typeof landingProductListRequestSchema>;
 export type LandingProductListQueryInput = InferType<typeof landingProductListQuerySchema>;

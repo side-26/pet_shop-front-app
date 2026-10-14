@@ -51,7 +51,6 @@ export const routePaths = {
   productsListByBrand: (brandId: string) =>
     `${PATHS.PRODUCTS_LIST}?brand=${encodeURIComponent(brandId)}`,
   productDetail: (slug: string) => `${PATHS.PRODUCTS}/${encodeURIComponent(slug)}`,
-  productsSearch: (query: string) => `${PATHS.PRODUCTS}?q=${encodeURIComponent(query)}`,
   articles: PATHS.ARTICLES,
   articleDetail: (slug: string) => `${PATHS.ARTICLES}/${encodeURIComponent(slug)}`,
   about: PATHS.ABOUT,

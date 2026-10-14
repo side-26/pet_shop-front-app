@@ -1,6 +1,5 @@
 'use client';
 
-import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { Suspense } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -17,13 +16,11 @@ type HeaderProductSearchResultsStreamProps = Readonly<{ query: string }>;
 
 export function HeaderProductSearchResultsStream({ query }: HeaderProductSearchResultsStreamProps) {
   return (
-    <QueryErrorResetBoundary>
-      <ErrorStateBoundary fallback={<HeaderProductSearchErrorFallback />}>
-        <Suspense fallback={<HeaderProductSearchResultsSkeleton />}>
-          <HeaderProductSearchResults query={query} />
-        </Suspense>
-      </ErrorStateBoundary>
-    </QueryErrorResetBoundary>
+    <ErrorStateBoundary fallback={<HeaderProductSearchErrorFallback />}>
+      <Suspense fallback={<HeaderProductSearchResultsSkeleton />}>
+        <HeaderProductSearchResults query={query} />
+      </Suspense>
+    </ErrorStateBoundary>
   );
 }
 

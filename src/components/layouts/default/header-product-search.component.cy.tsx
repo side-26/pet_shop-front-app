@@ -1,7 +1,6 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 
 import { ReactQueryProvider } from '@/app/react-query-provider';
-import { routePaths } from '@/configs/route.path';
 
 import { HeaderProductSearch } from './header-product-search';
 
@@ -62,7 +61,7 @@ function restoreClock() {
 }
 
 describe('HeaderProductSearch', () => {
-  it('renders desktop loading and result states, clears the query, and submits a canonical product search', () => {
+  it('renders desktop loading and result states, then clears the query', () => {
     cy.viewport(1280, 720);
     cy.clock();
     mountSearch();
@@ -81,10 +80,6 @@ describe('HeaderProductSearch', () => {
     cy.get('input[aria-label="جستجو سریع"]:visible').should('have.value', '');
     cy.contains('برای دیدن پیشنهادها، نام آیتم را وارد کنید.').should('be.visible');
 
-    typeSearch('  غذای سگ  ', false);
-    cy.get('[data-slot="form"]').submit();
-    cy.location('pathname').should('eq', '/products');
-    cy.location('href').should('include', routePaths.productsSearch('غذای سگ'));
     restoreClock();
   });
 

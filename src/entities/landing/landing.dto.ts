@@ -15,7 +15,6 @@ import type {
   LandingProductListRequestInput,
   LandingSlugInput,
   LandingSearchQueryInput,
-  LandingSearchRequestInput,
 } from './landing.schema';
 
 export type LandingPetTypeDTO = {
@@ -137,4 +136,3 @@ export type LandingPetListQueryDTO = LandingPetListQueryInput;
 export type LandingPetListRequestDTO = LandingPetListRequestInput;
 export type LandingSlugDTO = LandingSlugInput;
 export type LandingSearchQueryDTO = LandingSearchQueryInput;
-export type LandingSearchRequestDTO = LandingSearchRequestInput;

@@ -1,15 +1,12 @@
 'use client';
 
 import { Search, X } from 'lucide-react';
-import { useRouter } from 'nextjs-toploader/app';
 import { useMemo, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/fields/input-group';
-import { Form } from '@/components/ui/form';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Spinner } from '@/components/ui/spinner';
-import { routePaths } from '@/configs/route.path';
 import { useDialogController } from '@/hooks/use-dialog-controller';
 import { useDebounce } from '@/hooks/use-debounce';
 import { cn } from '@/lib/utils';
@@ -99,32 +96,20 @@ type SearchFormProps = Readonly<{
   onQueryChange: (value: string) => void;
   onClear: () => void;
   onFocus?: () => void;
-  autoFocus?: boolean;
-  className?: string;
 }>;
 
-function SearchForm({
-  query,
-  onQueryChange,
-  onClear,
-  onFocus,
-  autoFocus,
-  className,
-}: SearchFormProps) {
+function SearchForm({ query, onQueryChange, onClear, onFocus }: SearchFormProps) {
   return (
-    // <Form role="search" className={className} >
     <InputGroup className="tw:h-11 tw:border-border/70 tw:bg-muted/75 tw:shadow-none">
       <InputGroupAddon>
         <Search aria-hidden="true" />
       </InputGroupAddon>
       <InputGroupInput
         type="search"
-        name="q"
         value={query}
         aria-label="جستجو سریع"
         placeholder="جستجو سریع..."
         autoComplete="off"
-        autoFocus={autoFocus}
         onFocus={onFocus}
         onChange={(event) => onQueryChange(event.target.value)}
         className="tw:text-body-s tw:[&::-webkit-search-cancel-button]:hidden"
@@ -145,7 +130,6 @@ function SearchForm({
         </InputGroupAddon>
       ) : null}
     </InputGroup>
-    // </Form>
   );
 }
 

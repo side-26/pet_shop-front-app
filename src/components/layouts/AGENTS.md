@@ -78,10 +78,8 @@ search consume the remaining header space without weakening its accessible
 dialog trigger.
 
 The header product search uses a controlled shadcn Hover Card from `lg` upward
-and an accessible Dialog overlay below `lg`. Both surfaces reuse the same
-popular-search and debounced-suggestion renderer. Keep product search links on
-the canonical `routePaths.productsSearch()` builder and debounce input through
-the focused `useSetDefaultValue` hook.
+and an accessible Drawer below `lg`. Both surfaces reuse the same debounced
+suggestion renderer.
 
 The admin shell lives under `components/layouts/admin` and is composed by
 `app/admin/layout.tsx`. It is RTL-first, uses a persistent collapsible navigation rail from
