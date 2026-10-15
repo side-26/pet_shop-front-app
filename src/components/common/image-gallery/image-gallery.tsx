@@ -3,7 +3,13 @@
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 import { cn } from '@/lib/utils';
 
 import { GalleryImage } from './plugins/image-gallery-item';
@@ -18,6 +24,7 @@ export function ImageGallery({
 }: ImageGalleryProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const selectedImage = images[selectedImageIndex] ?? images[0];
+  const hasMultipleImages = images.length > 1;
 
   if (!selectedImage) return null;
 
@@ -91,6 +98,12 @@ export function ImageGallery({
             </CarouselItem>
           ))}
         </CarouselContent>
+        {hasMultipleImages ? (
+          <>
+            <CarouselPrevious className="tw:start-3" />
+            <CarouselNext className="tw:end-3" />
+          </>
+        ) : null}
       </Carousel>
     </section>
   );

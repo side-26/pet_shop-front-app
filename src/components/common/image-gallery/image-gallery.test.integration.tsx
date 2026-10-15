@@ -1,5 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { PreviewImageOverlay } from './plugins/preview-image';
 import { ImageGallery } from './image-gallery';
@@ -8,7 +8,13 @@ vi.mock('@/components/ui/carousel', () => ({
   Carousel: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   CarouselContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   CarouselItem: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  CarouselPrevious: (props: React.ComponentProps<'button'>) => (
+    <button {...props}>اسلاید قبلی</button>
+  ),
+  CarouselNext: (props: React.ComponentProps<'button'>) => <button {...props}>اسلاید بعدی</button>,
 }));
+
+afterEach(cleanup);
 
 const images = [
   {
@@ -50,6 +56,18 @@ describe('ImageGallery', () => {
     );
 
     expect(screen.getAllByText('برچسب تصویر')).toHaveLength(3);
+  });
+
+  it('shows mobile and tablet carousel controls only when more than one image is available', () => {
+    const { rerender } = render(<ImageGallery images={images} />);
+
+    expect(screen.getByRole('button', { name: 'اسلاید قبلی' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'اسلاید بعدی' })).toBeTruthy();
+
+    rerender(<ImageGallery images={[images[0]]} />);
+
+    expect(screen.queryByRole('button', { name: 'اسلاید قبلی' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'اسلاید بعدی' })).toBeNull();
   });
 
   it('does not render an empty gallery', () => {
