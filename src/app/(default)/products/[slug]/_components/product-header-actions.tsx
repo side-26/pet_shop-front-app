@@ -24,7 +24,7 @@ export function ProductHeaderActions({
   title,
 }: ProductHeaderActionsProps) {
   const [shareStatus, setShareStatus] = useState('');
-  const { data: wishlist = [] } = useWishlist();
+  const { data: wishlist = [] } = useWishlist({ enabled: !disabled });
   const { isPending, toggleWishlistItem } = useWishlistToggle();
   const isWishlisted = wishlist.some(
     (entry) => wishlistItemId(entry) === itemId && entry.itemType === itemType,

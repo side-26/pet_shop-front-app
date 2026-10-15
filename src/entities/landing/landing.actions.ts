@@ -69,6 +69,11 @@ export async function getLandingPetListAction(input: unknown = {}) {
 
 export async function getLandingPetBySlugAction(input: unknown) {
   const { slug } = await landingSlugSchema.validate({ slug: input }, { stripUnknown: true });
+  return unwrapResult(getLandingPetBySlug(slug), 'نمایش حیوان انجام نشد.');
+}
+
+export async function getPublicLandingPetBySlugAction(input: unknown) {
+  const { slug } = await landingSlugSchema.validate({ slug: input }, { stripUnknown: true });
   return getLandingPetBySlug(slug);
 }
 

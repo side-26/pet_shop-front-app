@@ -1,15 +1,15 @@
 import type { Metadata } from 'next';
 
-import { getLandingPetBySlugAction } from '@/entities/landing/landing.actions';
+import { getPublicLandingPetBySlugAction } from '@/entities/landing/landing.actions';
 import { richTextToPlainText } from '@/lib/rich-text';
 
-import { PetDetailWrapper } from './_components/pet-detail-wrapper';
+import { PetDetailSection } from './_components/pet-detail-section';
 
 type PetDetailPageProps = Readonly<{ params: Promise<{ slug: string }> }>;
 
 export async function generateMetadata({ params }: PetDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const result = await getLandingPetBySlugAction(slug);
+  const result = await getPublicLandingPetBySlugAction(slug);
   if (!result.isSuccess)
     return { title: 'حیوان پیدا نشد | پت شاپ پرشین', robots: { index: false } };
   const description =
@@ -22,5 +22,5 @@ export async function generateMetadata({ params }: PetDetailPageProps): Promise<
 }
 
 export default function PetDetailPage({ params }: PetDetailPageProps) {
-  return <PetDetailWrapper paramsPromise={params} />;
+  return <PetDetailSection params={params} />;
 }

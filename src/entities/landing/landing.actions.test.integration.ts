@@ -6,6 +6,7 @@ import {
   getAllLandingPetTypesAction,
   getDiscountedLandingProductsAction,
   getLandingPetBySlugAction,
+  getPublicLandingPetBySlugAction,
   getLandingProductBySlugAction,
   getLandingProductListAction,
   getLandingPetListAction,
@@ -90,6 +91,11 @@ beforeEach(() => {
     message: null,
     data: {} as never,
   });
+  vi.mocked(getLandingPetBySlug).mockResolvedValue({
+    isSuccess: true,
+    message: null,
+    data: {} as never,
+  });
   vi.mocked(getPublicLandingProductBySlug).mockResolvedValue({
     isSuccess: true,
     message: null,
@@ -106,6 +112,7 @@ describe('retryAllLandingPetTypesAction', () => {
     await getPopularLandingPetsAction();
     await getRecentLandingPetsAction();
     await getLandingPetBySlugAction('persian-cat');
+    await getPublicLandingPetBySlugAction('persian-cat');
     await getLandingProductBySlugAction(
       'تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ-تشویقی-و-اسنک-تشویقی-آموزشی',
     );
@@ -138,6 +145,16 @@ describe('retryAllLandingPetTypesAction', () => {
     await expect(getLandingProductBySlugAction('product-slug')).rejects.toThrow(
       'نمایش محصول انجام نشد.',
     );
+  });
+
+  it('unwraps pet-detail failures for Server Component error boundaries', async () => {
+    vi.mocked(getLandingPetBySlug).mockResolvedValue({
+      isSuccess: false,
+      message: 'نمایش حیوان انجام نشد.',
+      data: { messages: {}, details: {} },
+    });
+
+    await expect(getLandingPetBySlugAction('pet-slug')).rejects.toThrow('نمایش حیوان انجام نشد.');
   });
 
   it('validates the backend product-list filters and keeps its page size out of the action input', async () => {

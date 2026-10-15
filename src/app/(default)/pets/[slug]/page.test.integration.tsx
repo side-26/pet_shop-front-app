@@ -1,17 +1,29 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LandingPetDetailDTO } from '@/entities/landing/landing.dto';
 import { ReactQueryProvider } from '@/app/react-query-provider';
 import { routePaths } from '@/configs/route.path';
-import { getLandingPetBySlugAction } from '@/entities/landing/landing.actions';
+import {
+  getLandingPetBySlugAction,
+  getPublicLandingPetBySlugAction,
+} from '@/entities/landing/landing.actions';
 import { useCartStore } from '@/stores/cart.store';
 
-import { PetDetailContainer } from './_components/pet-detail-container';
 import PetDetailPage, { generateMetadata } from './page';
 
-vi.mock('@/entities/landing/landing.actions', () => ({ getLandingPetBySlugAction: vi.fn() }));
+const { toggleWishlistItem } = vi.hoisted(() => ({ toggleWishlistItem: vi.fn() }));
+
+vi.mock('@/entities/landing/landing.actions', () => ({
+  getLandingPetBySlugAction: vi.fn(),
+  getPublicLandingPetBySlugAction: vi.fn(),
+}));
+vi.mock('@/entities/users/users.client', () => ({
+  useWishlist: () => ({ data: [] }),
+  useWishlistToggle: () => ({ isPending: false, toggleWishlistItem }),
+  wishlistItemId: (entry: { item: string }) => entry.item,
+}));
 vi.mock('@/components/ui/carousel', () => ({
   Carousel: ({ children, ...props }: { children: ReactNode }) => <div {...props}>{children}</div>,
   CarouselContent: ({ children }: { children: ReactNode }) => <div>{children}</div>,
@@ -58,6 +70,8 @@ afterEach(() => {
 });
 
 beforeEach(() => {
+  toggleWishlistItem.mockReset();
+  vi.mocked(getLandingPetBySlugAction).mockResolvedValue(pet);
   vi.stubGlobal(
     'ResizeObserver',
     class {
@@ -75,15 +89,12 @@ describe(routePaths.petDetail('max'), () => {
   it('renders API-backed pet details, sticky request pricing, summary, and specification tabs', async () => {
     render(
       <ReactQueryProvider>
-        {await PetDetailContainer({
-          petPromise: Promise.resolve({ isSuccess: true, message: null, data: pet }),
-          slugPromise: Promise.resolve(pet.slug),
-        })}
+        <PetDetailPage params={Promise.resolve({ slug: pet.slug })} />
       </ReactQueryProvider>,
     );
-    expect(screen.getByRole('heading', { level: 1, name: pet.title })).toBeTruthy();
+    expect(await screen.findByRole('heading', { level: 1, name: pet.title })).toBeTruthy();
     expect(screen.getByRole('article').hasAttribute('data-pet-detail-content')).toBe(true);
-    expect(screen.getByLabelText(`گالری تصاویر ${pet.title}`)).toBeTruthy();
+    expect(screen.getAllByLabelText(`گالری تصاویر ${pet.title}`)).toHaveLength(2);
     expect(screen.getByRole('link', { name: pet.petType.title }).getAttribute('href')).toBe(
       routePaths.petsListByPetType(pet.petType.id),
     );
@@ -102,12 +113,11 @@ describe(routePaths.petDetail('max'), () => {
   it('adds and removes the exact pet through the cart store', async () => {
     render(
       <ReactQueryProvider>
-        {await PetDetailContainer({
-          petPromise: Promise.resolve({ isSuccess: true, message: null, data: pet }),
-          slugPromise: Promise.resolve(pet.slug),
-        })}
+        <PetDetailPage params={Promise.resolve({ slug: pet.slug })} />
       </ReactQueryProvider>,
     );
+
+    await screen.findByRole('heading', { level: 1, name: pet.title });
 
     fireEvent.click(screen.getAllByRole('button', { name: `پیش‌سفارش ${pet.title}` })[0]!);
 
@@ -120,6 +130,20 @@ describe(routePaths.petDetail('max'), () => {
     expect(screen.getAllByRole('button', { name: `پیش‌سفارش ${pet.title}` })).toHaveLength(2);
   });
 
+  it('toggles this pet through the shared wishlist mutation', async () => {
+    render(
+      <ReactQueryProvider>
+        <PetDetailPage params={Promise.resolve({ slug: pet.slug })} />
+      </ReactQueryProvider>,
+    );
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: `افزودن حیوان ${pet.title} به علاقه‌مندی‌ها` }),
+    );
+
+    expect(toggleWishlistItem).toHaveBeenCalledWith({ itemId: pet.id, itemType: 'pet' });
+  });
+
   it('uses the renderer-backed skeleton while route params are pending', () => {
     render(
       <ReactQueryProvider>
@@ -127,10 +151,85 @@ describe(routePaths.petDetail('max'), () => {
       </ReactQueryProvider>,
     );
     expect(screen.getByRole('article').getAttribute('aria-busy')).toBe('true');
+    expect(screen.getByRole('article').hasAttribute('inert')).toBe(true);
+    expect(
+      screen
+        .getAllByRole('button', { name: 'پیش‌سفارش عنوان حیوان خانگی' })
+        .every((button) => button.hasAttribute('disabled')),
+    ).toBe(true);
+    expect(screen.getByRole('tab', { name: 'معرفی حیوان' })).toBeTruthy();
+  });
+
+  it('shows the semantic empty state for detail data without an id', async () => {
+    vi.mocked(getLandingPetBySlugAction).mockResolvedValue({ ...pet, id: '' });
+
+    render(
+      <ReactQueryProvider>
+        <PetDetailPage params={Promise.resolve({ slug: pet.slug })} />
+      </ReactQueryProvider>,
+    );
+
+    expect(await screen.findByText('حیوانی برای نمایش یافت نشد')).toBeTruthy();
+    expect(screen.queryByRole('article')).toBeNull();
+  });
+
+  it('does not render an empty overview tab or its mobile/desktop drawers', async () => {
+    vi.mocked(getLandingPetBySlugAction).mockResolvedValue({
+      ...pet,
+      description: '',
+    });
+
+    render(
+      <ReactQueryProvider>
+        <PetDetailPage params={Promise.resolve({ slug: pet.slug })} />
+      </ReactQueryProvider>,
+    );
+
+    await screen.findByRole('heading', { level: 1, name: pet.title });
+
+    expect(screen.queryByRole('tab', { name: 'معرفی حیوان' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'نمایش معرفی حیوان' })).toBeNull();
+    expect(screen.getByRole('tab', { name: 'مشخصات' })).toBeTruthy();
+  });
+
+  it('shows a scoped recovery message when the action rejects', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    vi.mocked(getLandingPetBySlugAction).mockRejectedValue(
+      new Error('دریافت حیوان در دسترس نیست.'),
+    );
+
+    render(
+      <ReactQueryProvider>
+        <PetDetailPage params={Promise.resolve({ slug: pet.slug })} />
+      </ReactQueryProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.getByRole('alert').textContent).toContain('دریافت حیوان در دسترس نیست.'),
+    );
+    consoleError.mockRestore();
+  });
+
+  it('uses the pet-specific fallback when the error has no message', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    vi.mocked(getLandingPetBySlugAction).mockRejectedValue(new Error(' '));
+
+    render(
+      <ReactQueryProvider>
+        <PetDetailPage params={Promise.resolve({ slug: pet.slug })} />
+      </ReactQueryProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.getByRole('alert').textContent).toContain(
+        'نمایش حیوان انجام نشد. دوباره تلاش کنید.',
+      ),
+    );
+    consoleError.mockRestore();
   });
 
   it('builds metadata from the landing pet response', async () => {
-    vi.mocked(getLandingPetBySlugAction).mockResolvedValue({
+    vi.mocked(getPublicLandingPetBySlugAction).mockResolvedValue({
       isSuccess: true,
       message: null,
       data: pet,

@@ -11,7 +11,10 @@ export function PetDetailTabs({
   pet,
   isSkeleton = false,
 }: Readonly<{ pet: PetDetailViewModel; isSkeleton?: boolean }>) {
-  const hasOverview = Boolean(pet.descriptionText);
+  // RichText only renders a Tiptap document. A legacy string must not produce an empty tab/panel.
+  const overviewDescription =
+    isRichTextDocument(pet.description) && pet.descriptionText.trim() ? pet.description : null;
+  const hasOverview = overviewDescription !== null;
   const hasSpecifications = pet.specifications.length > 0;
   if (!hasOverview && !hasSpecifications) return null;
   return (
@@ -21,7 +24,7 @@ export function PetDetailTabs({
           {hasOverview ? <TabsTrigger value="overview">معرفی حیوان</TabsTrigger> : null}
           {hasSpecifications ? <TabsTrigger value="specifications">مشخصات</TabsTrigger> : null}
         </TabsList>
-        {hasOverview ? (
+        {overviewDescription ? (
           <TabsContent value="overview" className="tw:pt-5">
             <div className="tw:lg:hidden">
               <ExpandableDrawer
@@ -29,8 +32,13 @@ export function PetDetailTabs({
                 collapsedHeight={240}
                 disabled={isSkeleton}
                 showMoreLabel="نمایش معرفی حیوان"
-                sectionChildren={<OverviewContent pet={pet} />}
-                drawerChildren={<OverviewContent pet={pet} ariaLabel="توضیحات کامل حیوان" />}
+                sectionChildren={<OverviewContent description={overviewDescription} />}
+                drawerChildren={
+                  <OverviewContent
+                    description={overviewDescription}
+                    ariaLabel="توضیحات کامل حیوان"
+                  />
+                }
               />
             </div>
             <div className="tw:hidden tw:lg:block">
@@ -39,7 +47,7 @@ export function PetDetailTabs({
                 collapsedHeight={240}
                 isSkeleton={isSkeleton}
               >
-                <OverviewContent pet={pet} />
+                <OverviewContent description={overviewDescription} />
               </PetDetailExpandableCard>
             </div>
           </TabsContent>
@@ -70,13 +78,16 @@ export function PetDetailTabs({
 }
 
 function OverviewContent({
-  pet,
+  description,
   ariaLabel = 'توضیحات حیوان',
-}: Readonly<{ pet: PetDetailViewModel; ariaLabel?: string }>) {
+}: Readonly<{
+  description: Extract<PetDetailViewModel['description'], { type: 'doc' }>;
+  ariaLabel?: string;
+}>) {
   return (
     <RichText
       ariaLabel={ariaLabel}
-      content={isRichTextDocument(pet.description) ? pet.description : { type: 'doc', content: [] }}
+      content={description}
       editable={false}
       variant="outlined"
       className="tw:border-0"

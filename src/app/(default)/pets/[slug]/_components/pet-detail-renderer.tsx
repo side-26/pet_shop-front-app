@@ -1,9 +1,6 @@
-import { Star } from 'lucide-react';
 import Link from 'next/link';
 
-import { ProductGallery } from '@/app/(default)/products/[slug]/_components/product-gallery';
-import { ProductHeaderActions } from '@/app/(default)/products/[slug]/_components/product-header-actions';
-import { ExpandableDrawer } from '@/components/common/expandable-drawer';
+import { ImageGallery } from '@/components/common/image-gallery';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Price } from '@/components/ui/price';
 import { routePaths } from '@/configs/route.path';
@@ -11,8 +8,9 @@ import { cn } from '@/lib/utils';
 
 import type { PetDetailViewModel } from './pet-detail-data';
 import { PetAddToCartControl } from './pet-add-to-cart-control';
-import { PetDetailGallery } from './pet-detail-gallery';
-import { PetDetailExpandableCard } from './pet-detail-expandable-card';
+import { PetHeaderActions } from './pet-header-actions';
+import { PetDetailRating } from './pet-detail-rating';
+import { PetDetailSummary } from './pet-detail-summary';
 import { PetDetailTabs } from './pet-detail-tabs';
 
 type Props = Readonly<{ pet: PetDetailViewModel; isSkeleton?: boolean }>;
@@ -48,17 +46,22 @@ function PetRequestControls({
   );
 }
 
-export function PetDetailContent({ pet, isSkeleton = false }: Props) {
+export function PetDetailRenderer({ pet, isSkeleton = false }: Props) {
   return (
     <article
       data-pet-detail-content={isSkeleton ? undefined : true}
       aria-busy={isSkeleton || undefined}
+      inert={isSkeleton}
       className={cn(
         'tw:default-layout-container tw:pb-28 tw:pt-5 tw:sm:pb-48 tw:lg:pb-12 tw:lg:pt-8',
         isSkeleton && 'skeleton tw:pointer-events-none tw:select-none',
       )}
     >
-      <PetDetailGallery images={pet.images} title={pet.title} isSkeleton={isSkeleton} />
+      <ImageGallery
+        ariaLabel={`گالری تصاویر ${pet.title}`}
+        className="tw:lg:hidden"
+        images={pet.images}
+      />
       <div className="tw:lg:grid tw:lg:grid-cols-[minmax(0,1fr)_minmax(18rem,22rem)] tw:lg:items-start tw:lg:gap-8">
         <div className="tw:min-w-0">
           <Card
@@ -67,24 +70,17 @@ export function PetDetailContent({ pet, isSkeleton = false }: Props) {
             className="tw:overflow-hidden tw:rounded-3xl tw:p-4 tw:lg:p-6"
           >
             <div className="tw:grid tw:gap-6 tw:lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-              <ProductGallery
+              <ImageGallery
                 className="tw:hidden tw:lg:block"
                 images={pet.images}
-                itemLabel="حیوان"
-                isSkeleton={isSkeleton}
+                ariaLabel={`تصاویر حیوان ${pet.title}`}
               />
               <div className="tw:grid tw:content-start tw:grid-cols-3 tw:gap-4">
                 <h1 className="tw:col-span-2 tw:text-title-l tw:leading-9 tw:lg:text-heading-2">
                   {pet.title}
                 </h1>
                 <div className="tw:justify-self-end">
-                  <ProductHeaderActions
-                    title={pet.title}
-                    itemId={pet.id}
-                    itemLabel="حیوان"
-                    itemType="pet"
-                    disabled={isSkeleton}
-                  />
+                  <PetHeaderActions title={pet.title} petId={pet.id} disabled={isSkeleton} />
                 </div>
                 <div className="tw:col-span-3 tw:flex tw:flex-wrap tw:gap-3 tw:text-label-m">
                   <Link
@@ -100,55 +96,11 @@ export function PetDetailContent({ pet, isSkeleton = false }: Props) {
                     {pet.breed.title}
                   </Link>
                 </div>
-                {pet.reviewCount > 0 ? (
-                  <div className="tw:col-span-3 tw:flex tw:items-center tw:gap-2 tw:text-label-m">
-                    <Star
-                      aria-hidden="true"
-                      className="tw:size-5 tw:fill-warning-active tw:text-warning-active"
-                    />
-                    <bdi>{pet.rating.toLocaleString()}</bdi>
-                    <span className="tw:text-muted-foreground">
-                      ({pet.reviewCount.toLocaleString()} امتیاز)
-                    </span>
-                  </div>
-                ) : null}
+                <PetDetailRating rating={pet.rating} reviewCount={pet.reviewCount} />
                 <p className="tw:col-span-3 tw:text-label-m tw:text-muted-foreground">
                   {pet.quantity > 0 ? 'آماده واگذاری' : 'در حال حاضر واگذار شده است'}
                 </p>
-                {pet.summary ? (
-                  <section aria-label="خلاصه حیوان" className="tw:col-span-3">
-                    <div className="tw:lg:hidden">
-                      <h2 className="tw:px-4 tw:pt-4 tw:text-title-s">خلاصه حیوان</h2>
-                      <ExpandableDrawer
-                        title="خلاصه حیوان"
-                        collapsedHeight={112}
-                        disabled={isSkeleton}
-                        showMoreLabel="نمایش خلاصه حیوان"
-                        sectionChildren={
-                          <p className="tw:text-body-m tw:leading-8 tw:text-muted-foreground">
-                            {pet.summary}
-                          </p>
-                        }
-                        drawerChildren={
-                          <p className="tw:text-body-m tw:leading-8 tw:text-muted-foreground">
-                            {pet.summary}
-                          </p>
-                        }
-                      />
-                    </div>
-                    <div className="tw:hidden tw:lg:block">
-                      <PetDetailExpandableCard
-                        title="خلاصه حیوان"
-                        collapsedHeight={112}
-                        isSkeleton={isSkeleton}
-                      >
-                        <p className="tw:text-body-m tw:leading-8 tw:text-muted-foreground">
-                          {pet.summary}
-                        </p>
-                      </PetDetailExpandableCard>
-                    </div>
-                  </section>
-                ) : null}
+                <PetDetailSummary summary={pet.summary} isSkeleton={isSkeleton} />
               </div>
             </div>
           </Card>

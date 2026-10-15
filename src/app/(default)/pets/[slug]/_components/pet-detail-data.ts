@@ -74,29 +74,3 @@ export function createPetDetailViewModel(pet: LandingPetDetailDTO): PetDetailVie
     specifications: [...relationSpecifications(pet.petType), ...relationSpecifications(pet.breed)],
   };
 }
-
-export const petDetailSkeleton: PetDetailViewModel = {
-  id: 'pet-skeleton',
-  slug: 'pet-skeleton',
-  title: 'عنوان حیوان خانگی',
-  summary: 'خلاصه‌ای از شرایط نگهداری و ویژگی‌های این حیوان خانگی در این بخش نمایش داده می‌شود.',
-  description: null,
-  descriptionText: '',
-  petType: { id: 'pet-type-skeleton', title: 'نوع حیوان' },
-  breed: { id: 'breed-skeleton', title: 'نژاد حیوان' },
-  rating: 0,
-  reviewCount: 0,
-  price: 10_000_000,
-  payablePrice: 9_000_000,
-  discountPercentage: 10,
-  quantity: 1,
-  images: [
-    { src: undefined, alt: '' },
-    { src: undefined, alt: '' },
-    { src: undefined, alt: '' },
-  ],
-  specifications: [
-    { label: 'ویژگی حیوان', value: 'مقدار ویژگی' },
-    { label: 'ویژگی نژاد', value: 'مقدار ویژگی' },
-  ],
-};
