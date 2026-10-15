@@ -80,6 +80,16 @@ beforeEach(() => {
     message: null,
     data: {} as never,
   });
+  vi.mocked(getLandingProductBySlug).mockResolvedValue({
+    isSuccess: true,
+    message: null,
+    data: {} as never,
+  });
+  vi.mocked(getPublicLandingProductBySlug).mockResolvedValue({
+    isSuccess: true,
+    message: null,
+    data: {} as never,
+  });
 });
 
 describe('retryAllLandingPetTypesAction', () => {
@@ -110,6 +120,18 @@ describe('retryAllLandingPetTypesAction', () => {
     );
     expect(getPublicLandingProductBySlug).toHaveBeenCalledWith(
       'تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ-تشویقی-و-اسنک-تشویقی-آموزشی',
+    );
+  });
+
+  it('unwraps product-detail failures for Server Component error boundaries', async () => {
+    vi.mocked(getLandingProductBySlug).mockResolvedValue({
+      isSuccess: false,
+      message: 'نمایش محصول انجام نشد.',
+      data: { messages: {}, details: {} },
+    });
+
+    await expect(getLandingProductBySlugAction('product-slug')).rejects.toThrow(
+      'نمایش محصول انجام نشد.',
     );
   });
 

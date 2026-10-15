@@ -1,44 +1,26 @@
-import { notFound } from 'next/navigation';
+import { use } from 'react';
 
-import { PageErrorState } from '@/components/common/page-error-state';
-import {
-  getLandingProductBySlugAction,
-  retryLandingProductDetailAction,
-} from '@/entities/landing/landing.actions';
+import { EmptyStateBoundary } from '@/components/ui/empty-state-boundary';
+import type { getLandingProductBySlugAction } from '@/entities/landing/landing.actions';
 
 import { ProductDetailContent } from './product-detail-content';
 import { createProductDetailViewModel } from './product-detail-data';
-
-type ProductDetailResult = Awaited<ReturnType<typeof getLandingProductBySlugAction>>;
+import { ProductDetailEmptyFetch } from './product-detail-empty-fetch';
 
 type ProductDetailContainerProps = Readonly<{
-  productPromise: Promise<ProductDetailResult>;
-  slugPromise: Promise<string>;
+  productPromise: ReturnType<typeof getLandingProductBySlugAction>;
 }>;
 
-function isServerFailure(message: string | null) {
-  return !message || /server|unexpected|timed out|reach/i.test(message);
-}
+export function ProductDetailContainer({ productPromise }: ProductDetailContainerProps) {
+  const product = use(productPromise);
 
-export async function ProductDetailContainer({
-  productPromise,
-  slugPromise,
-}: ProductDetailContainerProps) {
-  const [result, slug] = await Promise.all([productPromise, slugPromise]);
-
-  if (!result.isSuccess) {
-    if (result.message?.includes('یافت نشد')) notFound();
-    if (isServerFailure(result.message))
-      throw new Error(result.message || 'Product request failed.');
-
-    return (
-      <PageErrorState
-        statusCode={400}
-        errorMessage={result.message}
-        onRetry={retryLandingProductDetailAction.bind(null, slug)}
-      />
-    );
-  }
-
-  return <ProductDetailContent product={createProductDetailViewModel(result.data)} />;
+  return (
+    <EmptyStateBoundary
+      data={product}
+      fallback={<ProductDetailEmptyFetch />}
+      isEmpty={() => !product?.id}
+    >
+      <ProductDetailContent product={createProductDetailViewModel(product)} />
+    </EmptyStateBoundary>
+  );
 }

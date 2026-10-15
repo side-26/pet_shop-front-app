@@ -5,18 +5,20 @@ import { getLandingProductBySlugAction } from '@/entities/landing/landing.action
 import { ProductDetailContainer } from './product-detail-container';
 import { ProductDetailContent } from './product-detail-content';
 import { productDetailSkeleton } from './product-detail-data';
+import { ProductDetailErrorBoundary } from './product-detail-error-boundary';
 
 type ProductDetailSectionProps = Readonly<{
   params: Promise<{ slug: string }>;
 }>;
 
 export function ProductDetailSection({ params }: ProductDetailSectionProps) {
-  const slugPromise = params.then(({ slug }) => slug);
-  const productPromise = slugPromise.then(getLandingProductBySlugAction);
+  const productPromise = params.then(({ slug }) => getLandingProductBySlugAction(slug));
 
   return (
-    <Suspense fallback={<ProductDetailContent product={productDetailSkeleton} isSkeleton />}>
-      <ProductDetailContainer productPromise={productPromise} slugPromise={slugPromise} />
-    </Suspense>
+    <ProductDetailErrorBoundary>
+      <Suspense fallback={<ProductDetailContent product={productDetailSkeleton} isSkeleton />}>
+        <ProductDetailContainer productPromise={productPromise} />
+      </Suspense>
+    </ProductDetailErrorBoundary>
   );
 }

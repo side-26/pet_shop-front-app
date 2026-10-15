@@ -1,5 +1,5 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
-import type { ReactNode } from 'react';
+import { Suspense, type ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LandingProductDetailDTO } from '@/entities/landing/landing.dto';
@@ -65,9 +65,7 @@ const product = {
 
 beforeEach(() => {
   vi.mocked(getLandingProductBySlugAction).mockResolvedValue({
-    isSuccess: true,
-    message: null,
-    data: product,
+    ...product,
   });
   vi.mocked(getPublicLandingProductBySlugAction).mockResolvedValue({
     isSuccess: true,
@@ -99,13 +97,15 @@ afterEach(() => {
 
 describe('/products/[slug]', () => {
   it('streams the API-backed product journey with inventory, taxonomy and specifications', async () => {
-    const content = await ProductDetailContainer({
-      productPromise: Promise.resolve({ isSuccess: true, message: null, data: product }),
-      slugPromise: Promise.resolve(product.slug),
-    });
-    render(<ReactQueryProvider>{content}</ReactQueryProvider>);
+    render(
+      <ReactQueryProvider>
+        <Suspense fallback={<p>در حال دریافت محصول</p>}>
+          <ProductDetailContainer productPromise={Promise.resolve(product)} />
+        </Suspense>
+      </ReactQueryProvider>,
+    );
 
-    expect(screen.getByRole('heading', { level: 1, name: product.title })).toBeTruthy();
+    expect(await screen.findByRole('heading', { level: 1, name: product.title })).toBeTruthy();
     expect(screen.getAllByText('سگ')).toHaveLength(2);
     expect(screen.getAllByText('تشویقی و اسنک')).toHaveLength(2);
     expect(screen.getAllByText('تشویقی آموزشی')).toHaveLength(2);
