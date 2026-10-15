@@ -42,6 +42,36 @@ it('submits the eligible customer rating without refreshing the product detail',
   expect(screen.getByText('امتیاز شما برای این محصول ثبت شده است.')).toBeTruthy();
 });
 
+it('shows the submitted rating optimistically while the mutation is pending', async () => {
+  let resolveRating!: (result: {
+    isSuccess: true;
+    message: string;
+    data: { userRate: number; userRateCount: number };
+  }) => void;
+  vi.mocked(updateProductUserRateAction).mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        resolveRating = resolve;
+      }),
+  );
+
+  renderWithQueryClient(
+    <ProductRatingForm productId="6a9fcb6871b632040de16436" canVote hasRated={false} />,
+  );
+
+  fireEvent.click(screen.getByRole('button', { name: '4 ستاره' }));
+  fireEvent.click(screen.getByRole('button', { name: 'ثبت امتیاز' }));
+
+  await waitFor(() => expect(updateProductUserRateAction).toHaveBeenCalledTimes(1));
+  expect(screen.getByText('امتیاز شما برای این محصول ثبت شده است.')).toBeTruthy();
+
+  resolveRating({
+    isSuccess: true,
+    message: 'امتیاز ثبت شد',
+    data: { userRate: 4, userRateCount: 1 },
+  });
+});
+
 it('explains the API eligibility limit without rendering a form', () => {
   renderWithQueryClient(
     <ProductRatingForm productId="6a9fcb6871b632040de16436" canVote={false} hasRated={false} />,

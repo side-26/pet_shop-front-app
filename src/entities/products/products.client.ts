@@ -32,6 +32,7 @@ import type {
   ReplaceProductWeightsInput,
   UpdateProductUserRateInput,
 } from './products.schema';
+import type { ProductUserRateDTO } from './products.dto';
 
 async function submit<T extends FieldValues>(
   input: T,
@@ -109,9 +110,30 @@ export async function submitDeleteProduct(id: string) {
   return true;
 }
 
-export function useUpdateProductUserRate() {
-  return useMutation({
-    mutationFn: (input: UpdateProductUserRateInput) => updateProductUserRateAction(input),
+export const productUserRateMutationKey = (productId: string) =>
+  ['products', productId, 'user-rate'] as const;
+
+export function useUpdateProductUserRate(productId: string) {
+  return useMutation<ProductUserRateDTO, FetcherError, UpdateProductUserRateInput>({
+    mutationKey: productUserRateMutationKey(productId),
+    retry: false,
+    mutationFn: async (input) => {
+      const result = await updateProductUserRateAction(input);
+      if (!result?.isSuccess) {
+        throw (
+          result ?? {
+            isSuccess: false,
+            message: 'ثبت امتیاز محصول ناموفق بود.',
+            data: { messages: {}, details: {} },
+          }
+        );
+      }
+      return result.data;
+    },
+    onError: (error) => globalErrorHandler(error),
+    onSuccess: () => {
+      toast.add({ type: 'success', title: 'امتیاز شما ثبت شد.' });
+    },
   });
 }
 

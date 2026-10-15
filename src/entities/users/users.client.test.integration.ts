@@ -7,6 +7,8 @@ import { toast } from '@/components/ui/toast';
 import { useAuthStore } from '@/entities/auth/auth.store';
 import { globalErrorHandler } from '@/utils/helpers';
 
+import type { WishlistItemDTO } from './users.dto';
+
 import {
   addWishlistItemAction,
   changeCurrentUserPasswordAction,
@@ -22,9 +24,8 @@ import {
   submitCurrentUserPassword,
   submitCurrentUserProfile,
   submitUserEnabledUpdate,
-  useAddWishlistItem,
-  useDeleteWishlistItem,
   useWishlist,
+  useWishlistToggle,
 } from './users.client';
 
 vi.mock('./users.actions', () => ({
@@ -68,7 +69,7 @@ describe('wishlist client queries', () => {
     vi.clearAllMocks();
   });
 
-  it('gets wishlist entries and delegates add/remove mutations to their Server Actions', async () => {
+  it('gets wishlist entries and delegates optimistic add/remove mutations to their Server Actions', async () => {
     getWishlistActionMock.mockResolvedValue({
       isSuccess: true,
       message: null,
@@ -84,18 +85,58 @@ describe('wishlist client queries', () => {
     const { result } = renderHook(
       () => ({
         wishlist: useWishlist(),
-        add: useAddWishlistItem(),
-        remove: useDeleteWishlistItem(),
+        toggle: useWishlistToggle(),
       }),
       { wrapper: queryClientWrapper },
     );
 
     await waitFor(() => expect(result.current.wishlist.data).toHaveLength(1));
-    await act(() => result.current.add.mutateAsync({ itemId: 'pet-1', itemType: 'pet' }));
-    await act(() => result.current.remove.mutateAsync('wishlist-1'));
+    act(() => result.current.toggle.toggleWishlistItem({ itemId: 'pet-1', itemType: 'pet' }));
+    await waitFor(() => expect(addWishlistItemActionMock).toHaveBeenCalled());
+    act(() =>
+      result.current.toggle.toggleWishlistItem({ itemId: 'product-1', itemType: 'product' }),
+    );
+    await waitFor(() => expect(deleteWishlistItemActionMock).toHaveBeenCalled());
 
     expect(addWishlistItemActionMock).toHaveBeenCalledWith({ itemId: 'pet-1', itemType: 'pet' });
     expect(deleteWishlistItemActionMock).toHaveBeenCalledWith({ id: 'wishlist-1' });
+  });
+
+  it('updates the wishlist query before an add mutation resolves', async () => {
+    getWishlistActionMock.mockResolvedValue({ isSuccess: true, message: null, data: [] });
+    let resolveAdd:
+      ((value: { isSuccess: true; message: null; data: WishlistItemDTO }) => void) | undefined;
+    addWishlistItemActionMock.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveAdd = resolve;
+        }),
+    );
+
+    const { result } = renderHook(
+      () => ({
+        wishlist: useWishlist(),
+        toggle: useWishlistToggle(),
+      }),
+      { wrapper: queryClientWrapper },
+    );
+
+    await waitFor(() => expect(result.current.wishlist.data).toEqual([]));
+    act(() => result.current.toggle.toggleWishlistItem({ itemId: 'pet-1', itemType: 'pet' }));
+
+    await waitFor(() =>
+      expect(result.current.wishlist.data).toEqual([
+        { _id: 'optimistic-pet-pet-1', item: 'pet-1', itemType: 'pet' },
+      ]),
+    );
+
+    await act(() =>
+      resolveAdd?.({
+        isSuccess: true,
+        message: null,
+        data: { _id: 'wishlist-2', item: 'pet-1', itemType: 'pet' },
+      }),
+    );
   });
 });
 
