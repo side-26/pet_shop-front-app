@@ -16,13 +16,13 @@ export type PetDetailViewModel = Readonly<{
   payablePrice: number;
   discountPercentage: number;
   quantity: number;
-  images: readonly Readonly<{ src?: string; alt: string; placeholder?: string }>[];
+  images: readonly Readonly<{ src?: string; alt: string; placeholderImage?: string }>[];
   specifications: readonly Readonly<{ label: string; value: string }>[];
 }>;
 
 function displayValue(value: unknown): string {
   if (typeof value === 'boolean') return value ? 'بله' : 'خیر';
-  if (typeof value === 'number') return value.toLocaleString('fa-IR');
+  if (typeof value === 'number') return value.toLocaleString();
   if (typeof value === 'string') return value.trim();
   if (Array.isArray(value)) return value.map(displayValue).filter(Boolean).join('، ');
   return '';
@@ -69,7 +69,7 @@ export function createPetDetailViewModel(pet: LandingPetDetailDTO): PetDetailVie
     images: imageSources.map((src, index) => ({
       src,
       alt: index === 0 ? pet.title : `${pet.title}، تصویر ${index + 1}`,
-      placeholder: index === 0 ? pet.mainImageThumbnail : undefined,
+      placeholderImage: index === 0 ? pet.mainImageThumbnail : undefined,
     })),
     specifications: [...relationSpecifications(pet.petType), ...relationSpecifications(pet.breed)],
   };

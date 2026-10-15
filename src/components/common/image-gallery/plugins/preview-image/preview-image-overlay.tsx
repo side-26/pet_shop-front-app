@@ -11,11 +11,11 @@ type PreviewImageOverlayProps = Readonly<{
 }>;
 
 const positionClasses: Record<PreviewImageOverlayPosition, string> = {
-  'top-left': 'tw:start-3 tw:top-3 tw:sm:start-4 tw:sm:top-4',
-  'top-right': 'tw:end-3 tw:top-3 tw:sm:end-4 tw:sm:top-4',
-  'bottom-left': 'tw:bottom-3 tw:start-3 tw:sm:bottom-4 tw:sm:start-4',
-  'bottom-right': 'tw:bottom-3 tw:end-3 tw:sm:bottom-4 tw:sm:end-4',
-  center: 'tw:start-1/2 tw:top-1/2 tw:-translate-x-1/2 tw:-translate-y-1/2',
+  'top-left': 'tw:left-2 tw:top-2',
+  'top-right': 'tw:right-2 tw:top-2',
+  'bottom-left': 'tw:bottom-2 tw:left-2',
+  'bottom-right': 'tw:bottom-2 tw:right-2',
+  center: 'tw:left-1/2 tw:top-1/2 tw:-translate-x-1/2 tw:-translate-y-1/2',
 };
 
 export function PreviewImageOverlay({ children, position }: PreviewImageOverlayProps) {
@@ -23,7 +23,7 @@ export function PreviewImageOverlay({ children, position }: PreviewImageOverlayP
     <div
       data-position={position}
       data-slot="preview-image-overlay"
-      className={cn('tw:absolute tw:p-3 tw:sm:p-4', positionClasses[position])}
+      className={cn('tw:absolute tw:p-2', positionClasses[position])}
     >
       {children}
     </div>

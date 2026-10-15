@@ -51,7 +51,7 @@ export function OffersSectionRenderer({ products, isSkeleton = false }: Props) {
                     size="sm"
                     className="tw:absolute tw:start-2 tw:top-2 tw:z-10"
                   >
-                    {product.discountPercentage.toLocaleString('fa-IR')}٪ تخفیف
+                    {product.discountPercentage.toLocaleString()}٪ تخفیف
                   </Badge>
                   {isSkeleton ? (
                     <div className="tw:absolute tw:inset-0" />

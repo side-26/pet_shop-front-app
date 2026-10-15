@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { useState } from 'react';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { cn } from '@/lib/utils';
@@ -13,7 +12,6 @@ import type { ProductGalleryImage } from './product-detail-data';
 type ProductGalleryProps = Readonly<{
   className?: string;
   images: readonly ProductGalleryImage[];
-  discountPercentage: number;
   itemLabel?: string;
   isSkeleton?: boolean;
 }>;
@@ -36,8 +34,8 @@ function GalleryImage({
       fill
       sizes={sizes}
       preload={preload}
-      placeholder={image.placeholder ? 'blur' : 'empty'}
-      blurDataURL={image.placeholder}
+      placeholder={image.placeholderImage ? 'blur' : 'empty'}
+      blurDataURL={image.placeholderImage}
       className={cn(
         image.fit === 'contain' && 'tw:bg-white',
         image.fit === 'contain' ? 'tw:object-contain' : 'tw:object-cover',
@@ -49,7 +47,6 @@ function GalleryImage({
 export function ProductGallery({
   className,
   images,
-  discountPercentage,
   itemLabel = 'محصول',
   isSkeleton,
 }: ProductGalleryProps) {
@@ -64,16 +61,6 @@ export function ProductGallery({
             sizes="(min-width: 1024px) 44vw, 100vw"
             preload={selectedImage === 0}
           />
-          {discountPercentage > 0 ? (
-            <Badge
-              color="error"
-              variant="fill"
-              size="lg"
-              className="tw:absolute tw:start-4 tw:top-4"
-            >
-              {discountPercentage.toLocaleString('fa-IR')}٪ تخفیف
-            </Badge>
-          ) : null}
         </div>
 
         <div className="tw:mt-4 tw:grid tw:grid-cols-3 tw:gap-3">
@@ -117,16 +104,6 @@ export function ProductGallery({
                     sizes="(max-width: 767px) 100vw, 50vw"
                     preload={index === 0}
                   />
-                  {index === 0 && discountPercentage > 0 ? (
-                    <Badge
-                      color="error"
-                      variant="fill"
-                      size="md"
-                      className="tw:absolute tw:start-4 tw:top-4"
-                    >
-                      {discountPercentage.toLocaleString('fa-IR')}٪ تخفیف
-                    </Badge>
-                  ) : null}
                 </div>
               </div>
             </CarouselItem>

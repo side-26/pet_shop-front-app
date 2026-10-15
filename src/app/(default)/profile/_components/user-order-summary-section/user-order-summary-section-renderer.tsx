@@ -36,7 +36,7 @@ export function UserOrderSummarySectionRenderer({ summary, isSkeleton = false }:
             سفارش‌ها
           </dt>
           <dd className="tw:text-title-l tw:text-primary-muted-foreground">
-            {isSkeleton ? '—' : summary.orders.toLocaleString('fa-IR')}
+            {isSkeleton ? '—' : summary.orders.toLocaleString()}
           </dd>
         </div>
         <div className="tw:flex tw:flex-col tw:gap-1 tw:rounded-2xl tw:bg-success-muted tw:p-4">
@@ -45,7 +45,7 @@ export function UserOrderSummarySectionRenderer({ summary, isSkeleton = false }:
             تحویل‌شده
           </dt>
           <dd className="tw:text-title-l tw:text-success-muted-foreground">
-            {isSkeleton ? '—' : summary.delivered.toLocaleString('fa-IR')}
+            {isSkeleton ? '—' : summary.delivered.toLocaleString()}
           </dd>
         </div>
         <div className="tw:col-span-2 tw:flex tw:flex-col tw:gap-1 tw:rounded-2xl tw:bg-info-muted tw:p-4 tw:sm:col-span-1">

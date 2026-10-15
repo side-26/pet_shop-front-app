@@ -106,9 +106,9 @@ export function PetDetailContent({ pet, isSkeleton = false }: Props) {
                       aria-hidden="true"
                       className="tw:size-5 tw:fill-warning-active tw:text-warning-active"
                     />
-                    <bdi>{pet.rating.toLocaleString('fa-IR')}</bdi>
+                    <bdi>{pet.rating.toLocaleString()}</bdi>
                     <span className="tw:text-muted-foreground">
-                      ({pet.reviewCount.toLocaleString('fa-IR')} امتیاز)
+                      ({pet.reviewCount.toLocaleString()} امتیاز)
                     </span>
                   </div>
                 ) : null}

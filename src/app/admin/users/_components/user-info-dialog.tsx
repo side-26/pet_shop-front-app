@@ -199,15 +199,11 @@ export function UserInfoRenderer({
         </CardHeader>
         <CardContent>
           <dl className="tw:grid tw:grid-cols-3 tw:gap-4">
-            <InfoItem label="سفارش‌ها">
-              {renderedUser.orders.length.toLocaleString('fa-IR')}
-            </InfoItem>
+            <InfoItem label="سفارش‌ها">{renderedUser.orders.length.toLocaleString()}</InfoItem>
             <InfoItem label="علاقه‌مندی‌ها">
-              {renderedUser.wishlist.length.toLocaleString('fa-IR')}
+              {renderedUser.wishlist.length.toLocaleString()}
             </InfoItem>
-            <InfoItem label="سبد خرید">
-              {renderedUser.cart.items.length.toLocaleString('fa-IR')}
-            </InfoItem>
+            <InfoItem label="سبد خرید">{renderedUser.cart.items.length.toLocaleString()}</InfoItem>
           </dl>
         </CardContent>
       </Card>

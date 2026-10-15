@@ -42,9 +42,7 @@ export function CounterShowcase() {
         <Button variant="outlined" onClick={() => setRefValue(counterRef.current?.value)}>
           خواندن مقدار از ref
         </Button>
-        {refValue !== undefined ? (
-          <output dir="ltr">{refValue.toLocaleString('fa-IR')}</output>
-        ) : null}
+        {refValue !== undefined ? <output dir="ltr">{refValue.toLocaleString()}</output> : null}
       </div>
       <div className="tw:flex tw:flex-wrap tw:items-center tw:gap-3">
         <Counter

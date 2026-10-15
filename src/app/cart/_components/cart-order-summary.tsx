@@ -64,7 +64,7 @@ export function CartOrderSummary({
         <CardContent className="tw:hidden tw:lg:block">
           <dl className="tw:flex tw:flex-col tw:gap-4">
             <SummaryRow
-              label={`قیمت آیتم ها(${itemCount.toLocaleString('fa-IR')})`}
+              label={`قیمت آیتم ها(${itemCount.toLocaleString()})`}
               value={merchandiseTotal + discountTotal}
             />
             <SummaryRow label="تخفیف آیتم ها" value={discountTotal} />

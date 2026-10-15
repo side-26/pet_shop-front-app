@@ -29,7 +29,7 @@ export function DesktopCartButton() {
     setCountMotion(itemCount > previousCount ? 'increase' : 'decrease');
   }, [itemCount]);
 
-  const countLabel = itemCount.toLocaleString('fa-IR');
+  const countLabel = itemCount.toLocaleString();
 
   return (
     <Link

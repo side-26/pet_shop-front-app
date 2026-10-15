@@ -103,7 +103,7 @@ export function ArticlesCatalogMobileToolbar({
         </Dialog>
       </div>
       <div className="tw:text-body-s tw:flex-none tw:text-muted-foreground">
-        {totalItems.toLocaleString('fa-IR')} مقاله
+        {totalItems.toLocaleString()} مقاله
       </div>
     </div>
   );

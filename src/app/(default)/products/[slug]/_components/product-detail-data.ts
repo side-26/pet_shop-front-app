@@ -9,7 +9,7 @@ export type ProductGalleryImage = Readonly<{
   src?: string;
   alt: string;
   fit?: 'cover' | 'contain';
-  placeholder?: string;
+  placeholderImage?: string;
 }>;
 
 export type ProductPurchaseOption = Readonly<{
@@ -35,7 +35,7 @@ function relationTitle(value: { title?: unknown; title_fa?: unknown } | null | u
 
 function displayValue(value: unknown): string {
   if (typeof value === 'boolean') return value ? 'بله' : 'خیر';
-  if (typeof value === 'number') return value.toLocaleString('fa-IR');
+  if (typeof value === 'number') return value.toLocaleString();
   if (typeof value === 'string') return value.trim();
   if (Array.isArray(value)) return value.map(displayValue).filter(Boolean).join('، ');
   return '';
@@ -61,7 +61,7 @@ function toProductDetailWeights(product: LandingProductDetailDTO): ProductDetail
 
     return {
       id,
-      label: `${weight.value.toLocaleString('fa-IR')} ${weight.metric}`,
+      label: `${weight.value.toLocaleString()} ${weight.metric}`,
       cartWeight: { ...weight, _id: weight._id ?? id, price, discountPercentage },
       ...toProductPurchaseOption(price, discountPercentage, weight.quantity),
     };
@@ -176,7 +176,7 @@ export class ProductDetailViewModel {
       return sources.map((src, index) => ({
         src,
         alt: index === 0 ? obj.title : `${obj.title}، تصویر ${index + 1}`,
-        placeholder: index === 0 ? obj.mainImageThumbnail : undefined,
+        placeholderImage: index === 0 ? obj.mainImageThumbnail : undefined,
       }));
     },
     { toClassOnly: true },

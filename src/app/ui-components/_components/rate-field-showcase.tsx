@@ -50,7 +50,7 @@ export function RateFieldShowcase() {
         <Button type="submit">ثبت امتیاز</Button>
       </Form>
       <p role="status" className="tw:text-body-m tw:text-muted-foreground">
-        امتیاز ثبت‌شده: {submittedRating?.toLocaleString('fa-IR') ?? '—'}
+        امتیاز ثبت‌شده: {submittedRating?.toLocaleString() ?? '—'}
       </p>
       <Form<RatingValues>
         handleSubmit={() => undefined}

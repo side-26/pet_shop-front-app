@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { PreviewImageOverlay, PreviewImagePreview } from './plugins/preview-image';
+import { PreviewImageOverlay } from './plugins/preview-image';
 import { ImageGallery } from './image-gallery';
 
 vi.mock('@/components/ui/carousel', () => ({
@@ -44,9 +44,7 @@ describe('ImageGallery', () => {
       <ImageGallery
         images={images}
         previewImagePreview={
-          <PreviewImagePreview>
-            <PreviewImageOverlay position="top-right">برچسب تصویر</PreviewImageOverlay>
-          </PreviewImagePreview>
+          <PreviewImageOverlay position="top-right">برچسب تصویر</PreviewImageOverlay>
         }
       />,
     );

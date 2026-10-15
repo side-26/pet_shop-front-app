@@ -20,7 +20,7 @@ export function DashboardTopSellingCard({ items }: Readonly<{ items: DashboardLi
               <span className="tw:truncate">{item.title}</span>
             </div>
             <Badge color="neutral" variant="tonal">
-              {item.unitsSold?.toLocaleString('fa-IR')} فروش
+              {item.unitsSold?.toLocaleString()} فروش
             </Badge>
           </div>
         ))}

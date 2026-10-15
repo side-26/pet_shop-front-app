@@ -42,7 +42,7 @@ export function CheckoutCartItemsRenderer({
           </span>
           <span className="tw:min-w-0 tw:flex-1 tw:truncate tw:text-body-s">{item.title}</span>
           <Badge color="secondary" size="sm" variant="tonal">
-            {item.cartQuantity.toLocaleString('fa-IR')} عدد
+            {item.cartQuantity.toLocaleString()} عدد
           </Badge>
         </li>
       ))}

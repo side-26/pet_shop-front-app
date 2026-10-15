@@ -1,10 +1,11 @@
+import { ImageGallery, PreviewImageOverlay } from '@/components/common/image-gallery';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 import { ProductDetailBreadcrumb } from './product-detail-breadcrumb';
 import type { ProductDetailViewModel } from './product-detail-data';
 import { ProductDetailTabs } from './product-detail-tabs';
-import { ProductGallery } from './product-gallery';
 import { ProductHeaderActions } from './product-header-actions';
 import { ProductInformationSection } from './product-information-section';
 import { ProductMobilePurchaseSection } from './product-mobile-purchase-section';
@@ -15,6 +16,20 @@ type ProductDetailContentProps = Readonly<{
   isSkeleton?: boolean;
   product: ProductDetailViewModel;
 }>;
+
+function ProductDiscountPreviewImagePlugin({
+  discountPercentage,
+}: Readonly<{ discountPercentage: number }>) {
+  if (discountPercentage <= 0) return null;
+
+  return (
+    <PreviewImageOverlay position="top-right">
+      <Badge color="error" variant="fill" size="md">
+        {discountPercentage.toLocaleString()}٪ تخفیف
+      </Badge>
+    </PreviewImageOverlay>
+  );
+}
 
 export function ProductDetailContent({ isSkeleton = false, product }: ProductDetailContentProps) {
   return (
@@ -28,7 +43,13 @@ export function ProductDetailContent({ isSkeleton = false, product }: ProductDet
     >
       <ProductDetailBreadcrumb title={product.title} />
 
-      <ProductGallery className="tw:lg:hidden" images={product.images} />
+      <ImageGallery
+        className="tw:lg:hidden"
+        images={product.images}
+        previewImagePreview={
+          <ProductDiscountPreviewImagePlugin discountPercentage={product.discountPercentage} />
+        }
+      />
 
       <div className="tw:lg:grid tw:lg:grid-cols-[minmax(0,1fr)_minmax(18rem,22rem)] tw:lg:items-start tw:lg:gap-8">
         <div>
@@ -37,9 +58,14 @@ export function ProductDetailContent({ isSkeleton = false, product }: ProductDet
             variant="elevated"
             className="tw:rounded-none tw:border-x-0 tw:py-0 tw:lg:grid tw:lg:grid-cols-5 tw:lg:gap-8 tw:lg:rounded-3xl tw:lg:border tw:lg:p-6"
           >
-            <ProductGallery
+            <ImageGallery
               className="tw:hidden tw:lg:col-span-2 tw:lg:block"
               images={product.images}
+              previewImagePreview={
+                <ProductDiscountPreviewImagePlugin
+                  discountPercentage={product.discountPercentage}
+                />
+              }
             />
 
             <CardContent className="tw:flex tw:flex-col tw:gap-5 tw:px-4 tw:py-5 tw:sm:px-6 tw:lg:col-span-3 tw:lg:px-0 tw:lg:py-1">

@@ -14,21 +14,19 @@ export function DashboardInventoryStatusCard({ summary }: Readonly<{ summary: Da
         <div className="tw:flex tw:items-center tw:justify-between">
           <span>محصولات فعال</span>
           <Badge color="success" variant="tonal">
-            {summary.productsEnabled.toLocaleString('fa-IR')} از{' '}
-            {summary.productsTotal.toLocaleString('fa-IR')}
+            {summary.productsEnabled.toLocaleString()} از {summary.productsTotal.toLocaleString()}
           </Badge>
         </div>
         <div className="tw:flex tw:items-center tw:justify-between">
           <span>حیوانات فعال</span>
           <Badge color="success" variant="tonal">
-            {summary.petsEnabled.toLocaleString('fa-IR')} از{' '}
-            {summary.petsTotal.toLocaleString('fa-IR')}
+            {summary.petsEnabled.toLocaleString()} از {summary.petsTotal.toLocaleString()}
           </Badge>
         </div>
         <div className="tw:flex tw:items-center tw:justify-between">
           <span>کم‌موجود</span>
           <Badge color="warning" variant="tonal">
-            {(summary.productsLowStock + summary.petsLowStock).toLocaleString('fa-IR')} مورد
+            {(summary.productsLowStock + summary.petsLowStock).toLocaleString()} مورد
           </Badge>
         </div>
       </CardContent>

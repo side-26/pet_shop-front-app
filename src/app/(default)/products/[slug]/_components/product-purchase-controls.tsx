@@ -60,7 +60,7 @@ export function ProductPurchaseControls({
             />
             {selectedPurchase.quantity > 0 && selectedPurchase.quantity < 8 ? (
               <span className="tw:text-label-s tw:text-muted-foreground">
-                موجودی: {selectedPurchase.quantity.toLocaleString('fa-IR')}
+                موجودی: {selectedPurchase.quantity.toLocaleString()}
               </span>
             ) : null}
           </div>
@@ -91,7 +91,7 @@ export function ProductPurchaseControls({
       />
       {selectedPurchase.quantity > 0 && selectedPurchase.quantity < 8 ? (
         <p className="tw:mt-3 tw:text-label-s tw:text-error" role="status">
-          تنها {selectedPurchase.quantity.toLocaleString('fa-IR')} عدد از این محصول باقی مانده است.
+          تنها {selectedPurchase.quantity.toLocaleString()} عدد از این محصول باقی مانده است.
         </p>
       ) : null}
     </div>

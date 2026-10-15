@@ -87,7 +87,7 @@ export function DeliveryServiceOption({
             <DeliveryServiceDetailItem
               icon={CalendarClock}
               label="بازه"
-              value={`${service.availability.length.toLocaleString('fa-IR')} بازه`}
+              value={`${service.availability.length.toLocaleString()} بازه`}
             />
           </div>
         </div>

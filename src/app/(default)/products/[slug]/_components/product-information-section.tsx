@@ -86,10 +86,10 @@ export function ProductInformationSection({ product }: ProductInformationSection
       <div className="tw:flex tw:flex-wrap tw:items-center tw:gap-x-4 tw:gap-y-2 tw:border-b tw:border-border/70 tw:pb-4 tw:text-label-m">
         <span className="tw:inline-flex tw:items-center tw:gap-1 tw:text-warning-active">
           <Star aria-hidden="true" className="tw:size-4 tw:fill-current" />
-          <bdi>{product.rating.toLocaleString('fa-IR')}</bdi>
+          <bdi>{product.rating.toLocaleString()}</bdi>
         </span>
         <span className="tw:text-muted-foreground">
-          ({product.reviewCount.toLocaleString('fa-IR')} نظر)
+          ({product.reviewCount.toLocaleString()} نظر)
         </span>
         {product.brand ? (
           <span>

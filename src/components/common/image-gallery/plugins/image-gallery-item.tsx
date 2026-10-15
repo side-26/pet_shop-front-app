@@ -11,6 +11,8 @@ type GalleryImageProps = Readonly<{
 }>;
 
 export function GalleryImage({ image, loading = 'lazy', sizes }: GalleryImageProps) {
+  if (!image.src) return <div aria-hidden="true" className="tw:absolute tw:inset-0" />;
+
   return (
     <Image
       src={image.src}

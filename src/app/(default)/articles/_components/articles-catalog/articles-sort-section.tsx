@@ -51,7 +51,7 @@ export function ArticlesSortSection({
         </div>
       </div>
       <span className="tw:text-body-s tw:text-muted-foreground">
-        {totalItems.toLocaleString('fa-IR')} مقاله
+        {totalItems.toLocaleString()} مقاله
       </span>
     </div>
   );

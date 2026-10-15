@@ -33,8 +33,8 @@ export function PetDetailGallery({ images, title, isSkeleton = false }: PetDetai
                     fill
                     sizes="(max-width: 1023px) 100vw, 0px"
                     preload={index === 0}
-                    placeholder={image.placeholder ? 'blur' : 'empty'}
-                    blurDataURL={image.placeholder}
+                    placeholder={image.placeholderImage ? 'blur' : 'empty'}
+                    blurDataURL={image.placeholderImage}
                     className="tw:object-cover"
                   />
                 ) : null}

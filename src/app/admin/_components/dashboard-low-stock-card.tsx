@@ -20,7 +20,7 @@ export function DashboardLowStockCard({ items }: Readonly<{ items: DashboardList
               <span className="tw:truncate">{item.title}</span>
             </div>
             <Badge color="warning" variant="tonal">
-              {item.quantity?.toLocaleString('fa-IR')} باقی‌مانده
+              {item.quantity?.toLocaleString()} باقی‌مانده
             </Badge>
           </div>
         ))}

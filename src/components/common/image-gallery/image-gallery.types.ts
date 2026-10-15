@@ -4,7 +4,7 @@ export type ImageGalleryImage = Readonly<{
   alt: string;
   fit?: 'contain' | 'cover';
   placeholderImage?: string;
-  src: string;
+  src?: string;
 }>;
 
 export type ImageGalleryProps = Readonly<{

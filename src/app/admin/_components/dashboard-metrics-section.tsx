@@ -45,7 +45,7 @@ export function DashboardMetricsSection({ summary }: Readonly<{ summary: Dashboa
       <MetricCard
         icon={ShoppingBagIcon}
         label="سفارش‌ها"
-        value={summary.orders.toLocaleString('fa-IR')}
+        value={summary.orders.toLocaleString()}
         description="سفارش‌های ثبت‌شده در بازه"
       />
       <MetricCard
@@ -57,8 +57,8 @@ export function DashboardMetricsSection({ summary }: Readonly<{ summary: Dashboa
       <MetricCard
         icon={UsersRoundIcon}
         label="مشتریان"
-        value={summary.customersTotal.toLocaleString('fa-IR')}
-        description={`${summary.newCustomers.toLocaleString('fa-IR')} مشتری جدید`}
+        value={summary.customersTotal.toLocaleString()}
+        description={`${summary.newCustomers.toLocaleString()} مشتری جدید`}
       />
       <MetricCard
         icon={PackageCheckIcon}
