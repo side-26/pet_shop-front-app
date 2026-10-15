@@ -23,8 +23,8 @@ describe('UserOrderSummarySectionContainer', () => {
 
     render(content);
 
-    expect(screen.getByText('۴')).toBeTruthy();
-    expect(screen.getByText('۳')).toBeTruthy();
+    expect(screen.getByText('4')).toBeTruthy();
+    expect(screen.getByText('3')).toBeTruthy();
   });
 
   it('renders a targeted retry boundary for expected summary failures', async () => {

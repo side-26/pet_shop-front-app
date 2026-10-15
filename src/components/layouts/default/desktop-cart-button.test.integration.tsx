@@ -33,7 +33,7 @@ describe('DesktopCartButton', () => {
       });
     });
 
-    const count = await screen.findByText('۲');
+    const count = await screen.findByText('2');
     expect(screen.getByLabelText('سبد خرید')).toBeTruthy();
     expect(count.className).toContain('tw:animate-[cart-count-increase_260ms_ease-out]');
     expect(count.parentElement?.className).toContain(
@@ -54,7 +54,7 @@ describe('DesktopCartButton', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('۱').className).toContain(
+      expect(screen.getByText('1').className).toContain(
         'tw:animate-[cart-count-decrease_260ms_ease-out]',
       );
     });

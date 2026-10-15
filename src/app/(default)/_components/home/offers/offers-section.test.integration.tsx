@@ -82,7 +82,7 @@ describe('OffersSection', () => {
     expect(createProductImageAlt(product)).toBe('تصویر محصول غذای گربه');
     expect(screen.getByAltText('تصویر محصول غذای گربه')).toBeTruthy();
     expect(screen.queryByText(product.summary ?? '')).toBeNull();
-    expect(screen.getByText('۲۰٪ تخفیف')).toBeTruthy();
+    expect(screen.getByText('20٪ تخفیف')).toBeTruthy();
     expect(screen.getByText('۲۰۰٬۰۰۰')).toBeTruthy();
     expect(screen.getByText('۱۶۰٬۰۰۰')).toBeTruthy();
   });

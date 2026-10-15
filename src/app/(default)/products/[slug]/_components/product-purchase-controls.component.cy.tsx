@@ -86,6 +86,6 @@ describe('ProductPurchaseControls', () => {
 
     cy.get('[data-testid="desktop-purchase-controls"]').should('be.visible');
     cy.get('[data-testid="mobile-purchase-controls"]').should('not.be.visible');
-    cy.contains('تنها ۳ عدد از این محصول باقی مانده است.').should('be.visible');
+    cy.contains('تنها 3 عدد از این محصول باقی مانده است.').should('be.visible');
   });
 });

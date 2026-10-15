@@ -14,8 +14,8 @@ describe('UserOrderSummarySectionRenderer', () => {
       />,
     );
 
-    expect(screen.getByText('۴')).toBeTruthy();
-    expect(screen.getByText('۳')).toBeTruthy();
+    expect(screen.getByText('4')).toBeTruthy();
+    expect(screen.getByText('3')).toBeTruthy();
     expect(screen.getByText('۲۷ مرداد')).toBeTruthy();
   });
 

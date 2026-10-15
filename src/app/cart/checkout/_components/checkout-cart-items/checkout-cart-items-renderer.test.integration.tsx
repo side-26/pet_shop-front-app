@@ -30,7 +30,7 @@ describe('CheckoutCartItemsRenderer', () => {
 
     expect(screen.getByRole('img', { name: 'غذای خشک گربه' })).toBeTruthy();
     expect(screen.getByText('غذای خشک گربه')).toBeTruthy();
-    expect(screen.getByText('۲ عدد')).toBeTruthy();
+    expect(screen.getByText('2 عدد')).toBeTruthy();
   });
 
   it('uses the same renderer for the inaccessible streaming skeleton', () => {

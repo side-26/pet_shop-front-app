@@ -97,13 +97,15 @@ afterEach(() => {
 
 describe('/products/[slug]', () => {
   it('streams the API-backed product journey with inventory, taxonomy and specifications', async () => {
-    render(
-      <ReactQueryProvider>
-        <Suspense fallback={<p>در حال دریافت محصول</p>}>
-          <ProductDetailContainer productPromise={Promise.resolve(product)} />
-        </Suspense>
-      </ReactQueryProvider>,
-    );
+    await act(async () => {
+      render(
+        <ReactQueryProvider>
+          <Suspense fallback={<p>در حال دریافت محصول</p>}>
+            <ProductDetailContainer productPromise={Promise.resolve(product)} />
+          </Suspense>
+        </ReactQueryProvider>,
+      );
+    });
 
     expect(await screen.findByRole('heading', { level: 1, name: product.title })).toBeTruthy();
     expect(screen.getAllByText('سگ')).toHaveLength(2);
@@ -124,7 +126,7 @@ describe('/products/[slug]', () => {
         routePaths.productsListBySubCategory(product.subCategory.id),
       );
     }
-    expect(screen.getAllByText('تنها ۳ عدد از این محصول باقی مانده است.')).toHaveLength(2);
+    expect(screen.getAllByText('تنها 3 عدد از این محصول باقی مانده است.')).toHaveLength(2);
     expect(screen.getAllByRole('group', { name: 'انتخاب وزن' })).toHaveLength(2);
     expect(screen.getByRole('tab', { name: 'معرفی محصول' })).toBeTruthy();
     fireEvent.click(screen.getByRole('tab', { name: 'مشخصات' }));
@@ -157,7 +159,7 @@ describe('/products/[slug]', () => {
       />,
     );
 
-    expect(screen.getByText('موجودی: ۷')).toBeTruthy();
+    expect(screen.getByText('موجودی: 7')).toBeTruthy();
   });
 
   it('keeps mobile weight selection, pricing, and inventory in the purchase dock', () => {
@@ -208,12 +210,12 @@ describe('/products/[slug]', () => {
         .getByTestId('mobile-purchase-controls')
         .querySelector('[data-slot="mobile-price-column"]'),
     ).toBeTruthy();
-    expect(screen.getByText('تنها ۳ عدد از این محصول باقی مانده است.')).toBeTruthy();
+    expect(screen.getByText('تنها 3 عدد از این محصول باقی مانده است.')).toBeTruthy();
 
     fireEvent.click(screen.getByText('۲ کیلوگرم'));
 
     expect(screen.getByText('۷۲۰٬۰۰۰')).toBeTruthy();
-    expect(screen.getByText('تنها ۱ عدد از این محصول باقی مانده است.')).toBeTruthy();
+    expect(screen.getByText('تنها 1 عدد از این محصول باقی مانده است.')).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: 'افزودن به سبد خرید' }));
 
