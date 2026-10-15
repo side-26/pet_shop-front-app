@@ -1,16 +1,15 @@
-import type { LandingPetListPageDTO } from '@/entities/landing/landing.dto';
-import type { FetcherResult } from '@/lib/api/customFetcher';
+import { use } from 'react';
 
-import { PetListFetchError } from './pet-list-fetch-error';
+import type { LandingPetListPageDTO } from '@/entities/landing/landing.dto';
+
 import { PetListRenderer } from './pet-list-renderer';
 
 type PetListContainerProps = Readonly<{
-  petsPromise: Promise<FetcherResult<LandingPetListPageDTO>>;
+  petsPromise: Promise<LandingPetListPageDTO>;
   query: Readonly<Record<string, string>>;
 }>;
 
-export async function PetListContainer({ petsPromise, query }: PetListContainerProps) {
-  const result = await petsPromise;
-  if (!result.isSuccess) return <PetListFetchError description={result.message} />;
-  return <PetListRenderer data={result.data} query={query} />;
+export function PetListContainer({ petsPromise, query }: PetListContainerProps) {
+  const data = use(petsPromise);
+  return <PetListRenderer data={data} query={query} />;
 }

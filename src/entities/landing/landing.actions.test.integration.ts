@@ -80,6 +80,11 @@ beforeEach(() => {
     message: null,
     data: {} as never,
   });
+  vi.mocked(getLandingPetList).mockResolvedValue({
+    isSuccess: true,
+    message: null,
+    data: {} as never,
+  });
   vi.mocked(getLandingProductBySlug).mockResolvedValue({
     isSuccess: true,
     message: null,

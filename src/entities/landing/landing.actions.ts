@@ -64,7 +64,7 @@ export async function getLandingProductListAction(input: unknown = {}) {
 
 export async function getLandingPetListAction(input: unknown = {}) {
   const query = await landingPetListRequestSchema.validate(input, { stripUnknown: true });
-  return getLandingPetList(query);
+  return unwrapResult(getLandingPetList(query));
 }
 
 export async function getLandingPetBySlugAction(input: unknown) {

@@ -1,80 +1,40 @@
 'use client';
 
-import { useCallback, useRef, useState, type ReactNode } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import { CustomInfiniteScroll } from '@/components/templates/custom-infinite-scroll';
+import { useSuspenseLandingPetsInfiniteQuery } from '@/entities/landing/landing.client';
 
-import { getLandingPetListAction } from '@/entities/landing/landing.actions';
-import type { LandingPetListItemDTO, LandingPetListPageDTO } from '@/entities/landing/landing.dto';
-import { globalErrorHandler } from '@/utils/helpers';
+import type { LandingPetListPageDTO } from '@/entities/landing/landing.dto';
 
-import { PetGrid, petGridSkeletonData, toPetCardViewModel } from './pet-grid';
-import { PetInfiniteListLoadError } from './pet-infinite-list-load-error';
+import { PetGrid } from './pet-grid';
+import { toPetCardViewModel } from './pet-card-view-model.mapper';
 import { PetInfiniteListLoader } from './pet-infinite-list-loader';
+import { PetListDescription } from './pet-list-description';
+import { PetListErrorFallback } from './pet-list-error-boundary';
 
 type PetInfiniteListProps = Readonly<{
-  data?: LandingPetListPageDTO;
-  endMessage?: ReactNode;
-  isSkeleton?: boolean;
+  data: LandingPetListPageDTO;
   query: Readonly<Record<string, string>>;
 }>;
 
-export function PetInfiniteList({
-  data,
-  endMessage,
-  isSkeleton = false,
-  query,
-}: PetInfiniteListProps) {
-  const [pets, setPets] = useState<readonly LandingPetListItemDTO[]>(() => data?.result ?? []);
-  const [hasMore, setHasMore] = useState(data?.pagination.hasNextPage ?? false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const pageRef = useRef(data?.pagination.currentPage ?? 1);
-
-  const loadNextPage = useCallback(
-    async (isRetry = false) => {
-      if (isLoading || (!hasMore && !isRetry)) return;
-
-      setIsLoading(true);
-      setLoadError(null);
-
-      const result = await getLandingPetListAction({ ...query, page: pageRef.current + 1 });
-      if (!result.isSuccess) {
-        globalErrorHandler(result);
-        setLoadError(result.message ?? 'دریافت حیوانات بیشتر انجام نشد.');
-        setHasMore(false);
-        setIsLoading(false);
-        return;
-      }
-
-      pageRef.current = result.data.pagination.currentPage;
-      setPets((current) => {
-        const currentIds = new Set(current.map((pet) => pet.id));
-        return [...current, ...result.data.result.filter((pet) => !currentIds.has(pet.id))];
-      });
-      setHasMore(result.data.pagination.hasNextPage);
-      setIsLoading(false);
-    },
-    [hasMore, isLoading, query],
-  );
-
-  if (isSkeleton) return <PetGrid pets={petGridSkeletonData} isSkeleton />;
+export function PetInfiniteList({ data, query }: PetInfiniteListProps) {
+  const { pets, error, fetchNextPage, hasNextPage, isFetchingNextPage, isFetchNextPageError } =
+    useSuspenseLandingPetsInfiniteQuery(data, query);
 
   return (
-    <InfiniteScroll
+    <CustomInfiniteScroll
       dataLength={pets.length}
-      endMessage={pets.length > 0 ? endMessage : null}
-      hasMore={hasMore}
+      endMessage={pets.length > 0 ? <PetListDescription /> : null}
+      error={error}
+      errorFallback={({ error: nextPageError, retry }) => (
+        <PetListErrorFallback error={nextPageError} refreshOnRetry={false} retry={retry} />
+      )}
+      fetchNextPage={fetchNextPage}
+      hasNextPage={hasNextPage ?? false}
+      isFetchingNextPage={isFetchingNextPage}
+      isFetchNextPageError={isFetchNextPageError}
       loader={<PetInfiniteListLoader />}
-      next={() => void loadNextPage()}
     >
       <PetGrid pets={pets.map(toPetCardViewModel)} />
-      {loadError ? (
-        <PetInfiniteListLoadError
-          description={loadError}
-          isLoading={isLoading}
-          onRetry={() => void loadNextPage(true)}
-        />
-      ) : null}
-    </InfiniteScroll>
+    </CustomInfiniteScroll>
   );
 }

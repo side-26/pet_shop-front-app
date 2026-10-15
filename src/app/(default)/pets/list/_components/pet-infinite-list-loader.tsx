@@ -1,7 +1,8 @@
 import { cn } from '@/lib/utils';
 
 import { PetCard } from './pet-card';
-import { petGridClassName, petGridSkeletonData } from './pet-grid';
+import { petGridClassName } from './pet-grid';
+import { petGridSkeletonData } from './pet-grid-skeleton-data';
 
 const twoRowVisibility = [
   '',

@@ -1,66 +1,15 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-import { useCallback, useRef, useState } from 'react';
+import { useMemo, useRef } from 'react';
 import { ArrowDownUp, SlidersHorizontal } from 'lucide-react';
 
-import { FilterFormDialogContent } from '@/components/common/filter-form-dialog-content';
+import type { DialogHandle } from '@/_types';
+import { MobileCatalogFilterNavigationDrawer } from '@/components/common/pagination-layout/mobile-catalog-filter-navigation-drawer';
 import type { RangeQueryKeys } from '@/components/common/pagination-layout/pagination-filters/default';
+import { MobileCatalogSortNavigationDrawer } from '@/components/common/pagination-layout/mobile-catalog-sort-navigation-drawer';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import type { FilterDTO, SortDTO } from '@/entities/pagination/pagination.types';
-
-import type { PetListMobileDialogHandle } from './pet-list-mobile-dialog.types';
-
-function PetListFilterDialogSkeleton() {
-  return (
-    <Dialog open>
-      <FilterFormDialogContent
-        formId="pet-list-mobile-filter-loading"
-        isLoading
-        onClose={() => undefined}
-        size="lg"
-        title="فیلتر حیوانات"
-      >
-        <form id="pet-list-mobile-filter-loading">
-          <fieldset disabled className="skeleton tw:flex tw:flex-col tw:gap-4" aria-busy="true">
-            <div className="tw:h-10 tw:rounded-xl tw:bg-muted" />
-            <div className="tw:h-10 tw:rounded-xl tw:bg-muted" />
-            <div className="tw:h-10 tw:rounded-xl tw:bg-muted" />
-          </fieldset>
-        </form>
-      </FilterFormDialogContent>
-    </Dialog>
-  );
-}
-
-function PetListSortDialogSkeleton() {
-  return (
-    <Dialog open>
-      <DialogContent size="sm">
-        <DialogTitle>مرتب‌سازی</DialogTitle>
-        <DialogDescription>ترتیب نمایش نتیجه‌ها را انتخاب کنید.</DialogDescription>
-        <div
-          aria-busy="true"
-          aria-label="در حال بارگذاری مرتب‌سازی"
-          className="skeleton tw:flex tw:flex-col tw:gap-2"
-        >
-          <div className="tw:h-10 tw:rounded-xl tw:bg-muted" />
-          <div className="tw:h-10 tw:rounded-xl tw:bg-muted" />
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-const LazyPetListFilterDialog = dynamic(
-  () => import('./pet-list-filter-dialog').then((module) => module.PetListFilterDialog),
-  { loading: PetListFilterDialogSkeleton },
-);
-const LazyPetListSortDialog = dynamic(
-  () => import('./pet-list-sort-dialog').then((module) => module.PetListSortDialog),
-  { loading: PetListSortDialogSkeleton },
-);
+import { useDialogController } from '@/hooks/use-dialog-controller';
 
 type Props = Readonly<{
   basePath: string;
@@ -81,18 +30,14 @@ export function PetListMobileTools({
   resetPageOnChange = true,
   sort,
 }: Props) {
-  const filterDialogRef = useRef<PetListMobileDialogHandle>(null);
-  const sortDialogRef = useRef<PetListMobileDialogHandle>(null);
-  const [filterDialogMounted, setFilterDialogMounted] = useState(false);
-  const [sortDialogMounted, setSortDialogMounted] = useState(false);
-  const openFilterDialog = useCallback(() => {
-    if (filterDialogRef.current) filterDialogRef.current.open();
-    else setFilterDialogMounted(true);
-  }, []);
-  const openSortDialog = useCallback(() => {
-    if (sortDialogRef.current) sortDialogRef.current.open();
-    else setSortDialogMounted(true);
-  }, []);
+  const filterDrawerRef = useRef<DialogHandle<void>>(null);
+  const sortDrawerRef = useRef<DialogHandle<void>>(null);
+  const { open } = useDialogController(
+    useMemo(
+      () => ({ filterDrawer: { ref: filterDrawerRef }, sortDrawer: { ref: sortDrawerRef } }),
+      [],
+    ),
+  );
 
   return (
     <>
@@ -102,39 +47,44 @@ export function PetListMobileTools({
           variant="tonal"
           color="secondary"
           block
-          onClick={openFilterDialog}
+          type="button"
+          onClick={() => open('filterDrawer')}
         >
           <SlidersHorizontal data-icon="inline-start" aria-hidden="true" />
           فیلترها
         </Button>
-        <Button disabled={disabled} variant="outlined" block onClick={openSortDialog}>
+        <Button
+          disabled={disabled}
+          variant="outlined"
+          block
+          type="button"
+          onClick={() => open('sortDrawer')}
+        >
           <ArrowDownUp data-icon="inline-start" aria-hidden="true" />
           مرتب‌سازی
         </Button>
       </div>
-      {filterDialogMounted ? (
-        <LazyPetListFilterDialog
-          ref={filterDialogRef}
-          basePath={basePath}
-          filters={filters}
-          openOnMount
-          onClosed={() => setFilterDialogMounted(false)}
-          query={query}
-          rangeQueryKeys={rangeQueryKeys}
-          resetPageOnChange={resetPageOnChange}
-        />
-      ) : null}
-      {sortDialogMounted ? (
-        <LazyPetListSortDialog
-          ref={sortDialogRef}
-          basePath={basePath}
-          openOnMount
-          onClosed={() => setSortDialogMounted(false)}
-          query={query}
-          resetPageOnChange={resetPageOnChange}
-          sort={sort}
-        />
-      ) : null}
+      <MobileCatalogFilterNavigationDrawer
+        ref={filterDrawerRef}
+        basePath={basePath}
+        description="فیلترهای دلخواهتان را برای یافتن حیوان مناسب انتخاب کنید."
+        filters={filters}
+        formId="pet-list-mobile-filter-form"
+        label="فیلتر حیوانات"
+        query={query}
+        rangeQueryKeys={rangeQueryKeys}
+        resetPageOnChange={resetPageOnChange}
+        title="فیلتر حیوانات"
+      />
+      <MobileCatalogSortNavigationDrawer
+        ref={sortDrawerRef}
+        basePath={basePath}
+        description="ترتیب نمایش نتیجه‌ها را انتخاب کنید."
+        query={query}
+        resetPageOnChange={resetPageOnChange}
+        sort={sort}
+        title="مرتب‌سازی"
+      />
     </>
   );
 }

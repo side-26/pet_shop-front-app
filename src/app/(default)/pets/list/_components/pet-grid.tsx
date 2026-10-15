@@ -7,11 +7,10 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
-import type { CustomerPetDetailDTO, CustomerPetListItemDTO } from '@/entities/pets/pets.dto';
-import type { LandingPetListItemDTO } from '@/entities/landing/landing.dto';
 import { cn } from '@/lib/utils';
 
-import { PetCard, type PetCardViewModel } from './pet-card';
+import { PetCard } from './pet-card';
+import type { PetCardViewModel } from './pet-card.types';
 
 type PetGridProps = Readonly<{
   isSkeleton?: boolean;
@@ -53,46 +52,3 @@ export function PetGrid({ isSkeleton = false, pets }: PetGridProps) {
     </div>
   );
 }
-
-function relationTitle(
-  relation:
-    | CustomerPetDetailDTO['petType']
-    | CustomerPetListItemDTO['petType']
-    | LandingPetListItemDTO['petType'],
-) {
-  if (!relation) return '—';
-  return typeof relation === 'string' ? relation : relation.title;
-}
-
-export function toPetCardViewModel(
-  pet: CustomerPetDetailDTO | CustomerPetListItemDTO | LandingPetListItemDTO,
-): PetCardViewModel {
-  return {
-    available: pet.inEnable && pet.quantity > 0,
-    breed: relationTitle(pet.breed),
-    discountPercentage: pet.discountPercentage,
-    id: pet.id,
-    image: pet.mainImage,
-    imageThumbnail: pet.mainImageThumbnail,
-    petType: relationTitle(pet.petType),
-    price: pet.price,
-    slug: pet.slug,
-    title: pet.title,
-  };
-}
-
-export const petGridSkeletonData: readonly PetCardViewModel[] = Array.from(
-  { length: 8 },
-  (_, index) => ({
-    available: true,
-    breed: 'نژاد نمونه',
-    discountPercentage: 0,
-    id: `pet-skeleton-${index}`,
-    image: '',
-    imageThumbnail: '',
-    petType: 'نوع حیوان',
-    price: 100_000,
-    slug: 'pet-skeleton',
-    title: 'عنوان نمونه حیوان',
-  }),
-);

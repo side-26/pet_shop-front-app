@@ -72,8 +72,8 @@ async function fetchWishlist() {
   return result.data;
 }
 
-export function useWishlist() {
-  return useQuery({ queryKey: wishlistQueryKey, queryFn: fetchWishlist });
+export function useWishlist({ enabled = true }: Readonly<{ enabled?: boolean }> = {}) {
+  return useQuery({ queryKey: wishlistQueryKey, queryFn: fetchWishlist, enabled });
 }
 
 export function useWishlistToggle() {

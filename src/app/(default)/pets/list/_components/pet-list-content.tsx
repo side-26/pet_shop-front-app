@@ -10,6 +10,7 @@ import { PetListBreadcrumb } from './pet-list-breadcrumb';
 import { PetListContainer } from './pet-list-container';
 import { PetListErrorBoundary } from './pet-list-error-boundary';
 import { PetListRenderer } from './pet-list-renderer';
+import { petListSkeletonData } from './pet-list-skeleton-data';
 
 type PetListContentProps = Readonly<{ searchParams: Promise<PaginationSearchParams> }>;
 
@@ -20,7 +21,7 @@ export function PetListContent({ searchParams }: PetListContentProps) {
       <header className="tw:flex tw:flex-col tw:gap-2">
         <h1 className="tw:text-heading-2 tw:lg:text-heading-1">لیست حیوانات</h1>
       </header>
-      <Suspense fallback={<PetListRenderer query={{}} isSkeleton />}>
+      <Suspense fallback={<PetListRenderer data={petListSkeletonData} query={{}} isSkeleton />}>
         <PetListErrorBoundary>
           <PetListQueryContent searchParams={searchParams} />
         </PetListErrorBoundary>
@@ -39,7 +40,10 @@ async function PetListQueryContent({ searchParams }: PetListContentProps) {
   const suspenseKey = new URLSearchParams(query).toString();
 
   return (
-    <Suspense key={suspenseKey} fallback={<PetListRenderer query={query} isSkeleton />}>
+    <Suspense
+      key={suspenseKey}
+      fallback={<PetListRenderer data={petListSkeletonData} query={query} isSkeleton />}
+    >
       <PetListContainer petsPromise={petsPromise} query={query} />
     </Suspense>
   );

@@ -138,6 +138,12 @@ describe('wishlist client queries', () => {
       }),
     );
   });
+
+  it('does not fetch wishlist entries when its consumer is disabled', () => {
+    renderHook(() => useWishlist({ enabled: false }), { wrapper: queryClientWrapper });
+
+    expect(getWishlistActionMock).not.toHaveBeenCalled();
+  });
 });
 
 describe('create user client orchestration', () => {

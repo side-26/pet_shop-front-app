@@ -1,21 +1,19 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
 import type { LandingPetListPageDTO } from '@/entities/landing/landing.dto';
 
-import { PetInfiniteList } from './_components/pet-infinite-list';
 import { PetListRenderer } from './_components/pet-list-renderer';
+import { petListSkeletonData } from './_components/pet-list-skeleton-data';
 import { metadata } from './page';
 
-const { getLandingPetListAction } = vi.hoisted(() => ({
-  getLandingPetListAction: vi.fn(),
-}));
+const { toggleWishlistItemMock } = vi.hoisted(() => ({ toggleWishlistItemMock: vi.fn() }));
 
 vi.mock('nextjs-toploader/app', () => ({
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
 }));
-vi.mock('@/entities/landing/landing.actions', () => ({ getLandingPetListAction }));
 vi.mock('react-infinite-scroll-component', () => ({
   default: ({
     children,
@@ -36,6 +34,11 @@ vi.mock('react-infinite-scroll-component', () => ({
       {!hasMore ? endMessage : null}
     </div>
   ),
+}));
+vi.mock('@/entities/users/users.client', () => ({
+  useWishlist: () => ({ data: [] }),
+  useWishlistToggle: () => ({ isPending: false, toggleWishlistItem: toggleWishlistItemMock }),
+  wishlistItemId: (entry: { item: string }) => entry.item,
 }));
 
 const data: LandingPetListPageDTO = {
@@ -90,13 +93,34 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
-  getLandingPetListAction.mockReset();
   vi.unstubAllGlobals();
+  toggleWishlistItemMock.mockReset();
 });
 
+function renderPetListRenderer(
+  props: Readonly<{
+    data: LandingPetListPageDTO;
+    isSkeleton?: boolean;
+    query: Readonly<Record<string, string>>;
+  }>,
+) {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <PetListRenderer {...props} />
+    </QueryClientProvider>,
+  );
+}
+
 describe(routePaths.petsList, () => {
+  it('renders the shared catalogue skeleton from its view-model data', () => {
+    renderPetListRenderer({ data: petListSkeletonData, isSkeleton: true, query: {} });
+
+    expect(screen.getAllByRole('heading', { name: 'عنوان نمونه حیوان' })).toHaveLength(8);
+  });
+
   it('renders live pet data inside the shared scroll-pagination composition', () => {
-    render(<PetListRenderer data={data} query={{}} />);
+    renderPetListRenderer({ data, query: {} });
 
     expect(screen.getByRole('complementary', { name: 'فیلتر حیوانات' })).toBeTruthy();
     expect(screen.getByTestId('pets-grid').className).toContain('tw:md:grid-cols-3');
@@ -114,47 +138,31 @@ describe(routePaths.petsList, () => {
     ).toBeTruthy();
   });
 
-  it('exposes mobile and tablet filters and sorting as dialog actions', () => {
-    render(<PetListRenderer data={data} query={{}} />);
+  it('toggles each pet card through the shared optimistic wishlist mutation', () => {
+    renderPetListRenderer({ data, query: {} });
+
+    fireEvent.click(screen.getByRole('button', { name: 'افزودن مکس به علاقه‌مندی‌ها' }));
+
+    expect(toggleWishlistItemMock).toHaveBeenCalledWith({ itemId: 'pet-1', itemType: 'pet' });
+  });
+
+  it('exposes mobile and tablet filters and sorting drawer actions', () => {
+    renderPetListRenderer({ data, query: {} });
     expect(screen.getByRole('button', { name: 'فیلترها' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'مرتب‌سازی' })).toBeTruthy();
   });
 
-  it('uses the landing API dynamic filter and sort metadata in its mobile dialogs', async () => {
-    render(<PetListRenderer data={data} query={{}} />);
+  it('uses the landing API dynamic filter and sort metadata in its mobile drawers', async () => {
+    renderPetListRenderer({ data, query: {} });
 
     fireEvent.click(screen.getByRole('button', { name: 'فیلترها' }));
-    const filterDialog = await screen.findByRole('dialog', { name: 'فیلتر حیوانات' });
-    expect(await screen.findByRole('button', { name: 'نوع حیوان' })).toBeTruthy();
+    const filterDrawer = await screen.findByRole('dialog', { name: 'فیلتر حیوانات' });
+    expect(within(filterDrawer).getByRole('button', { name: 'نوع حیوان' })).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: 'انصراف' }));
     fireEvent.click(screen.getByRole('button', { name: 'مرتب‌سازی' }));
-    const sortDialog = await screen.findByRole('dialog', { name: 'مرتب‌سازی' });
-    expect(within(sortDialog).getByLabelText('در حال بارگذاری مرتب‌سازی')).toBeTruthy();
-    expect(await screen.findByRole('button', { name: 'جدیدترین' })).toBeTruthy();
-  });
-
-  it('loads the next pet page through the Server Action without adding page or limit to its query', async () => {
-    getLandingPetListAction.mockResolvedValue({
-      isSuccess: true,
-      message: null,
-      data: {
-        ...data,
-        result: [{ ...data.result[0], id: 'pet-2', title: 'لونا', slug: 'luna' }],
-        pagination: { ...data.pagination, currentPage: 2, hasNextPage: false, nextPage: null },
-      },
-    });
-
-    render(
-      <PetInfiniteList
-        data={{ ...data, pagination: { ...data.pagination, hasNextPage: true } }}
-        query={{ petType: 'dog' }}
-      />,
-    );
-    fireEvent.click(screen.getByRole('button', { name: 'بارگذاری بیشتر' }));
-
-    await waitFor(() => expect(screen.getByRole('heading', { name: 'لونا' })).toBeTruthy());
-    expect(getLandingPetListAction).toHaveBeenCalledWith({ page: 2, petType: 'dog' });
+    const sortDrawer = await screen.findByRole('dialog', { name: 'مرتب‌سازی' });
+    expect(within(sortDrawer).getByRole('button', { name: 'جدیدترین' })).toBeTruthy();
   });
 
   it('defines route metadata while keeping the page server-rendered', () => {

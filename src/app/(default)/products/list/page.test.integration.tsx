@@ -141,21 +141,19 @@ describe(routePaths.productsList, () => {
     expect(push).toHaveBeenCalledWith('/products/list?isEnable=false', { scroll: false });
   });
 
-  it('lazy-loads the mobile filter and sort dialog bodies after opening each dialog', async () => {
+  it('lazy-loads the mobile filter and sort navigation drawers after opening each control', async () => {
     renderProductListRenderer({ data: filteredData, query: {} });
 
     fireEvent.click(screen.getByRole('button', { name: 'فیلترها' }));
 
-    const filterDialog = await screen.findByRole('dialog', { name: 'فیلتر محصولات' });
-    expect(within(filterDialog).getByRole('group', { busy: true })).toBeTruthy();
-    expect(await screen.findByRole('button', { name: 'قیمت' })).toBeTruthy();
+    const filterDrawer = await screen.findByRole('dialog', { name: 'فیلتر محصولات' });
+    expect(within(filterDrawer).getByRole('button', { name: 'قیمت' })).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: 'انصراف' }));
     fireEvent.click(screen.getByRole('button', { name: 'مرتب‌سازی' }));
 
-    const sortDialog = await screen.findByRole('dialog', { name: 'مرتب‌سازی' });
-    expect(within(sortDialog).getByLabelText('در حال بارگذاری مرتب‌سازی')).toBeTruthy();
-    expect(await screen.findByRole('button', { name: 'پرفروش‌ترین' })).toBeTruthy();
+    const sortDrawer = await screen.findByRole('dialog', { name: 'مرتب‌سازی' });
+    expect(within(sortDrawer).getByRole('button', { name: 'پرفروش‌ترین' })).toBeTruthy();
   });
 
   it('defines route metadata while keeping the page server-rendered', () => {

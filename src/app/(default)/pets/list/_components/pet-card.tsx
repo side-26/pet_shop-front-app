@@ -1,4 +1,3 @@
-import { Heart } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -9,18 +8,10 @@ import { Price } from '@/components/ui/price';
 import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
 
-export type PetCardViewModel = {
-  available: boolean;
-  breed: string;
-  discountPercentage: number;
-  id: string;
-  image: string;
-  imageThumbnail: string;
-  petType: string;
-  price: number;
-  slug: string;
-  title: string;
-};
+import type { PetCardViewModel } from './pet-card.types';
+import { PetWishlistToggle } from './pet-wishlist-toggle';
+
+export type { PetCardViewModel } from './pet-card.types';
 
 type PetCardProps = Readonly<{ eager?: boolean; isSkeleton?: boolean; pet: PetCardViewModel }>;
 
@@ -54,17 +45,7 @@ export function PetCard({ eager = false, isSkeleton = false, pet }: PetCardProps
             )}
           />
         )}
-        <Button
-          iconOnly
-          size="sm"
-          variant="transparent"
-          color="error"
-          disabled={isSkeleton}
-          aria-label={`افزودن ${pet.title} به علاقه‌مندی‌ها`}
-          className="tw:absolute tw:end-2 tw:top-2"
-        >
-          <Heart aria-hidden="true" />
-        </Button>
+        <PetWishlistToggle disabled={isSkeleton} petId={pet.id} petTitle={pet.title} />
         {!pet.available ? (
           <Badge color="warning" variant="tonal" className="tw:absolute tw:start-2 tw:bottom-2">
             واگذار شده
