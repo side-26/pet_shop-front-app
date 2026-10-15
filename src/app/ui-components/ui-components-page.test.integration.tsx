@@ -29,6 +29,7 @@ afterEach(() => {
 });
 
 beforeEach(() => {
+  vi.stubEnv('NODE_ENV', 'development');
   vi.stubGlobal(
     'ResizeObserver',
     class ResizeObserver {
@@ -53,7 +54,7 @@ beforeEach(() => {
 });
 
 describe(routePaths.uiComponents, () => {
-  it('lists every public UI component family and its supported conditions', () => {
+  it('lists every public UI component family and its supported conditions', async () => {
     const { container } = render(
       <DirectionProvider direction="rtl">
         <UiComponentsPage />
@@ -65,7 +66,9 @@ describe(routePaths.uiComponents, () => {
           button.getAttribute('aria-label') === name || button.textContent?.includes(name),
       );
 
-    expect(container.querySelector('h1')?.textContent).toBe('کتابخانه اجزای رابط کاربری');
+    expect((await screen.findByRole('heading', { level: 1 })).textContent).toBe(
+      'کتابخانه اجزای رابط کاربری',
+    );
     const sectionTitles = new Set(
       Array.from(container.querySelectorAll('h3')).map((heading) => heading.textContent),
     );

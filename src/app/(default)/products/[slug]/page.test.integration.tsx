@@ -23,6 +23,8 @@ vi.mock('@/components/ui/carousel', () => ({
   Carousel: ({ children, ...props }: { children: ReactNode }) => <div {...props}>{children}</div>,
   CarouselContent: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   CarouselItem: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  CarouselPrevious: () => <button type="button">اسلاید قبلی</button>,
+  CarouselNext: () => <button type="button">اسلاید بعدی</button>,
 }));
 vi.mock('@/components/ui/rich-text', () => ({
   RichText: () => <div aria-label="توضیحات محصول">متن معرفی محصول</div>,
