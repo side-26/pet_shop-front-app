@@ -6,6 +6,13 @@ import { routePaths } from '@/configs/route.path';
 
 import UiComponentsPage, { metadata } from './page';
 
+const { notFound } = vi.hoisted(() => ({ notFound: vi.fn() }));
+
+vi.mock('next/navigation', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('next/navigation')>()),
+  notFound,
+}));
+
 vi.mock('@/components/ui/carousel', () => ({
   Carousel: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   CarouselContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
@@ -15,7 +22,11 @@ vi.mock('@/components/ui/carousel', () => ({
   useCarousel: () => ({ canScrollNext: false, canScrollPrev: false }),
 }));
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.unstubAllEnvs();
+  notFound.mockReset();
+});
 
 beforeEach(() => {
   vi.stubGlobal(
@@ -145,5 +156,13 @@ describe(routePaths.uiComponents, () => {
 
   it('defines route metadata without making the page a Client Component', () => {
     expect(metadata.title).toBe('کتابخانه اجزای رابط کاربری | پت‌شاپ');
+  });
+
+  it('is not available in production', () => {
+    vi.stubEnv('NODE_ENV', 'production');
+
+    UiComponentsPage();
+
+    expect(notFound).toHaveBeenCalledOnce();
   });
 });
