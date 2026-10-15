@@ -5,26 +5,20 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 import { ProductAddToCartControl } from './product-add-to-cart-control';
-import type { ProductDetailViewModel } from './product-detail-data';
+import type { ProductDetailWeightViewModel, ProductPurchaseOption } from './product-detail-data';
 import { ProductPriceSection } from './product-price-section';
 import { ProductWeightSelector } from './product-weight-selector';
 
 type ProductPurchaseControlsProps = Readonly<{
   productId: string;
-  price: number;
-  previousPrice?: number;
-  quantity: number;
-  isSkeleton?: boolean;
+  defaultPurchase: ProductPurchaseOption;
   mode: 'desktop' | 'mobile';
-  weights?: ProductDetailViewModel['weights'];
+  weights?: readonly ProductDetailWeightViewModel[];
 }>;
 
 export function ProductPurchaseControls({
   productId,
-  price,
-  previousPrice,
-  quantity,
-  isSkeleton,
+  defaultPurchase,
   mode,
   weights = [],
 }: ProductPurchaseControlsProps) {
@@ -34,13 +28,7 @@ export function ProductPurchaseControls({
     ? selectedWeightId
     : (weights[0]?.id ?? '');
   const selectedWeight = weights.find((weight) => weight.id === resolvedWeightId) ?? weights[0];
-  const selectedPrice = selectedWeight?.price ?? price;
-  const selectedDiscountPercentage = selectedWeight?.discountPercentage ?? 0;
-  const selectedPayablePrice = Math.floor(selectedPrice * (1 - selectedDiscountPercentage / 100));
-  const selectedQuantity = selectedWeight?.quantity ?? quantity;
-  const currentPrice = selectedWeight ? selectedPayablePrice : price;
-  const currentPreviousPrice = selectedWeight ? selectedPrice : previousPrice;
-  const currentQuantity = selectedWeight ? selectedQuantity : quantity;
+  const selectedPurchase = selectedWeight ?? defaultPurchase;
   const handleWeightChange = (weightId: string) => {
     setSelectedWeightId(weightId);
   };
@@ -62,18 +50,17 @@ export function ProductPurchaseControls({
               weights={weights}
               value={resolvedWeightId}
               onValueChange={handleWeightChange}
-              disabled={isSkeleton}
             />
           ) : null}
           <div className="tw:mb-4 tw:mt-5 tw:flex tw:items-end tw:justify-between tw:gap-3">
             <ProductPriceSection
               mode="desktop"
-              finalPrice={currentPrice}
-              realPrice={currentPreviousPrice}
+              finalPrice={selectedPurchase.payablePrice}
+              realPrice={selectedPurchase.previousPrice}
             />
-            {selectedQuantity > 0 && selectedQuantity < 8 ? (
+            {selectedPurchase.quantity > 0 && selectedPurchase.quantity < 8 ? (
               <span className="tw:text-label-s tw:text-muted-foreground">
-                موجودی: {selectedQuantity.toLocaleString('fa-IR')}
+                موجودی: {selectedPurchase.quantity.toLocaleString('fa-IR')}
               </span>
             ) : null}
           </div>
@@ -87,13 +74,12 @@ export function ProductPurchaseControls({
             weights={weights}
             value={resolvedWeightId}
             onValueChange={handleWeightChange}
-            disabled={isSkeleton}
             className="tw:min-w-0 tw:flex-1 tw:gap-2"
           />
           <ProductPriceSection
             mode="mobile"
-            finalPrice={currentPrice}
-            realPrice={currentPreviousPrice}
+            finalPrice={selectedPurchase.payablePrice}
+            realPrice={selectedPurchase.previousPrice}
           />
         </div>
       ) : null}
@@ -101,12 +87,11 @@ export function ProductPurchaseControls({
       <ProductAddToCartControl
         productId={productId}
         weight={selectedWeight?.cartWeight}
-        maxQuantity={currentQuantity}
-        disabled={isSkeleton}
+        maxQuantity={selectedPurchase.quantity}
       />
-      {currentQuantity > 0 && currentQuantity < 8 ? (
+      {selectedPurchase.quantity > 0 && selectedPurchase.quantity < 8 ? (
         <p className="tw:mt-3 tw:text-label-s tw:text-error" role="status">
-          تنها {currentQuantity.toLocaleString('fa-IR')} عدد از این محصول باقی مانده است.
+          تنها {selectedPurchase.quantity.toLocaleString('fa-IR')} عدد از این محصول باقی مانده است.
         </p>
       ) : null}
     </div>

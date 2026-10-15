@@ -4,7 +4,7 @@ import { EmptyStateBoundary } from '@/components/ui/empty-state-boundary';
 import type { getLandingProductBySlugAction } from '@/entities/landing/landing.actions';
 
 import { ProductDetailContent } from './product-detail-content';
-import { createProductDetailViewModel } from './product-detail-data';
+import { toProductDetailViewModel } from './product-detail-data';
 import { ProductDetailEmptyFetch } from './product-detail-empty-fetch';
 
 type ProductDetailContainerProps = Readonly<{
@@ -13,14 +13,15 @@ type ProductDetailContainerProps = Readonly<{
 
 export function ProductDetailContainer({ productPromise }: ProductDetailContainerProps) {
   const product = use(productPromise);
+  const productViewModel = product?.id ? toProductDetailViewModel(product) : null;
 
   return (
     <EmptyStateBoundary
-      data={product}
+      data={productViewModel}
       fallback={<ProductDetailEmptyFetch />}
-      isEmpty={() => !product?.id}
+      isEmpty={() => !productViewModel?.id}
     >
-      <ProductDetailContent product={createProductDetailViewModel(product)} />
+      {productViewModel ? <ProductDetailContent product={productViewModel} /> : null}
     </EmptyStateBoundary>
   );
 }

@@ -143,8 +143,7 @@ describe('/products/[slug]', () => {
       <ProductPurchaseControls
         productId={product.id}
         mode="desktop"
-        price={product.price}
-        quantity={8}
+        defaultPurchase={{ payablePrice: product.price, previousPrice: product.price, quantity: 8 }}
       />,
     );
 
@@ -154,8 +153,7 @@ describe('/products/[slug]', () => {
       <ProductPurchaseControls
         productId={product.id}
         mode="desktop"
-        price={product.price}
-        quantity={7}
+        defaultPurchase={{ payablePrice: product.price, previousPrice: product.price, quantity: 7 }}
       />,
     );
 
@@ -167,8 +165,7 @@ describe('/products/[slug]', () => {
       <ProductPurchaseControls
         productId={product.id}
         mode="mobile"
-        price={500_000}
-        quantity={3}
+        defaultPurchase={{ payablePrice: 450_000, previousPrice: 500_000, quantity: 3 }}
         weights={[
           {
             id: 'weight-1',
@@ -181,8 +178,8 @@ describe('/products/[slug]', () => {
               discountPercentage: 10,
               quantity: 3,
             },
-            price: 500_000,
-            discountPercentage: 10,
+            payablePrice: 450_000,
+            previousPrice: 500_000,
             quantity: 3,
           },
           {
@@ -196,8 +193,8 @@ describe('/products/[slug]', () => {
               discountPercentage: 20,
               quantity: 1,
             },
-            price: 900_000,
-            discountPercentage: 20,
+            payablePrice: 720_000,
+            previousPrice: 900_000,
             quantity: 1,
           },
         ]}
@@ -249,8 +246,7 @@ describe('/products/[slug]', () => {
       <ProductPurchaseControls
         productId={product.id}
         mode="mobile"
-        price={500_000}
-        quantity={3}
+        defaultPurchase={{ payablePrice: 450_000, previousPrice: 500_000, quantity: 3 }}
         weights={[
           {
             id: 'weight-1',
@@ -263,8 +259,8 @@ describe('/products/[slug]', () => {
               discountPercentage: 10,
               quantity: 3,
             },
-            price: 500_000,
-            discountPercentage: 10,
+            payablePrice: 450_000,
+            previousPrice: 500_000,
             quantity: 3,
           },
         ]}

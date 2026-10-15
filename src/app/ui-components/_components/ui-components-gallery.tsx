@@ -56,6 +56,7 @@ import { NeshanMapShowcase } from './neshan-map-showcase';
 import { NeshanMapPointerIconShowcase } from './neshan-map-pointer-icon-showcase';
 import { FitTextShowcase } from './fit-text-showcase';
 import { BadgeGroupFieldShowcase } from './badge-group-field-showcase';
+import { ImageGalleryShowcase } from './image-gallery-showcase';
 
 const navigation = [
   ['#avatars', 'Avatar'],
@@ -100,6 +101,7 @@ const navigation = [
   ['#forms', 'Form'],
   ['#file-fields', 'FileField'],
   ['#multiple-image-uploader-fields', 'Multiple Image Uploader Field'],
+  ['#image-galleries', 'Image Gallery'],
   ['#rich-text', 'Rich Text'],
   ['#rich-text-previewer', 'Rich Text Previewer'],
   ['#input-otp-fields', 'Input OTP Field'],
@@ -195,6 +197,7 @@ export function UiComponentsGallery() {
         <FormShowcase />
         <FileFieldShowcase />
         <MultipleImageUploaderFieldShowcase />
+        <ImageGalleryShowcase />
         <RichTextShowcase />
         <RichTextPreviewerShowcase />
         <InputOtpShowcase />

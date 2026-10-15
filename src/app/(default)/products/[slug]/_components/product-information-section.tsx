@@ -8,12 +8,9 @@ import { routePaths } from '@/configs/route.path';
 import type { ProductDetailViewModel } from './product-detail-data';
 import { ProductRatingForm } from './product-rating-form';
 
-type ProductInformationSectionProps = Readonly<{
-  isSkeleton: boolean;
-  product: ProductDetailViewModel;
-}>;
+type ProductInformationSectionProps = Readonly<{ product: ProductDetailViewModel }>;
 
-export function ProductInformationSection({ isSkeleton, product }: ProductInformationSectionProps) {
+export function ProductInformationSection({ product }: ProductInformationSectionProps) {
   return (
     <>
       <div className="tw:flex tw:flex-wrap tw:gap-3 tw:text-label-m tw:lg:hidden">
@@ -109,15 +106,16 @@ export function ProductInformationSection({ isSkeleton, product }: ProductInform
       <Card size="xs" variant="filled" className="tw:rounded-2xl">
         <CardContent className="tw:flex tw:flex-col tw:gap-3">
           <h2 className="tw:text-title-s">امتیاز شما</h2>
-          {isSkeleton ? (
-            <p className="tw:text-label-m">وضعیت امتیازدهی کاربر در حال دریافت است.</p>
-          ) : (
+          <p data-skeleton-only className="tw:hidden tw:text-label-m">
+            وضعیت امتیازدهی کاربر در حال دریافت است.
+          </p>
+          <div data-loaded-only>
             <ProductRatingForm
               productId={product.id}
               canVote={product.canVote}
               hasRated={product.hasRated}
             />
-          )}
+          </div>
         </CardContent>
       </Card>
     </>

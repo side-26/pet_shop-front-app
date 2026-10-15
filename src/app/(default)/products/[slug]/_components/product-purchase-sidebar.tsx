@@ -3,12 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ProductDetailViewModel } from './product-detail-data';
 import { ProductPurchaseControls } from './product-purchase-controls';
 
-type ProductPurchaseSidebarProps = Readonly<{
-  isSkeleton?: boolean;
-  product: ProductDetailViewModel;
-}>;
+type ProductPurchaseSidebarProps = Readonly<{ product: ProductDetailViewModel }>;
 
-export function ProductPurchaseSidebar({ isSkeleton, product }: ProductPurchaseSidebarProps) {
+export function ProductPurchaseSidebar({ product }: ProductPurchaseSidebarProps) {
   return (
     <aside
       aria-label="خرید محصول"
@@ -22,11 +19,8 @@ export function ProductPurchaseSidebar({ isSkeleton, product }: ProductPurchaseS
           <ProductPurchaseControls
             productId={product.id}
             mode="desktop"
-            price={product.payablePrice}
-            previousPrice={product.price}
-            quantity={product.quantity}
+            defaultPurchase={product.purchase}
             weights={product.weights}
-            isSkeleton={isSkeleton}
           />
         </CardContent>
       </Card>

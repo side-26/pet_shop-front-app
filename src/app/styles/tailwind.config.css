@@ -88,6 +88,12 @@
     content: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><path fill='%23e5e7eb' d='M0 0h1v1H0z'/></svg>";
     @apply tw:absolute tw:inset-0 tw:size-full tw:bg-gray-200 tw:z-2;
   }
+  [data-skeleton] [data-skeleton-only] {
+    @apply tw:block!;
+  }
+  [data-skeleton] [data-loaded-only] {
+    @apply tw:hidden!;
+  }
   html {
     @apply tw:font-default;
   }

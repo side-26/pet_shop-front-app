@@ -7,7 +7,7 @@ import { ProductDetailTabs } from './product-detail-tabs';
 import { ProductGallery } from './product-gallery';
 import { ProductHeaderActions } from './product-header-actions';
 import { ProductInformationSection } from './product-information-section';
-import { ProductPurchaseControls } from './product-purchase-controls';
+import { ProductMobilePurchaseSection } from './product-mobile-purchase-section';
 import { ProductPurchaseSidebar } from './product-purchase-sidebar';
 import { ProductSummary } from './product-summary';
 
@@ -21,17 +21,14 @@ export function ProductDetailContent({ isSkeleton = false, product }: ProductDet
     <article
       data-product-detail-shell
       data-product-detail-content={isSkeleton ? undefined : true}
+      data-skeleton={isSkeleton ? '' : undefined}
       aria-busy={isSkeleton}
+      inert={isSkeleton || undefined}
       className={cn('tw:default-layout-container tw:pb-8 tw:lg:pb-12', isSkeleton && 'skeleton')}
     >
       <ProductDetailBreadcrumb title={product.title} />
 
-      <ProductGallery
-        className="tw:lg:hidden"
-        images={product.images}
-        discountPercentage={product.discountPercentage}
-        isSkeleton={isSkeleton}
-      />
+      <ProductGallery className="tw:lg:hidden" images={product.images} />
 
       <div className="tw:lg:grid tw:lg:grid-cols-[minmax(0,1fr)_minmax(18rem,22rem)] tw:lg:items-start tw:lg:gap-8">
         <div>
@@ -43,8 +40,6 @@ export function ProductDetailContent({ isSkeleton = false, product }: ProductDet
             <ProductGallery
               className="tw:hidden tw:lg:col-span-2 tw:lg:block"
               images={product.images}
-              discountPercentage={product.discountPercentage}
-              isSkeleton={isSkeleton}
             />
 
             <CardContent className="tw:flex tw:flex-col tw:gap-5 tw:px-4 tw:py-5 tw:sm:px-6 tw:lg:col-span-3 tw:lg:px-0 tw:lg:py-1">
@@ -56,30 +51,21 @@ export function ProductDetailContent({ isSkeleton = false, product }: ProductDet
                   title={product.title}
                   itemId={product.id}
                   itemType="product"
-                  disabled={isSkeleton}
                 />
               </div>
 
-              <ProductInformationSection product={product} isSkeleton={isSkeleton} />
+              <ProductInformationSection product={product} />
             </CardContent>
           </Card>
 
           <ProductSummary summary={product.summary} />
-          <ProductDetailTabs product={product} isSkeleton={isSkeleton} />
+          <ProductDetailTabs product={product} />
         </div>
 
-        <ProductPurchaseSidebar product={product} isSkeleton={isSkeleton} />
+        <ProductPurchaseSidebar product={product} />
       </div>
 
-      <ProductPurchaseControls
-        productId={product.id}
-        mode="mobile"
-        price={product.payablePrice}
-        previousPrice={product.price}
-        quantity={product.quantity}
-        weights={product.weights}
-        isSkeleton={isSkeleton}
-      />
+      <ProductMobilePurchaseSection product={product} />
     </article>
   );
 }

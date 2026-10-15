@@ -70,7 +70,6 @@ export function PetDetailContent({ pet, isSkeleton = false }: Props) {
               <ProductGallery
                 className="tw:hidden tw:lg:block"
                 images={pet.images}
-                discountPercentage={pet.discountPercentage}
                 itemLabel="حیوان"
                 isSkeleton={isSkeleton}
               />

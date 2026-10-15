@@ -1,6 +1,9 @@
+import { Expose, instanceToPlain, Transform } from 'class-transformer';
+
 import type { LandingProductDetailDTO } from '@/entities/landing/landing.dto';
 import type { ProductWeightDTO } from '@/entities/products/products.dto';
 import { richTextToPlainText, type RichTextFormValue } from '@/lib/rich-text';
+import { transform } from '@/lib/transform';
 
 export type ProductGalleryImage = Readonly<{
   src?: string;
@@ -9,39 +12,18 @@ export type ProductGalleryImage = Readonly<{
   placeholder?: string;
 }>;
 
-export type ProductDetailViewModel = Readonly<{
-  id: string;
-  slug: string;
-  title: string;
-  summary: string;
-  description: RichTextFormValue | null;
-  descriptionText: string;
-  animal: string;
-  animalId: string | null;
-  category: string;
-  categoryId: string;
-  subCategory: string | null;
-  subCategoryId: string | null;
-  brand: string;
-  rating: number;
-  reviewCount: number;
-  price: number;
+export type ProductPurchaseOption = Readonly<{
   payablePrice: number;
-  discountPercentage: number;
+  previousPrice: number;
   quantity: number;
-  canVote: boolean;
-  hasRated: boolean;
-  images: readonly ProductGalleryImage[];
-  weights: readonly Readonly<{
+}>;
+
+export type ProductDetailWeightViewModel = ProductPurchaseOption &
+  Readonly<{
     id: string;
     label: string;
     cartWeight: ProductWeightDTO;
-    price: number;
-    discountPercentage: number;
-    quantity: number;
-  }>[];
-  specifications: readonly Readonly<{ label: string; value: string }>[];
-}>;
+  }>;
 
 function relationTitle(value: { title?: unknown; title_fa?: unknown } | null | undefined) {
   return typeof value?.title_fa === 'string' && value.title_fa.trim()
@@ -59,59 +41,165 @@ function displayValue(value: unknown): string {
   return '';
 }
 
-export function createProductDetailViewModel(
-  product: LandingProductDetailDTO,
-): ProductDetailViewModel {
-  const descriptionText = richTextToPlainText(product.description).trim();
-  const sources = [product.mainImage, ...product.images].filter(
-    (source, index, images) => source && images.indexOf(source) === index,
-  );
-
+function toProductPurchaseOption(
+  price: number,
+  discountPercentage: number,
+  quantity: number,
+): ProductPurchaseOption {
   return {
-    id: product.id,
-    slug: product.slug,
-    title: product.title,
-    summary: product.summary?.trim() ?? '',
-    description: descriptionText ? product.description : null,
-    descriptionText,
-    animal: product.category.petType?.displayName || product.category.petType?.title || '',
-    animalId: product.category.petType?.id ?? null,
-    category: relationTitle(product.category),
-    categoryId: product.category.id,
-    subCategory: product.subCategory ? relationTitle(product.subCategory) : null,
-    subCategoryId: product.subCategory?.id ?? null,
-    brand: relationTitle(product.brand),
-    rating: product.userRate,
-    reviewCount: product.userRateCount,
-    price: product.price,
-    payablePrice: Math.floor(product.price * (1 - product.discountPercentage / 100)),
-    discountPercentage: product.discountPercentage,
-    quantity: product.quantity,
-    canVote: product.canVote,
-    hasRated: product.hasRated,
-    images: sources.map((src, index) => ({
-      src,
-      alt: index === 0 ? product.title : `${product.title}، تصویر ${index + 1}`,
-      placeholder: index === 0 ? product.mainImageThumbnail : undefined,
-    })),
-    weights: product.weights.map((weight, index) => {
-      const id = weight._id ?? `${weight.metric}-${weight.value}-${index}`;
-      const price = weight.price ?? product.price;
-      const discountPercentage = weight.discountPercentage ?? product.discountPercentage;
-
-      return {
-        id,
-        label: `${weight.value.toLocaleString('fa-IR')} ${weight.metric}`,
-        cartWeight: { ...weight, _id: weight._id ?? id, price, discountPercentage },
-        price,
-        discountPercentage,
-        quantity: weight.quantity,
-      };
-    }),
-    specifications: (product.category.petType?.propertyDefinitions ?? [])
-      .map(({ label, value }) => ({ label: label.trim(), value: displayValue(value) }))
-      .filter(({ label, value }) => label && value),
+    payablePrice: Math.floor(price * (1 - discountPercentage / 100)),
+    previousPrice: price,
+    quantity,
   };
+}
+
+function toProductDetailWeights(product: LandingProductDetailDTO): ProductDetailWeightViewModel[] {
+  return product.weights.map((weight, index) => {
+    const id = weight._id ?? `${weight.metric}-${weight.value}-${index}`;
+    const price = weight.price ?? product.price;
+    const discountPercentage = weight.discountPercentage ?? product.discountPercentage;
+
+    return {
+      id,
+      label: `${weight.value.toLocaleString('fa-IR')} ${weight.metric}`,
+      cartWeight: { ...weight, _id: weight._id ?? id, price, discountPercentage },
+      ...toProductPurchaseOption(price, discountPercentage, weight.quantity),
+    };
+  });
+}
+
+export class ProductDetailViewModel {
+  @Expose()
+  declare id: string;
+
+  @Expose()
+  declare slug: string;
+
+  @Expose()
+  declare title: string;
+
+  @Expose()
+  @Transform(({ value }) => value?.trim() ?? '', { toClassOnly: true })
+  declare summary: string;
+
+  @Expose()
+  @Transform(
+    ({ obj }) => {
+      const descriptionText = richTextToPlainText(obj.description).trim();
+      return descriptionText ? obj.description : null;
+    },
+    { toClassOnly: true },
+  )
+  declare description: RichTextFormValue | null;
+
+  @Expose()
+  @Transform(({ obj }) => richTextToPlainText(obj.description).trim(), { toClassOnly: true })
+  declare descriptionText: string;
+
+  @Expose()
+  @Transform(({ obj }) => obj.category.petType?.displayName || obj.category.petType?.title || '', {
+    toClassOnly: true,
+  })
+  declare animal: string;
+
+  @Expose()
+  @Transform(({ obj }) => obj.category.petType?.id ?? null, { toClassOnly: true })
+  declare animalId: string | null;
+
+  @Expose()
+  @Transform(({ obj }) => relationTitle(obj.category), { toClassOnly: true })
+  declare category: string;
+
+  @Expose()
+  @Transform(({ obj }) => obj.category.id, { toClassOnly: true })
+  declare categoryId: string;
+
+  @Expose()
+  @Transform(({ obj }) => (obj.subCategory ? relationTitle(obj.subCategory) : null), {
+    toClassOnly: true,
+  })
+  declare subCategory: string | null;
+
+  @Expose()
+  @Transform(({ obj }) => obj.subCategory?.id ?? null, { toClassOnly: true })
+  declare subCategoryId: string | null;
+
+  @Expose()
+  @Transform(({ obj }) => relationTitle(obj.brand), { toClassOnly: true })
+  declare brand: string;
+
+  @Expose()
+  @Transform(({ obj }) => obj.userRate, { toClassOnly: true })
+  declare rating: number;
+
+  @Expose()
+  @Transform(({ obj }) => obj.userRateCount, { toClassOnly: true })
+  declare reviewCount: number;
+
+  @Expose()
+  declare price: number;
+
+  @Expose()
+  @Transform(({ obj }) => Math.floor(obj.price * (1 - obj.discountPercentage / 100)), {
+    toClassOnly: true,
+  })
+  declare payablePrice: number;
+
+  @Expose()
+  declare discountPercentage: number;
+
+  @Expose()
+  declare quantity: number;
+
+  @Expose()
+  @Transform(
+    ({ obj }) => toProductPurchaseOption(obj.price, obj.discountPercentage, obj.quantity),
+    {
+      toClassOnly: true,
+    },
+  )
+  declare purchase: ProductPurchaseOption;
+
+  @Expose()
+  declare canVote: boolean;
+
+  @Expose()
+  declare hasRated: boolean;
+
+  @Expose()
+  @Transform(
+    ({ obj }) => {
+      const sources = [obj.mainImage, ...obj.images].filter(
+        (source, index, images) => source && images.indexOf(source) === index,
+      );
+
+      return sources.map((src, index) => ({
+        src,
+        alt: index === 0 ? obj.title : `${obj.title}، تصویر ${index + 1}`,
+        placeholder: index === 0 ? obj.mainImageThumbnail : undefined,
+      }));
+    },
+    { toClassOnly: true },
+  )
+  declare images: readonly ProductGalleryImage[];
+
+  @Expose()
+  @Transform(({ obj }) => toProductDetailWeights(obj), { toClassOnly: true })
+  declare weights: readonly ProductDetailWeightViewModel[];
+
+  @Expose()
+  @Transform(
+    ({ obj }) =>
+      ((obj as LandingProductDetailDTO).category.petType?.propertyDefinitions ?? [])
+        .map(({ label, value }) => ({ label: label.trim(), value: displayValue(value) }))
+        .filter(({ label, value }) => label && value),
+    { toClassOnly: true },
+  )
+  declare specifications: readonly Readonly<{ label: string; value: string }>[];
+}
+
+export function toProductDetailViewModel(product: LandingProductDetailDTO): ProductDetailViewModel {
+  return instanceToPlain(transform(ProductDetailViewModel, product)) as ProductDetailViewModel;
 }
 
 export const productDetailSkeleton: ProductDetailViewModel = {
@@ -134,6 +222,7 @@ export const productDetailSkeleton: ProductDetailViewModel = {
   payablePrice: 900_000,
   discountPercentage: 10,
   quantity: 8,
+  purchase: { payablePrice: 900_000, previousPrice: 1_000_000, quantity: 8 },
   canVote: false,
   hasRated: false,
   images: [{ src: undefined, alt: '' }],
@@ -149,8 +238,8 @@ export const productDetailSkeleton: ProductDetailViewModel = {
         discountPercentage: 10,
         quantity: 1,
       },
-      price: 1_000_000,
-      discountPercentage: 10,
+      payablePrice: 900_000,
+      previousPrice: 1_000_000,
       quantity: 1,
     },
     {
@@ -164,8 +253,8 @@ export const productDetailSkeleton: ProductDetailViewModel = {
         discountPercentage: 10,
         quantity: 1,
       },
-      price: 1_000_000,
-      discountPercentage: 10,
+      payablePrice: 900_000,
+      previousPrice: 1_000_000,
       quantity: 1,
     },
   ],

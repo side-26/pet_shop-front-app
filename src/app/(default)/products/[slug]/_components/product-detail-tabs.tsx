@@ -6,11 +6,10 @@ import type { ProductDetailViewModel } from './product-detail-data';
 import { ProductOverview } from './product-overview';
 
 type ProductDetailTabsProps = Readonly<{
-  isSkeleton?: boolean;
   product: ProductDetailViewModel;
 }>;
 
-export function ProductDetailTabs({ isSkeleton, product }: ProductDetailTabsProps) {
+export function ProductDetailTabs({ product }: ProductDetailTabsProps) {
   const hasOverview = Boolean(product.descriptionText);
   const hasSpecifications = product.specifications.length > 0;
   if (!hasOverview && !hasSpecifications) return null;
@@ -37,7 +36,6 @@ export function ProductDetailTabs({ isSkeleton, product }: ProductDetailTabsProp
               <ExpandableDrawer
                 title="مشخصات"
                 collapsedHeight={224}
-                disabled={isSkeleton}
                 showMoreLabel="نمایش مشخصات"
                 sectionChildren={<ProductSpecifications product={product} />}
                 drawerChildren={<ProductSpecifications product={product} />}
@@ -49,7 +47,6 @@ export function ProductDetailTabs({ isSkeleton, product }: ProductDetailTabsProp
           </TabsContent>
         ) : null}
       </Tabs>
-      {isSkeleton ? <span className="tw:sr-only">در حال بارگذاری اطلاعات محصول</span> : null}
     </section>
   );
 }

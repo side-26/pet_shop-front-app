@@ -13,8 +13,8 @@ const weights = [
       discountPercentage: 15,
       quantity: 3,
     },
-    price: 2975000,
-    discountPercentage: 15,
+    payablePrice: 2528750,
+    previousPrice: 2975000,
     quantity: 3,
   },
 ] as const;
@@ -25,17 +25,13 @@ function PurchaseControlsFixture() {
       <ProductPurchaseControls
         productId="product-1"
         mode="desktop"
-        price={2975000}
-        previousPrice={3500000}
-        quantity={3}
+        defaultPurchase={{ payablePrice: 2975000, previousPrice: 3500000, quantity: 3 }}
         weights={weights}
       />
       <ProductPurchaseControls
         productId="product-1"
         mode="mobile"
-        price={2975000}
-        previousPrice={3500000}
-        quantity={3}
+        defaultPurchase={{ payablePrice: 2975000, previousPrice: 3500000, quantity: 3 }}
         weights={weights}
       />
     </>
