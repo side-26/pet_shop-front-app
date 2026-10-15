@@ -7,17 +7,14 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
-import type {
-  LandingProductListItemDTO,
-  LandingProductListWireDTO,
-} from '@/entities/landing/landing.dto';
+import type { LandingProductListItemDTO } from '@/entities/landing/landing.dto';
 import { cn } from '@/lib/utils';
 
-import { ProductCard, type ProductCardViewModel } from './product-card';
+import { ProductCard } from './product-card';
 
 type ProductGridProps = Readonly<{
   isSkeleton?: boolean;
-  products: readonly ProductCardViewModel[];
+  products: readonly LandingProductListItemDTO[];
 }>;
 
 export const productGridClassName =
@@ -55,29 +52,11 @@ export function ProductGrid({ isSkeleton = false, products }: ProductGridProps) 
   );
 }
 
-export function toProductCardViewModel(
-  product: LandingProductListItemDTO | LandingProductListWireDTO,
-): ProductCardViewModel {
-  return {
-    available:
-      'available' in product
-        ? product.available
-        : (product.minimumQuantity ?? Number.POSITIVE_INFINITY) > 0,
-    discountPrice: product.discountPrice,
-    discountPercentage: product.discountPercentage,
-    id: product.id,
-    image: product.mainImage,
-    imageThumbnail: product.mainImageThumbnail ?? '',
-    price: product.price,
-    slug: product.slug,
-    title: product.title,
-  };
-}
-
-export const productGridSkeletonData: readonly ProductCardViewModel[] = Array.from(
+export const productGridSkeletonData: readonly LandingProductListItemDTO[] = Array.from(
   { length: 8 },
   (_, index) => ({
     available: true,
+    discountPrice: 100_000,
     discountPercentage: 0,
     id: `product-skeleton-${index}`,
     image: '',

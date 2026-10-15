@@ -1,6 +1,7 @@
 'use server';
 
 import { refresh } from 'next/cache';
+import { unwrapResult } from '@/lib/utils';
 
 import {
   getAllLandingPetTypes,
@@ -58,7 +59,7 @@ export async function getRecentLandingPetsAction() {
 
 export async function getLandingProductListAction(input: unknown = {}) {
   const query = await landingProductListRequestSchema.validate(input, { stripUnknown: true });
-  return getLandingProductList(query);
+  return unwrapResult(getLandingProductList(query));
 }
 
 export async function getLandingPetListAction(input: unknown = {}) {

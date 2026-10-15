@@ -59,7 +59,7 @@ export type LandingPopularProductDTO = LandingProductDTO & {
 };
 
 /**
- * The public catalogue-card projection consumed by `/products/list`.
+ * The card-ready public catalogue projection consumed by `/products/list`.
  * Keep it deliberately narrow so client queries do not retain unrelated backend fields.
  */
 export class LandingProductListItemDTO {
@@ -72,11 +72,12 @@ export class LandingProductListItemDTO {
   @Expose()
   declare slug: string;
 
-  @Expose()
-  declare mainImage: string;
+  @Expose({ name: 'mainImage' })
+  declare image: string;
 
-  @Expose()
-  declare mainImageThumbnail?: string;
+  @Expose({ name: 'mainImageThumbnail' })
+  @Transform(({ value }) => value ?? '', { toClassOnly: true })
+  declare imageThumbnail: string;
 
   @Expose()
   declare price: number;
@@ -88,7 +89,10 @@ export class LandingProductListItemDTO {
   declare discountPrice: number;
 
   @Expose()
-  declare minimumQuantity?: number;
+  declare brand?: string;
+
+  @Expose()
+  declare category?: string;
 
   /** A catalogue card is purchasable only when at least one weight remains in stock. */
   @Expose()

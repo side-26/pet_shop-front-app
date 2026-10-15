@@ -17,6 +17,7 @@ type PaginationLayoutProps = Readonly<{
   query: Readonly<Record<string, string>>;
   rangeQueryKeys?: Readonly<Record<string, RangeQueryKeys>>;
   resetPageOnChange?: boolean;
+  skeletonFallback?: ReactNode;
   sort?: SortDTO;
 }>;
 
@@ -30,6 +31,7 @@ export function PaginationLayout({
   query,
   rangeQueryKeys,
   resetPageOnChange = true,
+  skeletonFallback,
   sort,
 }: PaginationLayoutProps) {
   const controlsKey = new URLSearchParams(query).toString();
@@ -79,7 +81,7 @@ export function PaginationLayout({
             resetPageOnChange={resetPageOnChange}
             sort={sort}
           />
-          {children}
+          {isSkeleton && skeletonFallback ? skeletonFallback : children}
         </section>
       </div>
     </div>

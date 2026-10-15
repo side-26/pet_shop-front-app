@@ -7,25 +7,12 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Price } from '@/components/ui/price';
 import { routePaths } from '@/configs/route.path';
+import type { LandingProductListItemDTO } from '@/entities/landing/landing.dto';
 import { cn } from '@/lib/utils';
-
-export type ProductCardViewModel = {
-  available: boolean;
-  brand?: string;
-  category?: string;
-  discountPrice?: number;
-  discountPercentage: number;
-  id: string;
-  image: string;
-  imageThumbnail: string;
-  price: number;
-  slug: string;
-  title: string;
-};
 
 type ProductCardProps = Readonly<{
   isSkeleton?: boolean;
-  product: ProductCardViewModel;
+  product: LandingProductListItemDTO;
 }>;
 
 export function ProductCard({ isSkeleton = false, product }: ProductCardProps) {

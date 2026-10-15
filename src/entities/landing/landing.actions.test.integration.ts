@@ -75,6 +75,11 @@ vi.mock('./landing.service', () => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.mocked(getLandingProductList).mockResolvedValue({
+    isSuccess: true,
+    message: null,
+    data: {} as never,
+  });
 });
 
 describe('retryAllLandingPetTypesAction', () => {

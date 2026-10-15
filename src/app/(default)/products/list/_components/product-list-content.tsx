@@ -10,6 +10,7 @@ import { ProductListBreadcrumb } from './product-list-breadcrumb';
 import { ProductListContainer } from './product-list-container';
 import { ProductListErrorBoundary } from './product-list-error-boundary';
 import { ProductListRenderer } from './product-list-renderer';
+import { productListSkeletonData } from './product-list-skeleton-data';
 
 type ProductListContentProps = Readonly<{
   searchParams: Promise<PaginationSearchParams>;
@@ -22,7 +23,9 @@ export function ProductListContent({ searchParams }: ProductListContentProps) {
       <header>
         <h1 className="tw:text-heading-2 tw:lg:text-heading-1">محصولات حیوانات خانگی</h1>
       </header>
-      <Suspense fallback={<ProductListRenderer query={{}} isSkeleton />}>
+      <Suspense
+        fallback={<ProductListRenderer data={productListSkeletonData} query={{}} isSkeleton />}
+      >
         <ProductListErrorBoundary>
           <ProductListQueryContent searchParams={searchParams} />
         </ProductListErrorBoundary>
@@ -41,7 +44,10 @@ async function ProductListQueryContent({ searchParams }: ProductListContentProps
   const suspenseKey = new URLSearchParams(query).toString();
 
   return (
-    <Suspense key={suspenseKey} fallback={<ProductListRenderer query={query} isSkeleton />}>
+    <Suspense
+      key={suspenseKey}
+      fallback={<ProductListRenderer data={productListSkeletonData} query={query} isSkeleton />}
+    >
       <ProductListContainer productsPromise={productsPromise} query={query} />
     </Suspense>
   );

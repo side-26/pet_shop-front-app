@@ -1,37 +1,15 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
 import type { LandingProductListPageDTO } from '@/entities/landing/landing.dto';
 
 import { ProductListRenderer } from './_components/product-list-renderer';
-import { ProductInfiniteList } from './_components/product-infinite-list';
 import { metadata } from './page';
 
 const push = vi.fn();
-const { getLandingProductListAction } = vi.hoisted(() => ({
-  getLandingProductListAction: vi.fn(),
-}));
 vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ push, refresh: vi.fn() }) }));
-vi.mock('@/entities/landing/landing.actions', () => ({ getLandingProductListAction }));
-vi.mock('react-infinite-scroll-component', () => ({
-  default: ({
-    children,
-    hasMore,
-    next,
-  }: {
-    children: React.ReactNode;
-    hasMore: boolean;
-    next: () => void;
-  }) => (
-    <div>
-      {children}
-      <button disabled={!hasMore} onClick={next} type="button">
-        بارگذاری بیشتر
-      </button>
-    </div>
-  ),
-}));
 
 const data: LandingProductListPageDTO = {
   result: [
@@ -44,6 +22,7 @@ const data: LandingProductListPageDTO = {
       discountPercentage: 10,
       slug: 'cat-food',
       discountPrice: 180_000,
+      minimumQuantity: 3,
     },
   ],
   pagination: {
@@ -97,15 +76,25 @@ const filteredData: LandingProductListPageDTO = {
   },
 };
 
+function renderProductListRenderer(
+  props: Readonly<{ data: LandingProductListPageDTO; query: Readonly<Record<string, string>> }>,
+) {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <ProductListRenderer {...props} />
+    </QueryClientProvider>,
+  );
+}
+
 afterEach(() => {
   cleanup();
   push.mockClear();
-  getLandingProductListAction.mockReset();
 });
 
 describe(routePaths.productsList, () => {
   it('renders API-driven landing products without legacy page navigation', () => {
-    render(<ProductListRenderer data={data} query={{ brand: 'royal-canin' }} />);
+    renderProductListRenderer({ data, query: { brand: 'royal-canin' } });
 
     expect(screen.getByRole('complementary', { name: 'فیلتر محصولات' })).toBeTruthy();
     expect(screen.getByText('فیلتری برای این فهرست در دسترس نیست.')).toBeTruthy();
@@ -119,7 +108,7 @@ describe(routePaths.productsList, () => {
   });
 
   it('keeps API-metadata controls inert when the endpoint does not return metadata', () => {
-    render(<ProductListRenderer data={data} query={{}} />);
+    renderProductListRenderer({ data, query: {} });
     expect(screen.getByRole('button', { name: 'اعمال فیلترها' }).hasAttribute('disabled')).toBe(
       true,
     );
@@ -127,9 +116,7 @@ describe(routePaths.productsList, () => {
   });
 
   it('maps backend price facets to priceFrom and priceTo without adding URL pagination', () => {
-    render(
-      <ProductListRenderer data={filteredData} query={{ priceFrom: '100', priceTo: '200' }} />,
-    );
+    renderProductListRenderer({ data: filteredData, query: { priceFrom: '100', priceTo: '200' } });
 
     fireEvent.click(screen.getByRole('button', { name: 'قیمت' }));
     expect(screen.queryByRole('progressbar', { name: 'بازه قیمت انتخاب‌شده' })).toBeNull();
@@ -143,7 +130,7 @@ describe(routePaths.productsList, () => {
   });
 
   it('renders the API-provided isEnable filter label and applies its value', () => {
-    render(<ProductListRenderer data={filteredData} query={{ isEnable: 'true' }} />);
+    renderProductListRenderer({ data: filteredData, query: { isEnable: 'true' } });
 
     expect(screen.getByRole('button', { name: 'فقط کالاهای موجود' })).toBeTruthy();
 
@@ -155,7 +142,7 @@ describe(routePaths.productsList, () => {
   });
 
   it('lazy-loads the mobile filter and sort dialog bodies after opening each dialog', async () => {
-    render(<ProductListRenderer data={filteredData} query={{}} />);
+    renderProductListRenderer({ data: filteredData, query: {} });
 
     fireEvent.click(screen.getByRole('button', { name: 'فیلترها' }));
 
@@ -169,24 +156,6 @@ describe(routePaths.productsList, () => {
     const sortDialog = await screen.findByRole('dialog', { name: 'مرتب‌سازی' });
     expect(within(sortDialog).getByLabelText('در حال بارگذاری مرتب‌سازی')).toBeTruthy();
     expect(await screen.findByRole('button', { name: 'پرفروش‌ترین' })).toBeTruthy();
-  });
-
-  it('loads the next page through the Server Action without adding page or limit to its query', async () => {
-    getLandingProductListAction.mockResolvedValue({
-      isSuccess: true,
-      message: null,
-      data: {
-        ...data,
-        result: [{ ...data.result[0], id: 'product-2', title: 'غذای خشک سگ', slug: 'dog-food' }],
-        pagination: { ...data.pagination, currentPage: 2, hasNextPage: false, nextPage: null },
-      },
-    });
-
-    render(<ProductInfiniteList data={data} query={{ brand: 'royal-canin' }} />);
-    fireEvent.click(screen.getByRole('button', { name: 'بارگذاری بیشتر' }));
-
-    await waitFor(() => expect(screen.getByRole('heading', { name: 'غذای خشک سگ' })).toBeTruthy());
-    expect(getLandingProductListAction).toHaveBeenCalledWith({ brand: 'royal-canin', page: 2 });
   });
 
   it('defines route metadata while keeping the page server-rendered', () => {

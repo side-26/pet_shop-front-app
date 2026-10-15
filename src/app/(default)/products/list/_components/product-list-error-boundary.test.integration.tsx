@@ -3,6 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ProductListErrorBoundary } from './product-list-error-boundary';
 
+vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+
 afterEach(cleanup);
 
 function FailedProductListContent(): never {

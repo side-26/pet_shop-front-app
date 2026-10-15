@@ -1,82 +1,38 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import { CustomInfiniteScroll } from '@/components/templates/custom-infinite-scroll';
+import { useSuspenseLandingProductsInfiniteQuery } from '@/entities/landing/landing.client';
+import type { LandingProductListPageDTO } from '@/entities/landing/landing.dto';
 
-import { getLandingProductListAction } from '@/entities/landing/landing.actions';
-import type {
-  LandingProductListPageDTO,
-  LandingProductListWireDTO,
-} from '@/entities/landing/landing.dto';
-import { globalErrorHandler } from '@/utils/helpers';
-
-import { ProductGrid, productGridSkeletonData, toProductCardViewModel } from './product-grid';
-import { ProductInfiniteListLoadError } from './product-infinite-list-load-error';
+import { ProductGrid } from './product-grid';
 import { ProductInfiniteListLoader } from './product-infinite-list-loader';
 import { ProductListDescription } from './product-list-description';
+import { ProductListErrorFallback } from './product-list-error-boundary';
 
 type ProductInfiniteListProps = Readonly<{
-  data?: LandingProductListPageDTO;
-  isSkeleton?: boolean;
+  data: LandingProductListPageDTO;
   query: Readonly<Record<string, string>>;
 }>;
 
-export function ProductInfiniteList({ data, isSkeleton = false, query }: ProductInfiniteListProps) {
-  const [products, setProducts] = useState<readonly LandingProductListWireDTO[]>(
-    () => data?.result ?? [],
-  );
-  const [hasMore, setHasMore] = useState(data?.pagination.hasNextPage ?? false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const pageRef = useRef(data?.pagination.currentPage ?? 1);
-
-  const loadNextPage = useCallback(
-    async (isRetry = false) => {
-      if (isLoading || (!hasMore && !isRetry)) return;
-
-      setIsLoading(true);
-      setLoadError(null);
-
-      const result = await getLandingProductListAction({ ...query, page: pageRef.current + 1 });
-      if (!result.isSuccess) {
-        globalErrorHandler(result);
-        setLoadError(result.message ?? 'دریافت محصولات بیشتر انجام نشد.');
-        setHasMore(false);
-        setIsLoading(false);
-        return;
-      }
-
-      pageRef.current = result.data.pagination.currentPage;
-      setProducts((current) => {
-        const currentIds = new Set(current.map((product) => product.id));
-        return [...current, ...result.data.result.filter((product) => !currentIds.has(product.id))];
-      });
-      setHasMore(result.data.pagination.hasNextPage);
-      setIsLoading(false);
-    },
-    [hasMore, isLoading, query],
-  );
-
-  if (isSkeleton) return <ProductGrid products={productGridSkeletonData} isSkeleton />;
-
-  const productCards = products.map(toProductCardViewModel);
+export function ProductInfiniteList({ data, query }: ProductInfiniteListProps) {
+  const { products, error, fetchNextPage, hasNextPage, isFetchingNextPage, isFetchNextPageError } =
+    useSuspenseLandingProductsInfiniteQuery(data, query);
 
   return (
-    <InfiniteScroll
+    <CustomInfiniteScroll
       dataLength={products.length}
       endMessage={products.length > 0 ? <ProductListDescription /> : null}
-      hasMore={hasMore}
+      error={error}
+      errorFallback={({ error: nextPageError, retry }) => (
+        <ProductListErrorFallback error={nextPageError} refreshOnRetry={false} retry={retry} />
+      )}
+      fetchNextPage={fetchNextPage}
+      hasNextPage={hasNextPage ?? false}
+      isFetchingNextPage={isFetchingNextPage}
+      isFetchNextPageError={isFetchNextPageError}
       loader={<ProductInfiniteListLoader />}
-      next={() => void loadNextPage()}
     >
-      <ProductGrid products={productCards} />
-      {loadError ? (
-        <ProductInfiniteListLoadError
-          description={loadError}
-          isLoading={isLoading}
-          onRetry={() => void loadNextPage(true)}
-        />
-      ) : null}
-    </InfiniteScroll>
+      <ProductGrid products={products} />
+    </CustomInfiniteScroll>
   );
 }
