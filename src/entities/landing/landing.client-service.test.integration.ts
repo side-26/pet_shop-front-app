@@ -7,6 +7,21 @@ import { landingClientService } from './landing.client-service';
 vi.mock('@/lib/api/internalFetcher', () => ({ internalFetcher: vi.fn() }));
 
 describe('landing client service', () => {
+  it('requests landing pet pages through the same-origin API and forwards cancellation', async () => {
+    const signal = new AbortController().signal;
+    const query = { petType: '507f1f77bcf86cd799439011', page: 2, limit: 12 };
+    const page = { result: [], pagination: {} };
+    vi.mocked(internalFetcher).mockResolvedValue(page);
+
+    await expect(landingClientService.getPets(query, signal)).resolves.toBe(page);
+    expect(internalFetcher).toHaveBeenCalledWith({
+      url: '/api/landing/pets',
+      method: 'GET',
+      query,
+      signal,
+    });
+  });
+
   it('requests landing product pages through the same-origin API and forwards cancellation', async () => {
     const signal = new AbortController().signal;
     const query = { brand: '507f1f77bcf86cd799439011', page: 2, limit: 12 };

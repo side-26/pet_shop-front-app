@@ -32,6 +32,52 @@ export type LandingPetListItemDTO = Omit<CustomerPetListItemDTO, 'petType' | 'br
   breed?: string;
   petType?: string;
 };
+
+/**
+ * Card-ready pet projection for the public catalogue. Keep this limited to fields consumed by the
+ * existing pets list UI; class transformation runs only in the client query's `select` callback.
+ */
+export class LandingPetListCardDTO {
+  @Expose()
+  declare id: string;
+
+  @Expose()
+  declare title: string;
+
+  @Expose()
+  declare mainImage: string;
+
+  @Expose()
+  @Transform(({ value }) => value ?? '', { toClassOnly: true })
+  declare mainImageThumbnail: string;
+
+  @Expose()
+  declare quantity: number;
+
+  @Expose()
+  declare price: number;
+
+  @Expose()
+  declare discountPercentage: number;
+
+  @Expose()
+  declare inEnable: boolean;
+
+  @Expose()
+  declare slug: string;
+
+  @Expose()
+  @Transform(({ value }) => (typeof value === 'string' ? value : (value?.title ?? '—')), {
+    toClassOnly: true,
+  })
+  declare breed: string;
+
+  @Expose()
+  @Transform(({ value }) => (typeof value === 'string' ? value : (value?.title ?? '—')), {
+    toClassOnly: true,
+  })
+  declare petType: string;
+}
 export type LandingPetListPageDTO = PaginateDataDTO<LandingPetListItemDTO, FilterDTO, SortDTO>;
 
 export type LandingProductDTO = {

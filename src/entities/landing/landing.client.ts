@@ -3,9 +3,12 @@
 import { useMemo } from 'react';
 import { useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 
-import { transformPaginateResult } from '@/app/core/transformer/transform';
+import { transformData, transformPaginateResult } from '@/app/core/transformer/transform';
 
 import {
+  LandingPetListCardDTO,
+  type LandingPetListPageDTO,
+  type LandingPetListQueryDTO,
   LandingProductListItemDTO,
   type LandingProductListPageDTO,
   type LandingProductListQueryDTO,
@@ -25,6 +28,12 @@ export const landingQueryKeys = {
       'products',
       new URLSearchParams([...Object.entries(query), ['limit', String(limit)]].sort()).toString(),
     ] as const,
+  pets: (query: Readonly<Record<string, string>>, limit: number) =>
+    [
+      ...landingQueryKeys.all,
+      'pets',
+      new URLSearchParams([...Object.entries(query), ['limit', String(limit)]].sort()).toString(),
+    ] as const,
   search: ({ limit, page, search }: LandingSearchQueryDTO) =>
     [...landingQueryKeys.all, 'search', search, page, limit] as const,
 };
@@ -42,6 +51,23 @@ function toLandingProductListRequest(
     ...(query.priceTo ? { priceTo: Number(query.priceTo) } : {}),
     ...(query.isEnable ? { isEnable: query.isEnable === 'true' } : {}),
     ...(query.sort ? { sort: query.sort as LandingProductListQueryDTO['sort'] } : {}),
+    page,
+    limit,
+  };
+}
+
+function toLandingPetListRequest(
+  query: Readonly<Record<string, string>>,
+  page: number,
+  limit: number,
+): Partial<LandingPetListQueryDTO> {
+  return {
+    ...(query.petType ? { petType: query.petType } : {}),
+    ...(query.breed ? { breed: query.breed } : {}),
+    ...(query.priceFrom ? { priceFrom: Number(query.priceFrom) } : {}),
+    ...(query.priceTo ? { priceTo: Number(query.priceTo) } : {}),
+    ...(query.isEnable ? { isEnable: query.isEnable === 'true' } : {}),
+    ...(query.sort ? { sort: query.sort as LandingPetListQueryDTO['sort'] } : {}),
     page,
     limit,
   };
@@ -75,6 +101,17 @@ const selectLandingProductPages = (productData: {
   pages: productData.pages.map((productPage) => ({
     ...productPage,
     result: selectLandingProductListItems(productPage),
+  })),
+});
+
+const selectLandingPetPages = (petData: {
+  pages: LandingPetListPageDTO[];
+  pageParams: unknown[];
+}) => ({
+  ...petData,
+  pages: petData.pages.map((petPage) => ({
+    ...petPage,
+    result: transformData(LandingPetListCardDTO, petPage.result),
   })),
 });
 
@@ -150,4 +187,37 @@ export function useSuspenseLandingProductsInfiniteQuery(
   }, [infiniteQuery.data.pages]);
 
   return { ...infiniteQuery, products };
+}
+
+export function useSuspenseLandingPetsInfiniteQuery(
+  initialPage: LandingPetListPageDTO,
+  query: Readonly<Record<string, string>>,
+) {
+  const limit = initialPage.pagination.itemsPerPage;
+  const infiniteQuery = useSuspenseInfiniteQuery({
+    queryKey: landingQueryKeys.pets(query, limit),
+    queryFn: ({ pageParam, signal }) =>
+      landingClientService.getPets(toLandingPetListRequest(query, pageParam, limit), signal),
+    initialPageParam: initialPage.pagination.currentPage,
+    initialData: {
+      pages: [initialPage],
+      pageParams: [initialPage.pagination.currentPage],
+    },
+    getNextPageParam: (page) => page.pagination.nextPage ?? undefined,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+    retry: false,
+    select: selectLandingPetPages,
+  });
+
+  const pets = useMemo(() => {
+    const uniquePets = new Map<string, LandingPetListCardDTO>();
+    infiniteQuery.data.pages
+      .flatMap((page) => page.result)
+      .forEach((pet) => uniquePets.set(pet.id, pet));
+    return [...uniquePets.values()];
+  }, [infiniteQuery.data.pages]);
+
+  return { ...infiniteQuery, pets };
 }

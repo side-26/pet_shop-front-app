@@ -7,13 +7,14 @@ import { landingClientService } from './landing.client-service';
 import {
   landingSearchDialogQuery,
   landingQueryKeys,
+  useSuspenseLandingPetsInfiniteQuery,
   useSuspenseLandingProductsInfiniteQuery,
   useSuspenseLandingSearchInfiniteQuery,
   useSuspenseLandingSearchQuery,
 } from './landing.client';
 
 vi.mock('./landing.client-service', () => ({
-  landingClientService: { getProducts: vi.fn(), getSearch: vi.fn() },
+  landingClientService: { getPets: vi.fn(), getProducts: vi.fn(), getSearch: vi.fn() },
 }));
 
 function createWrapper() {
@@ -257,6 +258,95 @@ describe('landing product suspense infinite query', () => {
     );
     expect(landingQueryKeys.products(query, 12)).not.toEqual(
       landingQueryKeys.products({ ...query, brand: '507f1f77bcf86cd799439012' }, 12),
+    );
+    queryClient.clear();
+  });
+});
+
+describe('landing pet suspense infinite query', () => {
+  it('seeds the server page, then fetches and projects only the pet-list card fields', async () => {
+    const query = { petType: '507f1f77bcf86cd799439011', sort: 'less-valued' };
+    const firstPage = {
+      result: [
+        {
+          id: 'pet-1',
+          title: 'گربه پرشین',
+          mainImage: '/persian-cat.webp',
+          mainImageThumbnail: '',
+          quantity: 2,
+          price: 2_000_000,
+          discountPercentage: 10,
+          inEnable: true,
+          slug: 'persian-cat',
+          petType: 'گربه',
+          breed: 'پرشین',
+          description: { type: 'doc' as const, content: [] },
+          ignoredByPetCard: 'not exposed',
+        },
+      ],
+      pagination: {
+        currentPage: 1,
+        totalPages: 2,
+        totalItems: 2,
+        itemsPerPage: 12,
+        hasNextPage: true,
+        hasPrevPage: false,
+        nextPage: 2,
+        prevPage: null,
+      },
+    };
+    const secondPage = {
+      ...firstPage,
+      result: [
+        {
+          ...firstPage.result[0],
+          id: 'pet-2',
+          slug: 'golden-retriever',
+          title: 'گلدن رتریور',
+        },
+      ],
+      pagination: {
+        ...firstPage.pagination,
+        currentPage: 2,
+        hasNextPage: false,
+        nextPage: null,
+        prevPage: 1,
+      },
+    };
+    vi.mocked(landingClientService.getPets).mockResolvedValue(secondPage);
+    const { queryClient, wrapper } = createWrapper();
+    const { result } = renderHook(() => useSuspenseLandingPetsInfiniteQuery(firstPage, query), {
+      wrapper,
+    });
+
+    await waitFor(() =>
+      expect(result.current.pets).toEqual([
+        {
+          breed: 'پرشین',
+          discountPercentage: 10,
+          id: 'pet-1',
+          inEnable: true,
+          mainImage: '/persian-cat.webp',
+          mainImageThumbnail: '',
+          petType: 'گربه',
+          price: 2_000_000,
+          quantity: 2,
+          slug: 'persian-cat',
+          title: 'گربه پرشین',
+        },
+      ]),
+    );
+    expect(landingClientService.getPets).not.toHaveBeenCalled();
+
+    await result.current.fetchNextPage();
+
+    await waitFor(() => expect(result.current.pets).toHaveLength(2));
+    expect(landingClientService.getPets).toHaveBeenCalledWith(
+      { petType: query.petType, sort: 'less-valued', page: 2, limit: 12 },
+      expect.any(AbortSignal),
+    );
+    expect(landingQueryKeys.pets(query, 12)).not.toEqual(
+      landingQueryKeys.pets({ ...query, petType: '507f1f77bcf86cd799439012' }, 12),
     );
     queryClient.clear();
   });
