@@ -14,9 +14,7 @@ export const instant = false;
 
 type ArticlesPageProps = Readonly<{ searchParams?: Promise<PaginationSearchParams> }>;
 
-export default function ArticlesPage({
-  searchParams = Promise.resolve({}),
-}: ArticlesPageProps = {}) {
+export default function ArticlesPage({ searchParams = Promise.resolve({}) }: ArticlesPageProps) {
   return (
     <main className="tw:default-layout-container tw:py-10 tw:sm:py-14 tw:lg:py-20">
       <header className="tw:mx-auto tw:max-w-3xl tw:text-center">

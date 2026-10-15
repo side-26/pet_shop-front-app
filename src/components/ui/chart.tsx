@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useId } from 'react';
+import { createContext, useContext, useId, useSyncExternalStore } from 'react';
 import type * as React from 'react';
 import * as RechartsPrimitive from 'recharts';
 import type { TooltipPayloadEntry, TooltipValueType } from 'recharts';
@@ -40,12 +40,18 @@ function ChartContainer({
 }) {
   const uniqueId = useId();
   const chartId = `chart-${id ?? uniqueId.replace(/:/g, '')}`;
+  const isHydrated = useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
+  );
 
   return (
     <ChartContext.Provider value={{ config }}>
       <div
         data-slot="chart"
         data-chart={chartId}
+        aria-busy={!isHydrated || undefined}
         className={cn(
           'tw:flex tw:aspect-video tw:justify-center tw:text-xs',
           'tw:[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground',
@@ -56,7 +62,13 @@ function ChartContainer({
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <RechartsPrimitive.ResponsiveContainer>{children}</RechartsPrimitive.ResponsiveContainer>
+        {isHydrated ? (
+          <RechartsPrimitive.ResponsiveContainer minWidth={0}>
+            {children}
+          </RechartsPrimitive.ResponsiveContainer>
+        ) : (
+          <div aria-hidden="true" className="tw:size-full" />
+        )}
       </div>
     </ChartContext.Provider>
   );

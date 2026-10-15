@@ -112,7 +112,12 @@ function PaymentResultRenderer({
   );
 }
 
-async function PaymentResultContainer({ request }: Readonly<{ request: GatewayPaymentRequest }>) {
+async function PaymentResultContainer({
+  authorityPromise,
+}: Readonly<{ authorityPromise: Promise<{ authority: string }> }>) {
+  const { authority } = await authorityPromise;
+  const request: GatewayPaymentRequest = getGatewayPaymentAction({ authority });
+
   return <PaymentResultRenderer viewModel={toPaymentResultViewModel(await request)} />;
 }
 
@@ -127,12 +132,12 @@ const paymentResultSkeleton: PaymentResultViewModel = {
   illustrationAlt: '',
 };
 
-export function PaymentResultSection({ authority }: Readonly<{ authority: string }>) {
-  const request = getGatewayPaymentAction({ authority });
-
+export function PaymentResultSection({
+  authorityPromise,
+}: Readonly<{ authorityPromise: Promise<{ authority: string }> }>) {
   return (
     <Suspense fallback={<PaymentResultRenderer viewModel={paymentResultSkeleton} isSkeleton />}>
-      <PaymentResultContainer request={request} />
+      <PaymentResultContainer authorityPromise={authorityPromise} />
     </Suspense>
   );
 }

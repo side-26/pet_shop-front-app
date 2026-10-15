@@ -10,7 +10,5 @@ export const metadata: Metadata = {
 export default async function PaymentResultPage({
   params,
 }: Readonly<{ params: Promise<{ authority: string }> }>) {
-  const { authority } = await params;
-
-  return <PaymentResultSection authority={authority} />;
+  return <PaymentResultSection authorityPromise={params} />;
 }

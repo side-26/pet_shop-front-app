@@ -15,6 +15,15 @@ export function withApiHandler<TContext = unknown>(
     try {
       return await handler(request, context);
     } catch (error: unknown) {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'digest' in error &&
+        error.digest === 'NEXT_PRERENDER_INTERRUPTED'
+      ) {
+        throw error;
+      }
+
       if (error instanceof InternalApiError) {
         return NextResponse.json(
           {

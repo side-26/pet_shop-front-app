@@ -15,6 +15,6 @@ type ProductListPageProps = Readonly<{ searchParams?: Promise<PaginationSearchPa
 
 export default function ProductListPage({
   searchParams = Promise.resolve({}),
-}: ProductListPageProps = {}) {
+}: ProductListPageProps) {
   return <ProductListContent searchParams={searchParams} />;
 }

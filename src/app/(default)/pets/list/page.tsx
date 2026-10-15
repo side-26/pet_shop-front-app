@@ -13,6 +13,6 @@ export const prefetch = 'partial';
 
 type PetListPageProps = Readonly<{ searchParams?: Promise<PaginationSearchParams> }>;
 
-export default function PetListPage({ searchParams = Promise.resolve({}) }: PetListPageProps = {}) {
+export default function PetListPage({ searchParams = Promise.resolve({}) }: PetListPageProps) {
   return <PetListContent searchParams={searchParams} />;
 }
