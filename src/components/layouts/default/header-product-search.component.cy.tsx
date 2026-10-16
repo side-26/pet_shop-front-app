@@ -67,6 +67,7 @@ describe('HeaderProductSearch', () => {
     mountSearch();
 
     cy.get('.header-product-search-test').should('be.visible');
+    cy.get('button[aria-label="باز کردن جستجوی سریع"]').should('not.exist');
     cy.get('input[aria-label="جستجو سریع"]:visible').focus();
     cy.contains('برای دیدن پیشنهادها، نام آیتم را وارد کنید.').should('be.visible');
     cy.get('input[aria-label="جستجو سریع"]:visible').type('غذای سگ');
@@ -132,7 +133,8 @@ describe('HeaderProductSearch', () => {
     cy.clock();
     mountSearch();
 
-    cy.get('input[aria-label="باز کردن جستجوی سریع"]').click();
+    cy.get('input[aria-label="جستجو سریع"]').should('not.exist');
+    cy.get('button[aria-label="باز کردن جستجوی سریع"]').click();
     cy.get('[data-slot="drawer-content"]').should('be.visible');
     cy.contains('برای دیدن نتایج، نام آیتم را وارد کنید.').should('be.visible');
     typeSearch('خاک');
