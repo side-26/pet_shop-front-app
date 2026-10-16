@@ -2,12 +2,13 @@ import { ArrowLeft, HeartPulse, PawPrint } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { FadeIn } from '@/components/common/animation/fade-in';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
 
-import { HeroSequence, RevealItem } from '../shared/motion-primitives';
+import { RevealItem } from '../shared/motion-primitives';
 import { ShaderBackground } from './shader-background';
 
 export function HeroSection() {
@@ -17,7 +18,10 @@ export function HeroSection() {
       <ShaderBackground />
       <div className="tw:absolute tw:inset-0 tw:-z-10 tw:bg-background/35 tw:supports-backdrop-filter:backdrop-blur-[2px]" />
 
-      <HeroSequence className="tw:default-layout-container tw:relative tw:grid tw:min-h-[calc(100svh-140px)] tw:items-center tw:gap-8 tw:lg:min-h-[640px] tw:lg:grid-cols-12 tw:lg:gap-10">
+      <FadeIn
+        loading="eager"
+        className="tw:default-layout-container tw:relative tw:grid tw:min-h-[calc(100svh-140px)] tw:items-center tw:gap-8 tw:lg:min-h-[640px] tw:lg:grid-cols-12 tw:lg:gap-10"
+      >
         <div className="tw:flex tw:flex-col tw:items-start tw:gap-5 tw:lg:col-span-5">
           <RevealItem>
             <Badge variant="transparent" color="primary" size="lg">
@@ -80,7 +84,7 @@ export function HeroSection() {
             <div className="tw:absolute tw:inset-0 tw:bg-linear-to-t tw:from-foreground/20 tw:via-transparent tw:to-transparent" />
           </div>
         </RevealItem>
-      </HeroSequence>
+      </FadeIn>
     </section>
   );
 }

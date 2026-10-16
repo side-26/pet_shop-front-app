@@ -1,17 +1,24 @@
+import { FadeIn } from '@/components/common/animation/fade-in';
+import {
+  AnimatedStaggeredList,
+  animatedStaggeredListItemClassName,
+} from '@/components/common/staggered-list';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 import { benefitIconStyles, homeBenefits } from './home-data';
-import { RevealItem, RevealSection } from '../shared/motion-primitives';
 
 export function BenefitsSection() {
   return (
-    <RevealSection
+    <AnimatedStaggeredList
       id="benefits"
-      labelledBy="benefits-title"
+      aria-labelledby="benefits-title"
       className="tw:default-layout-container tw:flex tw:flex-col tw:gap-10 tw:py-16 tw:lg:py-24"
     >
-      <RevealItem className="tw:mx-auto tw:flex tw:max-w-2xl tw:flex-col tw:items-center tw:gap-3 tw:text-center">
+      <FadeIn
+        loading="eager"
+        className="tw:mx-auto tw:flex tw:max-w-2xl tw:flex-col tw:items-center tw:gap-3 tw:text-center"
+      >
         <span className="tw:text-label-m tw:font-bold tw:text-primary">
           مراقبت، ساده‌تر از همیشه
         </span>
@@ -21,11 +28,11 @@ export function BenefitsSection() {
         <p className="tw:text-body-m tw:text-muted-foreground">
           چالش‌های نگهداری از حیوانات خانگی را می‌شناسیم و برای هرکدام راهکاری روشن داریم.
         </p>
-      </RevealItem>
+      </FadeIn>
 
       <div className="tw:grid tw:grid-cols-1 tw:gap-5 tw:md:grid-cols-3 tw:lg:gap-6">
         {homeBenefits.map(({ title, description, icon: Icon, color }) => (
-          <RevealItem key={title}>
+          <div key={title} className={animatedStaggeredListItemClassName}>
             <Card
               size="md"
               className="tw:h-full tw:transition-[transform,box-shadow] tw:duration-300 tw:hover:-translate-y-2 tw:hover:shadow-xl tw:motion-reduce:transition-none tw:motion-reduce:hover:transform-none"
@@ -45,9 +52,9 @@ export function BenefitsSection() {
                 {description}
               </CardContent>
             </Card>
-          </RevealItem>
+          </div>
         ))}
       </div>
-    </RevealSection>
+    </AnimatedStaggeredList>
   );
 }

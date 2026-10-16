@@ -1,0 +1,68 @@
+@keyframes staggered-list-item-in-view {
+  from {
+    --staggered-list-in-view: false;
+  }
+
+  to {
+    --staggered-list-in-view: true;
+  }
+}
+
+@keyframes staggered-list-item-reveal {
+  from {
+    opacity: 0;
+    translate: 0 1.875rem;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0;
+  }
+}
+
+.list {
+  container: staggered-list / inline-size;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .list :global(.animated-staggered-list-item) {
+      --staggered-list-in-view: false;
+      animation: staggered-list-item-in-view both;
+      animation-range: entry 0% entry 40%;
+      animation-timeline: view();
+    }
+
+    .list :global(.animated-staggered-list-item) > * {
+      animation: staggered-list-item-reveal 450ms ease-out both;
+      animation-delay: calc(var(--staggered-list-index, 0) * 125ms);
+      animation-play-state: paused;
+    }
+
+    @container style(--staggered-list-in-view: true) {
+      .list :global(.animated-staggered-list-item) > * {
+        animation-play-state: running;
+      }
+    }
+  }
+}
+
+@container staggered-list (width > 36rem) {
+  .list :global(.animated-staggered-list-item:nth-child(2n)) {
+    --staggered-list-index: 1;
+  }
+}
+
+@container staggered-list (width > 55rem) {
+  .list :global(.animated-staggered-list-item:nth-child(3n + 1)) {
+    --staggered-list-index: 0;
+  }
+
+  .list :global(.animated-staggered-list-item:nth-child(3n + 2)) {
+    --staggered-list-index: 1;
+  }
+
+  .list :global(.animated-staggered-list-item:nth-child(3n)) {
+    --staggered-list-index: 2;
+  }
+}

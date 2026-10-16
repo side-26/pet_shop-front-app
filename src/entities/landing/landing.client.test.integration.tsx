@@ -7,6 +7,7 @@ import { landingClientService } from './landing.client-service';
 import {
   landingSearchDialogQuery,
   landingQueryKeys,
+  useSuspenseLandingPetTypesQuery,
   useSuspenseLandingPetsInfiniteQuery,
   useSuspenseLandingProductsInfiniteQuery,
   useSuspenseLandingSearchInfiniteQuery,
@@ -14,7 +15,12 @@ import {
 } from './landing.client';
 
 vi.mock('./landing.client-service', () => ({
-  landingClientService: { getPets: vi.fn(), getProducts: vi.fn(), getSearch: vi.fn() },
+  landingClientService: {
+    getPetTypes: vi.fn(),
+    getPets: vi.fn(),
+    getProducts: vi.fn(),
+    getSearch: vi.fn(),
+  },
 }));
 
 function createWrapper() {
@@ -170,6 +176,39 @@ describe('landing search suspense query', () => {
     expect(landingSearchDialogQuery({ search: 'غذای گربه', limit: 20 })).not.toEqual(
       landingQueryKeys.search({ search: 'غذای گربه', page: 1, limit: 3 }),
     );
+  });
+});
+
+describe('landing pet-types suspense query', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('fetches and transforms only the fields used by the category carousel', async () => {
+    vi.mocked(landingClientService.getPetTypes).mockResolvedValue([
+      {
+        id: 'cat',
+        title: 'گربه‌ها',
+        mainImage: '/images/cat.jpg',
+        thumbnail: undefined as unknown as string,
+        summary: 'unused',
+      },
+    ]);
+    const { queryClient, wrapper } = createWrapper();
+    const { result } = renderHook(() => useSuspenseLandingPetTypesQuery(), { wrapper });
+
+    await waitFor(() =>
+      expect(result.current.data).toEqual([
+        {
+          id: 'cat',
+          title: 'گربه‌ها',
+          mainImage: '/images/cat.jpg',
+          thumbnail: '',
+        },
+      ]),
+    );
+
+    expect(landingQueryKeys.petTypes()).toEqual(['landing', 'pet-types']);
+    expect(landingClientService.getPetTypes).toHaveBeenCalledWith(expect.any(AbortSignal));
+    queryClient.clear();
   });
 });
 

@@ -10,12 +10,29 @@ vi.mock('./_components/home/hero/shader-background', () => ({
   ShaderBackground: () => <div data-testid="shader-background" />,
 }));
 
+vi.mock('./_components/home/categories/lazy-categories-section', () => ({
+  LazyCategoriesSection: () => (
+    <section>
+      <h2>دسته‌بندی حیوانات</h2>
+      <div aria-label="دسته‌بندی حیوانات" aria-roledescription="carousel" role="region">
+        <a href={routePaths.pets}>گربه‌ها</a>
+      </div>
+    </section>
+  ),
+}));
+
+vi.mock('@/entities/landing/landing.actions', () => ({
+  getAllLandingPetTypesAction: () => new Promise(() => {}),
+  getDiscountedLandingProductsAction: () => new Promise(() => {}),
+  retryAllLandingPetTypesAction: vi.fn(),
+  retryLandingHomeOffersAction: vi.fn(),
+}));
+
 vi.mock('./_components/home/shared/motion-primitives', () => ({
   RevealSection: ({ children, labelledBy }: { children: ReactNode; labelledBy?: string }) => (
     <section aria-labelledby={labelledBy}>{children}</section>
   ),
   RevealItem: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-  HeroSequence: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   ParallaxMedia: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));
 
@@ -56,7 +73,7 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe('HomePage', () => {
-  it('composes every storefront section with canonical product and pet links', () => {
+  it('composes every storefront section with canonical product and pet links', async () => {
     render(<HomePage />);
 
     expect(screen.getByRole('heading', { level: 1, name: /بهترین دوستت/ })).toBeTruthy();
@@ -76,7 +93,7 @@ describe('HomePage', () => {
     );
   });
 
-  it('renders descriptive local imagery and accessible carousels', () => {
+  it('renders descriptive local imagery and accessible carousels', async () => {
     render(<HomePage />);
 
     expect(screen.getByAltText(/گلدن رتریور و گربه پرشین/)).toBeTruthy();

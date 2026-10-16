@@ -1,12 +1,26 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { internalFetcher } from '@/lib/api/internalFetcher';
+import type { LandingPetTypeDTO } from './landing.dto';
 
 import { landingClientService } from './landing.client-service';
 
 vi.mock('@/lib/api/internalFetcher', () => ({ internalFetcher: vi.fn() }));
 
 describe('landing client service', () => {
+  it('requests all landing pet types through the same-origin API and forwards cancellation', async () => {
+    const signal = new AbortController().signal;
+    const petTypes: LandingPetTypeDTO[] = [];
+    vi.mocked(internalFetcher).mockResolvedValue(petTypes);
+
+    await expect(landingClientService.getPetTypes(signal)).resolves.toBe(petTypes);
+    expect(internalFetcher).toHaveBeenCalledWith({
+      url: '/api/landing/pet-types',
+      method: 'GET',
+      signal,
+    });
+  });
+
   it('requests landing pet pages through the same-origin API and forwards cancellation', async () => {
     const signal = new AbortController().signal;
     const query = { petType: '507f1f77bcf86cd799439011', page: 2, limit: 12 };

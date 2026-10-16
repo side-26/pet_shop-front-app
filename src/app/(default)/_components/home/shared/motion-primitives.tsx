@@ -1,33 +1,39 @@
 'use client';
 
-import { motion, useReducedMotion, useScroll, useTransform, type Variants } from 'framer-motion';
-import { useRef, type ReactNode } from 'react';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
 
-const groupVariants: Variants = {
-  hidden: { opacity: 0, y: 28 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.55,
-      ease: [0.22, 1, 0.36, 1],
-      staggerChildren: 0.09,
-      delayChildren: 0.05,
-    },
-  },
-};
+function useRevealOnView<TElement extends HTMLElement>() {
+  const elementRef = useRef<TElement>(null);
+  const [isInView, setIsInView] = useState(false);
 
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20, scale: 0.985 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { duration: 0.48, ease: [0.22, 1, 0.36, 1] },
-  },
-};
+  useEffect(() => {
+    const element = elementRef.current;
+    if (!element || isInView) return;
+
+    if (!('IntersectionObserver' in window)) {
+      const animationFrame = requestAnimationFrame(() => setIsInView(true));
+      return () => cancelAnimationFrame(animationFrame);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+
+        setIsInView(true);
+        observer.disconnect();
+      },
+      { threshold: 0.2 },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [isInView]);
+
+  return { elementRef, isInView };
+}
 
 type RevealSectionProps = Readonly<{
   children: ReactNode;
@@ -37,20 +43,18 @@ type RevealSectionProps = Readonly<{
 }>;
 
 export function RevealSection({ children, className, id, labelledBy }: RevealSectionProps) {
-  const prefersReducedMotion = useReducedMotion();
+  const { elementRef, isInView } = useRevealOnView<HTMLElement>();
 
   return (
-    <motion.section
+    <section
+      ref={elementRef}
       id={id}
       aria-labelledby={labelledBy}
-      className={className}
-      initial={prefersReducedMotion ? false : 'hidden'}
-      whileInView={prefersReducedMotion ? undefined : 'visible'}
-      viewport={{ once: true, amount: 0.16 }}
-      variants={groupVariants}
+      className={cn('tw:fade-in', className)}
+      data-reveal-in-view={isInView || undefined}
     >
       {children}
-    </motion.section>
+    </section>
   );
 }
 
@@ -58,29 +62,7 @@ export function RevealItem({
   children,
   className,
 }: Readonly<{ children: ReactNode; className?: string }>) {
-  return (
-    <motion.div className={className} variants={itemVariants}>
-      {children}
-    </motion.div>
-  );
-}
-
-export function HeroSequence({
-  children,
-  className,
-}: Readonly<{ children: ReactNode; className?: string }>) {
-  const prefersReducedMotion = useReducedMotion();
-
-  return (
-    <motion.div
-      className={className}
-      initial={prefersReducedMotion ? false : 'hidden'}
-      animate={prefersReducedMotion ? undefined : 'visible'}
-      variants={groupVariants}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={cn('tw:fade-in', className)}>{children}</div>;
 }
 
 export function ParallaxMedia({

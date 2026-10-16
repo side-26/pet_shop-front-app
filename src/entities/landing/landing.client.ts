@@ -7,6 +7,8 @@ import { transformData, transformPaginateResult } from '@/app/core/transformer/t
 
 import {
   LandingPetListCardDTO,
+  LandingPetTypeCardDTO,
+  type LandingPetTypeDTO,
   type LandingPetListPageDTO,
   type LandingPetListQueryDTO,
   LandingProductListItemDTO,
@@ -22,6 +24,7 @@ const landingSearchCacheTime = 5 * 60 * 1000;
 
 export const landingQueryKeys = {
   all: ['landing'] as const,
+  petTypes: () => [...landingQueryKeys.all, 'pet-types'] as const,
   products: (query: Readonly<Record<string, string>>, limit: number) =>
     [
       ...landingQueryKeys.all,
@@ -79,6 +82,9 @@ export const landingSearchDialogQuery = (query: Omit<LandingSearchQueryDTO, 'pag
 const selectLandingSearchResults = (searchPage: LandingSearchPageDTO) =>
   transformPaginateResult(LandingSearchResultDTO, searchPage);
 
+const selectLandingPetTypes = (petTypes: LandingPetTypeDTO[]) =>
+  transformData(LandingPetTypeCardDTO, petTypes);
+
 const selectLandingProductListItems = (productPage: LandingProductListPageDTO) =>
   transformPaginateResult(LandingProductListItemDTO, productPage);
 
@@ -120,6 +126,20 @@ export function useSuspenseLandingSearchQuery(query: LandingSearchQueryDTO) {
     queryKey: landingQueryKeys.search(query),
     queryFn: ({ signal }) => landingClientService.getSearch(query, signal),
     select: selectLandingSearchResults,
+    retry: false,
+    staleTime: landingSearchCacheTime,
+    gcTime: landingSearchCacheTime,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  });
+}
+
+export function useSuspenseLandingPetTypesQuery() {
+  return useSuspenseQuery({
+    queryKey: landingQueryKeys.petTypes(),
+    queryFn: ({ signal }) => landingClientService.getPetTypes(signal),
+    select: selectLandingPetTypes,
     retry: false,
     staleTime: landingSearchCacheTime,
     gcTime: landingSearchCacheTime,

@@ -1,6 +1,7 @@
 import { internalFetcher } from '@/lib/api/internalFetcher';
 
 import type {
+  LandingPetTypeDTO,
   LandingPetListPageDTO,
   LandingPetListQueryDTO,
   LandingProductListPageDTO,
@@ -10,6 +11,13 @@ import type {
 } from './landing.dto';
 
 export const landingClientService = {
+  getPetTypes(signal?: AbortSignal): Promise<LandingPetTypeDTO[]> {
+    return internalFetcher<LandingPetTypeDTO[]>({
+      url: '/api/landing/pet-types',
+      method: 'GET',
+      signal,
+    });
+  },
   getPets(
     query: Partial<LandingPetListQueryDTO>,
     signal?: AbortSignal,
