@@ -15,9 +15,10 @@ import { cn } from '@/lib/utils';
 type Props = Readonly<{
   petTypes: readonly LandingPetTypeDTO[];
   isLoading?: boolean;
+  itemClassName?: string;
 }>;
 
-export function PetTypesCarouselSection({ petTypes, isLoading = false }: Props) {
+export function PetTypesCarouselSection({ petTypes, isLoading = false, itemClassName }: Props) {
   if (!isLoading && petTypes.length === 0) return null;
 
   return (
@@ -31,7 +32,10 @@ export function PetTypesCarouselSection({ petTypes, isLoading = false }: Props) 
         {petTypes.map((petType) => (
           <CarouselItem
             key={petType.id}
-            className="tw:basis-[88%] tw:sm:basis-1/2 tw:lg:basis-1/3 tw:xl:basis-1/4"
+            className={cn(
+              'tw:basis-[88%] tw:sm:basis-1/2 tw:lg:basis-1/3 tw:xl:basis-1/4',
+              itemClassName,
+            )}
           >
             <Link
               href={routePaths.pets}

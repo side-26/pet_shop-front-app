@@ -25,22 +25,6 @@ export type LandingPetTypeDTO = {
   summary?: string;
 };
 
-/** Card-ready pet-type projection used by the client-lazy home section. */
-export class LandingPetTypeCardDTO {
-  @Expose()
-  declare id: string;
-
-  @Expose()
-  declare title: string;
-
-  @Expose()
-  declare mainImage: string;
-
-  @Expose()
-  @Transform(({ value }) => value ?? '', { toClassOnly: true })
-  declare thumbnail: string;
-}
-
 /** Popular and recent landing pets use the customer-facing card contract. */
 export type LandingPetDTO = CustomerPetListItemDTO;
 /** The landing pet-list formatter only emits populated taxonomy titles when the model supplies them. */

@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   getAllLandingPetTypesAction,
+  getHomeLandingPetTypesAction,
   getDiscountedLandingProductsAction,
   getLandingPetBySlugAction,
   getPublicLandingPetBySlugAction,
@@ -76,6 +77,11 @@ vi.mock('./landing.service', () => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.mocked(getAllLandingPetTypes).mockResolvedValue({
+    isSuccess: true,
+    message: null,
+    data: [],
+  });
   vi.mocked(getLandingProductList).mockResolvedValue({
     isSuccess: true,
     message: null,
@@ -145,6 +151,16 @@ describe('retryAllLandingPetTypesAction', () => {
     await expect(getLandingProductBySlugAction('product-slug')).rejects.toThrow(
       'نمایش محصول انجام نشد.',
     );
+  });
+
+  it('unwraps home pet-type failures for its Server Component error boundary', async () => {
+    vi.mocked(getAllLandingPetTypes).mockResolvedValue({
+      isSuccess: false,
+      message: 'دسته‌بندی‌ها در دسترس نیستند.',
+      data: { messages: {}, details: {} },
+    });
+
+    await expect(getHomeLandingPetTypesAction()).rejects.toThrow('دسته‌بندی‌ها در دسترس نیستند.');
   });
 
   it('unwraps pet-detail failures for Server Component error boundaries', async () => {

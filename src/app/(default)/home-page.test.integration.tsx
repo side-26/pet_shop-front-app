@@ -10,8 +10,8 @@ vi.mock('./_components/home/hero/shader-background', () => ({
   ShaderBackground: () => <div data-testid="shader-background" />,
 }));
 
-vi.mock('./_components/home/categories/lazy-categories-section', () => ({
-  LazyCategoriesSection: () => (
+vi.mock('./_components/home/categories/categories-section', () => ({
+  CategoriesSection: () => (
     <section>
       <h2>دسته‌بندی حیوانات</h2>
       <div aria-label="دسته‌بندی حیوانات" aria-roledescription="carousel" role="region">
@@ -23,6 +23,7 @@ vi.mock('./_components/home/categories/lazy-categories-section', () => ({
 
 vi.mock('@/entities/landing/landing.actions', () => ({
   getAllLandingPetTypesAction: () => new Promise(() => {}),
+  getHomeLandingPetTypesAction: () => new Promise(() => {}),
   getDiscountedLandingProductsAction: () => new Promise(() => {}),
   retryAllLandingPetTypesAction: vi.fn(),
   retryLandingHomeOffersAction: vi.fn(),
