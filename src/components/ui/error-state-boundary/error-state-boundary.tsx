@@ -3,7 +3,7 @@
 import { catchError, type ErrorInfo } from 'next/error';
 import type { ReactNode } from 'react';
 
-import { useReportClientError } from '@/lib/logging/use-report-client-error';
+import { useReportClientError } from '@/hooks/use-report-client-error';
 
 type ErrorStateBoundaryProps = Readonly<{
   children: ReactNode;

@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 
-import { reportClientError } from './client-reporter';
+import { reportClientError } from '@/lib/logging/client-reporter';
 
 export function useReportClientError(error: unknown): void {
   useEffect(() => {

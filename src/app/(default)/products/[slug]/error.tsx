@@ -1,7 +1,7 @@
 'use client';
 
 import { PageErrorState } from '@/components/common/page-error-state';
-import { useReportClientError } from '@/lib/logging/use-report-client-error';
+import { useReportClientError } from '@/hooks/use-report-client-error';
 
 export default function ProductDetailError({
   error,

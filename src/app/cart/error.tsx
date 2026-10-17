@@ -2,7 +2,7 @@
 
 import { PageErrorState } from '@/components/common/page-error-state';
 import { retryCartAction } from '@/entities/users/users.actions';
-import { useReportClientError } from '@/lib/logging/use-report-client-error';
+import { useReportClientError } from '@/hooks/use-report-client-error';
 
 export default function CartError({
   error,

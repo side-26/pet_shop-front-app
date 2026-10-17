@@ -7,6 +7,7 @@ import {
   type ClientErrorType,
   type InteractionType,
 } from './contracts';
+import { telemetryFetcher } from '@/lib/api/telemetryFetcher';
 import { isValidRequestId } from './request-id';
 import { createErrorFingerprint, sanitizeErrorType } from './sanitize';
 
@@ -46,17 +47,7 @@ function getInteractionType(): InteractionType {
 }
 
 function sendReport(report: ClientErrorReport): void {
-  try {
-    void fetch(TELEMETRY_ENDPOINT, {
-      method: 'POST',
-      credentials: 'same-origin',
-      keepalive: true,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(report),
-    }).catch(() => undefined);
-  } catch {
-    // Reporting failure must remain invisible to the user operation.
-  }
+  telemetryFetcher({ body: report, url: TELEMETRY_ENDPOINT });
 }
 
 export function setClientRequestId(value: unknown): void {
