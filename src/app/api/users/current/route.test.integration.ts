@@ -25,7 +25,7 @@ describe('GET /api/users/current', () => {
       },
     });
 
-    const response = await GET();
+    const response = await GET(new Request('http://localhost/api/users/current'), undefined);
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({

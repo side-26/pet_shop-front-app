@@ -33,6 +33,10 @@ class MockXMLHttpRequest {
     this.headers.set(name, value);
   }
 
+  getResponseHeader(name: string) {
+    return this.headers.get(name) ?? null;
+  }
+
   send(body?: XMLHttpRequestBodyInit | null) {
     this.sentBody = body ?? undefined;
   }
@@ -83,6 +87,7 @@ describe('uploadFetcher', () => {
     expect(request.url).toBe('https://api.example.test/uploads?folder=pets');
     expect(request.sentBody).toBe(body);
     expect(request.headers.get('authorization')).toBe('Bearer access-token');
+    expect(request.headers.get('x-request-id')).toMatch(/^[A-Za-z0-9._:-]{8,128}$/);
     expect(request.headers.has('content-type')).toBe(false);
     expect(onProgress).toHaveBeenCalledWith({ loaded: 50, total: 100, percent: 50 });
   });

@@ -27,8 +27,6 @@ export function ProductListErrorFallback({
 }: ProductListErrorFallbackProps) {
   const router = useRouter();
 
-  console.error('Unexpected error while rendering the product catalogue.', error);
-
   return (
     <FetchErrorSection
       description={getErrorDescription(error)}

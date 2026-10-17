@@ -18,7 +18,7 @@ describe('GET /api/auth/session', () => {
       sessionExp: 2,
     });
 
-    const response = await GET();
+    const response = await GET(new Request('http://localhost/api/auth/session'), undefined);
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({ userId: 'user-1' });
@@ -27,7 +27,7 @@ describe('GET /api/auth/session', () => {
   it('returns null when no encrypted session exists', async () => {
     vi.mocked(getSession).mockResolvedValue(null);
 
-    const response = await GET();
+    const response = await GET(new Request('http://localhost/api/auth/session'), undefined);
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({ userId: null });

@@ -14,7 +14,6 @@ export function usePrepareOrderMutation() {
       const result = (await prepareServiceAction(input)) as
         FetcherResult<PreparedOrderDTO> | undefined;
       if (!result?.isSuccess) {
-        console.log(input, 'input');
         throw (
           result ?? {
             isSuccess: false,

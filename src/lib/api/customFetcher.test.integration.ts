@@ -34,6 +34,9 @@ describe('customFetcher', () => {
 
     expect(result).toEqual({ isSuccess: true, message: 'Products loaded.', data: [1, 2] });
     expect(fetchMock.mock.calls[0]?.[1]?.cache).toBe('no-store');
+    expect(new Headers(fetchMock.mock.calls[0]?.[1]?.headers).get('x-request-id')).toMatch(
+      /^[A-Za-z0-9._:-]{8,128}$/,
+    );
   });
 
   it('treats a partial HTTP success envelope as a successful request', async () => {

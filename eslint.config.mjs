@@ -6,6 +6,14 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   // Keep this last so Prettier owns all formatting decisions.
   prettierConfig,
+  {
+    files: ['src/**/*.{js,jsx,mjs,cjs,ts,tsx}'],
+    rules: { 'no-console': 'error' },
+  },
+  {
+    files: ['src/scripts/**'],
+    rules: { 'no-console': 'off' },
+  },
   globalIgnores([
     '.next/**',
     'out/**',

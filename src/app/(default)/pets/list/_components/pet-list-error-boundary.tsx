@@ -27,8 +27,6 @@ export function PetListErrorFallback({
 }: PetListErrorFallbackProps) {
   const router = useRouter();
 
-  console.error('Unexpected error while rendering the pet catalogue.', error);
-
   return (
     <FetchErrorSection
       description={getErrorDescription(error)}

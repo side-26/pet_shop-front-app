@@ -8,6 +8,9 @@ import {
 
 import { InternalApiError } from './InternalFetchError';
 import { HTTP_STATUS } from './http-status';
+import { reportClientError, setClientRequestId } from '@/lib/logging/client-reporter';
+import { resolveRequestId } from '@/lib/logging/request-id';
+import { getPathGroup } from '@/lib/logging/sanitize';
 
 type InternalFetcherOptions<TBody = never> = {
   url: string;
@@ -33,7 +36,10 @@ export async function internalFetcher<TSuccess, TBackendError = unknown, TBody =
   } = options;
 
   const headers = new Headers(callerHeaders);
+  const requestId = resolveRequestId(headers.get('x-request-id'));
+  headers.set('X-Request-ID', requestId);
   const serializedBody = serializeBody(body);
+  const path = getPathGroup(url);
 
   if (serializedBody instanceof FormData) {
     headers.delete('Content-Type');
@@ -53,9 +59,18 @@ export async function internalFetcher<TSuccess, TBackendError = unknown, TBody =
     const responseBody = parseResponseText(
       response.status === HTTP_STATUS.NO_CONTENT ? '' : await response.text(),
     );
+    setClientRequestId(response.headers.get('x-request-id') ?? requestId);
 
     if (!response.ok) {
       const errorBody = responseBody as FetcherError<TBackendError>;
+      if (response.status >= HTTP_STATUS.INTERNAL_SERVER_ERROR) {
+        reportClientError(new Error('Internal API server error'), {
+          component: 'internal-fetcher',
+          errorType: 'server_error',
+          fingerprintParts: [method, path, response.status],
+          requestId,
+        });
+      }
 
       throw new InternalApiError<TBackendError>(
         errorBody?.message ?? 'خطا در دریافت اطلاعات',
@@ -71,6 +86,12 @@ export async function internalFetcher<TSuccess, TBackendError = unknown, TBody =
     }
 
     if (error instanceof Error && error.name === 'TimeoutError') {
+      reportClientError(error, {
+        component: 'internal-fetcher',
+        errorType: 'timeout',
+        fingerprintParts: [method, path],
+        requestId,
+      });
       throw new InternalApiError('زمان درخواست به پایان رسید');
     }
 
@@ -79,9 +100,21 @@ export async function internalFetcher<TSuccess, TBackendError = unknown, TBody =
     }
 
     if (error instanceof TypeError) {
+      reportClientError(error, {
+        component: 'internal-fetcher',
+        errorType: 'network_error',
+        fingerprintParts: [method, path],
+        requestId,
+      });
       throw new InternalApiError('خطا در اتصال به سرور');
     }
 
+    reportClientError(error, {
+      component: 'internal-fetcher',
+      errorType: 'protocol_error',
+      fingerprintParts: [method, path],
+      requestId,
+    });
     throw new InternalApiError('خطای غیرمنتظره');
   }
 }

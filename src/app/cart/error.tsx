@@ -1,17 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
-
 import { PageErrorState } from '@/components/common/page-error-state';
 import { retryCartAction } from '@/entities/users/users.actions';
+import { useReportClientError } from '@/lib/logging/use-report-client-error';
 
 export default function CartError({
   error,
   retry,
 }: Readonly<{ error: Error & { digest?: string }; retry: () => void }>) {
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
+  useReportClientError(error);
 
   async function handleRetry() {
     await retryCartAction();

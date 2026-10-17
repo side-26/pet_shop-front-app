@@ -17,6 +17,10 @@ import {
   type ResponseParser,
 } from './fetcher.shared';
 import { HTTP_STATUS } from './http-status';
+import { getRequestContextId } from '@/lib/logging/request-context';
+import { resolveRequestId } from '@/lib/logging/request-id';
+import { getPathGroup, sanitizeErrorType } from '@/lib/logging/sanitize';
+import { observeServerHttpCompletion } from '@/lib/logging/server-http-observer';
 
 export type {
   FetcherError,
@@ -71,6 +75,8 @@ export async function customFetcher<TSuccess, TBackendError = unknown, TBody = n
     url,
   } = options;
   const headers = new Headers(callerHeaders);
+  const requestId = resolveRequestId(headers.get('x-request-id') ?? getRequestContextId());
+  headers.set('X-Request-ID', requestId);
   if (customConfig?.customToken) headers.set('Authorization', `Bearer ${customConfig.customToken}`);
   else if (auth) {
     const session = await getSession();
@@ -88,6 +94,8 @@ export async function customFetcher<TSuccess, TBackendError = unknown, TBody = n
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  const startedAt = performance.now();
+  const path = getPathGroup(url);
   try {
     const response = await fetch(buildUrl(url, query), {
       method,
@@ -101,28 +109,80 @@ export async function customFetcher<TSuccess, TBackendError = unknown, TBody = n
       response.status === HTTP_STATUS.NO_CONTENT ? '' : await response.text(),
     );
     if (!response.ok || isExplicitErrorResponse(responseBody)) {
+      observeServerHttpCompletion({
+        requestId,
+        returnedRequestId: response.headers.get('x-request-id') ?? undefined,
+        method,
+        path,
+        statusCode: response.status,
+        durationMs: performance.now() - startedAt,
+        outcome: response.ok
+          ? 'protocol_error'
+          : response.status >= 500
+            ? 'server_error'
+            : 'client_error',
+      });
       return parseResponseError(
         responseBody,
         parseErrorDetails,
         response.ok ? HTTP_STATUS.BAD_GATEWAY : response.status,
       );
     }
-    return parseSuccess(
+    const result = parseSuccess<TSuccess, TBackendError>(
       normalizeSuccessResponse(responseBody),
       successParser,
       HTTP_STATUS.BAD_GATEWAY,
     );
+    observeServerHttpCompletion({
+      requestId,
+      returnedRequestId: response.headers.get('x-request-id') ?? undefined,
+      method,
+      path,
+      statusCode: result.isSuccess ? response.status : HTTP_STATUS.BAD_GATEWAY,
+      durationMs: performance.now() - startedAt,
+      outcome: result.isSuccess ? 'success' : 'protocol_error',
+    });
+    return result;
   } catch (error: unknown) {
-    if (controller.signal.aborted)
+    if (controller.signal.aborted) {
+      observeServerHttpCompletion({
+        requestId,
+        method,
+        path,
+        statusCode: HTTP_STATUS.GATEWAY_TIMEOUT,
+        durationMs: performance.now() - startedAt,
+        outcome: 'timeout',
+        errorType: sanitizeErrorType(error),
+      });
       return transportError<TBackendError>(
         fetcherMessages.requestTimedOut,
         HTTP_STATUS.GATEWAY_TIMEOUT,
       );
-    if (error instanceof TypeError)
+    }
+    if (error instanceof TypeError) {
+      observeServerHttpCompletion({
+        requestId,
+        method,
+        path,
+        statusCode: HTTP_STATUS.BAD_GATEWAY,
+        durationMs: performance.now() - startedAt,
+        outcome: 'network_error',
+        errorType: sanitizeErrorType(error),
+      });
       return transportError<TBackendError>(
         fetcherMessages.serverUnavailable,
         HTTP_STATUS.BAD_GATEWAY,
       );
+    }
+    observeServerHttpCompletion({
+      requestId,
+      method,
+      path,
+      statusCode: HTTP_STATUS.BAD_GATEWAY,
+      durationMs: performance.now() - startedAt,
+      outcome: 'protocol_error',
+      errorType: sanitizeErrorType(error),
+    });
     return transportError<TBackendError>(fetcherMessages.unexpectedError, HTTP_STATUS.BAD_GATEWAY);
   } finally {
     clearTimeout(timeout);

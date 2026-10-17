@@ -1,7 +1,13 @@
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { FetchErrorSection } from './fetch-error-section';
+import { reportClientError } from '@/lib/logging/client-reporter';
+
+import { createFetchErrorSectionBoundary, FetchErrorSection } from './fetch-error-section';
+
+vi.mock('@/lib/logging/client-reporter', () => ({
+  reportClientError: vi.fn(),
+}));
 
 afterEach(cleanup);
 
@@ -48,5 +54,31 @@ describe('FetchErrorSection', () => {
     fireEvent.click(retryButton);
     expect(onRetry).toHaveBeenCalledTimes(2);
     vi.useRealTimers();
+  });
+
+  it('creates a shared boundary that reports the failed fetch region', async () => {
+    const fetchError = new Error('Failed to load breeds');
+    const FetchErrorBoundary = createFetchErrorSectionBoundary({
+      description: 'فهرست نژادها در دسترس نیست.',
+      title: 'خطا در دریافت نژادها',
+    });
+
+    function FailedFetch(): never {
+      throw fetchError;
+    }
+
+    render(
+      <FetchErrorBoundary>
+        <FailedFetch />
+      </FetchErrorBoundary>,
+    );
+
+    expect(screen.getByRole('alert').textContent).toContain('خطا در دریافت نژادها');
+    await waitFor(() =>
+      expect(reportClientError).toHaveBeenCalledWith(fetchError, {
+        component: 'react-boundary',
+        errorType: 'render_error',
+      }),
+    );
   });
 });

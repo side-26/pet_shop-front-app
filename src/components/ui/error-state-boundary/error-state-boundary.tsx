@@ -3,6 +3,8 @@
 import { catchError, type ErrorInfo } from 'next/error';
 import type { ReactNode } from 'react';
 
+import { useReportClientError } from '@/lib/logging/use-report-client-error';
+
 type ErrorStateBoundaryProps = Readonly<{
   children: ReactNode;
   fallback?: ReactNode;
@@ -13,6 +15,8 @@ function ErrorStateFallback(
   { fallback, fallbackRender }: Omit<ErrorStateBoundaryProps, 'children'>,
   info: ErrorInfo,
 ) {
+  useReportClientError(info.error);
+
   if (fallbackRender) {
     return fallbackRender(info);
   }

@@ -1,7 +1,8 @@
 import { customFetcher } from '@/lib/api/customFetcher';
 import { HTTP_STATUS } from '@/lib/api/http-status';
+import { withApiHandler } from '@/lib/api/with-api-handler';
 
-export async function POST(request: Request) {
+export const POST = withApiHandler(async (request) => {
   try {
     const body = await request.formData();
     const result = await customFetcher<{ imageUrl: string }, unknown, FormData>({
@@ -25,4 +26,4 @@ export async function POST(request: Request) {
       { status: HTTP_STATUS.BAD_REQUEST },
     );
   }
-}
+});

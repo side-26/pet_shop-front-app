@@ -19,6 +19,7 @@ describe('POST /api/images', () => {
 
     const response = await POST(
       new Request('http://localhost/api/images', { method: 'POST', body }),
+      undefined,
     );
 
     expect(response.status).toBe(201);

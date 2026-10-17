@@ -1,7 +1,11 @@
-import { cleanup, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import { reportClientError } from '@/lib/logging/client-reporter';
 
 import { ErrorStateBoundary } from '.';
+
+vi.mock('@/lib/logging/client-reporter', () => ({ reportClientError: vi.fn() }));
 
 afterEach(cleanup);
 
@@ -21,7 +25,7 @@ describe('ErrorStateBoundary', () => {
     expect(screen.queryByText('نمایش وضعیت خطا')).toBeNull();
   });
 
-  it('renders the supplied fallback when a descendant throws', () => {
+  it('renders the supplied fallback and reports when a descendant throws', async () => {
     render(
       <ErrorStateBoundary fallback={<p role="alert">نمایش وضعیت خطا</p>}>
         <ThrowRenderError />
@@ -29,5 +33,11 @@ describe('ErrorStateBoundary', () => {
     );
 
     expect(screen.getByRole('alert').textContent).toContain('نمایش وضعیت خطا');
+    await waitFor(() =>
+      expect(reportClientError).toHaveBeenCalledWith(expect.any(Error), {
+        component: 'react-boundary',
+        errorType: 'render_error',
+      }),
+    );
   });
 });

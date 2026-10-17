@@ -1,6 +1,7 @@
 'use client';
 
 import { RefreshCw, RotateCcw, type LucideIcon } from 'lucide-react';
+import { type ErrorInfo } from 'next/error';
 import { useEffect, useState, type ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { ErrorStateBoundary } from '@/components/ui/error-state-boundary';
 import { cn } from '@/lib/utils';
 
 type FetchErrorSectionProps = Readonly<{
@@ -22,6 +24,12 @@ type FetchErrorSectionProps = Readonly<{
   retryCooldownMs?: number;
   title?: ReactNode;
 }>;
+
+type FetchErrorSectionBoundaryOptions<TProps extends object> = Readonly<
+  Omit<FetchErrorSectionProps, 'onRetry'> & {
+    onRetry?: (props: TProps, retry: ErrorInfo['retry']) => void;
+  }
+>;
 
 /**
  * A recovery UI for a section whose server-side API request could not be completed.
@@ -94,4 +102,37 @@ function FetchErrorSection({
   );
 }
 
-export { FetchErrorSection, type FetchErrorSectionProps };
+/**
+ * Creates a section-level error boundary with the shared recovery UI and
+ * centralized browser-error reporting. It delegates boundary behavior to the
+ * application-wide ErrorStateBoundary; feature files provide only their copy
+ * and, when needed, the extra retry work for that data region.
+ */
+function createFetchErrorSectionBoundary<TProps extends object = Record<never, never>>(
+  options: FetchErrorSectionBoundaryOptions<TProps>,
+) {
+  return function FetchErrorSectionBoundary({
+    children,
+    ...props
+  }: Readonly<TProps & { children: ReactNode }>) {
+    return (
+      <ErrorStateBoundary
+        fallbackRender={({ retry }) => (
+          <FetchErrorSection
+            {...options}
+            onRetry={() => options.onRetry?.(props as TProps, retry) ?? retry()}
+          />
+        )}
+      >
+        {children}
+      </ErrorStateBoundary>
+    );
+  };
+}
+
+export {
+  FetchErrorSection,
+  createFetchErrorSectionBoundary,
+  type FetchErrorSectionBoundaryOptions,
+  type FetchErrorSectionProps,
+};

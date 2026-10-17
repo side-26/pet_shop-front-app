@@ -14,6 +14,9 @@ import {
   type ResponseParser,
 } from './fetcher.shared';
 import { HTTP_STATUS } from './http-status';
+import { reportClientError, setClientRequestId } from '@/lib/logging/client-reporter';
+import { resolveRequestId } from '@/lib/logging/request-id';
+import { getPathGroup } from '@/lib/logging/sanitize';
 
 export type UploadProgress = {
   loaded: number;
@@ -50,6 +53,9 @@ export function uploadFetcher<TSuccess, TBackendError = unknown, TBody = FormDat
   options: UploadFetcherOptions<TSuccess, TBackendError, TBody>,
 ): UploadFetcherPromise<TSuccess, TBackendError> {
   const request = new XMLHttpRequest();
+  const requestId = resolveRequestId(new Headers(options.headers).get('x-request-id'));
+  const method = options.method ?? 'POST';
+  const path = getPathGroup(options.url);
   let settled = false;
   let removeAbortListener: (() => void) | undefined;
 
@@ -62,11 +68,12 @@ export function uploadFetcher<TSuccess, TBackendError = unknown, TBody = FormDat
     };
 
     try {
-      request.open(options.method ?? 'POST', buildUrl(options.url, options.query));
+      request.open(method, buildUrl(options.url, options.query));
       request.timeout = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
       request.withCredentials = options.withCredentials ?? false;
 
       const headers = new Headers(options.headers);
+      headers.set('X-Request-ID', requestId);
       if (options.token) headers.set('Authorization', `Bearer ${options.token}`);
 
       const body = serializeBody(options.body);
@@ -83,21 +90,44 @@ export function uploadFetcher<TSuccess, TBackendError = unknown, TBody = FormDat
         });
       };
       request.onload = () => {
+        setClientRequestId(request.getResponseHeader('x-request-id') ?? requestId);
         const response = parseResponseText(request.responseText);
         if (
           request.status < HTTP_STATUS.OK ||
           request.status >= HTTP_STATUS.MULTIPLE_CHOICES ||
           isExplicitErrorResponse(response)
         ) {
+          if (request.status >= HTTP_STATUS.INTERNAL_SERVER_ERROR) {
+            reportClientError(new Error('Upload endpoint server error'), {
+              component: 'upload-fetcher',
+              errorType: 'server_error',
+              fingerprintParts: [method, path, request.status],
+              requestId,
+            });
+          }
           finish(parseResponseError(response, options.parseErrorDetails));
           return;
         }
         finish(parseSuccess(normalizeSuccessResponse(response), options.parseSuccess));
       };
-      request.onerror = () =>
+      request.onerror = () => {
+        reportClientError(new Error('Upload network error'), {
+          component: 'upload-fetcher',
+          errorType: 'network_error',
+          fingerprintParts: [method, path],
+          requestId,
+        });
         finish(transportError<TBackendError>(fetcherMessages.serverUnavailable));
-      request.ontimeout = () =>
+      };
+      request.ontimeout = () => {
+        reportClientError(new Error('Upload timeout'), {
+          component: 'upload-fetcher',
+          errorType: 'timeout',
+          fingerprintParts: [method, path],
+          requestId,
+        });
         finish(transportError<TBackendError>(fetcherMessages.requestTimedOut));
+      };
       request.onabort = () =>
         finish(transportError<TBackendError>(fetcherMessages.uploadCancelled));
       if (options.signal?.aborted) {
@@ -109,7 +139,13 @@ export function uploadFetcher<TSuccess, TBackendError = unknown, TBody = FormDat
       options.signal?.addEventListener('abort', abort, { once: true });
       removeAbortListener = () => options.signal?.removeEventListener('abort', abort);
       request.send(body);
-    } catch {
+    } catch (error: unknown) {
+      reportClientError(error, {
+        component: 'upload-fetcher',
+        errorType: 'protocol_error',
+        fingerprintParts: [method, path],
+        requestId,
+      });
       finish(transportError<TBackendError>(fetcherMessages.unexpectedError));
     }
   }) as UploadFetcherPromise<TSuccess, TBackendError>;
