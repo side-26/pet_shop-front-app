@@ -163,6 +163,20 @@ function isLocalImageSource(src: unknown): src is string {
   return typeof src === 'string' && src.startsWith('data:image/');
 }
 
+function dataUrlToFile(source: string): File {
+  const separatorIndex = source.indexOf(',');
+  if (separatorIndex === -1) throw new Error('invalid-image-data-url');
+
+  const metadata = source.slice(0, separatorIndex);
+  const data = source.slice(separatorIndex + 1);
+  const mimeType = metadata.match(/^data:([^;,]+)/i)?.[1] ?? 'image/webp';
+  const bytes = metadata.toLowerCase().includes(';base64')
+    ? Uint8Array.from(atob(data), (character) => character.codePointAt(0) ?? 0)
+    : new TextEncoder().encode(decodeURIComponent(data.replace(/\+/g, ' ')));
+
+  return new File([bytes], 'rich-text-image', { type: mimeType });
+}
+
 async function uploadEmbeddedImage(source: string): Promise<string> {
   const bucketUrl = richTextDraftImageUrls.get(source);
   if (bucketUrl) return bucketUrl;
@@ -171,9 +185,8 @@ async function uploadEmbeddedImage(source: string): Promise<string> {
     const result = await draft.request;
     if (result.isSuccess) return result.data.imageUrl;
   }
-  const blob = await (await fetch(source)).blob();
   const result = await uploadImage({
-    mainImage: new File([blob], 'rich-text-image', { type: blob.type || 'image/webp' }),
+    mainImage: dataUrlToFile(source),
   });
   if (!result.isSuccess) throw result;
   richTextDraftImageUrls.set(source, result.data.imageUrl);

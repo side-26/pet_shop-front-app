@@ -56,12 +56,6 @@ describe('image client upload', () => {
       { abort: vi.fn() },
     );
     vi.mocked(uploadFetcher).mockReturnValue(request);
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        blob: () => Promise.resolve(new Blob(['image'], { type: 'image/webp' })),
-      }),
-    );
     const content = {
       type: 'doc' as const,
       content: [
@@ -79,6 +73,10 @@ describe('image client upload', () => {
     });
 
     expect(uploadFetcher).toHaveBeenCalledTimes(1);
+    const uploadedFile = (vi.mocked(uploadFetcher).mock.calls[0]?.[0].body as FormData).get(
+      'mainImage',
+    ) as File;
+    expect(uploadedFile).toMatchObject({ name: 'rich-text-image', type: 'image/webp', size: 5 });
     expect(content.content[1]?.attrs?.src).toBe('data:image/webp;base64,aW1hZ2U=');
     expect(richTextDraftImageUrls.get('data:image/webp;base64,aW1hZ2U=')).toBe(
       'https://cdn.example.test/rich-text.webp',

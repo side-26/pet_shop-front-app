@@ -4,6 +4,7 @@ import { toast } from '@/components/ui/toast';
 import { routePaths } from '@/configs/route.path';
 import { USER_ROLES } from '@/configs/user-role';
 import { globalErrorHandler } from '@/utils/helpers';
+import { internalFetcher } from '@/lib/api/internalFetcher';
 
 import { authMessages } from './auth.messages';
 import {
@@ -39,6 +40,7 @@ vi.mock('./auth.actions', () => ({
 }));
 vi.mock('@/utils/helpers', () => ({ globalErrorHandler: vi.fn() }));
 vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
+vi.mock('@/lib/api/internalFetcher', () => ({ internalFetcher: vi.fn() }));
 
 const registerUserActionMock = vi.mocked(registerUserAction);
 const loginUserActionMock = vi.mocked(loginUserAction);
@@ -50,6 +52,7 @@ const resetPasswordActionMock = vi.mocked(resetPasswordAction);
 const verifyResetPasswordOtpActionMock = vi.mocked(verifyResetPasswordOtpAction);
 const globalErrorHandlerMock = vi.mocked(globalErrorHandler);
 const toastAddMock = vi.mocked(toast.add);
+const internalFetcherMock = vi.mocked(internalFetcher);
 
 describe('registerUser client orchestration', () => {
   beforeEach(() => {
@@ -216,10 +219,6 @@ describe('auth session identity synchronization', () => {
     useAuthStore.getState().deleteUserIdentity();
   });
 
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
   it('stores only the identity returned by the internal endpoint', async () => {
     const identity = {
       userId: 'user-1',
@@ -233,19 +232,21 @@ describe('auth session identity synchronization', () => {
       age: 31,
       birthDate: null,
     };
-    vi.stubGlobal(
-      'fetch',
-      vi
-        .fn()
-        .mockResolvedValueOnce({ ok: true, json: async () => ({ userId: identity.userId }) })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => ({ isSuccess: true, data: identity }),
-        }),
-    );
+    internalFetcherMock
+      .mockResolvedValueOnce({ userId: identity.userId })
+      .mockResolvedValueOnce({ isSuccess: true, data: identity });
 
     await expect(syncUserIdentity()).resolves.toEqual(identity);
     expect(useAuthStore.getState().userIdentity).toEqual(identity);
+    expect(internalFetcherMock).toHaveBeenNthCalledWith(1, {
+      url: '/api/auth/session',
+      method: 'GET',
+      signal: undefined,
+    });
+    expect(internalFetcherMock).toHaveBeenNthCalledWith(2, {
+      url: '/api/users/current',
+      method: 'GET',
+    });
   });
 
   it('clears identity when the internal endpoint reports no session', async () => {
@@ -261,10 +262,7 @@ describe('auth session identity synchronization', () => {
       age: 31,
       birthDate: null,
     });
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({ ok: true, json: async () => ({ userId: null }) }),
-    );
+    internalFetcherMock.mockResolvedValue({ userId: null });
 
     await expect(syncUserIdentity()).resolves.toBeNull();
     expect(useAuthStore.getState().userIdentity).toBeNull();
@@ -273,12 +271,9 @@ describe('auth session identity synchronization', () => {
   it('does not fetch or change identity when the synchronization signal is already aborted', async () => {
     const controller = new AbortController();
     controller.abort();
-    const fetchMock = vi.fn();
-    vi.stubGlobal('fetch', fetchMock);
-
     await expect(syncUserIdentity(controller.signal)).resolves.toBeNull();
 
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(internalFetcherMock).not.toHaveBeenCalled();
     expect(useAuthStore.getState().userIdentity).toBeNull();
   });
 
@@ -296,22 +291,12 @@ describe('auth session identity synchronization', () => {
       birthDate: null,
     };
     const controller = new AbortController();
-    vi.stubGlobal(
-      'fetch',
-      vi
-        .fn()
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => {
-            controller.abort();
-            return { userId: identity.userId };
-          },
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => ({ isSuccess: true, data: identity }),
-        }),
-    );
+    internalFetcherMock
+      .mockImplementationOnce(async () => {
+        controller.abort();
+        return { userId: identity.userId };
+      })
+      .mockResolvedValueOnce({ isSuccess: true, data: identity });
 
     await expect(syncUserIdentity(controller.signal)).resolves.toEqual(identity);
     expect(useAuthStore.getState().userIdentity).toEqual(identity);

@@ -7,6 +7,7 @@ import { useRouter } from 'nextjs-toploader/app';
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
 import { routePaths } from '@/configs/route.path';
+import { internalFetcher } from '@/lib/api/internalFetcher';
 import {
   loginUserAction,
   logoutUserAction,
@@ -46,26 +47,22 @@ export async function syncUserIdentity(signal?: AbortSignal): Promise<CurrentUse
   try {
     if (signal?.aborted) return null;
 
-    const response = await fetch(AUTH_SESSION_API_PATH, {
+    const result = await internalFetcher<AuthSessionResponse>({
+      url: AUTH_SESSION_API_PATH,
       method: 'GET',
-      cache: 'no-store',
-      credentials: 'same-origin',
       signal,
     });
-    const result = (await response.json()) as AuthSessionResponse;
 
-    if (!response.ok || !result.userId) {
+    if (!result.userId) {
       useAuthStore.getState().deleteUserIdentity();
       return null;
     }
 
-    const currentUserResponse = await fetch(CURRENT_USER_API_PATH, {
+    const currentUser = await internalFetcher<CurrentUserResponse>({
+      url: CURRENT_USER_API_PATH,
       method: 'GET',
-      cache: 'no-store',
-      credentials: 'same-origin',
     });
-    const currentUser = (await currentUserResponse.json()) as CurrentUserResponse;
-    if (!currentUserResponse.ok || !currentUser.isSuccess) {
+    if (!currentUser.isSuccess) {
       useAuthStore.getState().deleteUserIdentity();
       return null;
     }
