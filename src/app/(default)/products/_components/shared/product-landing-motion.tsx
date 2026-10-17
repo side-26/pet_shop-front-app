@@ -4,6 +4,7 @@ import { motion, useReducedMotion, useScroll, useTransform, type Variants } from
 import { useRef, type ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
+import { useDetectMobileViewport } from '@/hooks/use-detect-mobile-viewport';
 
 const sectionVariants: Variants = {
   hidden: { opacity: 0, y: 34 },
@@ -44,7 +45,9 @@ export function MotionSection({
   labelledBy,
   id,
 }: MotionSectionProps) {
-  const reducedMotion = useReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
+  const isMobileViewport = useDetectMobileViewport();
+  const reducedMotion = prefersReducedMotion || isMobileViewport;
 
   return (
     <motion.section
@@ -77,7 +80,9 @@ export function HeroMotion({
   children,
   className,
 }: Readonly<{ children: ReactNode; className?: string }>) {
-  const reducedMotion = useReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
+  const isMobileViewport = useDetectMobileViewport();
+  const reducedMotion = prefersReducedMotion || isMobileViewport;
 
   return (
     <motion.div
@@ -95,8 +100,21 @@ export function ParallaxProductMedia({
   children,
   className,
 }: Readonly<{ children: ReactNode; className?: string }>) {
-  const mediaRef = useRef<HTMLDivElement>(null);
+  const isMobileViewport = useDetectMobileViewport();
   const reducedMotion = useReducedMotion();
+
+  if (isMobileViewport || reducedMotion) {
+    return <div className={className}>{children}</div>;
+  }
+
+  return <ActiveParallaxProductMedia className={className}>{children}</ActiveParallaxProductMedia>;
+}
+
+function ActiveParallaxProductMedia({
+  children,
+  className,
+}: Readonly<{ children: ReactNode; className?: string }>) {
+  const mediaRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: mediaRef,
     offset: ['start end', 'end start'],
@@ -104,11 +122,7 @@ export function ParallaxProductMedia({
   const y = useTransform(scrollYProgress, [0, 1], [32, -32]);
 
   return (
-    <motion.div
-      ref={mediaRef}
-      className={cn(!reducedMotion && 'tw:will-change-transform', className)}
-      style={reducedMotion ? undefined : { y }}
-    >
+    <motion.div ref={mediaRef} className={cn('tw:will-change-transform', className)} style={{ y }}>
       {children}
     </motion.div>
   );

@@ -4,6 +4,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
+import { useDetectMobileViewport } from '@/hooks/use-detect-mobile-viewport';
 
 function useRevealOnView<TElement extends HTMLElement>() {
   const elementRef = useRef<TElement>(null);
@@ -69,8 +70,21 @@ export function ParallaxMedia({
   children,
   className,
 }: Readonly<{ children: ReactNode; className?: string }>) {
-  const mediaRef = useRef<HTMLDivElement>(null);
+  const isMobileViewport = useDetectMobileViewport();
   const prefersReducedMotion = useReducedMotion();
+
+  if (isMobileViewport || prefersReducedMotion) {
+    return <div className={className}>{children}</div>;
+  }
+
+  return <ActiveParallaxMedia className={className}>{children}</ActiveParallaxMedia>;
+}
+
+function ActiveParallaxMedia({
+  children,
+  className,
+}: Readonly<{ children: ReactNode; className?: string }>) {
+  const mediaRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: mediaRef,
     offset: ['start end', 'end start'],
@@ -78,11 +92,7 @@ export function ParallaxMedia({
   const y = useTransform(scrollYProgress, [0, 1], [30, -30]);
 
   return (
-    <motion.div
-      ref={mediaRef}
-      className={cn(!prefersReducedMotion && 'tw:will-change-transform', className)}
-      style={prefersReducedMotion ? undefined : { y }}
-    >
+    <motion.div ref={mediaRef} className={cn('tw:will-change-transform', className)} style={{ y }}>
       {children}
     </motion.div>
   );

@@ -25,7 +25,7 @@
 }
 
 @supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
+  @media (width >= 64rem) and (prefers-reduced-motion: no-preference) {
     .list :global(.animated-staggered-list-item) {
       --staggered-list-in-view: false;
       animation: staggered-list-item-in-view both;

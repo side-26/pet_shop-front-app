@@ -358,6 +358,9 @@ for (const route of routes) {
       .toEqual(['CLS', 'INP', 'LCP']);
 
     const metrics = await readMetrics(page);
+    if (process.env.CORE_WEB_VITALS_REPORT === 'true') {
+      console.info(`[core-web-vitals] ${profile} ${route.pathname} ${JSON.stringify(metrics)}`);
+    }
     await testInfo.attach('core-web-vitals.json', {
       body: JSON.stringify({ profile, route, metrics, thresholds }, null, 2),
       contentType: 'application/json',

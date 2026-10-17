@@ -1,11 +1,16 @@
 const productDetailFixture =
   '/products/%D8%AA%D8%B4%D9%88%DB%8C%D9%82%DB%8C-%D8%A2%D9%85%D9%88%D8%B2%D8%B4%DB%8C-%D8%B3%DA%AF-%D8%A8%D8%A7-%D8%B7%D8%B9%D9%85-%DA%AF%D9%88%D8%B4%D8%AA-%D8%B3%DA%AF-%D8%AA%D8%B4%D9%88%DB%8C%D9%82%DB%8C-%D9%88-%D8%A7%D8%B3%D9%86%DA%A9-%D8%AA%D8%B4%D9%88%DB%8C%D9%82%DB%8C-%D8%A2%D9%85%D9%88%D8%B2%D8%B4%DB%8C';
+const articleDetailFixture = '/articles/%D8%AA%D8%B3%D8%AA-%D8%B4%D8%B4%D9%85';
+const articlePreviewFixture = '/admin/articles/%D8%AA%D8%B3%D8%AA-%D8%B4%D8%B4%D9%85/preview';
 
 /**
  * Each dynamic App Router page must have at least one concrete URL.
  * Route discovery fails when a new dynamic page is missing from this map.
  */
 export const dynamicRouteFixtures = {
+  '/admin/articles/[id]/preview': [articlePreviewFixture],
+  '/articles/[slug]': [articleDetailFixture],
+  '/payment/result/[authority]': ['/payment/result/core-web-vitals'],
   '/pets/[slug]': ['/pets/pet-1x8uo2o'],
   '/products/[slug]': [productDetailFixture],
 };
@@ -15,6 +20,7 @@ export const dynamicRouteFixtures = {
  * rather than the app's successful-response 404 page.
  */
 export const routeContentSelectors = {
+  [articleDetailFixture]: 'article:not(.skeleton)',
   '/pets/pet-1x8uo2o': '[data-pet-detail-content]',
   [productDetailFixture]: '[data-product-detail-content]',
 };
