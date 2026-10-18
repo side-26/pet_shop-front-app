@@ -4,16 +4,16 @@ import { Suspense } from 'react';
 
 import { buttonVariants } from '@/components/ui/button';
 import { routePaths } from '@/configs/route.path';
-import { getAllLandingPetTypesAction } from '@/entities/landing/landing.actions';
+import { getProductLandingPetTypesAction } from '@/entities/landing/landing.actions';
 import { cn } from '@/lib/utils';
 
-import { ProductCategoriesSectionContainer } from './product-categories-section-container';
+import { ProductCategoriesSectionContent } from './product-categories-section-content';
 import { ProductCategoriesSectionErrorBoundary } from './product-categories-section-error-boundary';
 import { ProductCategoriesSectionRenderer } from './product-categories-section-renderer';
 import { productCategoriesSectionSkeletonData } from './product-categories-section-skeleton-data';
 
 export function ProductCategoriesSection() {
-  const petTypesPromise = getAllLandingPetTypesAction();
+  const petTypesPromise = getProductLandingPetTypesAction();
 
   return (
     <section
@@ -53,7 +53,7 @@ export function ProductCategoriesSection() {
           }
         >
           <ProductCategoriesSectionErrorBoundary>
-            <ProductCategoriesSectionContainer petTypesPromise={petTypesPromise} />
+            <ProductCategoriesSectionContent petTypesPromise={petTypesPromise} />
           </ProductCategoriesSectionErrorBoundary>
         </Suspense>
       </div>

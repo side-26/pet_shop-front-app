@@ -1,22 +1,22 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { Suspense } from 'react';
+import { act, cleanup, render, screen, within } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
 import type { LandingPetTypeDTO } from '@/entities/landing/landing.dto';
 
-import { ProductCategoriesSectionContainer } from './product-categories-section-container';
+import { ProductCategoriesSectionContent } from './product-categories-section-content';
 import { ProductCategoriesSection } from './product-categories-section';
 import { ProductCategoriesSectionRenderer } from './product-categories-section-renderer';
 import { productCategoriesSectionSkeletonData } from './product-categories-section-skeleton-data';
 
-const { getAllLandingPetTypesMock, retryAllLandingPetTypesActionMock } = vi.hoisted(() => ({
-  getAllLandingPetTypesMock: vi.fn(),
-  retryAllLandingPetTypesActionMock: vi.fn(),
+const { getProductLandingPetTypesMock } = vi.hoisted(() => ({
+  getProductLandingPetTypesMock: vi.fn(),
 }));
 
 vi.mock('@/entities/landing/landing.actions', () => ({
-  getAllLandingPetTypesAction: getAllLandingPetTypesMock,
-  retryAllLandingPetTypesAction: retryAllLandingPetTypesActionMock,
+  getProductLandingPetTypesAction: getProductLandingPetTypesMock,
+  retryAllLandingPetTypesAction: vi.fn(),
 }));
 
 const petType: LandingPetTypeDTO = {
@@ -59,27 +59,23 @@ beforeEach(() => {
   );
 });
 
+afterEach(cleanup);
+
 describe('ProductCategoriesSection', () => {
   it('starts the pet-types request and provides a prefetched all-products link', async () => {
-    const petTypes = Promise.withResolvers<LandingPetTypeDTO[]>();
-    getAllLandingPetTypesMock.mockReturnValue(
-      petTypes.promise.then((data) => ({ isSuccess: true, message: null, data })),
-    );
+    getProductLandingPetTypesMock.mockReturnValue(Promise.resolve([]));
 
-    render(<ProductCategoriesSection />);
+    await act(async () => {
+      render(<ProductCategoriesSection />);
+    });
 
-    expect(getAllLandingPetTypesMock).toHaveBeenCalledOnce();
+    expect(getProductLandingPetTypesMock).toHaveBeenCalledOnce();
     expect(screen.getByRole('heading', { name: 'از دنیای او شروع کن' })).toBeTruthy();
     expect(screen.getByRole('link', { name: 'مشاهده محصولات بیشتر' }).getAttribute('href')).toBe(
       routePaths.productsList,
     );
     expect(screen.getByText('بیشتر').className).toContain('tw:sm:hidden');
     expect(screen.getByText('مشاهده محصولات بیشتر').className).toContain('tw:sm:inline');
-
-    await act(async () => {
-      petTypes.resolve([]);
-      await petTypes.promise;
-    });
   });
 
   it('renders a pet-type image, title, and canonical filtered-products link without legacy copy', () => {
@@ -121,24 +117,16 @@ describe('ProductCategoriesSection', () => {
     ).toBe(true);
   });
 
-  it('renders the targeted retry error and hides the section when the API is empty', async () => {
-    const error = await ProductCategoriesSectionContainer({
-      petTypesPromise: Promise.resolve({
-        isSuccess: false,
-        message: 'ارتباط با سرور برقرار نشد.',
-        data: { messages: {}, details: {} },
-      }),
+  it('renders a dedicated empty state for an empty category collection', async () => {
+    await act(async () => {
+      render(
+        <Suspense fallback={null}>
+          <ProductCategoriesSectionContent petTypesPromise={Promise.resolve([])} />
+        </Suspense>,
+      );
     });
-    const empty = await ProductCategoriesSectionContainer({
-      petTypesPromise: Promise.resolve({ isSuccess: true, message: null, data: [] }),
-    });
-    const { rerender } = render(error);
 
-    expect(screen.getByText('دریافت دسته‌بندی محصولات انجام نشد')).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'دریافت دوباره اطلاعات' }));
-    expect(retryAllLandingPetTypesActionMock).toHaveBeenCalledOnce();
-
-    rerender(empty);
-    expect(screen.queryByText('دریافت دسته‌بندی محصولات انجام نشد')).toBeNull();
+    expect(screen.getByText('دسته‌بندی فعالی برای نمایش وجود ندارد')).toBeTruthy();
+    expect(screen.getByText('به‌زودی دسته‌بندی‌های محصولات اضافه می‌شود.')).toBeTruthy();
   });
 });

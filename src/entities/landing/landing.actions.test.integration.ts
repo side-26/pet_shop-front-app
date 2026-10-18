@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   getAllLandingPetTypesAction,
   getHomeLandingPetTypesAction,
+  getProductLandingPetTypesAction,
   getDiscountedLandingProductsAction,
   getLandingPetBySlugAction,
   getPublicLandingPetBySlugAction,
@@ -82,6 +83,16 @@ beforeEach(() => {
     message: null,
     data: [],
   });
+  vi.mocked(getPopularLandingProducts).mockResolvedValue({
+    isSuccess: true,
+    message: null,
+    data: [],
+  });
+  vi.mocked(getPopularLandingBrands).mockResolvedValue({
+    isSuccess: true,
+    message: null,
+    data: [],
+  });
   vi.mocked(getLandingProductList).mockResolvedValue({
     isSuccess: true,
     message: null,
@@ -112,6 +123,7 @@ beforeEach(() => {
 describe('retryAllLandingPetTypesAction', () => {
   it('validates read-action input and delegates uncached orchestration to the service cache layer', async () => {
     await getAllLandingPetTypesAction();
+    await getProductLandingPetTypesAction();
     await getDiscountedLandingProductsAction({ limit: '5', ignored: true });
     await getPopularLandingProductsAction();
     await getPopularLandingBrandsAction();
@@ -126,7 +138,7 @@ describe('retryAllLandingPetTypesAction', () => {
       'تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ-تشویقی-و-اسنک-تشویقی-آموزشی',
     );
 
-    expect(getAllLandingPetTypes).toHaveBeenCalledOnce();
+    expect(getAllLandingPetTypes).toHaveBeenCalledTimes(2);
     expect(getDiscountedLandingProducts).toHaveBeenCalledWith({ limit: 5 });
     expect(getPopularLandingProducts).toHaveBeenCalledOnce();
     expect(getPopularLandingBrands).toHaveBeenCalledOnce();
@@ -161,6 +173,40 @@ describe('retryAllLandingPetTypesAction', () => {
     });
 
     await expect(getHomeLandingPetTypesAction()).rejects.toThrow('دسته‌بندی‌ها در دسترس نیستند.');
+  });
+
+  it('unwraps product-category failures for its Server Component error boundary', async () => {
+    vi.mocked(getAllLandingPetTypes).mockResolvedValue({
+      isSuccess: false,
+      message: 'دسته‌بندی محصولات در دسترس نیستند.',
+      data: { messages: {}, details: {} },
+    });
+
+    await expect(getProductLandingPetTypesAction()).rejects.toThrow(
+      'دسته‌بندی محصولات در دسترس نیستند.',
+    );
+  });
+
+  it('unwraps popular-product failures for its Server Component error boundary', async () => {
+    vi.mocked(getPopularLandingProducts).mockResolvedValue({
+      isSuccess: false,
+      message: 'محصولات محبوب در دسترس نیستند.',
+      data: { messages: {}, details: {} },
+    });
+
+    await expect(getPopularLandingProductsAction()).rejects.toThrow(
+      'محصولات محبوب در دسترس نیستند.',
+    );
+  });
+
+  it('unwraps popular-brand failures for its Server Component error boundary', async () => {
+    vi.mocked(getPopularLandingBrands).mockResolvedValue({
+      isSuccess: false,
+      message: 'برندهای محبوب در دسترس نیستند.',
+      data: { messages: {}, details: {} },
+    });
+
+    await expect(getPopularLandingBrandsAction()).rejects.toThrow('برندهای محبوب در دسترس نیستند.');
   });
 
   it('unwraps pet-detail failures for Server Component error boundaries', async () => {

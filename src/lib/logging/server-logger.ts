@@ -31,7 +31,9 @@ const transport = pino({
       return { level: label };
     },
   },
-  timestamp: () => `,"timestamp":"${new Date().toISOString()}"`,
+  // The deployment log collector provides an ingestion timestamp. Avoid a runtime clock read here:
+  // this logger is also called from Next.js's prerender-failure hook, where `new Date()` is blocked.
+  timestamp: false,
   redact: {
     paths: [
       '*.authorization',

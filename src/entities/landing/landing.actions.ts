@@ -41,17 +41,22 @@ export async function getHomeLandingPetTypesAction() {
   return unwrapResult(getAllLandingPetTypes(), 'دریافت دسته‌بندی حیوانات انجام نشد.');
 }
 
+/** Server-rendered product categories unwrap failures for their local Suspense error boundary. */
+export async function getProductLandingPetTypesAction() {
+  return unwrapResult(getAllLandingPetTypes(), 'دریافت دسته‌بندی محصولات انجام نشد.');
+}
+
 export async function getDiscountedLandingProductsAction(input: unknown = {}) {
   const value = await landingDiscountLimitSchema.validate(input, { stripUnknown: true });
   return getDiscountedLandingProducts(value);
 }
 
 export async function getPopularLandingProductsAction() {
-  return getPopularLandingProducts();
+  return unwrapResult(getPopularLandingProducts(), 'دریافت محصولات محبوب انجام نشد.');
 }
 
 export async function getPopularLandingBrandsAction() {
-  return getPopularLandingBrands();
+  return unwrapResult(getPopularLandingBrands(), 'دریافت برندهای محبوب انجام نشد.');
 }
 
 export async function getPopularLandingPetsAction() {

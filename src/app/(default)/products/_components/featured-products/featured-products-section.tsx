@@ -7,7 +7,7 @@ import { routePaths } from '@/configs/route.path';
 import { getPopularLandingProductsAction } from '@/entities/landing/landing.actions';
 import { cn } from '@/lib/utils';
 
-import { FeaturedProductsSectionContainer } from './featured-products-section-container';
+import { FeaturedProductsSectionContent } from './featured-products-section-content';
 import { FeaturedProductsSectionErrorBoundary } from './featured-products-section-error-boundary';
 import { FeaturedProductsRenderer } from './featured-products-section-renderer';
 import { featuredProductsSectionSkeletonData } from './featured-products-section-skeleton-data';
@@ -64,7 +64,7 @@ export function FeaturedProductsSection() {
           }
         >
           <FeaturedProductsSectionErrorBoundary>
-            <FeaturedProductsSectionContainer popularProductsPromise={popularProductsPromise} />
+            <FeaturedProductsSectionContent popularProductsPromise={popularProductsPromise} />
           </FeaturedProductsSectionErrorBoundary>
         </Suspense>
       </div>
