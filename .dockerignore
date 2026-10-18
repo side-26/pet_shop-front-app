@@ -1,0 +1,23 @@
+.git
+.github
+.next
+node_modules
+
+# Local configuration and secrets are supplied to containers at runtime.
+.env
+.env.*
+!.env.example
+
+# Test and coverage artifacts.
+coverage
+playwright-report
+test-results
+cypress/screenshots
+cypress/videos
+cypress/downloads
+
+# Local tooling and OS artifacts.
+.DS_Store
+*.log
+*.tsbuildinfo
+.vercel

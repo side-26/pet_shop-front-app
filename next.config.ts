@@ -32,6 +32,7 @@ function excludeDateFnsFromNextSwcLoader(rules: unknown[]): void {
 }
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   cacheComponents: true,
   partialPrefetching: true,
   images: {

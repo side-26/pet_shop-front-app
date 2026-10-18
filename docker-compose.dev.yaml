@@ -1,0 +1,20 @@
+services:
+  petshop-front-dev:
+    build:
+      context: .
+      dockerfile: DockerFIle.dev.yaml
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      NEXT_TELEMETRY_DISABLED: '1'
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+      - petshop_front_dev_node_modules:/app/node_modules
+      - petshop_front_dev_next:/app/.next
+
+volumes:
+  petshop_front_dev_node_modules:
+  petshop_front_dev_next:
