@@ -1,6 +1,8 @@
+import Link from 'next/link';
 import { Camera, Mail, Phone, Send } from 'lucide-react';
 
 import { Brand } from './brand';
+import { desktopNavigationItems } from './navigation-items';
 
 export function DefaultFooter() {
   return (
@@ -35,6 +37,29 @@ export function DefaultFooter() {
         </div>
 
         <div className="tw:grid tw:grid-cols-1 tw:gap-8 tw:sm:grid-cols-2">
+          <section aria-labelledby="footer-quick-navigation">
+            <h2
+              id="footer-quick-navigation"
+              className="tw:text-title-s tw:sm:text-title-m tw:lg:text-title-l"
+            >
+              دسترسی سریع
+            </h2>
+            <nav aria-label="دسترسی سریع">
+              <ul className="tw:mt-4 tw:flex tw:flex-col tw:items-center tw:gap-2.5 tw:text-body-s tw:text-muted-foreground tw:sm:text-body-m tw:lg:items-start">
+                {desktopNavigationItems.map(({ href, label }) => (
+                  <li key={href}>
+                    <Link
+                      href={href}
+                      className="tw:rounded-sm tw:outline-none tw:transition-colors tw:hover:text-primary tw:focus-visible:ring-3 tw:focus-visible:ring-primary/25 tw:motion-reduce:transition-none"
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </section>
+
           <section aria-labelledby="footer-contact">
             <h2
               id="footer-contact"

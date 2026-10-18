@@ -46,9 +46,22 @@ describe('DefaultLayoutShell', () => {
     expect(screen.getByRole('main').textContent).toContain('محتوای صفحه');
     const footer = screen.getByRole('contentinfo');
     expect(footer).toBeTruthy();
-    expect(within(footer).queryByText('لینک‌های مفید')).toBeNull();
-    expect(within(footer).queryByText('سؤالات متداول')).toBeNull();
-    expect(within(footer).queryByText('قوانین و مقررات')).toBeNull();
+    const quickNavigation = within(footer).getByRole('navigation', { name: 'دسترسی سریع' });
+    expect(within(quickNavigation).getByRole('link', { name: 'خانه' }).getAttribute('href')).toBe(
+      routePaths.home,
+    );
+    expect(
+      within(quickNavigation).getByRole('link', { name: 'حیوانات' }).getAttribute('href'),
+    ).toBe(routePaths.pets);
+    expect(
+      within(quickNavigation).getByRole('link', { name: 'محصولات' }).getAttribute('href'),
+    ).toBe(routePaths.products);
+    expect(within(quickNavigation).getByRole('link', { name: 'مقالات' }).getAttribute('href')).toBe(
+      routePaths.articles,
+    );
+    expect(
+      within(quickNavigation).getByRole('link', { name: 'درباره ما' }).getAttribute('href'),
+    ).toBe(routePaths.about);
     expect(await screen.findByRole('navigation', { name: 'ناوبری اصلی' })).toBeTruthy();
     expect(screen.getAllByRole('link', { name: /صفحه اصلی/ })[0].getAttribute('href')).toBe(
       routePaths.home,

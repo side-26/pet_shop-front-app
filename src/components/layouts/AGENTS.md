@@ -67,7 +67,8 @@ focused client components. The header is 76px through tablet and 88px from
 `lg`; desktop header navigation starts at `lg`. The bottom navigation is
 edge-to-edge on phones, becomes a centered content-width floating dock on
 tablets, and is hidden from `lg` upward. The footer stays single-column through
-tablet before splitting at `lg`. Reuse the transparent
+tablet before splitting at `lg`; its quick-navigation links must derive from
+`desktopNavigationItems` so they remain canonical. Reuse the transparent
 `public/images/brand/pet-haven-mark.png` asset and canonical `routePaths`
 entries rather than duplicating brand art or route literals.
 
