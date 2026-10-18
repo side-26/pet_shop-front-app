@@ -8,7 +8,11 @@ const dotenv = requireBackendDependency('dotenv') as {
   config(options: { path: string }): void;
 };
 
-dotenv.config({ path: resolve(backendDirectory, '.env') });
+// Local E2E tests exercise the development backend, which loads `.env.dev`.
+// An alternate target must opt in through CYPRESS_BACKEND_ENV or MONGODB_E2E_URI.
+const backendEnvironmentFile =
+  process.env.CYPRESS_BACKEND_ENV === 'production' ? '.env' : '.env.dev';
+dotenv.config({ path: resolve(backendDirectory, backendEnvironmentFile) });
 
 const e2eDatabaseUri = process.env.MONGODB_E2E_URI ?? process.env.MONGODB_URI;
 const registerRateLimitKeyPattern = 'rate-limit:users:POST:/api/users/register:*';
