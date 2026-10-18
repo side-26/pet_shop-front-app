@@ -10,7 +10,6 @@ import { authMessages } from './auth.messages';
 import {
   loginUserAction,
   logoutUserAction,
-  redirectToLoginAfterLogoutAction,
   redirectToLoginAction,
   registerUserAction,
   resetPasswordAction,
@@ -31,7 +30,6 @@ import { useAuthStore } from './auth.store';
 vi.mock('./auth.actions', () => ({
   loginUserAction: vi.fn(),
   logoutUserAction: vi.fn(),
-  redirectToLoginAfterLogoutAction: vi.fn(),
   registerUserAction: vi.fn(),
   resetPasswordAction: vi.fn(),
   redirectToLoginAction: vi.fn(),
@@ -45,7 +43,6 @@ vi.mock('@/lib/api/internalFetcher', () => ({ internalFetcher: vi.fn() }));
 const registerUserActionMock = vi.mocked(registerUserAction);
 const loginUserActionMock = vi.mocked(loginUserAction);
 const logoutUserActionMock = vi.mocked(logoutUserAction);
-const redirectToLoginAfterLogoutActionMock = vi.mocked(redirectToLoginAfterLogoutAction);
 const redirectToLoginActionMock = vi.mocked(redirectToLoginAction);
 const sendOtpActionMock = vi.mocked(sendOtpAction);
 const resetPasswordActionMock = vi.mocked(resetPasswordAction);
@@ -192,24 +189,33 @@ describe('logout client orchestration', () => {
       data: { messages: {}, details: {} },
     };
     logoutUserActionMock.mockResolvedValue(error);
+    const navigate = vi.fn();
 
-    await logoutUser();
+    await logoutUser(navigate);
 
     expect(globalErrorHandlerMock).toHaveBeenCalledWith(error);
+    expect(navigate).not.toHaveBeenCalled();
   });
 
-  it('does not show a local toast before the successful server redirect', async () => {
+  it('synchronizes the cleared identity before navigating to the logged-out login state', async () => {
     logoutUserActionMock.mockResolvedValue({
       isSuccess: true,
       message: 'خارج شدید.',
       data: undefined,
     });
+    internalFetcherMock.mockResolvedValue({ userId: null });
+    const navigate = vi.fn();
 
-    await logoutUser();
+    await logoutUser(navigate);
 
     expect(globalErrorHandlerMock).not.toHaveBeenCalled();
     expect(toastAddMock).not.toHaveBeenCalled();
-    expect(redirectToLoginAfterLogoutActionMock).toHaveBeenCalledOnce();
+    expect(internalFetcherMock).toHaveBeenCalledWith({
+      url: '/api/auth/session',
+      method: 'GET',
+      signal: undefined,
+    });
+    expect(navigate).toHaveBeenCalledWith(routePaths.loginAfterLogout);
   });
 });
 

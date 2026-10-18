@@ -12,7 +12,7 @@ import { useLoginUser } from '@/entities/auth/auth.client';
 import { loginUserSchema, type LoginUserInput } from '@/entities/auth/auth.schema';
 
 export function LoginForm() {
-  const { formRef, handleSubmit } = useLoginUser();
+  const { formRef, handleSubmit, isPending } = useLoginUser();
 
   return (
     <Form<LoginUserInput>
@@ -73,7 +73,7 @@ export function LoginForm() {
             size="lg"
             color="primary"
             block
-            isLoading={formMethods.formState.isSubmitting}
+            isLoading={formMethods.formState.isSubmitting || isPending}
             loadingText="در حال ورود"
           >
             ورود

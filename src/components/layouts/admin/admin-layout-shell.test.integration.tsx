@@ -6,6 +6,8 @@ import { routePaths } from '@/configs/route.path';
 import { adminNavigationItems } from './admin-navigation-items';
 import { AdminLayoutShellView } from './admin-layout-shell';
 
+vi.mock('@/entities/auth/auth.client', () => ({ useLogoutUser: () => vi.fn() }));
+
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();

@@ -17,6 +17,7 @@ vi.mock('next/headers', () => ({
 }));
 
 import {
+  deleteSessionCookie,
   decryptSession,
   decryptTemporaryToken,
   deleteTemporaryTokenCookie,
@@ -76,6 +77,12 @@ describe('session helpers', () => {
       expect.any(String),
       expect.objectContaining({ maxAge: 0 }),
     );
+  });
+
+  it('deletes the encrypted session cookie by its configured name', async () => {
+    await deleteSessionCookie();
+
+    expect(cookieDeleteMock).toHaveBeenCalledWith('petshop-session');
   });
 
   it('encrypts the temporary token in a secure five-minute cookie', async () => {

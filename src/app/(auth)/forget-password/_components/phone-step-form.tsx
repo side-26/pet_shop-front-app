@@ -15,7 +15,7 @@ type PhoneStepFormProps = {
 };
 
 export function PhoneStepForm({ defaultPhoneNumber, onSuccess }: PhoneStepFormProps) {
-  const { formRef, handleSubmit } = useSendOtp(onSuccess);
+  const { formRef, handleSubmit, isPending } = useSendOtp(onSuccess);
 
   return (
     <Form<SendOtpInput>
@@ -46,7 +46,7 @@ export function PhoneStepForm({ defaultPhoneNumber, onSuccess }: PhoneStepFormPr
             size="lg"
             color="primary"
             block
-            isLoading={formMethods.formState.isSubmitting}
+            isLoading={formMethods.formState.isSubmitting || isPending}
             loadingText="در حال ارسال کد"
           >
             ارسال کد تأیید

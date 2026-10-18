@@ -9,6 +9,7 @@ import { SubCategoriesHeaderActions } from './sub-categories-header-actions';
 
 const refresh = vi.fn();
 vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ refresh }) }));
+vi.mock('@/entities/auth/auth.client', () => ({ useLogoutUser: () => vi.fn() }));
 
 afterEach(() => {
   cleanup();

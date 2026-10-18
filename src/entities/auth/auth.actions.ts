@@ -95,10 +95,6 @@ export async function logoutUserAction() {
   return result;
 }
 
-export async function redirectToLoginAfterLogoutAction(): Promise<never> {
-  redirect(PATHS.AUTH.LOGIN_AFTER_LOGOUT);
-}
-
 export async function sendOtpAction(input: SendOtpInput) {
   try {
     const validatedInput = await sendOtpSchema.validate(input, {

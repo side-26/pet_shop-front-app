@@ -1,4 +1,5 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -12,13 +13,21 @@ vi.mock('@/hooks/use-router', () => ({
 
 afterEach(cleanup);
 
-describe(routePaths.login, () => {
-  it('renders the complete Persian login form', () => {
-    render(
+function renderPage() {
+  return render(
+    <QueryClientProvider
+      client={new QueryClient({ defaultOptions: { mutations: { retry: false } } })}
+    >
       <DirectionProvider direction="rtl">
         <LoginPage />
-      </DirectionProvider>,
-    );
+      </DirectionProvider>
+    </QueryClientProvider>,
+  );
+}
+
+describe(routePaths.login, () => {
+  it('renders the complete Persian login form', () => {
+    renderPage();
 
     expect(screen.getByRole('heading', { level: 1, name: 'ورود به پت‌شاپ' })).toBeTruthy();
     expect(
@@ -38,11 +47,7 @@ describe(routePaths.login, () => {
   });
 
   it('uses medium-touch field sizing and mixed RTL/LTR input direction', () => {
-    render(
-      <DirectionProvider direction="rtl">
-        <LoginPage />
-      </DirectionProvider>,
-    );
+    renderPage();
 
     const phone = screen.getByLabelText('شماره موبایل');
     const password = screen.getByLabelText('کلمه عبور');
@@ -54,11 +59,7 @@ describe(routePaths.login, () => {
   });
 
   it('shows associated validation messages', async () => {
-    render(
-      <DirectionProvider direction="rtl">
-        <LoginPage />
-      </DirectionProvider>,
-    );
+    renderPage();
 
     fireEvent.click(screen.getByRole('button', { name: 'ورود' }));
 

@@ -9,7 +9,7 @@ import { DesktopAccountMenu } from './desktop-account-menu';
 
 const logoutUserMock = vi.hoisted(() => vi.fn());
 
-vi.mock('@/entities/auth/auth.client', () => ({ logoutUser: logoutUserMock }));
+vi.mock('@/entities/auth/auth.client', () => ({ useLogoutUser: () => logoutUserMock }));
 
 const user = {
   userId: 'user-1',

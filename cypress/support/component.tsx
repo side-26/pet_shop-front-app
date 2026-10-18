@@ -1,4 +1,5 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { mount, type MountOptions, type MountReturn } from 'cypress/react';
 import {
   AppRouterContext,
@@ -26,11 +27,15 @@ declare global {
 }
 
 Cypress.Commands.add('mount', (component, options = {}) => {
+  const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
+
   return mount(
     <AppRouterContext.Provider value={appRouter}>
-      <div dir="rtl">
-        <DirectionProvider direction="rtl">{component}</DirectionProvider>
-      </div>
+      <QueryClientProvider client={queryClient}>
+        <div dir="rtl">
+          <DirectionProvider direction="rtl">{component}</DirectionProvider>
+        </div>
+      </QueryClientProvider>
     </AppRouterContext.Provider>,
     options,
   );

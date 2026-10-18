@@ -59,6 +59,7 @@ export const routePaths = {
   profile: PATHS.PROFILE,
   paymentResult: (authority: string) => `${PATHS.PAYMENT_RESULT}/${encodeURIComponent(authority)}`,
   login: PATHS.AUTH.LOGIN,
+  loginAfterLogout: PATHS.AUTH.LOGIN_AFTER_LOGOUT,
   register: PATHS.AUTH.REGISTER,
   forgetPassword: PATHS.AUTH.FORGET_PASSWORD,
   resetPassword: PATHS.AUTH.RESET_PASSWORD,

@@ -1,12 +1,28 @@
-const productSlug = 'تشویقی-آموزشی-سگ-با-طعم-گوشت-سگ-تشویقی-و-اسنک-تشویقی-آموزشی';
-const productPath = `/products/${encodeURIComponent(productSlug)}`;
+type CatalogProduct = Readonly<{ slug: string; title: string }>;
+
+function visitProduct(product: CatalogProduct) {
+  cy.visit(`/products/${encodeURIComponent(product.slug)}`);
+  cy.get('h1').should('have.text', product.title).and('be.visible');
+}
 
 describe('Product detail page', () => {
-  it('renders the desktop composition without horizontal overflow', () => {
-    cy.viewport(1280, 900);
-    cy.visit(productPath);
+  let product: CatalogProduct | undefined;
 
-    cy.get('h1').should('have.text', 'تشویقی آموزشی سگ با طعم گوشت').and('be.visible');
+  before(() => {
+    cy.task<CatalogProduct>('createE2EProduct').then((fixture) => {
+      product = fixture;
+    });
+  });
+
+  after(() => {
+    if (product) cy.task('deleteE2EProduct', product.slug);
+  });
+
+  it('renders the desktop composition without horizontal overflow', () => {
+    expect(product, 'E2E product fixture').to.exist;
+    cy.viewport(1280, 900);
+    visitProduct(product!);
+
     cy.get('[data-testid="desktop-purchase-controls"]').should('be.visible');
     cy.get('[data-testid="mobile-purchase-controls"]').should('not.be.visible');
     cy.document().then((document) => {
@@ -15,8 +31,9 @@ describe('Product detail page', () => {
   });
 
   it('keeps the mobile purchase dock above navigation', () => {
+    expect(product, 'E2E product fixture').to.exist;
     cy.viewport(390, 844);
-    cy.visit(productPath);
+    visitProduct(product!);
 
     cy.get('[data-testid="mobile-purchase-controls"]').should('be.visible');
     cy.get('nav[aria-label="ناوبری موبایل"]').should('be.visible');

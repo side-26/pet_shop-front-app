@@ -11,6 +11,7 @@ import { UsersHeaderActions } from './users-header-actions';
 const refresh = vi.fn();
 
 vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ push: vi.fn(), refresh }) }));
+vi.mock('@/entities/auth/auth.client', () => ({ useLogoutUser: () => vi.fn() }));
 
 afterEach(() => {
   cleanup();

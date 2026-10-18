@@ -15,7 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { logoutUser } from '@/entities/auth/auth.client';
+import { useLogoutUser } from '@/entities/auth/auth.client';
 import type { AdminHeaderActions as AdminHeaderActionsValue } from '@/contexts/admin/layout/admin-layout-context';
 import { useCommonStore } from '@/stores/common.store';
 
@@ -151,6 +151,7 @@ function AdminNavigation({
   onNavigate,
 }: AdminNavigationProps) {
   const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
+  const logoutUser = useLogoutUser();
 
   return (
     <TooltipProvider>

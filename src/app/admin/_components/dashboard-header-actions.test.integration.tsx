@@ -11,6 +11,7 @@ const push = vi.fn();
 const refresh = vi.fn();
 
 vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ push, refresh }) }));
+vi.mock('@/entities/auth/auth.client', () => ({ useLogoutUser: () => vi.fn() }));
 
 afterEach(() => {
   cleanup();

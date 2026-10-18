@@ -1,7 +1,8 @@
 'use client';
 
+import { useMutation } from '@tanstack/react-query';
 import type { UseFormSetError } from 'react-hook-form';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 import { useRouter } from '@/hooks/use-router';
 
 import type { FormHandle } from '@/components/ui/form';
@@ -11,7 +12,6 @@ import { internalFetcher } from '@/lib/api/internalFetcher';
 import {
   loginUserAction,
   logoutUserAction,
-  redirectToLoginAfterLogoutAction,
   redirectToLoginAction,
   registerUserAction,
   resetPasswordAction,
@@ -30,7 +30,6 @@ import type {
   VerifyResetPasswordOtpInput,
 } from '@/entities/auth/auth.schema';
 import { globalErrorHandler } from '@/utils/helpers';
-import { wait } from '@/utils/wait';
 import type { CurrentUserDTO } from '@/entities/users/users.dto';
 
 const SUCCESS_TOAST_DURATION_MS = 3_000;
@@ -79,7 +78,7 @@ export async function syncUserIdentity(signal?: AbortSignal): Promise<CurrentUse
   }
 }
 
-export async function logoutUser(): Promise<void> {
+export async function logoutUser(navigate: (href: string) => void): Promise<void> {
   const result = await logoutUserAction();
 
   if (result && !result.isSuccess) {
@@ -88,7 +87,19 @@ export async function logoutUser(): Promise<void> {
   }
 
   await syncUserIdentity();
-  await redirectToLoginAfterLogoutAction();
+  navigate(routePaths.loginAfterLogout);
+}
+
+export function useLogoutUser() {
+  const router = useRouter();
+  const { mutateAsync } = useMutation({
+    mutationFn: () => logoutUser(router.replace),
+    retry: false,
+  });
+
+  return useCallback(async () => {
+    await mutateAsync();
+  }, [mutateAsync]);
 }
 
 export async function submitRegisterUser(
@@ -111,17 +122,25 @@ export async function submitRegisterUser(
 export function useRegisterUser() {
   const formRef = useRef<FormHandle<RegisterUserInput>>(null);
   const router = useRouter();
-  const handleSubmit = useCallback(
-    async (input: RegisterUserInput) => {
+  const { isPending, mutateAsync } = useMutation({
+    mutationFn: async (input: RegisterUserInput) => {
       const form = formRef.current;
       if (!form) return;
 
       await submitRegisterUser(input, form.setError, router.replace);
     },
-    [router],
+    retry: false,
+  });
+  const handleSubmit = useCallback(
+    async (input: RegisterUserInput) => {
+      if (isPending) return;
+
+      await mutateAsync(input);
+    },
+    [isPending, mutateAsync],
   );
 
-  return { formRef, handleSubmit } as const;
+  return { formRef, handleSubmit, isPending } as const;
 }
 
 export async function submitLoginUser(
@@ -145,19 +164,27 @@ export async function submitLoginUser(
 export function useLoginUser() {
   const formRef = useRef<FormHandle<LoginUserInput>>(null);
   const router = useRouter();
-  const handleSubmit = useCallback(
-    async (input: LoginUserInput) => {
+  const { isPending, mutateAsync } = useMutation({
+    mutationFn: async ({ callbackUrl, input }: { callbackUrl?: string; input: LoginUserInput }) => {
       const form = formRef.current;
       if (!form) return;
 
-      const callbackUrl =
-        new URLSearchParams(window.location.search).get('callbackUrl') ?? undefined;
       await submitLoginUser(input, form.setError, callbackUrl, router.replace);
     },
-    [router],
+    retry: false,
+  });
+  const handleSubmit = useCallback(
+    async (input: LoginUserInput) => {
+      if (isPending) return;
+
+      const callbackUrl =
+        new URLSearchParams(window.location.search).get('callbackUrl') ?? undefined;
+      await mutateAsync({ input, callbackUrl });
+    },
+    [isPending, mutateAsync],
   );
 
-  return { formRef, handleSubmit } as const;
+  return { formRef, handleSubmit, isPending } as const;
 }
 
 export async function submitSendOtp(
@@ -184,39 +211,43 @@ type SendOtpSuccessHandler = (input: SendOtpInput, response: SendOtpResponseDTO)
 
 export function useSendOtp(onSuccess: SendOtpSuccessHandler) {
   const formRef = useRef<FormHandle<SendOtpInput>>(null);
+  const { isPending, mutateAsync } = useMutation({
+    mutationFn: async (input: SendOtpInput) => {
+      const form = formRef.current;
+      return submitSendOtp(input, form?.setError);
+    },
+    retry: false,
+  });
   const handleSubmit = useCallback(
     async (input: SendOtpInput) => {
-      const form = formRef.current;
-      if (!form) return;
+      if (isPending) return;
 
-      const response = await submitSendOtp(input, form.setError);
+      const response = await mutateAsync(input);
       if (response) onSuccess(input, response);
     },
-    [onSuccess],
+    [isPending, mutateAsync, onSuccess],
   );
 
-  return { formRef, handleSubmit } as const;
+  return { formRef, handleSubmit, isPending } as const;
 }
 
 export function useResendOtp(
   phoneNumber: string,
   onSuccess: (response: SendOtpResponseDTO) => void,
 ) {
-  const [isLoading, setIsLoading] = useState(false);
+  const { isPending, mutateAsync } = useMutation({
+    mutationFn: (input: SendOtpInput) => submitSendOtp(input),
+    retry: false,
+  });
 
   const handleResend = useCallback(async () => {
-    if (isLoading) return;
+    if (isPending) return;
 
-    setIsLoading(true);
-    try {
-      const response = await submitSendOtp({ phoneNumber });
-      if (response) onSuccess(response);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isLoading, onSuccess, phoneNumber]);
+    const response = await mutateAsync({ phoneNumber });
+    if (response) onSuccess(response);
+  }, [isPending, mutateAsync, onSuccess, phoneNumber]);
 
-  return { handleResend, isLoading } as const;
+  return { handleResend, isLoading: isPending } as const;
 }
 
 export async function submitVerifyResetPasswordOtp(
@@ -243,24 +274,29 @@ export function useVerifyResetPasswordOtp(
 ) {
   const formRef = useRef<FormHandle<VerifyOtpCodeInput>>(null);
   const completedCodeRef = useRef('');
+  const { isPending, mutateAsync } = useMutation({
+    mutationFn: async (input: VerifyResetPasswordOtpInput) => {
+      const form = formRef.current;
+      if (!form) return null;
+
+      return submitVerifyResetPasswordOtp(input, form.setError);
+    },
+    retry: false,
+  });
   const handleSubmit = useCallback(
     async (input: VerifyOtpCodeInput) => {
-      const form = formRef.current;
-      if (!form) return;
+      if (isPending) return;
       const verificationCode = input.verificationCode ?? completedCodeRef.current;
       if (!verificationCode) return;
 
-      const isVerified = await submitVerifyResetPasswordOtp(
-        {
-          phoneNumber,
-          'otp-code': verificationCode,
-          'reset-password': true,
-        },
-        form.setError,
-      );
+      const isVerified = await mutateAsync({
+        phoneNumber,
+        'otp-code': verificationCode,
+        'reset-password': true,
+      });
       if (isVerified) onSuccess();
     },
-    [onSuccess, phoneNumber],
+    [isPending, mutateAsync, onSuccess, phoneNumber],
   );
   const handleFinished = useCallback(
     (verificationCode: string) => {
@@ -281,7 +317,7 @@ export function useVerifyResetPasswordOtp(
     formRef.current?.reset({ verificationCode: '' });
   }, []);
 
-  return { formRef, handleFinished, handleSubmit, resetVerificationCode } as const;
+  return { formRef, handleFinished, handleSubmit, isPending, resetVerificationCode } as const;
 }
 
 export async function submitResetPassword(
@@ -304,12 +340,23 @@ export async function submitResetPassword(
 
 export function useResetPassword() {
   const formRef = useRef<FormHandle<ResetPasswordInput>>(null);
-  const handleSubmit = useCallback(async (input: ResetPasswordInput) => {
-    const form = formRef.current;
-    if (!form) return;
+  const { isPending, mutateAsync } = useMutation({
+    mutationFn: async (input: ResetPasswordInput) => {
+      const form = formRef.current;
+      if (!form) return;
 
-    await submitResetPassword(input, form.setError);
-  }, []);
+      await submitResetPassword(input, form.setError);
+    },
+    retry: false,
+  });
+  const handleSubmit = useCallback(
+    async (input: ResetPasswordInput) => {
+      if (isPending) return;
 
-  return { formRef, handleSubmit } as const;
+      await mutateAsync(input);
+    },
+    [isPending, mutateAsync],
+  );
+
+  return { formRef, handleSubmit, isPending } as const;
 }

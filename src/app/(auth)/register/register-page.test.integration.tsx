@@ -1,4 +1,5 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -10,13 +11,21 @@ vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ replace: vi.fn() }) }
 
 afterEach(cleanup);
 
-describe(routePaths.register, () => {
-  it('renders the Persian registration form without login-only actions', () => {
-    render(
+function renderPage() {
+  return render(
+    <QueryClientProvider
+      client={new QueryClient({ defaultOptions: { mutations: { retry: false } } })}
+    >
       <DirectionProvider direction="rtl">
         <RegisterPage />
-      </DirectionProvider>,
-    );
+      </DirectionProvider>
+    </QueryClientProvider>,
+  );
+}
+
+describe(routePaths.register, () => {
+  it('renders the Persian registration form without login-only actions', () => {
+    renderPage();
 
     expect(screen.getByRole('heading', { level: 1, name: 'ثبت‌نام در پت‌شاپ' })).toBeTruthy();
     expect(
@@ -30,11 +39,7 @@ describe(routePaths.register, () => {
   });
 
   it('uses the same field sizing and direction as the login form', () => {
-    render(
-      <DirectionProvider direction="rtl">
-        <RegisterPage />
-      </DirectionProvider>,
-    );
+    renderPage();
 
     const phone = screen.getByLabelText('شماره موبایل');
     const password = screen.getByLabelText('کلمه عبور');
@@ -47,11 +52,7 @@ describe(routePaths.register, () => {
   });
 
   it('shows associated validation messages', async () => {
-    render(
-      <DirectionProvider direction="rtl">
-        <RegisterPage />
-      </DirectionProvider>,
-    );
+    renderPage();
 
     fireEvent.click(screen.getByRole('button', { name: 'ثبت‌نام' }));
 

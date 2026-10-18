@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { routePaths } from '@/configs/route.path';
-import { logoutUser } from '@/entities/auth/auth.client';
+import { useLogoutUser } from '@/entities/auth/auth.client';
 import type { CurrentUserDTO } from '@/entities/users/users.dto';
 import { useCommonStore } from '@/stores/common.store';
 
@@ -23,6 +23,7 @@ type Props = Readonly<{ user: CurrentUserDTO }>;
 
 export function DesktopAccountMenu({ user }: Props) {
   const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
+  const logoutUser = useLogoutUser();
   const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.phoneNumber;
 
   return (

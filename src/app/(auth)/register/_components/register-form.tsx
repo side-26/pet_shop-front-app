@@ -9,7 +9,7 @@ import { useRegisterUser } from '@/entities/auth/auth.client';
 import { registerUserSchema, type RegisterUserInput } from '@/entities/auth/auth.schema';
 
 export function RegisterForm() {
-  const { formRef, handleSubmit } = useRegisterUser();
+  const { formRef, handleSubmit, isPending } = useRegisterUser();
 
   return (
     <Form<RegisterUserInput>
@@ -53,7 +53,7 @@ export function RegisterForm() {
             size="lg"
             color="primary"
             block
-            isLoading={formMethods.formState.isSubmitting}
+            isLoading={formMethods.formState.isSubmitting || isPending}
             loadingText="در حال ثبت‌نام"
           >
             ثبت‌نام

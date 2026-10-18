@@ -26,8 +26,13 @@ export function OtpStepForm({ phoneNumber, resendSeconds, onSuccess }: OtpStepFo
     revision: 0,
     seconds: resendSeconds,
   });
-  const { formRef, handleFinished, handleSubmit, resetVerificationCode } =
-    useVerifyResetPasswordOtp(phoneNumber, onSuccess);
+  const {
+    formRef,
+    handleFinished,
+    handleSubmit,
+    isPending: isVerificationPending,
+    resetVerificationCode,
+  } = useVerifyResetPasswordOtp(phoneNumber, onSuccess);
   const handleResendSuccess = useCallback(
     (response: SendOtpResponseDTO) => {
       resetVerificationCode();
@@ -49,40 +54,44 @@ export function OtpStepForm({ phoneNumber, resendSeconds, onSuccess }: OtpStepFo
       aria-label="فرم کد تأیید بازیابی کلمه عبور"
       className="tw:items-center tw:gap-3"
     >
-      {({ formState: { isSubmitting } }) => (
-        <>
-          <InputOtpField<VerifyOtpCodeInput>
-            name="verificationCode"
-            label="کد تأیید"
-            hint={isSubmitting ? 'در حال بررسی کد تأیید…' : 'کد ۶ رقمی ارسال‌شده را وارد کنید.'}
-            maxLength={6}
-            focusOnMount
-            onFinished={handleFinished}
-            disabled={isSubmitting}
-            className="tw:items-center tw:text-center"
-          />
+      {({ formState: { isSubmitting } }) => {
+        const isVerifying = isSubmitting || isVerificationPending;
 
-          <Countdown
-            key={countdown.revision}
-            seconds={countdown.seconds}
-            size="sm"
-            color="primary"
-            className="tw:justify-center"
-          >
-            <Button
-              type="button"
-              variant="text"
-              color="primary"
+        return (
+          <>
+            <InputOtpField<VerifyOtpCodeInput>
+              name="verificationCode"
+              label="کد تأیید"
+              hint={isVerifying ? 'در حال بررسی کد تأیید…' : 'کد ۶ رقمی ارسال‌شده را وارد کنید.'}
+              maxLength={6}
+              focusOnMount
+              onFinished={handleFinished}
+              disabled={isVerifying}
+              className="tw:items-center tw:text-center"
+            />
+
+            <Countdown
+              key={countdown.revision}
+              seconds={countdown.seconds}
               size="sm"
-              onClick={handleResend}
-              isLoading={isLoading}
-              loadingText="در حال ارسال مجدد"
+              color="primary"
+              className="tw:justify-center"
             >
-              ارسال مجدد کد
-            </Button>
-          </Countdown>
-        </>
-      )}
+              <Button
+                type="button"
+                variant="text"
+                color="primary"
+                size="sm"
+                onClick={handleResend}
+                isLoading={isLoading}
+                loadingText="در حال ارسال مجدد"
+              >
+                ارسال مجدد کد
+              </Button>
+            </Countdown>
+          </>
+        );
+      }}
     </Form>
   );
 }

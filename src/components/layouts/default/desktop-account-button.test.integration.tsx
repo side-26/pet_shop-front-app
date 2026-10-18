@@ -1,10 +1,12 @@
 import { cleanup, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
 import { useAuthStore } from '@/entities/auth/auth.store';
 
 import { DesktopAccountButton } from './desktop-account-button';
+
+vi.mock('@/entities/auth/auth.client', () => ({ useLogoutUser: () => vi.fn() }));
 
 afterEach(cleanup);
 

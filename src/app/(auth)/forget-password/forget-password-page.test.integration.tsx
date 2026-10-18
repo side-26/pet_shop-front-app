@@ -1,4 +1,5 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -87,9 +88,23 @@ afterEach(async () => {
 
 function renderPage() {
   return render(
-    <DirectionProvider direction="rtl">
-      <ForgetPasswordPage />
-    </DirectionProvider>,
+    <QueryClientProvider
+      client={new QueryClient({ defaultOptions: { mutations: { retry: false } } })}
+    >
+      <DirectionProvider direction="rtl">
+        <ForgetPasswordPage />
+      </DirectionProvider>
+    </QueryClientProvider>,
+  );
+}
+
+function renderWithQueryClient(children: React.ReactNode) {
+  return render(
+    <QueryClientProvider
+      client={new QueryClient({ defaultOptions: { mutations: { retry: false } } })}
+    >
+      <DirectionProvider direction="rtl">{children}</DirectionProvider>
+    </QueryClientProvider>,
   );
 }
 
@@ -209,10 +224,8 @@ describe(routePaths.forgetPassword, () => {
       data: { remainingSeconds: 73 },
     });
 
-    render(
-      <DirectionProvider direction="rtl">
-        <OtpStepForm phoneNumber="09123456789" resendSeconds={1} onSuccess={vi.fn()} />
-      </DirectionProvider>,
+    renderWithQueryClient(
+      <OtpStepForm phoneNumber="09123456789" resendSeconds={1} onSuccess={vi.fn()} />,
     );
 
     act(() => vi.advanceTimersByTime(1000));
