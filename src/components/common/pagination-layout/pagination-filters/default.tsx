@@ -2,7 +2,7 @@
 
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react';
 import { ChevronDown, ListFilter } from 'lucide-react';
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from '@/hooks/use-router';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

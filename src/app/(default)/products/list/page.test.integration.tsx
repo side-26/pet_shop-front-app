@@ -9,7 +9,7 @@ import { ProductListRenderer } from './_components/product-list-renderer';
 import { metadata } from './page';
 
 const push = vi.fn();
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ push, refresh: vi.fn() }) }));
+vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ push, refresh: vi.fn() }) }));
 
 const data: LandingProductListPageDTO = {
   result: [

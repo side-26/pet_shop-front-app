@@ -6,7 +6,7 @@ import { CreateNewAddressButton } from './create-new-address-button';
 const mapFlyTo = vi.fn();
 const renderProvinceSelector = vi.fn();
 
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock('@/entities/locations/locations.actions', () => ({
   reverseGeocodeAction: vi.fn().mockResolvedValue({
     isSuccess: true,

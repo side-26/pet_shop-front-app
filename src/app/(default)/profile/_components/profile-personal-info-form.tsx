@@ -1,7 +1,7 @@
 'use client';
 
 import { AtSign, CakeSlice, Save, UserRound } from 'lucide-react';
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from '@/hooks/use-router';
 import { useRef, useTransition } from 'react';
 
 import { Button } from '@/components/ui/button';

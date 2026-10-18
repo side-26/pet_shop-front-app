@@ -11,7 +11,7 @@ import { metadata } from './page';
 
 const { toggleWishlistItemMock } = vi.hoisted(() => ({ toggleWishlistItemMock: vi.fn() }));
 
-vi.mock('nextjs-toploader/app', () => ({
+vi.mock('@/hooks/use-router', () => ({
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
 }));
 vi.mock('react-infinite-scroll-component', () => ({

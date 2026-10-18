@@ -3,7 +3,7 @@
 import { Menu, PanelRightClose, PanelRightOpen } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from '@/hooks/use-router';
 import { useCallback, useState, type ReactNode } from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';

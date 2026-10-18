@@ -10,7 +10,7 @@ import { toSearchParams, UsersAllPaginateFilter } from './users-all-paginate-fil
 
 const push = vi.fn();
 
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ push }) }));
+vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ push }) }));
 
 afterEach(() => {
   cleanup();

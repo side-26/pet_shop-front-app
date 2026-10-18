@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from '@/hooks/use-router';
 import type { ReactNode } from 'react';
 
 import { FetchErrorSection } from '@/components/common/fetch-error-section';

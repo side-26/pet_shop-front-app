@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from '@/hooks/use-router';
 
 import {
   Pagination,

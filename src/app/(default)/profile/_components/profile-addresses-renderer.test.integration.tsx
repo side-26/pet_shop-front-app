@@ -6,7 +6,7 @@ import type { ProfileAddressDTO } from '@/entities/profile/profile.dto';
 import { ProfileAddressesRenderer } from './profile-addresses-renderer';
 import { profileAddressesSkeletonData } from './profile-addresses-skeleton-data';
 
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 
 afterEach(cleanup);
 

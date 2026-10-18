@@ -5,7 +5,7 @@ import { PaymentResultClientActions } from './payment-result-client-actions';
 
 const replace = vi.fn();
 
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ replace }) }));
+vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ replace }) }));
 vi.mock('@/entities/users/users.actions', () => ({
   emptyCartAction: vi.fn().mockResolvedValue({ isSuccess: true }),
 }));

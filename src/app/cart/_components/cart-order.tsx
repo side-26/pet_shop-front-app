@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from '@/hooks/use-router';
 import { cn } from '@/lib/utils';
 import { useCartStore } from '@/stores/cart.store';
 import type { CartItem, CartPetItem, CartProductItem } from './cart-data';

@@ -11,7 +11,7 @@ vi.mock('next/navigation', () => ({
   usePathname: () => navigationState.pathname,
 }));
 
-vi.mock('nextjs-toploader/app', () => ({
+vi.mock('@/hooks/use-router', () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 

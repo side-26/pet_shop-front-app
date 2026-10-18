@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from '@/hooks/use-router';
 import {
   type AdminHeaderActions,
   useAdminLayoutContext,

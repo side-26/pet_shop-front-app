@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from '@/hooks/use-router';
 
 import { Switch } from '@/components/ui/fields/switch';
 import { useProductRowActions } from '@/entities/products/products.client';

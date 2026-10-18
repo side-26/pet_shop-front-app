@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, use, useMemo, useRef, type ReactNode } from 'react';
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from '@/hooks/use-router';
 
 import { useDialogController } from '@/hooks/use-dialog-controller';
 

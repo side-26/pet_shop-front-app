@@ -6,7 +6,7 @@ import { useBrandStatus } from '@/entities/brands/brands.client';
 
 import { BrandEnabledSwitch } from './brand-enabled-switch';
 
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock('@/entities/brands/brands.client', () => ({ useBrandStatus: vi.fn() }));
 
 const useBrandStatusMock = vi.mocked(useBrandStatus);

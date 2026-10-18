@@ -14,7 +14,7 @@ import { mapBreedsPageViewModel } from './_components/breeds-table.mapper';
 import { breedsTableSkeletonData } from './_components/breeds-table-skeleton-data';
 import { BreedsTableWrapper } from './_components/breeds-table-wrapper';
 
-vi.mock('nextjs-toploader/app', () => ({
+vi.mock('@/hooks/use-router', () => ({
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
 }));
 vi.mock('@/entities/breeds/breeds.actions', () => ({

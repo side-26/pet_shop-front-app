@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from '@/hooks/use-router';
 
 import { Switch } from '@/components/ui/fields/switch';
 import { useBreedStatus } from '@/entities/breeds/breeds.client';

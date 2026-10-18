@@ -13,7 +13,7 @@ const { routerPushMock } = vi.hoisted(() => ({ routerPushMock: vi.fn() }));
 vi.mock('react-infinite-scroll-component', () => ({
   default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ push: routerPushMock }) }));
+vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ push: routerPushMock }) }));
 
 afterEach(cleanup);
 

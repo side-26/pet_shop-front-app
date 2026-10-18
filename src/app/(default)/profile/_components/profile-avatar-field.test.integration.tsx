@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { submitCurrentUserProfile } from '@/entities/users/users.client';
 
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock('@/components/ui/avatar', () => ({
   Avatar: ({ children, ...props }: ComponentProps<'div'> & { children?: ReactNode }) => (
     <div {...props}>{children}</div>

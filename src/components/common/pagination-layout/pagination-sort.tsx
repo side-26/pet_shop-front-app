@@ -1,7 +1,7 @@
 'use client';
 
 import { ArrowDownUp } from 'lucide-react';
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from '@/hooks/use-router';
 
 import { Button } from '@/components/ui/button';
 import { createPaginationHref } from '@/entities/pagination/pagination.helpers';

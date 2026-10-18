@@ -1,12 +1,12 @@
 'use client';
 
 import { Heart, Share2 } from 'lucide-react';
-import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
 import { useWishlist, useWishlistToggle, wishlistItemId } from '@/entities/users/users.client';
 import type { AddWishlistItemInput } from '@/entities/users/users.schema';
+import { useShare } from '@/hooks/use-share';
 
 type ProductHeaderActionsProps = Readonly<{
   disabled?: boolean;
@@ -23,7 +23,10 @@ export function ProductHeaderActions({
   itemType,
   title,
 }: ProductHeaderActionsProps) {
-  const [shareStatus, setShareStatus] = useState('');
+  const { share, status: shareStatus } = useShare({
+    copiedMessage: 'پیوند ' + itemLabel + ' کپی شد',
+    title,
+  });
   const { data: wishlist = [] } = useWishlist({ enabled: !disabled });
   const { isPending, toggleWishlistItem } = useWishlistToggle();
   const isWishlisted = wishlist.some(
@@ -34,20 +37,6 @@ export function ProductHeaderActions({
     if (disabled || isPending) return;
     toggleWishlistItem({ itemId, itemType });
   }
-
-  const shareProduct = async () => {
-    try {
-      if (navigator.share) {
-        await navigator.share({ title, url: window.location.href });
-        return;
-      }
-
-      await navigator.clipboard?.writeText(window.location.href);
-      setShareStatus(`پیوند ${itemLabel} کپی شد`);
-    } catch {
-      setShareStatus('اشتراک‌گذاری لغو شد');
-    }
-  };
 
   return (
     <div className="tw:flex tw:items-center tw:gap-1">
@@ -73,7 +62,7 @@ export function ProductHeaderActions({
         color="secondary"
         aria-label={`اشتراک‌گذاری ${itemLabel}`}
         disabled={disabled}
-        onClick={() => void shareProduct()}
+        onClick={() => void share()}
       >
         <Share2 aria-hidden="true" />
       </Button>

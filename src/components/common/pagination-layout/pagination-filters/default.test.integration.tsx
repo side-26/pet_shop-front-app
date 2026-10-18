@@ -6,7 +6,7 @@ import { PaginationFilters } from './default';
 
 const push = vi.fn();
 
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ push }) }));
+vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ push }) }));
 
 afterEach(() => {
   cleanup();

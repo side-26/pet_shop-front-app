@@ -10,7 +10,7 @@ import { DashboardHeaderActions } from './dashboard-header-actions';
 const push = vi.fn();
 const refresh = vi.fn();
 
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ push, refresh }) }));
+vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ push, refresh }) }));
 
 afterEach(() => {
   cleanup();

@@ -9,7 +9,7 @@ import { CartPageContent } from './_components/cart-page-content';
 import { CartRouteLayout } from './_components/cart-route-layout';
 import type { CartItem } from './_components/cart-data';
 
-vi.mock('nextjs-toploader/app', () => ({
+vi.mock('@/hooks/use-router', () => ({
   useRouter: () => ({ back: vi.fn(), push: vi.fn(), refresh: vi.fn(), replace: vi.fn() }),
 }));
 

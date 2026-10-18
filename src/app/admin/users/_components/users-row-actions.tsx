@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from '@/hooks/use-router';
 import { EyeIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';

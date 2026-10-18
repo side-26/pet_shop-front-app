@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { routePaths } from '@/configs/route.path';
 import { useAuthStore } from '@/entities/auth/auth.store';
 
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock('./_components/order-tab/profile-orders-wrapper', () => ({
   ProfileOrdersWrapper: () => (
     <section aria-labelledby="orders-heading">

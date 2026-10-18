@@ -9,7 +9,7 @@ import { ProductRowActions } from './product-row-actions';
 import { ProductWeightsFormBody } from './product-weights-dialog-content-wrapper';
 
 const refresh = vi.fn();
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh }) }));
+vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ refresh }) }));
 vi.mock('@/entities/products/products.actions', () => ({
   getProductFormOptionsAction: vi.fn(),
   getProductImagesAction: vi.fn(),

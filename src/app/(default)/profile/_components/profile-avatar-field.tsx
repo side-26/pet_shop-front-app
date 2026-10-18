@@ -3,7 +3,7 @@
 import { PencilIcon, Save, Trash2Icon, UserRound } from 'lucide-react';
 import type { MouseEvent } from 'react';
 import { useRef, useTransition } from 'react';
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from '@/hooks/use-router';
 
 import {
   DEFAULT_IMAGE_ACCEPT_TYPES,

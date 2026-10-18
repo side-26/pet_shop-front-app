@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from '@/hooks/use-router';
 
 import { routePaths } from '@/configs/route.path';
 import {

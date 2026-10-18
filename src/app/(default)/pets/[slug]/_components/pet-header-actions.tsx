@@ -1,11 +1,11 @@
 'use client';
 
 import { Heart, Share2 } from 'lucide-react';
-import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
 import { useWishlist, useWishlistToggle, wishlistItemId } from '@/entities/users/users.client';
+import { useShare } from '@/hooks/use-share';
 
 type PetHeaderActionsProps = Readonly<{
   disabled?: boolean;
@@ -14,7 +14,10 @@ type PetHeaderActionsProps = Readonly<{
 }>;
 
 export function PetHeaderActions({ disabled, petId, title }: PetHeaderActionsProps) {
-  const [shareStatus, setShareStatus] = useState('');
+  const { share, status: shareStatus } = useShare({
+    copiedMessage: 'پیوند حیوان کپی شد',
+    title,
+  });
   const { data: wishlist = [] } = useWishlist({ enabled: !disabled });
   const { isPending, toggleWishlistItem } = useWishlistToggle();
   const isWishlisted = wishlist.some(
@@ -24,20 +27,6 @@ export function PetHeaderActions({ disabled, petId, title }: PetHeaderActionsPro
   function toggleWishlist() {
     if (disabled || isPending) return;
     toggleWishlistItem({ itemId: petId, itemType: 'pet' });
-  }
-
-  async function sharePet() {
-    try {
-      if (navigator.share) {
-        await navigator.share({ title, url: window.location.href });
-        return;
-      }
-
-      await navigator.clipboard?.writeText(window.location.href);
-      setShareStatus('پیوند حیوان کپی شد');
-    } catch {
-      setShareStatus('اشتراک‌گذاری لغو شد');
-    }
   }
 
   return (
@@ -64,7 +53,7 @@ export function PetHeaderActions({ disabled, petId, title }: PetHeaderActionsPro
         color="secondary"
         aria-label={`اشتراک‌گذاری حیوان ${title}`}
         disabled={disabled}
-        onClick={() => void sharePet()}
+        onClick={() => void share()}
       >
         <Share2 aria-hidden="true" />
       </Button>

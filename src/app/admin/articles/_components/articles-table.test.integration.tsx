@@ -13,7 +13,7 @@ import { ArticlesTable } from './articles-table';
 const mocks = vi.hoisted(() => ({ push: vi.fn(), refresh: vi.fn() }));
 const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
 
-vi.mock('nextjs-toploader/app', () => ({
+vi.mock('@/hooks/use-router', () => ({
   useRouter: () => ({ push: mocks.push, refresh: mocks.refresh }),
 }));
 vi.mock('@/entities/articles/articles.actions', () => ({ deleteArticleAction: vi.fn() }));

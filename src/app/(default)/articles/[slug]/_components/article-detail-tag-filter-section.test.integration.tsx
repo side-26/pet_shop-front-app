@@ -5,7 +5,7 @@ import { ArticleDetailTagFilterSection } from './article-detail-tag-filter-secti
 
 const { routerPushMock } = vi.hoisted(() => ({ routerPushMock: vi.fn() }));
 
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ push: routerPushMock }) }));
+vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ push: routerPushMock }) }));
 
 describe('ArticleDetailTagFilterSection', () => {
   it('filters the article catalog when a tag is selected', () => {

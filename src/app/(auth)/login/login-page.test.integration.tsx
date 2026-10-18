@@ -6,7 +6,7 @@ import { routePaths } from '@/configs/route.path';
 
 import LoginPage, { metadata } from './page';
 
-vi.mock('nextjs-toploader/app', () => ({
+vi.mock('@/hooks/use-router', () => ({
   useRouter: () => ({ replace: vi.fn() }),
 }));
 

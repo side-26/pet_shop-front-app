@@ -12,7 +12,7 @@ vi.mock('react', async (importOriginal) => {
     use: <T,>(promise: Promise<T>) => usedPromiseValues.get(promise) as T,
   };
 });
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock('./articles-row-actions', () => ({ ArticlesRowActions: () => null }));
 
 import { ArticlesTableDialogProvider } from './articles-table-dialog-provider';

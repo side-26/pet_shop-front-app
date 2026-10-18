@@ -2,7 +2,7 @@
 
 import type { UseFormSetError } from 'react-hook-form';
 import { useCallback, useRef, useState } from 'react';
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from '@/hooks/use-router';
 
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';

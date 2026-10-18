@@ -1,29 +1,15 @@
 'use client';
 
 import { Share2Icon } from 'lucide-react';
-import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { useShare } from '@/hooks/use-share';
 
 export function ArticlePreviewShareButton({
   disabled = false,
   title,
 }: Readonly<{ disabled?: boolean; title: string }>) {
-  const [status, setStatus] = useState('');
-
-  async function shareArticle() {
-    try {
-      if (navigator.share) {
-        await navigator.share({ title, url: window.location.href });
-        return;
-      }
-
-      await navigator.clipboard?.writeText(window.location.href);
-      setStatus('پیوند مقاله کپی شد');
-    } catch {
-      setStatus('اشتراک‌گذاری لغو شد');
-    }
-  }
+  const { share, status } = useShare({ copiedMessage: 'پیوند مقاله کپی شد', title });
 
   return (
     <>
@@ -35,7 +21,7 @@ export function ArticlePreviewShareButton({
         color="secondary"
         disabled={disabled}
         aria-label="اشتراک‌گذاری مقاله"
-        onClick={() => void shareArticle()}
+        onClick={() => void share()}
       >
         <Share2Icon aria-hidden="true" />
       </Button>

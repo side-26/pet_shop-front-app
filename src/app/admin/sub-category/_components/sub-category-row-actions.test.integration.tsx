@@ -15,7 +15,7 @@ import { SubCategoryDetailFormBody } from './sub-category-detail-dialog-content-
 import { SubCategoryRowActions } from './sub-category-row-actions';
 
 const refresh = vi.fn();
-vi.mock('nextjs-toploader/app', () => ({ useRouter: () => ({ refresh }) }));
+vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ refresh }) }));
 vi.mock('@/entities/sub-categories/sub-categories.actions', () => ({
   deleteSubCategoryAction: vi.fn(),
   getSubCategoryByIdAction: vi.fn(),
