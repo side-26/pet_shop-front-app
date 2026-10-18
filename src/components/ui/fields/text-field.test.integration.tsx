@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Form } from '@/components/ui/form';
 import { TextField, textFieldVariants } from '@/components/ui/fields/text-field';
 
-type Values = { password: string; phoneNumber: string };
+type Values = { password: string; phoneNumber: string; serialNumber: string };
 
 afterEach(cleanup);
 
@@ -117,5 +117,30 @@ describe('TextField', () => {
     expect(input.getAttribute('dir')).toBe('ltr');
     expect(input.className).toContain('tw:text-left');
     expect(input.className).toContain('[&::placeholder]:[direction:rtl]');
+  });
+
+  it('normalizes localized digits before storing the field value', async () => {
+    const onSubmit = vi.fn();
+    render(
+      <Form<Values>
+        handleSubmit={onSubmit}
+        options={{ defaultValues: { password: '', phoneNumber: '', serialNumber: '' } }}
+      >
+        <TextField<Values> name="serialNumber" label="شماره سریال" />
+        <button type="submit">ثبت</button>
+      </Form>,
+    );
+
+    const input = screen.getByLabelText('شماره سریال') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'کد ۱۲٣' } });
+
+    expect(input.value).toBe('کد 123');
+    fireEvent.click(screen.getByRole('button', { name: 'ثبت' }));
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(
+        { password: '', phoneNumber: '', serialNumber: 'کد 123' },
+        expect.anything(),
+      ),
+    );
   });
 });

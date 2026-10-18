@@ -44,7 +44,11 @@ describe('DefaultLayoutShell', () => {
 
     expect(screen.getByRole('banner')).toBeTruthy();
     expect(screen.getByRole('main').textContent).toContain('محتوای صفحه');
-    expect(screen.getByRole('contentinfo')).toBeTruthy();
+    const footer = screen.getByRole('contentinfo');
+    expect(footer).toBeTruthy();
+    expect(within(footer).queryByText('لینک‌های مفید')).toBeNull();
+    expect(within(footer).queryByText('سؤالات متداول')).toBeNull();
+    expect(within(footer).queryByText('قوانین و مقررات')).toBeNull();
     expect(await screen.findByRole('navigation', { name: 'ناوبری اصلی' })).toBeTruthy();
     expect(screen.getAllByRole('link', { name: /صفحه اصلی/ })[0].getAttribute('href')).toBe(
       routePaths.home,

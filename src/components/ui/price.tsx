@@ -2,9 +2,10 @@ import type { ComponentProps } from 'react';
 
 import { APP_CURRENCY } from '@/configs/currency';
 import { cn } from '@/lib/utils';
+import { toEnglishDigits } from '@/utils/localized-digits';
 
 type PriceProps = Omit<ComponentProps<'span'>, 'children'> & {
-  number: number;
+  number: number | string;
 };
 
 const priceFormatter = new Intl.NumberFormat('fa-IR', {
@@ -13,7 +14,9 @@ const priceFormatter = new Intl.NumberFormat('fa-IR', {
 });
 
 function Price({ number, className, ...props }: PriceProps) {
-  const formattedNumber = priceFormatter.format(Math.floor(number));
+  const formattedNumber = priceFormatter.format(
+    Math.floor(Number(toEnglishDigits(String(number)))),
+  );
 
   return (
     <span

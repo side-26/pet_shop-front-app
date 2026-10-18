@@ -6,7 +6,7 @@
 
 - `session.ts` handles encrypted session-cookie persistence and retrieval.
 - `entityCache.ts` centralizes entity cache tags, cache life, and invalidation helpers.
-- `address-coordinate.ts`, `helpers.ts`, and `wait.ts` provide reusable conversion and utility functions.
+- `address-coordinate.ts`, `helpers.ts`, `localized-digits.ts`, and `wait.ts` provide reusable conversion and utility functions.
 - Colocated tests protect shared utility contracts.
 
 ## Rules

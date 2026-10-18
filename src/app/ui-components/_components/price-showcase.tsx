@@ -14,6 +14,7 @@ export function PriceShowcase() {
         <Price number={1250000} className="tw:text-price-m tw:text-primary" />
         <Price number={9800000} className="tw:text-title-m" />
         <Price number={49.99} className="tw:text-title-s tw:text-success" />
+        <Price number="۱۲۵۰۰۰۰" className="tw:text-label-l" />
       </div>
     </ShowcaseSection>
   );

@@ -26,4 +26,10 @@ describe('Price', () => {
     expect(price.textContent).toBe(`۴۹${APP_CURRENCY}`);
     expect(price.querySelector('bdi')?.getAttribute('dir')).toBe('ltr');
   });
+
+  it('accepts localized digit strings', () => {
+    render(<Price number="۱۲۵۰۰۰۰" />);
+
+    expect(screen.getByText('۱٬۲۵۰٬۰۰۰')).toBeTruthy();
+  });
 });

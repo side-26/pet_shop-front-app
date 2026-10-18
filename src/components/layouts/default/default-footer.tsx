@@ -2,8 +2,6 @@ import { Camera, Mail, Phone, Send } from 'lucide-react';
 
 import { Brand } from './brand';
 
-const usefulLinks = ['درباره ما', 'تماس با ما', 'سؤالات متداول', 'قوانین و مقررات'] as const;
-
 export function DefaultFooter() {
   return (
     <footer className="tw:mt-12 tw:rounded-t-3xl tw:bg-muted tw:text-foreground tw:md:mt-16">
@@ -37,20 +35,6 @@ export function DefaultFooter() {
         </div>
 
         <div className="tw:grid tw:grid-cols-1 tw:gap-8 tw:sm:grid-cols-2">
-          <section aria-labelledby="footer-useful-links">
-            <h2
-              id="footer-useful-links"
-              className="tw:text-title-s tw:sm:text-title-m tw:lg:text-title-l"
-            >
-              لینک‌های مفید
-            </h2>
-            <ul className="tw:mt-4 tw:flex tw:flex-col tw:gap-2.5 tw:text-body-s tw:text-muted-foreground tw:sm:text-body-m">
-              {usefulLinks.map((label) => (
-                <li key={label}>{label}</li>
-              ))}
-            </ul>
-          </section>
-
           <section aria-labelledby="footer-contact">
             <h2
               id="footer-contact"

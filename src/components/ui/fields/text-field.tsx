@@ -16,6 +16,7 @@ import { FieldErrorHint } from '@/components/ui/field/field-error-hint';
 import { FieldLabel } from '@/components/ui/field/label';
 import { Input, type InputProps } from '@/components/ui/fields/input';
 import { cn } from '@/lib/utils';
+import { toEnglishDigits } from '@/utils/localized-digits';
 
 const textFieldVariants = tv({
   slots: {
@@ -179,6 +180,7 @@ function TextField<
           size={size}
           disabled={disabled}
           value={field.value ?? ''}
+          onChange={(event) => field.onChange(toEnglishDigits(event.target.value))}
           aria-invalid={fieldState.invalid}
           aria-describedby={descriptionId}
           className={className}
