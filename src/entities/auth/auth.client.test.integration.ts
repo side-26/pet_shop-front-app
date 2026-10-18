@@ -122,7 +122,7 @@ describe('loginUser client orchestration', () => {
     const navigate = vi.fn();
 
     await submitLoginUser(
-      { phoneNumber: '09123456789', password: '123456', rememberMe: false },
+      { phoneNumber: '09123456789', password: '123456' },
       setError,
       undefined,
       navigate,
@@ -145,7 +145,7 @@ describe('loginUser client orchestration', () => {
     const navigate = vi.fn();
 
     await submitLoginUser(
-      { phoneNumber: '09123456789', password: '123456', rememberMe: false },
+      { phoneNumber: '09123456789', password: '123456' },
       vi.fn(),
       `${routePaths.checkout}?step=payment`,
       navigate,
@@ -165,7 +165,7 @@ describe('loginUser client orchestration', () => {
     const navigate = vi.fn();
 
     await submitLoginUser(
-      { phoneNumber: '09123456789', password: '123456', rememberMe: false },
+      { phoneNumber: '09123456789', password: '123456' },
       setError,
       routePaths.checkout,
       navigate,

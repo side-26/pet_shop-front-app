@@ -113,7 +113,6 @@ describe('auth actions', () => {
       loginUserAction({
         phoneNumber: '09123456789',
         password: '123456',
-        rememberMe: false,
       }),
     ).resolves.toEqual({
       isSuccess: true,
@@ -139,7 +138,6 @@ describe('auth actions', () => {
       loginUserAction({
         phoneNumber: '09123456789',
         password: '123456',
-        rememberMe: false,
       }),
     ).resolves.toBe(error);
     expect(saveSessionToCookieMock).not.toHaveBeenCalled();
@@ -149,7 +147,6 @@ describe('auth actions', () => {
     const result = await loginUserAction({
       phoneNumber: '123',
       password: 'short',
-      rememberMe: false,
     });
 
     expect(result.isSuccess).toBe(false);

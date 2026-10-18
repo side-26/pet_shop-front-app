@@ -41,7 +41,7 @@ describe(`${routePaths.login} inside the auth layout`, () => {
     });
   }
 
-  it('supports password visibility and remember-me interaction', () => {
+  it('supports password visibility and centers the password-recovery action', () => {
     cy.viewport(375, 667);
     mountLogin();
 
@@ -51,8 +51,8 @@ describe(`${routePaths.login} inside the auth layout`, () => {
       .should('have.attr', 'type', 'text')
       .and('have.attr', 'dir', 'ltr')
       .and('have.css', 'text-align', 'left');
-    cy.contains('label', 'مرا به خاطر بسپار').click();
-    cy.get('[role="checkbox"]').should('have.attr', 'aria-checked', 'true');
+    cy.get('[role="checkbox"]').should('not.exist');
+    cy.contains('a', 'فراموشی کلمه عبور؟').parent().should('have.css', 'justify-content', 'center');
   });
 
   it('remains usable in desktop dark mode', () => {

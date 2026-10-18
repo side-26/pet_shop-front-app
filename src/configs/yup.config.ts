@@ -31,7 +31,6 @@ const labels = {
   postalCode: 'کد پستی',
   propertyDefinitions: 'ویژگی‌ها',
   provinceId: 'شناسه استان',
-  rememberMe: 'مرا به خاطر بسپار',
   'reset-password': 'درخواست بازیابی کلمه عبور',
   role: 'نقش کاربر',
   repeatPassword: 'تکرار کلمه عبور',

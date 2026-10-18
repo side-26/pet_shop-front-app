@@ -40,12 +40,10 @@ describe('loginUserSchema', () => {
       loginUserSchema.validate({
         phoneNumber: '09123456789',
         password: '123456',
-        rememberMe: false,
       }),
     ).resolves.toEqual({
       phoneNumber: '09123456789',
       password: '123456',
-      rememberMe: false,
     });
   });
 
@@ -54,7 +52,6 @@ describe('loginUserSchema', () => {
       loginUserSchema.validate({
         phoneNumber: '09123456789',
         password: '12345',
-        rememberMe: false,
       }),
     ).rejects.toThrow(yupMinimumLengthMessage('password', 6));
   });

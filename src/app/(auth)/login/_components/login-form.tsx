@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { LockKeyholeIcon, PhoneIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { CheckboxField } from '@/components/ui/fields/checkbox-field';
 import { TextField } from '@/components/ui/fields/text-field';
 import { Form } from '@/components/ui/form';
 import { routePaths } from '@/configs/route.path';
@@ -19,7 +18,7 @@ export function LoginForm() {
       ref={formRef}
       validationSchema={loginUserSchema}
       options={{
-        defaultValues: { phoneNumber: '', password: '', rememberMe: false },
+        defaultValues: { phoneNumber: '', password: '' },
         mode: 'onBlur',
       }}
       handleSubmit={handleSubmit}
@@ -51,18 +50,10 @@ export function LoginForm() {
             prefixIcon={<LockKeyholeIcon />}
           />
 
-          <div className="tw:flex tw:min-h-11 tw:items-center tw:justify-between tw:gap-2">
-            <CheckboxField<LoginUserInput>
-              name="rememberMe"
-              label="مرا به خاطر بسپار"
-              size="sm"
-              variant="outlined"
-              checkedColor="primary"
-              uncheckedColor="primary"
-            />
+          <div className="tw:flex tw:min-h-11 tw:items-center tw:justify-center">
             <Link
               href={routePaths.forgetPassword}
-              className="tw:inline-flex tw:min-h-11 tw:shrink-0 tw:items-center tw:rounded-lg tw:px-1 tw:text-label-s tw:text-primary tw:outline-none tw:transition-colors tw:hover:text-primary-hover tw:focus-visible:ring-3 tw:focus-visible:ring-primary/25 tw:motion-reduce:transition-none"
+              className="tw:inline-flex tw:min-h-11 tw:items-center tw:rounded-lg tw:px-1 tw:text-label-s tw:text-primary tw:outline-none tw:transition-colors tw:hover:text-primary-hover tw:focus-visible:ring-3 tw:focus-visible:ring-primary/25 tw:motion-reduce:transition-none"
             >
               فراموشی کلمه عبور؟
             </Link>

@@ -58,7 +58,7 @@ describe('Login', () => {
     cy.get('input[name="password"]')
       .should('have.attr', 'dir', 'ltr')
       .and('have.attr', 'autocomplete', 'current-password');
-    cy.get('[role="checkbox"]').should('have.attr', 'aria-checked', 'false');
+    cy.get('[role="checkbox"]').should('not.exist');
 
     cy.contains('a', 'فراموشی کلمه عبور؟').should('have.attr', 'href', routePaths.forgetPassword);
     cy.contains('a', 'ثبت‌نام').should('have.attr', 'href', routePaths.register);
@@ -79,7 +79,7 @@ describe('Login', () => {
     cy.location('pathname').should('eq', routePaths.login);
   });
 
-  it('reveals and hides the password and toggles remember-me without changing form values', () => {
+  it('reveals and hides the password without changing form values', () => {
     fillLoginForm(registeredPhoneNumber, password);
 
     cy.get('button[aria-label="نمایش کلمه عبور"]').click();
@@ -90,8 +90,6 @@ describe('Login', () => {
     cy.get('input[name="password"]')
       .should('have.attr', 'type', 'password')
       .and('have.value', password);
-    cy.contains('label', 'مرا به خاطر بسپار').click();
-    cy.get('[role="checkbox"]').should('have.attr', 'aria-checked', 'true');
   });
 
   it('keeps the user on login and returns the same safe error for incorrect and unknown credentials', () => {
@@ -154,7 +152,6 @@ describe('Login', () => {
 
     cy.get('input[name="phoneNumber"]').scrollIntoView().should('be.visible');
     cy.get('input[name="password"]').scrollIntoView().should('be.visible');
-    cy.contains('label', 'مرا به خاطر بسپار').scrollIntoView().should('be.visible');
     cy.contains('a', 'فراموشی کلمه عبور؟').scrollIntoView().should('be.visible');
     cy.get('button[type="submit"]').scrollIntoView().should('be.visible');
     cy.contains('a', 'ثبت‌نام').scrollIntoView().should('be.visible');

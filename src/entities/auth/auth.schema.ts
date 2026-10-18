@@ -19,7 +19,6 @@ export type RegisterUserInput = InferType<typeof registerUserSchema>;
 export const loginUserSchema = object({
   phoneNumber: iranianPhoneNumberSchema,
   password: string().required().min(6),
-  rememberMe: boolean().required(),
 });
 
 export type LoginUserInput = InferType<typeof loginUserSchema>;

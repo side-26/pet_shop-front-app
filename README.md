@@ -48,6 +48,64 @@ At checkout, the customer selects the required delivery information and requests
 - Structured, sanitized browser/server observability and client-error reporting.
 - Vitest, React Testing Library, Cypress, Playwright, ESLint, Prettier, and TypeScript validation.
 
+## Observability and logging
+
+The application uses structured, privacy-safe observability for actionable failures. It is not an
+analytics system and must never be used to record user activity, request bodies, form values, or
+backend payloads.
+
+### What is recorded
+
+- **Server operations:** the server-side fetcher emits one structured completion event for each
+  backend operation. Successful operations are debug-level; rate-limited responses are warnings;
+  server, timeout, network, and protocol failures are errors.
+- **Next.js failures:** unexpected render, Route Handler, Server Action, and proxy failures are
+  recorded through Next.js instrumentation.
+- **Internal API failures:** Route Handlers record safe failure metadata through the shared API
+  handler wrapper.
+- **Browser failures:** unexpected render errors, uncaught errors/rejections, and selected internal
+  API network, timeout, protocol, or server failures may be reported from the browser.
+
+Every log uses a registered event name and a stable message. Current events include
+`http.upstream.completed`, `http.request.failed`, `server.unexpected_error`,
+`client.unexpected_error`, and `logging.client_event_rejected`.
+
+### Correlation and privacy
+
+- Requests use a validated `X-Request-ID`. The proxy attaches one to application responses, and
+  server and browser fetchers propagate it to downstream requests.
+- Server output is emitted through the Pino-backed logger with bounded fields such as event,
+  component, method, grouped path, status, duration, outcome, and sanitized error type.
+- Browser reports contain only an allowlisted component, error category, deterministic fingerprint,
+  recent interaction type, and optional request ID. They never include browser identity, a raw
+  error message, URL/query string, or arbitrary metadata.
+- The client-error collector accepts only authenticated requests, limits reports to 8 KiB, rejects
+  unknown fields, and returns an empty response. Logging failures are deliberately ignored so they
+  cannot affect the user flow.
+- Do not add tokens, cookies, passwords, OTPs, phone numbers, email addresses, sessions, headers,
+  files, URLs with query strings, request/response bodies, or arbitrary objects to log context.
+
+### Configuration
+
+| Variable                                     | Purpose                                                                                                        | Default                                                         |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `LOG_LEVEL`                                  | Server threshold: `debug`, `info`, `warn`, `error`, or `silent`.                                               | `debug` in development, `info` in production, `silent` in tests |
+| `LOG_SERVICE_NAME`                           | Bounded service name attached to server logs.                                                                  | `petshop-frontend`                                              |
+| `LOG_ENVIRONMENT`                            | Bounded deployment environment attached to server logs.                                                        | `NODE_ENV` or `development`                                     |
+| `RELEASE_VERSION`                            | Optional release identifier attached to server logs.                                                           | unset                                                           |
+| `NEXT_PUBLIC_CLIENT_ERROR_REPORTING_ENABLED` | Enables the browser reporter when `true`.                                                                      | disabled                                                        |
+| `NEXT_PUBLIC_CLIENT_ERROR_SAMPLE_RATE`       | Browser-report sample rate from `0` through `1`.                                                               | `1`                                                             |
+| `CLIENT_ERROR_REPORTING_ENABLED`             | Enables the server-side client-error collector when `true`.                                                    | disabled                                                        |
+| `CLIENT_TELEMETRY_EDGE_RATE_LIMITED`         | Required in production before the collector accepts reports; confirms deployment-edge rate limiting is active. | disabled                                                        |
+
+Browser reporting requires both public browser reporting and the server collector to be enabled.
+In production, configure edge/distributed rate limiting before setting
+`CLIENT_TELEMETRY_EDGE_RATE_LIMITED=true`; the application intentionally refuses reports otherwise.
+
+When adding a new event, register it in `src/lib/logging/contracts.ts`, keep its message stable,
+use only the closed log context, and add focused safety tests. Do not import the server logger from
+browser-reachable code.
+
 ## Architecture at a glance
 
 ```text
@@ -130,6 +188,61 @@ Read the nearest `AGENTS.md` before changing a source area. These guides documen
 | `pnpm test`                    | Run the full test suite                       |
 | `pnpm test:core-web-vitals`    | Build and run Core Web Vitals checks          |
 | `pnpm test:instant-navigation` | Run client-navigation performance checks      |
+
+## Test levels
+
+The project uses a layered test strategy. Select the narrowest level that proves the behavior, then
+run broader checks for cross-boundary changes.
+
+### 1. Unit tests
+
+Unit tests live next to the code they exercise and use the `*.test.unit.ts` convention. They run in
+the Vitest `unit` project and cover deterministic, framework-independent behavior such as schemas,
+formatters, mappings, cache utilities, session helpers, middleware composition, and logging safety.
+External boundaries are mocked.
+
+```bash
+pnpm test:unit
+```
+
+### 2. Integration tests
+
+Integration tests use the `*.test.integration.ts` and `*.test.integration.tsx` conventions. They run
+in the Vitest `integration` project with React Testing Library and exercise meaningful adjacent
+layers: rendered forms and accessibility, Server Action/client orchestration, Route Handlers,
+fetcher contracts, state stores, loading and error states, navigation requests, and shared-provider
+wiring. The browser/backend boundary is mocked only where the test needs a controlled response.
+
+```bash
+pnpm test:integration
+```
+
+### 3. End-to-end tests
+
+End-to-end tests use `*.e2e.cy.ts` and run in Cypress against the running application and its local
+development backend. They cover complete user journeys such as registration, login, logout, session
+cookies, protected-route redirects, cart preservation and synchronization, and responsive product
+detail behavior. E2E fixtures are created and cleaned up through Cypress tasks so tests do not rely
+on pre-existing catalogue or user data.
+
+```bash
+pnpm test:e2e
+```
+
+### Browser component tests
+
+Cypress component specs (`*.component.cy.tsx`) complement the three levels above. They exercise
+interactive UI primitives and responsive layouts in a real browser with the same RTL, App Router,
+and TanStack Query providers used by the application. Use them for keyboard/focus behavior,
+portals, dialogs, drawers, responsive composition, and other browser-only UI contracts that do not
+require a complete backend journey.
+
+```bash
+pnpm test:component
+```
+
+Run `pnpm test` to execute all unit, integration, component, and E2E suites. Performance checks are
+separate because they require a production build and dedicated browser tooling.
 
 ## Development conventions
 

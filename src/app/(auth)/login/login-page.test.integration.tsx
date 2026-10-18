@@ -36,7 +36,7 @@ describe(routePaths.login, () => {
       ),
     ).toBeTruthy();
     expect(screen.getByRole('form', { name: 'فرم ورود' })).toBeTruthy();
-    expect(screen.getByRole('checkbox', { name: 'مرا به خاطر بسپار' })).toBeTruthy();
+    expect(screen.queryByRole('checkbox')).toBeNull();
     expect(screen.getByRole('link', { name: 'فراموشی کلمه عبور؟' }).getAttribute('href')).toBe(
       routePaths.forgetPassword,
     );
@@ -44,6 +44,9 @@ describe(routePaths.login, () => {
       routePaths.register,
     );
     expect(screen.getByRole('button', { name: 'ورود' })).toBeTruthy();
+    expect(
+      screen.getByRole('link', { name: 'فراموشی کلمه عبور؟' }).parentElement?.className,
+    ).toContain('tw:justify-center');
   });
 
   it('uses medium-touch field sizing and mixed RTL/LTR input direction', () => {
