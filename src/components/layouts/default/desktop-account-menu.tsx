@@ -1,6 +1,6 @@
 'use client';
 
-import { LogOut, Package, UserRound } from 'lucide-react';
+import { LogOut, UserRound } from 'lucide-react';
 import Link from 'next/link';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -17,10 +17,12 @@ import {
 import { routePaths } from '@/configs/route.path';
 import { logoutUser } from '@/entities/auth/auth.client';
 import type { CurrentUserDTO } from '@/entities/users/users.dto';
+import { useCommonStore } from '@/stores/common.store';
 
 type Props = Readonly<{ user: CurrentUserDTO }>;
 
 export function DesktopAccountMenu({ user }: Props) {
+  const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
   const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.phoneNumber;
 
   return (
@@ -49,14 +51,21 @@ export function DesktopAccountMenu({ user }: Props) {
             <UserRound aria-hidden="true" />
             پروفایل
           </DropdownMenuItem>
-          <DropdownMenuItem disabled>
-            <Package aria-hidden="true" />
-            سفارش‌ها
-          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem variant="destructive" onClick={() => void logoutUser()}>
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={() => {
+              showConfirmDialog({
+                title: 'از حساب خارج می‌شوید؟',
+                message: 'برای ادامه، لازم است دوباره وارد حساب کاربری خود شوید.',
+                icon: LogOut,
+                variant: 'warning',
+                onSuccess: logoutUser,
+              });
+            }}
+          >
             <LogOut aria-hidden="true" />
             خروج
           </DropdownMenuItem>
