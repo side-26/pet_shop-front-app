@@ -12,7 +12,7 @@ export function AuthCardShell({ titleId, children }: AuthCardShellProps) {
     <div className="tw:flex tw:min-w-0 tw:items-center tw:justify-center tw:text-foreground">
       <section
         aria-labelledby={titleId}
-        className="tw:relative tw:flex tw:h-fit tw:w-full tw:max-w-md tw:flex-none tw:items-end tw:overflow-hidden tw:sm:max-lg:max-w-none tw:sm:max-lg:rounded-t-4xl tw:sm:max-lg:rounded-b-none tw:sm:max-lg:border"
+        className="tw:relative tw:flex tw:h-fit tw:w-full tw:max-w-md tw:flex-none tw:items-end tw:overflow-hidden tw:sm:max-lg:max-w-none tw:sm:max-lg:rounded-t-4xl tw:sm:max-lg:rounded-b-none tw:sm:max-lg:border tw:[@media(min-width:1025px)]:max-w-[400px] tw:[@media(min-width:1025px)]:-translate-x-8"
       >
         <div aria-hidden="true" className="tw:absolute tw:inset-0 tw:bg-background/15" />
 

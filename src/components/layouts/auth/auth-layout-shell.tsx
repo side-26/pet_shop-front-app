@@ -1,12 +1,11 @@
 import type { ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Bone, Headphones, HouseIcon, PawPrint, ShieldCheck, Truck } from 'lucide-react';
+import { ArrowLeft, Bone, Headphones, PawPrint, ShieldCheck, Truck } from 'lucide-react';
 
 import dogImage from '@/../public/images/auth/dog.png';
-import { buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { routePaths } from '@/configs/route.path';
-import { cn } from '@/lib/utils';
 
 type AuthLayoutShellProps = Readonly<{
   children: ReactNode;
@@ -33,16 +32,17 @@ const benefits = [
 export function AuthLayoutShell({ children }: AuthLayoutShellProps) {
   return (
     <main className="tw:relative tw:grid tw:min-h-svh tw:w-full tw:min-w-0 tw:overflow-x-hidden tw:bg-info-muted tw:text-foreground tw:[@media(min-width:1025px)]:h-svh tw:[@media(min-width:1025px)]:overflow-hidden">
-      <Link
-        href={routePaths.home}
-        className={cn(
-          buttonVariants({ color: 'primary', size: 'sm', variant: 'transparent' }),
-          'tw:absolute tw:top-4 tw:end-4 tw:z-30 tw:shadow-md tw:sm:top-6 tw:sm:end-6',
-        )}
+      <Button
+        nativeButton={false}
+        render={<Link href={routePaths.home} />}
+        iconOnly
+        color="secondary"
+        variant="tonal"
+        aria-label="بازگشت به خانه"
+        className="tw:absolute tw:top-4 tw:end-4 tw:z-30 tw:shadow-md tw:sm:top-6 tw:sm:end-6"
       >
-        <HouseIcon aria-hidden="true" data-icon="inline-start" />
-        بازگشت به خانه
-      </Link>
+        <ArrowLeft aria-hidden="true" />
+      </Button>
       <section
         aria-labelledby="auth-brand-title"
         className="tw:relative tw:isolate tw:min-h-72 tw:overflow-hidden tw:bg-info-muted tw:sm:min-h-[34rem] tw:[@media(min-width:1025px)]:absolute tw:[@media(min-width:1025px)]:inset-0 tw:[@media(min-width:1025px)]:min-h-svh"

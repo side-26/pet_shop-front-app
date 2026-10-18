@@ -1,12 +1,10 @@
 'use client';
 
-import Link from 'next/link';
 import { LockKeyholeIcon, PhoneIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/ui/fields/text-field';
 import { Form } from '@/components/ui/form';
-import { routePaths } from '@/configs/route.path';
 import { useLoginUser } from '@/entities/auth/auth.client';
 import { loginUserSchema, type LoginUserInput } from '@/entities/auth/auth.schema';
 
@@ -49,15 +47,6 @@ export function LoginForm() {
             placeholder="کلمه عبور"
             prefixIcon={<LockKeyholeIcon />}
           />
-
-          <div className="tw:flex tw:min-h-11 tw:items-center tw:justify-center">
-            <Link
-              href={routePaths.forgetPassword}
-              className="tw:inline-flex tw:min-h-11 tw:items-center tw:rounded-lg tw:px-1 tw:text-label-s tw:text-primary tw:outline-none tw:transition-colors tw:hover:text-primary-hover tw:focus-visible:ring-3 tw:focus-visible:ring-primary/25 tw:motion-reduce:transition-none"
-            >
-              فراموشی کلمه عبور؟
-            </Link>
-          </div>
 
           <Button
             type="submit"

@@ -41,7 +41,7 @@ describe(`${routePaths.login} inside the auth layout`, () => {
     });
   }
 
-  it('supports password visibility and centers the password-recovery action', () => {
+  it('supports password visibility and keeps recovery beside registration', () => {
     cy.viewport(375, 667);
     mountLogin();
 
@@ -52,7 +52,10 @@ describe(`${routePaths.login} inside the auth layout`, () => {
       .and('have.attr', 'dir', 'ltr')
       .and('have.css', 'text-align', 'left');
     cy.get('[role="checkbox"]').should('not.exist');
-    cy.contains('a', 'فراموشی کلمه عبور؟').parent().should('have.css', 'justify-content', 'center');
+    cy.contains('a', 'فراموشی کلمه عبور؟')
+      .parent()
+      .should('have.css', 'justify-content', 'space-between')
+      .and('contain.text', 'حساب کاربری ندارید؟');
   });
 
   it('remains usable in desktop dark mode', () => {
@@ -65,6 +68,16 @@ describe(`${routePaths.login} inside the auth layout`, () => {
     cy.get('form[aria-label="فرم ورود"]').should('be.visible');
     cy.get('button[type="submit"]').should('be.visible');
     cy.get(`a[href="${routePaths.register}"]`).should('be.visible');
+    cy.get('section[aria-labelledby="login-title"]').then(($formCard) => {
+      const formCard = $formCard[0].getBoundingClientRect();
+      const formCardWrapper = $formCard[0].parentElement?.getBoundingClientRect();
+
+      expect(formCard.width).to.equal(400);
+      expect(formCardWrapper).to.not.equal(undefined);
+      expect(formCard.left).to.equal(
+        (formCardWrapper?.left ?? 0) + ((formCardWrapper?.width ?? 0) - 400) / 2 - 32,
+      );
+    });
     cy.get('[data-slot="card"]').then(($card) => {
       const style = getComputedStyle($card[0]);
 

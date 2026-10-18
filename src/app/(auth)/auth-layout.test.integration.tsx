@@ -21,9 +21,12 @@ describe('AuthLayout', () => {
     expect(screen.getByRole('img', { name: 'توله‌سگ گلدن رتریور' })).toBeTruthy();
     expect(screen.getByRole('region', { name: 'محتوای احراز هویت' })).toBeTruthy();
     expect(screen.getByText('محتوای صفحه ورود')).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'بازگشت به خانه' }).getAttribute('href')).toBe(
-      routePaths.home,
-    );
+    const homeLink = screen.getByRole('button', { name: 'بازگشت به خانه' });
+    expect(homeLink.getAttribute('href')).toBe(routePaths.home);
+    expect(homeLink.getAttribute('data-icon-only')).toBe('true');
+    expect(homeLink.getAttribute('data-color')).toBe('secondary');
+    expect(homeLink.getAttribute('data-variant')).toBe('tonal');
+    expect(homeLink.querySelector('svg.lucide-arrow-left')).toBeTruthy();
   });
 
   it('shows the three trust benefits', () => {

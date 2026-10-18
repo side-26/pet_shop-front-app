@@ -44,9 +44,9 @@ describe(routePaths.login, () => {
       routePaths.register,
     );
     expect(screen.getByRole('button', { name: 'ورود' })).toBeTruthy();
-    expect(
-      screen.getByRole('link', { name: 'فراموشی کلمه عبور؟' }).parentElement?.className,
-    ).toContain('tw:justify-center');
+    const recoveryLink = screen.getByRole('link', { name: 'فراموشی کلمه عبور؟' });
+    expect(recoveryLink.parentElement?.className).toContain('tw:justify-between');
+    expect(recoveryLink.parentElement?.textContent).toContain('حساب کاربری ندارید؟');
   });
 
   it('uses medium-touch field sizing and mixed RTL/LTR input direction', () => {

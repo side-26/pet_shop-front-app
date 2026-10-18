@@ -26,6 +26,12 @@ describe('auth layout responsive composition', () => {
       });
     });
     cy.get('[data-testid="auth-child"]').scrollIntoView().should('be.visible');
+    cy.get('a[href="/"]')
+      .should('have.attr', 'aria-label', 'بازگشت به خانه')
+      .and('have.attr', 'data-icon-only', 'true')
+      .and('have.attr', 'data-color', 'secondary')
+      .and('have.attr', 'data-variant', 'tonal');
+    cy.get('a[href="/"] svg.lucide-arrow-left').should('exist');
     cy.get('section[aria-label="محتوای احراز هویت"]').then(($panel) => {
       const panel = $panel[0].getBoundingClientRect();
 

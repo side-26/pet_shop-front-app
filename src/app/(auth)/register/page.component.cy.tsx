@@ -54,6 +54,16 @@ describe(`${routePaths.register} inside the auth layout`, () => {
     cy.get('input[name="password"]').should('have.attr', 'type', 'text');
     cy.get('form[aria-label="فرم ثبت‌نام"]').should('be.visible');
     cy.get('button[type="submit"]').should('be.visible');
+    cy.get('section[aria-labelledby="register-title"]').then(($formCard) => {
+      const formCard = $formCard[0].getBoundingClientRect();
+      const formCardWrapper = $formCard[0].parentElement?.getBoundingClientRect();
+
+      expect(formCard.width).to.equal(400);
+      expect(formCardWrapper).to.not.equal(undefined);
+      expect(formCard.left).to.equal(
+        (formCardWrapper?.left ?? 0) + ((formCardWrapper?.width ?? 0) - 400) / 2 - 32,
+      );
+    });
     cy.get('[data-slot="card"]').then(($card) => {
       const style = getComputedStyle($card[0]);
 
