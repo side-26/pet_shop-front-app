@@ -34,7 +34,9 @@ describe('internalFetcher observability', () => {
     ).resolves.toEqual({ result: [] });
 
     const headers = new Headers(fetchMock.mock.calls[0]?.[1]?.headers);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe('http://localhost/api/landing/products');
+    const requestUrl = new URL(String(fetchMock.mock.calls[0]?.[0]));
+    expect(requestUrl.origin).toBe(window.location.origin);
+    expect(requestUrl.pathname).toBe('/api/landing/products');
     expect(headers.get('x-request-id')).toBe('client_request_1234');
     expect(setClientRequestId).toHaveBeenCalledWith('server_request_1234');
     expect(reportClientError).not.toHaveBeenCalled();
