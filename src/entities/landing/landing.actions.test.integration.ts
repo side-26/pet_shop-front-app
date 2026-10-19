@@ -144,7 +144,7 @@ describe('retryAllLandingPetTypesAction', () => {
     );
 
     expect(getAllLandingPetTypes).toHaveBeenCalledTimes(2);
-    expect(connectionMock).toHaveBeenCalledTimes(3);
+    expect(connectionMock).toHaveBeenCalledTimes(4);
     expect(getDiscountedLandingProducts).toHaveBeenCalledWith({ limit: 5 });
     expect(getPopularLandingProducts).toHaveBeenCalledOnce();
     expect(getPopularLandingBrands).toHaveBeenCalledOnce();
@@ -179,6 +179,7 @@ describe('retryAllLandingPetTypesAction', () => {
     });
 
     await expect(getHomeLandingPetTypesAction()).rejects.toThrow('دسته‌بندی‌ها در دسترس نیستند.');
+    expect(connectionMock).toHaveBeenCalledOnce();
   });
 
   it('unwraps product-category failures for its Server Component error boundary', async () => {

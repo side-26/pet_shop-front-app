@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "deploy:vps": "bash scripts/deploy.sh",
     "lint": "eslint .",
     "format": "prettier --write . --ignore-unknown && eslint . --fix",
     "test": "pnpm run test:unit && pnpm run test:integration && pnpm run test:component && pnpm run test:e2e",
@@ -18,7 +19,6 @@
     "test:core-web-vitals:routes": "node --test scripts/core-web-vitals/discover-routes.test.mjs",
     "core-web-vitals:install": "playwright install chromium",
     "prepare": "husky",
-    "deploy": "bash scripts/deploy.sh",
     "cypress:open": "cypress open --e2e",
     "generate:typography": "node ./src/scripts/typography.generator.mjs"
   },

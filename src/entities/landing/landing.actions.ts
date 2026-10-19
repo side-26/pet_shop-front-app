@@ -39,6 +39,7 @@ export async function getAllLandingPetTypesAction() {
 
 /** Server-rendered home categories unwrap failures for their local Suspense error boundary. */
 export async function getHomeLandingPetTypesAction() {
+  await connection();
   return unwrapResult(getAllLandingPetTypes(), 'دریافت دسته‌بندی حیوانات انجام نشد.');
 }
 
@@ -49,6 +50,7 @@ export async function getProductLandingPetTypesAction() {
 }
 
 export async function getDiscountedLandingProductsAction(input: unknown = {}) {
+  await connection();
   const value = await landingDiscountLimitSchema.validate(input, { stripUnknown: true });
   return getDiscountedLandingProducts(value);
 }
