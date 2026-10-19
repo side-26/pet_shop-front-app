@@ -20,6 +20,7 @@ describe('ProfileOrdersErrorBoundary', () => {
     );
 
     expect(screen.getByRole('alert').textContent).toContain('دریافت سفارش‌ها انجام نشد');
+    expect(screen.getByRole('alert').textContent).toContain('ارتباط با سرور برقرار نشد.');
     consoleError.mockRestore();
   });
 });

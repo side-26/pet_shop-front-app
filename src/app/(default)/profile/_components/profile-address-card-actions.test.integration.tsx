@@ -1,4 +1,5 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ConfirmDialog } from '@/components/common/confirm-dialog/main';
@@ -6,6 +7,7 @@ import { deleteProfileAddressAction } from '@/entities/profile/profile.actions';
 import { useCommonStore } from '@/stores/common.store';
 
 import { ProfileAddressCardActions } from './profile-address-card-actions';
+import { ProfileAddressDialogsProvider } from './profile-address-dialogs-provider';
 
 vi.mock('@/entities/profile/profile.actions', () => ({ deleteProfileAddressAction: vi.fn() }));
 vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
@@ -26,14 +28,17 @@ describe('ProfileAddressCardActions', () => {
       data: undefined,
     } as never);
 
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     render(
-      <>
-        <ProfileAddressCardActions
-          addressId="507f1f77bcf86cd799439011"
-          addressTitle="تهران، تهران"
-        />
+      <QueryClientProvider client={queryClient}>
+        <ProfileAddressDialogsProvider>
+          <ProfileAddressCardActions
+            addressId="507f1f77bcf86cd799439011"
+            addressTitle="تهران، تهران"
+          />
+        </ProfileAddressDialogsProvider>
         <ConfirmDialog />
-      </>,
+      </QueryClientProvider>,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'حذف نشانی' }));

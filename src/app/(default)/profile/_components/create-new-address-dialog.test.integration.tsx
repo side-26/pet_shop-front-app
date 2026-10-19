@@ -1,7 +1,10 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { CreateNewAddressButton } from './create-new-address-button';
+import { ProfileAddressDialogsProvider } from './profile-address-dialogs-provider';
 
 const mapFlyTo = vi.fn();
 const renderProvinceSelector = vi.fn();
@@ -19,6 +22,15 @@ afterEach(() => {
   mapFlyTo.mockClear();
   renderProvinceSelector.mockClear();
 });
+
+function renderWithQueryClient(children: ReactNode) {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <ProfileAddressDialogsProvider>{children}</ProfileAddressDialogsProvider>
+    </QueryClientProvider>,
+  );
+}
 
 vi.mock('@/components/ui/map/neshan-map/default', () => ({
   NeshanMap: ({
@@ -75,11 +87,14 @@ vi.mock('@/components/ui/map/neshan-map/plugins/province-selector', () => ({
 }));
 
 describe('CreateNewAddressDialog', () => {
-  it('opens the location step and keeps its marker coordinate synchronized with province selection and dragging', async () => {
-    render(<CreateNewAddressButton />);
+  it('defers the location form until opened and keeps its marker coordinate synchronized', async () => {
+    renderWithQueryClient(<CreateNewAddressButton />);
 
+    expect(screen.queryByRole('heading', { name: 'موقعیت نشانی را انتخاب کنید' })).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'افزودن نشانی جدید' }));
-    expect(screen.getByRole('heading', { name: 'موقعیت نشانی را انتخاب کنید' })).toBeTruthy();
+    expect(
+      await screen.findByRole('heading', { name: 'موقعیت نشانی را انتخاب کنید' }),
+    ).toBeTruthy();
     expect(await screen.findByRole('region', { name: 'نقشه انتخاب موقعیت نشانی' })).toBeTruthy();
     expect(screen.getByText('lat: 35.689200')).toBeTruthy();
     expect(screen.getByText('lng: 51.389000')).toBeTruthy();
@@ -94,7 +109,7 @@ describe('CreateNewAddressDialog', () => {
   });
 
   it('streams reverse-geocoded address fields and keeps receiver details disabled by default', async () => {
-    render(<CreateNewAddressButton />);
+    renderWithQueryClient(<CreateNewAddressButton />);
 
     fireEvent.click(screen.getByRole('button', { name: 'افزودن نشانی جدید' }));
     fireEvent.submit(screen.getAllByRole('form', { name: 'انتخاب موقعیت نشانی' }).at(-1)!);
@@ -109,7 +124,7 @@ describe('CreateNewAddressDialog', () => {
   });
 
   it('flies to the selected address coordinate when editing the location', async () => {
-    render(<CreateNewAddressButton />);
+    renderWithQueryClient(<CreateNewAddressButton />);
 
     fireEvent.click(screen.getByRole('button', { name: 'افزودن نشانی جدید' }));
     fireEvent.click(screen.getByRole('button', { name: /نشانگر 51\.389,35\.6892/ }));

@@ -1,14 +1,14 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
-import { createElement, type ReactNode } from 'react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getProfileOrdersAction } from './profile.actions';
 import { useProfileOrdersPage } from './profile.client';
+import { getProfileOrdersAction } from './profile.actions';
 import type { ProfileOrdersPageDTO } from './profile.dto';
 
-vi.mock('./profile.actions', () => ({ getProfileOrdersAction: vi.fn() }));
-vi.mock('@/utils/helpers', () => ({ globalErrorHandler: vi.fn() }));
+vi.mock('./profile.actions', () => ({
+  getProfileOrderAction: vi.fn(),
+  getProfileOrdersAction: vi.fn(),
+}));
 
 const initialPage: ProfileOrdersPageDTO = {
   result: [],
@@ -27,36 +27,18 @@ const initialPage: ProfileOrdersPageDTO = {
 afterEach(() => vi.clearAllMocks());
 
 describe('useProfileOrdersPage', () => {
-  it('seeds the first server page and fetches only the next page on demand without staleTime', async () => {
+  it('seeds the streamed initial page and fetches a requested next page through the Server Action', async () => {
     vi.mocked(getProfileOrdersAction).mockResolvedValue({
-      isSuccess: true,
-      message: null,
-      data: {
-        ...initialPage,
-        pagination: {
-          ...initialPage.pagination,
-          currentPage: 2,
-          hasNextPage: false,
-          nextPage: null,
-        },
-      },
+      ...initialPage,
+      pagination: { ...initialPage.pagination, currentPage: 2, hasNextPage: false, nextPage: null },
     });
-    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-    const wrapper = ({ children }: { children: ReactNode }) =>
-      createElement(QueryClientProvider, { client: queryClient }, children);
-
-    const { result } = renderHook(() => useProfileOrdersPage(initialPage), { wrapper });
+    const { result } = renderHook(() => useProfileOrdersPage(initialPage));
 
     expect(getProfileOrdersAction).not.toHaveBeenCalled();
     expect(result.current.data.pages).toEqual([initialPage]);
-    expect(
-      'staleTime' in
-        (queryClient.getQueryCache().find({ queryKey: ['profile', 'orders'] })?.options ?? {}),
-    ).toBe(false);
 
-    result.current.fetchNextPage();
+    await act(() => result.current.fetchNextPage());
     await waitFor(() => expect(result.current.data.pages).toHaveLength(2));
     expect(getProfileOrdersAction).toHaveBeenCalledWith({ page: 2 });
-    queryClient.clear();
   });
 });

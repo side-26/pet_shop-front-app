@@ -69,24 +69,25 @@ describe(routePaths.profile, () => {
     expect(screen.queryByRole('heading', { name: 'نشانی‌های من', hidden: true })).toBeNull();
   });
 
-  it('switches to the orders tab', () => {
+  it('loads the orders tab only after it is selected', async () => {
     render(<ProfilePage />);
 
     fireEvent.click(screen.getByRole('tab', { name: 'سفارش‌ها' }));
-    expect(screen.getByRole('heading', { level: 2, name: 'سفارش‌های من' })).toBeTruthy();
+    expect(await screen.findByRole('heading', { level: 2, name: 'سفارش‌های من' })).toBeTruthy();
   });
 
-  it('switches to the addresses tab', () => {
+  it('loads the addresses tab only after it is selected', async () => {
     render(<ProfilePage />);
 
     fireEvent.click(screen.getByRole('tab', { name: 'نشانی‌ها' }));
-    expect(screen.getByRole('heading', { level: 2, name: 'نشانی‌های من' })).toBeTruthy();
+    expect(await screen.findByRole('heading', { level: 2, name: 'نشانی‌های من' })).toBeTruthy();
   });
 
-  it('keeps a lazy-loaded tab mounted after it has been visited', () => {
+  it('keeps a lazy-loaded tab mounted after it has been visited', async () => {
     render(<ProfilePage />);
 
     fireEvent.click(screen.getByRole('tab', { name: 'سفارش‌ها' }));
+    await screen.findByRole('heading', { level: 2, name: 'سفارش‌های من' });
     fireEvent.click(screen.getByRole('tab', { name: 'اطلاعات شخصی' }));
 
     expect(screen.getByRole('heading', { name: 'سفارش‌های من', hidden: true })).toBeTruthy();

@@ -1,16 +1,20 @@
-import type { ProfileAddressDTO } from '@/entities/profile/profile.dto';
+import type { ProfileAddressCardDTO } from '@/entities/profile/profile.dto';
 
-export const profileAddressesSkeletonData: ProfileAddressDTO[] = Array.from({ length: 2 }, () => ({
-  province: '',
-  city: '',
-  detailAddress: '',
-  latLng: [0, 0],
-  plate: '',
-  unit: null,
-  postalCode: '',
-  receiverIsMe: true,
-  firstName: '',
-  lastName: '',
-  nationalCode: '',
-  phoneNumber: '',
-}));
+export const profileAddressesSkeletonData: ProfileAddressCardDTO[] = [
+  {
+    title: 'تهران، تهران',
+    details: 'تهران، خیابان نمونه، کوچه نمونه، پلاک ۲۱، واحد ۸',
+    postalCode: '1998712345',
+    firstName: 'نیلوفر',
+    lastName: 'احمدی',
+    phoneNumber: '09121234567',
+  },
+  {
+    title: 'اصفهان، اصفهان',
+    details: 'اصفهان، خیابان چهارباغ، پلاک ۴۵، واحد ۲',
+    postalCode: '8135712345',
+    firstName: 'نیلوفر',
+    lastName: 'احمدی',
+    phoneNumber: '09121234567',
+  },
+];

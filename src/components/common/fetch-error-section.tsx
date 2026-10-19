@@ -25,8 +25,11 @@ type FetchErrorSectionProps = Readonly<{
   title?: ReactNode;
 }>;
 
+type FetchErrorDescription = ReactNode | ((error: unknown) => ReactNode);
+
 type FetchErrorSectionBoundaryOptions<TProps extends object> = Readonly<
-  Omit<FetchErrorSectionProps, 'onRetry'> & {
+  Omit<FetchErrorSectionProps, 'description' | 'onRetry'> & {
+    description?: FetchErrorDescription;
     onRetry?: (props: TProps, retry: ErrorInfo['retry']) => void;
   }
 >;
@@ -117,12 +120,20 @@ function createFetchErrorSectionBoundary<TProps extends object = Record<never, n
   }: Readonly<TProps & { children: ReactNode }>) {
     return (
       <ErrorStateBoundary
-        fallbackRender={({ retry }) => (
-          <FetchErrorSection
-            {...options}
-            onRetry={() => options.onRetry?.(props as TProps, retry) ?? retry()}
-          />
-        )}
+        fallbackRender={({ error, retry }) => {
+          const description =
+            typeof options.description === 'function'
+              ? options.description(error)
+              : options.description;
+
+          return (
+            <FetchErrorSection
+              {...options}
+              description={description}
+              onRetry={() => options.onRetry?.(props as TProps, retry) ?? retry()}
+            />
+          );
+        }}
       >
         {children}
       </ErrorStateBoundary>

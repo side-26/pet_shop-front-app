@@ -1,19 +1,19 @@
-import { Suspense } from 'react';
+import { use } from 'react';
 
 import type { getProfileOrdersAction } from '@/entities/profile/profile.actions';
+import { EmptyStateBoundary } from '@/components/ui/empty-state-boundary';
 
-import { ProfileOrdersErrorBoundary } from './profile-orders-error-boundary';
-import { ProfileOrdersRenderer } from './profile-orders-renderer';
-import { ProfileOrdersSkeleton } from './profile-orders-skeleton';
+import { ProfileOrdersResolved } from './profile-orders-resolved';
+import { ProfileOrdersState } from './profile-orders-state';
 
 type Props = { ordersPromise: ReturnType<typeof getProfileOrdersAction> };
 
 export function ProfileOrdersContainer({ ordersPromise }: Props) {
+  const orders = use(ordersPromise);
+
   return (
-    <Suspense fallback={<ProfileOrdersSkeleton />}>
-      <ProfileOrdersErrorBoundary>
-        <ProfileOrdersRenderer ordersPromise={ordersPromise} />
-      </ProfileOrdersErrorBoundary>
-    </Suspense>
+    <EmptyStateBoundary data={orders.result} fallback={<ProfileOrdersState />}>
+      <ProfileOrdersResolved orders={orders} />
+    </EmptyStateBoundary>
   );
 }

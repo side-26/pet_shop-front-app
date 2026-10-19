@@ -1,7 +1,9 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { Suspense, useCallback, useImperativeHandle, useState, type Ref } from 'react';
+import { Suspense, forwardRef, useCallback, useImperativeHandle, useState } from 'react';
+
+import type { DialogHandle } from '@/_types';
 
 import type { OrderDetailDialogProps } from './order-detail-dialog';
 import { OrderDetailDialogSkeleton } from './order-detail-dialog-skeleton';
@@ -10,23 +12,24 @@ const LazyOrderDetailDialog = dynamic<OrderDetailDialogProps>(() =>
   import('./order-detail-dialog').then((module) => module.OrderDetailDialog),
 );
 
-export type OrderDetailDialogRef = {
-  close: () => void;
-  open: (orderId: string) => void;
-};
+export type OrderDetailDialogParams = Readonly<{ orderId: string }>;
+export type OrderDetailDialogRef = DialogHandle<OrderDetailDialogParams>;
 
-type OrderDetailDialogWrapperProps = Readonly<{ ref: Ref<OrderDetailDialogRef> }>;
+export const OrderDetailDialogWrapper = forwardRef<OrderDetailDialogRef>(
+  function OrderDetailDialogWrapper(_props, ref) {
+    const [orderId, setOrderId] = useState<string | null>(null);
+    const close = useCallback(() => setOrderId(null), []);
+    const open = useCallback(
+      ({ orderId: nextOrderId }: OrderDetailDialogParams) => setOrderId(nextOrderId),
+      [],
+    );
 
-export function OrderDetailDialogWrapper({ ref }: OrderDetailDialogWrapperProps) {
-  const [orderId, setOrderId] = useState<string | null>(null);
-  const close = useCallback(() => setOrderId(null), []);
-  const open = useCallback((nextOrderId: string) => setOrderId(nextOrderId), []);
+    useImperativeHandle(ref, () => ({ close, open }), [close, open]);
 
-  useImperativeHandle(ref, () => ({ close, open }), [close, open]);
-
-  return orderId ? (
-    <Suspense fallback={<OrderDetailDialogSkeleton />}>
-      <LazyOrderDetailDialog onClose={close} orderId={orderId} />
-    </Suspense>
-  ) : null;
-}
+    return orderId ? (
+      <Suspense fallback={<OrderDetailDialogSkeleton />}>
+        <LazyOrderDetailDialog onClose={close} orderId={orderId} />
+      </Suspense>
+    ) : null;
+  },
+);
