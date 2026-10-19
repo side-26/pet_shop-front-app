@@ -17,7 +17,9 @@ export function PetHeroSection() {
           src="/images/home/hero-pets.jpeg"
           alt="سگ گلدن رتریور و گربه پرشین در خانه‌ای روشن"
           fill
-          priority
+          preload
+          loading="eager"
+          fetchPriority="high"
           sizes="(min-width: 1280px) 1280px, 100vw"
           className="tw:object-cover tw:transition-transform tw:duration-700 tw:group-hover/hero:scale-105 tw:motion-reduce:transition-none tw:motion-reduce:group-hover/hero:transform-none"
         />

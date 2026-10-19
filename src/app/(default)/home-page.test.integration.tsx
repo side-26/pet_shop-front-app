@@ -97,7 +97,9 @@ describe('HomePage', () => {
   it('renders descriptive local imagery and accessible carousels', async () => {
     render(<HomePage />);
 
-    expect(screen.getByAltText(/گلدن رتریور و گربه پرشین/)).toBeTruthy();
+    const heroImage = screen.getByAltText(/گلدن رتریور و گربه پرشین/);
+    expect(heroImage.getAttribute('loading')).toBe('eager');
+    expect(heroImage.getAttribute('fetchpriority')).toBe('high');
     expect(screen.getByAltText('تحویل بسته محصولات پت در درب منزل')).toBeTruthy();
     expect(
       screen

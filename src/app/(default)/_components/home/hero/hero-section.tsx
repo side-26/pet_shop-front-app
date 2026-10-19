@@ -72,12 +72,14 @@ export function HeroSection() {
 
         <RevealItem className="tw:relative tw:lg:col-span-7">
           <div className="tw:absolute tw:-inset-3 tw:rounded-[2.25rem] tw:bg-primary/15 tw:blur-2xl tw:sm:-inset-5" />
-          <div className="tw:relative tw:aspect-[16/10] tw:overflow-hidden tw:rounded-[2rem] tw:border tw:border-background/70 tw:bg-card tw:shadow-2xl tw:shadow-foreground/15">
+          <div className="tw:relative tw:aspect-16/10 tw:overflow-hidden tw:rounded-[2rem] tw:border tw:border-background/70 tw:bg-card tw:shadow-2xl tw:shadow-foreground/15">
             <Image
               src="/images/home/hero-pets.jpeg"
               alt="سگ گلدن رتریور و گربه پرشین در خانه‌ای روشن، کنار نمای موبایل پت‌شاپ"
               fill
-              priority
+              preload
+              loading="eager"
+              fetchPriority="high"
               sizes="(min-width: 1024px) 58vw, 100vw"
               className="tw:object-cover tw:object-center"
             />

@@ -125,7 +125,10 @@ describe('Product landing page', () => {
 
     expect(
       screen.getByAltText('گلدن رتریور و گربه پرشین در خانه روشن').getAttribute('loading'),
-    ).toBe('lazy');
+    ).toBe('eager');
+    expect(
+      screen.getByAltText('گلدن رتریور و گربه پرشین در خانه روشن').getAttribute('fetchpriority'),
+    ).toBe('high');
     expect(
       screen
         .getByAltText('گلدن رتریور و گربه پرشین در خانه روشن')

@@ -20,6 +20,8 @@
     "core-web-vitals:install": "playwright install chromium",
     "prepare": "husky",
     "cypress:open": "cypress open --e2e",
+    "analyze": "next experimental-analyze",
+    "analyze:output": "next experimental-analyze --output",
     "generate:typography": "node ./src/scripts/typography.generator.mjs"
   },
   "dependencies": {

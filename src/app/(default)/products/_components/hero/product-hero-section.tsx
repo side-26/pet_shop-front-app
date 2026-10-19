@@ -83,6 +83,9 @@ export function ProductHeroRenderer() {
               src="/images/home/hero-pets.jpeg"
               alt="گلدن رتریور و گربه پرشین در خانه روشن"
               fill
+              preload
+              loading="eager"
+              fetchPriority="high"
               sizes="(min-width: 1024px) 55vw, 92vw"
               className="tw:object-cover"
             />
