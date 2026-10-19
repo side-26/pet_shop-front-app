@@ -65,6 +65,8 @@ describe(routePaths.profile, () => {
     expect(screen.getByRole('button', { name: 'تاریخ تولد' }).getAttribute('data-slot')).toBe(
       'field-control',
     );
+    expect(screen.queryByRole('heading', { name: 'سفارش‌های من', hidden: true })).toBeNull();
+    expect(screen.queryByRole('heading', { name: 'نشانی‌های من', hidden: true })).toBeNull();
   });
 
   it('switches to the orders tab', () => {
@@ -79,6 +81,15 @@ describe(routePaths.profile, () => {
 
     fireEvent.click(screen.getByRole('tab', { name: 'نشانی‌ها' }));
     expect(screen.getByRole('heading', { level: 2, name: 'نشانی‌های من' })).toBeTruthy();
+  });
+
+  it('keeps a lazy-loaded tab mounted after it has been visited', () => {
+    render(<ProfilePage />);
+
+    fireEvent.click(screen.getByRole('tab', { name: 'سفارش‌ها' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'اطلاعات شخصی' }));
+
+    expect(screen.getByRole('heading', { name: 'سفارش‌های من', hidden: true })).toBeTruthy();
   });
 
   it('defines profile metadata', () => {
