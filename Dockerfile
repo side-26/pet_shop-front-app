@@ -4,7 +4,9 @@ FROM base AS deps
 WORKDIR /app
 
 RUN corepack enable
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+ENV CYPRESS_INSTALL_BINARY=0
+
 RUN pnpm install --frozen-lockfile
 
 FROM base AS builder

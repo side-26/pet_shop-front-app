@@ -50,9 +50,13 @@ import {
   invalidateLandingPetDetail,
 } from './landing.service';
 
-const { refreshMock } = vi.hoisted(() => ({ refreshMock: vi.fn() }));
+const { connectionMock, refreshMock } = vi.hoisted(() => ({
+  connectionMock: vi.fn(),
+  refreshMock: vi.fn(),
+}));
 
 vi.mock('next/cache', () => ({ refresh: refreshMock }));
+vi.mock('next/server', () => ({ connection: connectionMock }));
 vi.mock('./landing.service', () => ({
   getAllLandingPetTypes: vi.fn(),
   getDiscountedLandingProducts: vi.fn(),
@@ -78,6 +82,7 @@ vi.mock('./landing.service', () => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
+  connectionMock.mockResolvedValue(undefined);
   vi.mocked(getAllLandingPetTypes).mockResolvedValue({
     isSuccess: true,
     message: null,
@@ -139,6 +144,7 @@ describe('retryAllLandingPetTypesAction', () => {
     );
 
     expect(getAllLandingPetTypes).toHaveBeenCalledTimes(2);
+    expect(connectionMock).toHaveBeenCalledTimes(3);
     expect(getDiscountedLandingProducts).toHaveBeenCalledWith({ limit: 5 });
     expect(getPopularLandingProducts).toHaveBeenCalledOnce();
     expect(getPopularLandingBrands).toHaveBeenCalledOnce();
