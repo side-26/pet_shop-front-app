@@ -54,10 +54,7 @@ export function BreedsHeaderActions({ initialValues, countries = [], petTypes }:
           <LazyCreateBreedDialog
             open={createOpen}
             onOpenChange={setCreateOpen}
-            onCreated={() => {
-              setCreateOpen(false);
-              router.refresh();
-            }}
+            onCreated={() => setCreateOpen(false)}
             countries={countries}
             petTypes={petTypes}
           />

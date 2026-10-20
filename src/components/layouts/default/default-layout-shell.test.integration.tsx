@@ -1,4 +1,6 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { ReactQueryProvider } from '@/app/react-query-provider';
+import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
@@ -34,13 +36,17 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
+function renderLayout(children: ReactNode) {
+  return render(
+    <ReactQueryProvider>
+      <DefaultLayoutShell>{children}</DefaultLayoutShell>
+    </ReactQueryProvider>,
+  );
+}
+
 describe('DefaultLayoutShell', () => {
   it('renders the RTL storefront landmarks, canonical links, and child content', async () => {
-    render(
-      <DefaultLayoutShell>
-        <h1>محتوای صفحه</h1>
-      </DefaultLayoutShell>,
-    );
+    renderLayout(<h1>محتوای صفحه</h1>);
 
     expect(screen.getByRole('banner')).toBeTruthy();
     expect(screen.getByRole('main').textContent).toContain('محتوای صفحه');
@@ -87,7 +93,7 @@ describe('DefaultLayoutShell', () => {
   });
 
   it('keeps desktop header actions accessible', async () => {
-    render(<DefaultLayoutShell>صفحه</DefaultLayoutShell>);
+    renderLayout('صفحه');
 
     expect(
       (await screen.findByRole('searchbox', { name: 'جستجو سریع' })).getAttribute('type'),
@@ -104,7 +110,7 @@ describe('DefaultLayoutShell', () => {
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
     });
-    render(<DefaultLayoutShell>صفحه</DefaultLayoutShell>);
+    renderLayout('صفحه');
 
     expect(await screen.findByRole('button', { name: 'باز کردن جستجوی سریع' })).toBeTruthy();
     fireEvent.click(await screen.findByRole('button', { name: 'باز کردن منوی بیشتر' }));
@@ -120,7 +126,7 @@ describe('DefaultLayoutShell', () => {
   it('marks the active desktop destination', async () => {
     navigationState.pathname = routePaths.products;
 
-    render(<DefaultLayoutShell>صفحه محصولات</DefaultLayoutShell>);
+    renderLayout('صفحه محصولات');
 
     const desktopNavigation = await screen.findByRole('navigation', { name: 'ناوبری اصلی' });
     expect(

@@ -1,5 +1,7 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, render, screen } from '@testing-library/react';
+import { createElement, type ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
@@ -66,9 +68,17 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
+function renderWithQueryClient(children: ReactNode) {
+  const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
+  return {
+    ...render(createElement(QueryClientProvider, { client: queryClient }, children)),
+    queryClient,
+  };
+}
+
 describe(routePaths.adminBreeds, () => {
   it('renders the shared table renderer as a disabled, stable skeleton', () => {
-    const { container } = render(
+    const { container } = renderWithQueryClient(
       <DirectionProvider direction="rtl">
         <BreedsPaginateTable
           breeds={breedsTableSkeletonData}
@@ -123,7 +133,7 @@ describe(routePaths.adminBreeds, () => {
       query: {},
     });
 
-    const { container, rerender } = render(
+    const { container, queryClient, rerender } = renderWithQueryClient(
       <DirectionProvider direction="rtl">{loaded}</DirectionProvider>,
     );
     expect(screen.getByText(breed.title)).toBeTruthy();
@@ -134,9 +144,17 @@ describe(routePaths.adminBreeds, () => {
       breed.thumbnailImage,
     );
 
-    rerender(<DirectionProvider direction="rtl">{empty}</DirectionProvider>);
+    rerender(
+      <QueryClientProvider client={queryClient}>
+        <DirectionProvider direction="rtl">{empty}</DirectionProvider>
+      </QueryClientProvider>,
+    );
     expect(screen.getByText('نژادی پیدا نشد')).toBeTruthy();
-    rerender(<DirectionProvider direction="rtl">{error}</DirectionProvider>);
+    rerender(
+      <QueryClientProvider client={queryClient}>
+        <DirectionProvider direction="rtl">{error}</DirectionProvider>
+      </QueryClientProvider>,
+    );
     expect(screen.getByText('دریافت نژادها انجام نشد')).toBeTruthy();
     expect(screen.getByText('خطا در ارتباط با سرور')).toBeTruthy();
   });
