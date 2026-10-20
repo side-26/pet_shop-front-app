@@ -88,7 +88,7 @@ describe('MultipleImageUploaderField', () => {
     );
     expect(
       screen.getByAltText('تصویر اصلی فعلی').closest('[data-slot="carousel-item"]')?.className,
-    ).toContain('tw:basis-[100px]');
+    ).toContain('tw:basis-25');
     expect(screen.getByLabelText('تصاویر').closest('[data-slot="field"]')?.className).toContain(
       'tw:w-full',
     );
@@ -162,7 +162,7 @@ describe('MultipleImageUploaderField', () => {
 
     expect(screen.getByRole('region', { name: 'تصاویر انتخاب‌شده به‌صورت اسلایدی' })).toBeTruthy();
     expect(screen.getByText('one.png').closest('[data-slot="carousel-item"]')?.className).toContain(
-      'tw:basis-[160px]',
+      'tw:basis-40',
     );
   });
 

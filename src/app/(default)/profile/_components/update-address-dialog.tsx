@@ -12,6 +12,7 @@ import {
 } from 'react';
 
 import type { DialogHandle } from '@/_types';
+import { defaultDialogScrollableContentClassName } from '@/app/(default)/_components/default-dialog.styles';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
@@ -122,7 +123,7 @@ export const UpdateAddressDialog = forwardRef<UpdateAddressDialogHandle>(
               </Button>
             ) : undefined
           }
-          contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
+          contentClassName={defaultDialogScrollableContentClassName}
         >
           {locationStep ? (
             <Form

@@ -1,5 +1,6 @@
 'use client';
 
+import { adminDialogScrollableContentClassName } from '@/app/admin/_components/admin-dialog.styles';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { Dialog } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
@@ -30,7 +31,7 @@ export function CreateCategoryDialog({ open, onOpenChange, onCreated, petTypes }
         submitText="ایجاد دسته‌بندی"
         title="ایجاد دسته‌بندی جدید"
         size="lg"
-        contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
+        contentClassName={adminDialogScrollableContentClassName}
       >
         <Form<CategoryInput>
           ref={formRef}

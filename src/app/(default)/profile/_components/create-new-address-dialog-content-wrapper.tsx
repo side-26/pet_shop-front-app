@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { Suspense, useEffect, useRef, useState, useTransition, type RefObject } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
+import { defaultDialogScrollableContentClassName } from '@/app/(default)/_components/default-dialog.styles';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { Button } from '@/components/ui/button';
 import { CheckboxField } from '@/components/ui/fields/checkbox-field';
@@ -268,7 +269,7 @@ export function CreateNewAddressDialogContentWrapper({ onClose }: Props) {
         submitText="ادامه"
         title="موقعیت نشانی را انتخاب کنید"
         size="xl"
-        contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
+        contentClassName={defaultDialogScrollableContentClassName}
       >
         <CreateNewAddressLocationFormBody
           formRef={locationFormRef}
@@ -303,7 +304,7 @@ export function CreateNewAddressDialogContentWrapper({ onClose }: Props) {
           ویرایش موقعیت
         </Button>
       }
-      contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
+      contentClassName={defaultDialogScrollableContentClassName}
     >
       {request ? (
         <Suspense

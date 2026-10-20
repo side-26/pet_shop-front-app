@@ -8,6 +8,7 @@ import {
   type PaginationFiltersHandle,
   type RangeQueryKeys,
 } from '@/components/common/pagination-layout/pagination-filters/default';
+import { mobileCatalogDrawerContentClassName } from '@/components/common/pagination-layout/mobile-catalog-drawer.styles';
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -57,7 +58,7 @@ export const MobileCatalogFilterNavigationDrawer = forwardRef<
 
   return (
     <Drawer open={open} onOpenChange={setOpen} showSwipeHandle>
-      <DrawerContent color="primary" className="tw:max-h-[calc(100dvh-2rem)] tw:gap-0 tw:p-0">
+      <DrawerContent color="primary" className={mobileCatalogDrawerContentClassName}>
         <DrawerHeader className="tw:border-b tw:border-border tw:px-6 tw:py-4">
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription>{description}</DrawerDescription>

@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
+import { adminDialogScrollableContentClassName } from '@/app/admin/_components/admin-dialog.styles';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { Form } from '@/components/ui/form';
 import { useUpdateBrand } from '@/entities/brands/brands.client';
@@ -77,7 +78,7 @@ export function BrandDetailDialogContentWrapper({ brandId, request, onClose, onU
       submitText="ذخیره تغییرات"
       title="مشاهده و ویرایش برند"
       size="lg"
-      contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
+      contentClassName={adminDialogScrollableContentClassName}
     >
       <Suspense
         fallback={<BrandDetailFormBody formRef={formRef} handleSubmit={handleSubmit} isSkeleton />}

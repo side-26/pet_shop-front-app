@@ -2,6 +2,7 @@
 
 import { type RefObject, useCallback } from 'react';
 
+import { adminTallDialogScrollableContentClassName } from '@/app/admin/_components/admin-dialog.styles';
 import { ImageFileField } from '@/components/common/image-file-field';
 import { ImageFilePreview } from '@/components/common/image-file-preview';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
@@ -127,7 +128,7 @@ export default function CreateNewArticleDialogContent({
         submitText="ایجاد مقاله"
         size="xl"
         className="tw:max-w-3xl"
-        contentClassName="tw:max-h-[72dvh] tw:overflow-y-auto"
+        contentClassName={adminTallDialogScrollableContentClassName}
         isLoading={isPending}
         onClose={() => onOpenChange(false)}
         onAnimationEnd={(event) => {

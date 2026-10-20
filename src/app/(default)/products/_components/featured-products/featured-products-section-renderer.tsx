@@ -36,7 +36,7 @@ export function FeaturedProductsRenderer({
           {products.map((product) => (
             <CarouselItem
               key={product.id}
-              className="tw:basis-[88%] tw:sm:basis-1/2 tw:lg:basis-1/3 tw:xl:basis-1/4"
+              className="tw:basis-22/25 tw:sm:basis-1/2 tw:lg:basis-1/3 tw:xl:basis-1/4"
             >
               <PopularProductCard product={product} isSkeleton={isSkeleton} />
             </CarouselItem>
@@ -61,7 +61,7 @@ function PopularProductCard({
       size="sm"
       className="tw:h-full tw:transition-[transform,box-shadow] tw:duration-300 tw:hover:-translate-y-1.5 tw:hover:shadow-xl tw:motion-reduce:transition-none tw:motion-reduce:hover:transform-none"
     >
-      <div className="tw:relative tw:mx-4 tw:mt-4 tw:aspect-[4/3] tw:overflow-hidden tw:rounded-2xl tw:bg-muted">
+      <div className="tw:relative tw:mx-4 tw:mt-4 tw:aspect-4/3 tw:overflow-hidden tw:rounded-2xl tw:bg-muted">
         <Badge
           color="primary"
           variant="tonal"

@@ -308,7 +308,7 @@ function RangedDatePicker<
               <div
                 role="status"
                 aria-label="در حال آماده‌سازی تقویم"
-                className="skeleton tw:h-80 tw:w-[276px] tw:rounded-2xl"
+                className="skeleton tw:h-80 tw:w-69 tw:rounded-2xl"
               />
             )}
             {hasTime && draftFromTime && draftToTime ? (

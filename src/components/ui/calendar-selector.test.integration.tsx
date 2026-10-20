@@ -20,7 +20,7 @@ describe('CalendarSelector', () => {
     );
     const trigger = screen.getByRole('button', { name: 'سال' });
     expect(trigger.getAttribute('data-color')).toBe('warning');
-    expect(trigger.className).toContain('tw:w-[95px]');
+    expect(trigger.className).toContain('tw:w-23.75');
     fireEvent.click(trigger);
     expect(screen.getByText('سال')).toBeTruthy();
     const listbox = screen.getByRole('listbox', { name: 'سال' });

@@ -1,5 +1,6 @@
 'use client';
 
+import { adminDialogScrollableContentClassName } from '@/app/admin/_components/admin-dialog.styles';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { Dialog } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
@@ -31,7 +32,7 @@ export function CreateBreedDialog({ open, onOpenChange, onCreated, countries, pe
         submitText="ایجاد نژاد"
         title="ایجاد نژاد جدید"
         size="lg"
-        contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
+        contentClassName={adminDialogScrollableContentClassName}
       >
         <Form<UpdateBreedInput>
           ref={formRef}

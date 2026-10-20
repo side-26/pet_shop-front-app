@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
+import { adminDialogScrollableContentClassName } from '@/app/admin/_components/admin-dialog.styles';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { Form } from '@/components/ui/form';
 import { getCategoryByIdAction } from '@/entities/categories/categories.actions';
@@ -93,7 +94,7 @@ export function CategoryDetailDialogContentWrapper({
       submitText="ذخیره تغییرات"
       title="مشاهده و ویرایش دسته‌بندی"
       size="lg"
-      contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
+      contentClassName={adminDialogScrollableContentClassName}
     >
       <Suspense
         fallback={

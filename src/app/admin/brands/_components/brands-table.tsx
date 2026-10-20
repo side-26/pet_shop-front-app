@@ -41,7 +41,7 @@ export function BrandsTable({
               <TableHead className="tw:sticky tw:top-0 tw:z-10 tw:bg-background">
                 <div>عنوان فارسی</div>
               </TableHead>
-              <TableHead className="tw:sticky tw:top-0 tw:z-10 tw:w-[40%] tw:bg-background">
+              <TableHead className="tw:sticky tw:top-0 tw:z-10 tw:w-2/5 tw:bg-background">
                 <div>توضیحات</div>
               </TableHead>
               <TableHead className="tw:sticky tw:top-0 tw:z-10 tw:bg-background">

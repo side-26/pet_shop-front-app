@@ -140,7 +140,7 @@ function ChartTooltipContent({
               {!hideIndicator ? (
                 <span
                   aria-hidden="true"
-                  className="tw:size-2.5 tw:rounded-[2px]"
+                  className="tw:size-2.5 tw:rounded-xs"
                   style={{ backgroundColor: String(color) }}
                 />
               ) : null}
@@ -176,7 +176,7 @@ function ChartLegendContent({
           <div key={index} className="tw:flex tw:items-center tw:gap-1.5">
             <span
               aria-hidden="true"
-              className="tw:size-2 tw:rounded-[2px]"
+              className="tw:size-2 tw:rounded-xs"
               style={{ backgroundColor: item.color }}
             />
             <span>{config[key]?.label ?? item.value}</span>

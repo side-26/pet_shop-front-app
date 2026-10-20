@@ -5,6 +5,7 @@ import { Suspense } from 'react';
 import { CirclePlusIcon, Trash2Icon } from 'lucide-react';
 import { useFieldArray, useFormContext, type FieldPath } from 'react-hook-form';
 
+import { adminDialogScrollableContentClassName } from '@/app/admin/_components/admin-dialog.styles';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/ui/fields/text-field';
@@ -157,7 +158,7 @@ export function ProductWeightsDialogContentWrapper({
       title={`وزن‌ها و قیمت‌های ${productTitle}`}
       size="lg"
       className="tw:max-w-[730px]"
-      contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
+      contentClassName={adminDialogScrollableContentClassName}
     >
       <Suspense fallback={fallback}>
         <AsyncProductWeightsDialogContent request={request}>
