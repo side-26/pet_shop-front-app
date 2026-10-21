@@ -4,8 +4,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useRef } from 'react';
 
 import type { FormHandle } from '@/components/ui/form';
-import { toast } from '@/components/ui/toast';
-import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
+import type { FetcherError } from '@/lib/api/customFetcher';
+import {
+  type ActionMutation,
+  type ActionMutationOptions,
+  useMutationOptions,
+} from '@/hooks/use-mutation-options';
 import { globalErrorHandler } from '@/utils/helpers';
 
 import {
@@ -63,46 +67,45 @@ export function useAvailableDeliveryServices(input: AvailableDeliveryServicesQue
   });
 }
 
-type DeliveryServiceMutationAction<TVariables> = (
-  input: TVariables,
-) => Promise<FetcherResult<unknown>>;
-type DeliveryServiceMutationOptions = {
-  onError?: (error: FetcherError) => void;
-};
+type DeliveryServiceMutationOptions<TVariables> = ActionMutationOptions<TVariables>;
 
 /** Server reads refresh through EntityTags; checkout quotes refresh through this client query prefix. */
 function useDeliveryServiceMutation<TVariables>(
-  action: DeliveryServiceMutationAction<TVariables>,
-  { onError = globalErrorHandler }: DeliveryServiceMutationOptions = {},
+  action: ActionMutation<TVariables>,
+  { onSuccess, ...options }: DeliveryServiceMutationOptions<TVariables> = {},
 ) {
   const queryClient = useQueryClient();
-  return useMutation<FetcherResult<unknown>, FetcherError, TVariables>({
-    mutationFn: async (variables) => {
-      const result = await action(variables);
-      if (!result.isSuccess) throw result;
-      return result;
-    },
-    retry: false,
-    onError: (error) => onError(error),
-    onSuccess: async (result) => {
-      await queryClient.invalidateQueries({ queryKey: deliveryServicesQueryKeys.availablePrefix });
-      toast.add({ type: 'success', title: result.message });
-    },
-  });
+  return useMutation(
+    useMutationOptions(action, {
+      ...options,
+      onSuccess: async (result, variables, context, mutationContext) => {
+        await queryClient.invalidateQueries({
+          queryKey: deliveryServicesQueryKeys.availablePrefix,
+        });
+        await onSuccess?.(result, variables, context, mutationContext);
+      },
+    }),
+  );
 }
 
-export function useCreateDeliveryServiceMutation(options?: DeliveryServiceMutationOptions) {
+export function useCreateDeliveryServiceMutation(
+  options?: DeliveryServiceMutationOptions<DeliveryServiceInput>,
+) {
   return useDeliveryServiceMutation<DeliveryServiceInput>(createDeliveryServiceAction, options);
 }
 
-export function useUpdateDeliveryServiceMutation(options?: DeliveryServiceMutationOptions) {
+export function useUpdateDeliveryServiceMutation(
+  options?: DeliveryServiceMutationOptions<{ id: string } & UpdateDeliveryServiceInput>,
+) {
   return useDeliveryServiceMutation<{ id: string } & UpdateDeliveryServiceInput>(
     updateDeliveryServiceAction,
     options,
   );
 }
 
-export function useDeliveryServiceStatusMutation(options?: DeliveryServiceMutationOptions) {
+export function useDeliveryServiceStatusMutation(
+  options?: DeliveryServiceMutationOptions<{ id: string; enabled: boolean }>,
+) {
   return useDeliveryServiceMutation<{ id: string; enabled: boolean }>(
     async ({ id, enabled }) =>
       (enabled ? enableDeliveryServiceAction : disableDeliveryServiceAction)({ id }),
@@ -110,7 +113,9 @@ export function useDeliveryServiceStatusMutation(options?: DeliveryServiceMutati
   );
 }
 
-export function useDeleteDeliveryServiceMutation(options?: DeliveryServiceMutationOptions) {
+export function useDeleteDeliveryServiceMutation(
+  options?: DeliveryServiceMutationOptions<{ id: string }>,
+) {
   return useDeliveryServiceMutation<{ id: string }>(deleteDeliveryServiceAction, options);
 }
 

@@ -49,8 +49,20 @@ describe('brand client mutations', () => {
   beforeEach(() => vi.clearAllMocks());
 
   it.each([
-    ['creates a brand', useCreateBrandMutation, createBrandAction, { title: 'Royal Canin' }],
-    ['updates a brand', useUpdateBrandMutation, updateBrandAction, { id, title: 'Royal Canin' }],
+    [
+      'creates a brand',
+      useCreateBrandMutation,
+      createBrandAction,
+      { title: 'Royal Canin' },
+      undefined,
+    ],
+    [
+      'updates a brand',
+      useUpdateBrandMutation,
+      updateBrandAction,
+      { id, title: 'Royal Canin' },
+      undefined,
+    ],
     ['enables a brand', useBrandStatusMutation, enableBrandAction, { id, enabled: true }, { id }],
     [
       'disables a brand',
@@ -59,7 +71,7 @@ describe('brand client mutations', () => {
       { id, enabled: false },
       { id },
     ],
-    ['deletes a brand', useDeleteBrandMutation, deleteBrandAction, { id }],
+    ['deletes a brand', useDeleteBrandMutation, deleteBrandAction, { id }, undefined],
   ] as const)(
     '%s through a non-retrying Server Action mutation',
     async (_label, useHook, action, input, actionInput) => {
