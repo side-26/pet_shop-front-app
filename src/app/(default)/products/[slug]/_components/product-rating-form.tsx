@@ -42,8 +42,8 @@ export function ProductRatingForm({ canVote, hasRated, productId }: ProductRatin
     updateProductUserRate.mutate(
       { id: productId, userRate },
       {
-        onSuccess: ({ userRate: savedUserRate }) => {
-          setSavedUserRate(savedUserRate);
+        onSuccess: ({ data }) => {
+          setSavedUserRate((data as { userRate: number }).userRate);
         },
       },
     );

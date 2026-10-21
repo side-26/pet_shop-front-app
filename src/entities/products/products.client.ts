@@ -1,228 +1,251 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useRef, useTransition } from 'react';
-import type { FieldValues, UseFormSetError } from 'react-hook-form';
+import { useCallback, useRef, useState } from 'react';
+import type { FieldValues } from 'react-hook-form';
 
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
 import { imageOperationMessages } from '@/configs/image-operation-messages';
-import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
-import { globalErrorHandler } from '@/utils/helpers';
 import {
   hasPendingRichTextImageOperations,
   persistRichTextDraftImages,
   uploadRichTextImages,
 } from '@/entities/images/images.client';
+import {
+  type ActionMutation,
+  type ActionMutationOptions,
+  useMutationOptions,
+} from '@/hooks/use-mutation-options';
+import type { FetcherError } from '@/lib/api/customFetcher';
 import { isRichTextDocument, type RichTextDocument } from '@/lib/rich-text';
+import { globalErrorHandler } from '@/utils/helpers';
+
 import {
   createProductAction,
   deleteProductAction,
   disableProductAction,
   enableProductAction,
+  replaceProductWeightsAction,
   updateProductBaseInfoAction,
   updateProductImagesAction,
-  replaceProductWeightsAction,
   updateProductUserRateAction,
 } from './products.actions';
 import type {
   ProductInput,
+  ReplaceProductWeightsInput,
   UpdateProductBaseInfoInput,
   UpdateProductImagesInput,
-  ReplaceProductWeightsInput,
   UpdateProductUserRateInput,
 } from './products.schema';
-import type { ProductUserRateDTO } from './products.dto';
 
-async function submit<T extends FieldValues>(
-  input: T,
-  setError: UseFormSetError<T>,
-  action: (value: T) => Promise<FetcherResult<unknown>>,
-  onDescriptionUploaded?: (description: RichTextDocument) => void,
+type ProductMutationOptions<TVariables> = ActionMutationOptions<TVariables>;
+type ProductSectionVariables<TInput> = TInput & { id: string };
+
+function useProductMutation<TVariables>(
+  action: ActionMutation<TVariables>,
+  options?: ProductMutationOptions<TVariables>,
 ) {
-  if (hasPendingRichTextImageOperations()) {
-    toast.add({ type: 'warning', title: imageOperationMessages.pendingOperations });
-    return false;
-  }
-  try {
-    if (isRichTextDocument((input as { description?: unknown }).description)) {
-      const description = await uploadRichTextImages(
-        (input as unknown as { description: RichTextDocument }).description,
-      );
-      input = {
-        ...input,
-        description,
-      };
-      onDescriptionUploaded?.(description);
-    }
-  } catch (error) {
-    globalErrorHandler(error as FetcherError, { showErrorFields: setError });
-    return false;
-  }
-  const result = await action(input);
-  if (!result.isSuccess) {
-    globalErrorHandler(result, { showErrorFields: setError });
-    return false;
-  }
-  if (isRichTextDocument((input as { description?: unknown }).description)) {
-    persistRichTextDraftImages((input as unknown as { description: RichTextDocument }).description);
-  }
-  toast.add({ type: 'success', title: result.message });
-  return true;
+  return useMutation(useMutationOptions(action, options));
 }
-export const submitCreateProduct = (
-  input: ProductInput,
-  setError: UseFormSetError<ProductInput>,
-  onDescriptionUploaded?: (description: RichTextDocument) => void,
-) => submit(input, setError, createProductAction, onDescriptionUploaded);
-export const submitUpdateProductBaseInfo = (
-  id: string,
-  input: UpdateProductBaseInfoInput,
-  setError: UseFormSetError<UpdateProductBaseInfoInput>,
-  onDescriptionUploaded?: (description: RichTextDocument) => void,
-) => submit({ id, ...input }, setError, updateProductBaseInfoAction, onDescriptionUploaded);
-export const submitUpdateProductImages = (
-  id: string,
-  input: UpdateProductImagesInput,
-  setError: UseFormSetError<UpdateProductImagesInput>,
-) => submit({ id, ...input }, setError, updateProductImagesAction);
-export const submitReplaceProductWeights = (
-  id: string,
-  input: Pick<ReplaceProductWeightsInput, 'weights'>,
-  setError: UseFormSetError<Pick<ReplaceProductWeightsInput, 'weights'>>,
-) => submit({ id, ...input }, setError, replaceProductWeightsAction);
-export async function submitProductEnabledUpdate(id: string, enabled: boolean) {
-  const result = await (enabled ? enableProductAction : disableProductAction)({ id });
-  if (!result.isSuccess) {
-    globalErrorHandler(result);
-    return false;
-  }
-  toast.add({ type: 'success', title: result.message });
-  return true;
+
+export function useCreateProductMutation(options?: ProductMutationOptions<ProductInput>) {
+  return useProductMutation(createProductAction, options);
 }
-export async function submitDeleteProduct(id: string) {
-  const result = await deleteProductAction({ id });
-  if (!result.isSuccess) {
-    globalErrorHandler(result);
-    return false;
-  }
-  toast.add({ type: 'success', title: result.message });
-  return true;
+
+export function useUpdateProductBaseInfoMutation(
+  options?: ProductMutationOptions<ProductSectionVariables<UpdateProductBaseInfoInput>>,
+) {
+  return useProductMutation(updateProductBaseInfoAction, options);
+}
+
+export function useUpdateProductImagesMutation(
+  options?: ProductMutationOptions<ProductSectionVariables<UpdateProductImagesInput>>,
+) {
+  return useProductMutation(updateProductImagesAction, options);
+}
+
+export function useReplaceProductWeightsMutation(
+  options?: ProductMutationOptions<
+    ProductSectionVariables<Pick<ReplaceProductWeightsInput, 'weights'>>
+  >,
+) {
+  return useProductMutation(replaceProductWeightsAction, options);
+}
+
+export function useProductStatusMutation(
+  options?: ProductMutationOptions<{ id: string; enabled: boolean }>,
+) {
+  return useProductMutation(
+    async ({ id, enabled }) => (enabled ? enableProductAction : disableProductAction)({ id }),
+    options,
+  );
+}
+
+export function useDeleteProductMutation(options?: ProductMutationOptions<{ id: string }>) {
+  return useProductMutation(deleteProductAction, options);
 }
 
 export const productUserRateMutationKey = (productId: string) =>
   ['products', productId, 'user-rate'] as const;
 
 export function useUpdateProductUserRate(productId: string) {
-  return useMutation<ProductUserRateDTO, FetcherError, UpdateProductUserRateInput>({
+  return useProductMutation<UpdateProductUserRateInput>(updateProductUserRateAction, {
     mutationKey: productUserRateMutationKey(productId),
-    retry: false,
-    mutationFn: async (input) => {
-      const result = await updateProductUserRateAction(input);
-      if (!result?.isSuccess) {
-        throw (
-          result ?? {
-            isSuccess: false,
-            message: 'ثبت امتیاز محصول ناموفق بود.',
-            data: { messages: {}, details: {} },
-          }
-        );
-      }
-      return result.data;
-    },
-    onError: (error) => globalErrorHandler(error),
-    onSuccess: () => {
-      toast.add({ type: 'success', title: 'امتیاز شما ثبت شد.' });
-    },
   });
+}
+
+async function prepareProductDescription<T extends FieldValues>(
+  input: T,
+  onError: (error: FetcherError) => void,
+  onDescriptionUploaded?: (description: RichTextDocument) => void,
+): Promise<T | null> {
+  if (hasPendingRichTextImageOperations()) {
+    toast.add({ type: 'warning', title: imageOperationMessages.pendingOperations });
+    return null;
+  }
+
+  const description = (input as { description?: unknown }).description;
+  if (!isRichTextDocument(description)) return input;
+
+  try {
+    const uploadedDescription = await uploadRichTextImages(description);
+    onDescriptionUploaded?.(uploadedDescription);
+    return { ...input, description: uploadedDescription };
+  } catch (error) {
+    onError(error as FetcherError);
+    return null;
+  }
+}
+
+function persistDescription(input: { description?: unknown }) {
+  if (isRichTextDocument(input.description)) persistRichTextDraftImages(input.description);
 }
 
 export function useCreateProduct(onSuccess: () => void) {
   const formRef = useRef<FormHandle<ProductInput>>(null);
-  const [isPending, startTransition] = useTransition();
-  const handleSubmit = useCallback(
-    (input: ProductInput) => {
+  const [isPreparing, setIsPreparing] = useState(false);
+  const { isPending, mutate } = useCreateProductMutation({
+    onError: (error) => {
       const form = formRef.current;
-      if (!form || isPending) return;
-      startTransition(async () => {
-        if (
-          await submitCreateProduct(input, form.setError, (description) =>
-            form.setValue('description', description),
-          )
-        )
+      globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
+    },
+  });
+  const handleSubmit = useCallback(
+    async (input: ProductInput) => {
+      const form = formRef.current;
+      if (!form || isPreparing || isPending) return;
+
+      setIsPreparing(true);
+      const preparedInput = await prepareProductDescription(
+        input,
+        (error) => globalErrorHandler(error, { showErrorFields: form.setError }),
+        (description) => form.setValue('description', description),
+      );
+      setIsPreparing(false);
+      if (!preparedInput) return;
+
+      mutate(preparedInput, {
+        onSuccess: () => {
+          persistDescription(preparedInput);
           onSuccess();
+        },
       });
     },
-    [isPending, onSuccess],
+    [isPending, isPreparing, mutate, onSuccess],
   );
-  return { formRef, handleSubmit, isPending } as const;
+  return { formRef, handleSubmit, isPending: isPreparing || isPending } as const;
 }
 
 export function useUpdateProductBaseInfo(id: string, onSuccess: () => void) {
   const formRef = useRef<FormHandle<UpdateProductBaseInfoInput>>(null);
-  const [isPending, startTransition] = useTransition();
-  const handleSubmit = useCallback(
-    (input: UpdateProductBaseInfoInput) => {
+  const [isPreparing, setIsPreparing] = useState(false);
+  const { isPending, mutate } = useUpdateProductBaseInfoMutation({
+    onError: (error) => {
       const form = formRef.current;
-      if (!form || isPending) return;
-      startTransition(async () => {
-        if (
-          await submitUpdateProductBaseInfo(id, input, form.setError, (description) =>
-            form.setValue('description', description),
-          )
-        )
-          onSuccess();
-      });
+      globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
     },
-    [id, isPending, onSuccess],
+  });
+  const handleSubmit = useCallback(
+    async (input: UpdateProductBaseInfoInput) => {
+      const form = formRef.current;
+      if (!form || isPreparing || isPending) return;
+
+      setIsPreparing(true);
+      const preparedInput = await prepareProductDescription(
+        input,
+        (error) => globalErrorHandler(error, { showErrorFields: form.setError }),
+        (description) => form.setValue('description', description),
+      );
+      setIsPreparing(false);
+      if (!preparedInput) return;
+
+      mutate(
+        { id, ...preparedInput },
+        {
+          onSuccess: () => {
+            persistDescription(preparedInput);
+            onSuccess();
+          },
+        },
+      );
+    },
+    [id, isPending, isPreparing, mutate, onSuccess],
   );
-  return { formRef, handleSubmit, isPending } as const;
+  return { formRef, handleSubmit, isPending: isPreparing || isPending } as const;
 }
+
 export function useUpdateProductImages(id: string, onSuccess: () => void) {
   const formRef = useRef<FormHandle<UpdateProductImagesInput>>(null);
-  const [isPending, startTransition] = useTransition();
+  const { isPending, mutate } = useUpdateProductImagesMutation({
+    onError: (error) => {
+      const form = formRef.current;
+      globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
+    },
+  });
   const handleSubmit = useCallback(
     (input: UpdateProductImagesInput) => {
-      const form = formRef.current;
-      if (!form || isPending) return;
-      startTransition(async () => {
-        if (await submitUpdateProductImages(id, input, form.setError)) onSuccess();
-      });
+      if (isPending) return;
+      mutate({ id, ...input }, { onSuccess });
     },
-    [id, isPending, onSuccess],
+    [id, isPending, mutate, onSuccess],
   );
   return { formRef, handleSubmit, isPending } as const;
 }
+
 export function useReplaceProductWeights(id: string, onSuccess: () => void) {
   const formRef = useRef<FormHandle<Pick<ReplaceProductWeightsInput, 'weights'>>>(null);
-  const [isPending, startTransition] = useTransition();
+  const { isPending, mutate } = useReplaceProductWeightsMutation({
+    onError: (error) => {
+      const form = formRef.current;
+      globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
+    },
+  });
   const handleSubmit = useCallback(
     (input: Pick<ReplaceProductWeightsInput, 'weights'>) => {
-      const form = formRef.current;
-      if (!form || isPending) return;
-      startTransition(async () => {
-        if (await submitReplaceProductWeights(id, input, form.setError)) onSuccess();
-      });
+      if (isPending) return;
+      mutate({ id, ...input }, { onSuccess });
     },
-    [id, isPending, onSuccess],
+    [id, isPending, mutate, onSuccess],
   );
   return { formRef, handleSubmit, isPending } as const;
 }
 
 export function useProductRowActions(onSuccess: () => void) {
-  const [isPending, startTransition] = useTransition();
-  const run = useCallback(
-    (action: () => Promise<boolean>) => {
+  const statusMutation = useProductStatusMutation();
+  const isPending = statusMutation.isPending;
+
+  const updateStatus = useCallback(
+    (id: string, enabled: boolean) => {
       if (isPending) return;
-      startTransition(async () => {
-        if (await action()) onSuccess();
-      });
+      statusMutation.mutate({ id, enabled }, { onSuccess });
     },
-    [isPending, onSuccess],
+    [isPending, onSuccess, statusMutation],
   );
+
   return {
     isPending,
-    enable: (id: string) => run(() => submitProductEnabledUpdate(id, true)),
-    disable: (id: string) => run(() => submitProductEnabledUpdate(id, false)),
+    enable: (id: string) => updateStatus(id, true),
+    disable: (id: string) => updateStatus(id, false),
   } as const;
 }

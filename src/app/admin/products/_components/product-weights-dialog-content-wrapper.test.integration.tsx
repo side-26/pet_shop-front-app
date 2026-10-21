@@ -17,7 +17,7 @@ vi.mock('@/entities/products/products.actions', () => ({
   getProductWeightsAction: vi.fn(),
 }));
 vi.mock('@/entities/products/products.client', () => ({
-  submitDeleteProduct: vi.fn(),
+  useDeleteProductMutation: () => ({ isPending: false, mutate: vi.fn() }),
   useReplaceProductWeights: () => ({
     formRef: { current: null },
     handleSubmit: vi.fn(),
