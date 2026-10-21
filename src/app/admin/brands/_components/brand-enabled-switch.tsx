@@ -1,5 +1,4 @@
 'use client';
-import { useRouter } from '@/hooks/use-router';
 import { Switch } from '@/components/ui/fields/switch';
 import { useBrandStatus } from '@/entities/brands/brands.client';
 import type { BrandTableRow } from './brands-table.types';
@@ -10,8 +9,7 @@ export function BrandEnabledSwitch({
   brand: BrandTableRow;
   disabled?: boolean;
 }) {
-  const router = useRouter();
-  const { isPending, update } = useBrandStatus(router.refresh);
+  const { isPending, update } = useBrandStatus();
 
   return (
     <Switch

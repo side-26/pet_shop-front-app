@@ -3,7 +3,6 @@
 import dynamic from 'next/dynamic';
 import { Suspense, useRef, useState } from 'react';
 import { EyeIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
-import { useRouter } from '@/hooks/use-router';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,9 +11,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { deleteBrandAction } from '@/entities/brands/brands.actions';
+import { useDeleteBrand } from '@/entities/brands/brands.client';
 import { useCommonStore } from '@/stores/common.store';
-import { globalErrorHandler } from '@/utils/helpers';
 import type { BrandTableRow } from './brands-table.types';
 import type { BrandDetailRequest, BrandFormDialogHandle } from './brand-form-dialog.types';
 
@@ -28,10 +26,10 @@ export function BrandRowActions({
   brand: BrandTableRow;
   disabled?: boolean;
 }) {
-  const router = useRouter();
   const confirm = useCommonStore((state) => state.showConfirmDialog);
   const detailDialogRef = useRef<BrandFormDialogHandle>(null);
   const [detailRequest, setDetailRequest] = useState<BrandDetailRequest | null>(null);
+  const { remove } = useDeleteBrand(() => undefined);
 
   function openDetail() {
     if (disabled) return;
@@ -86,9 +84,7 @@ export function BrandRowActions({
                   icon: Trash2Icon,
                   variant: 'error',
                   onSuccess: async () => {
-                    const result = await deleteBrandAction({ id: brand.id });
-                    if (!result.isSuccess) return globalErrorHandler(result);
-                    router.refresh();
+                    await remove(brand.id);
                   },
                 })
               }
@@ -109,7 +105,6 @@ export function BrandRowActions({
             onClosed={() => setDetailRequest(null)}
             onUpdated={() => {
               setDetailRequest(null);
-              router.refresh();
             }}
           />
         </Suspense>

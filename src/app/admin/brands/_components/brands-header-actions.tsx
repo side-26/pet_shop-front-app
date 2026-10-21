@@ -40,10 +40,7 @@ export function BrandsHeaderActions() {
       ref={createDialogRef}
       openOnMount
       onClosed={() => setCreateDialogMounted(false)}
-      onCreated={() => {
-        setCreateDialogMounted(false);
-        router.refresh();
-      }}
+      onCreated={() => setCreateDialogMounted(false)}
     />
   ) : null;
 }
