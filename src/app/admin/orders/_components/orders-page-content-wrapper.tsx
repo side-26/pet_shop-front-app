@@ -7,13 +7,19 @@ import {
   type OrdersSearchParams,
 } from './orders-query.helpers';
 import { ordersTableSkeletonData } from './orders-table-skeleton-data';
+import { OrdersHeaderActions } from './orders-header-actions';
 import { OrdersTableWrapper } from './orders-table-wrapper';
 
 type OrdersPageContentWrapperProps = { searchParams: Promise<OrdersSearchParams> };
 
 async function OrdersPageContent({ searchParams }: OrdersPageContentWrapperProps) {
   const query = toOrdersQuery(await searchParams);
-  return <OrdersTableWrapper page={getOrdersRequestedPage(query)} query={query} />;
+  return (
+    <>
+      <OrdersHeaderActions query={query} />
+      <OrdersTableWrapper page={getOrdersRequestedPage(query)} query={query} />
+    </>
+  );
 }
 
 export function OrdersPageContentWrapper(props: OrdersPageContentWrapperProps) {

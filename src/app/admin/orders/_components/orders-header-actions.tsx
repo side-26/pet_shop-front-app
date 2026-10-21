@@ -8,17 +8,21 @@ import {
   useAdminLayoutContext,
 } from '@/contexts/admin/layout/admin-layout-context';
 
-/** Filter is deliberately a placeholder until the filter dialog is introduced. */
-export function OrdersHeaderActions() {
+import { useOrdersDialogs } from './orders-dialog-provider';
+
+type OrdersHeaderActionsProps = { query: Record<string, string> };
+
+export function OrdersHeaderActions({ query }: OrdersHeaderActionsProps) {
   const router = useRouter();
   const { resetHeaderActions, setHeaderActions } = useAdminLayoutContext();
+  const { openFilter } = useOrdersDialogs();
   const actions = useMemo<AdminHeaderActions>(
     () => ({
       lastVisibleOrder: 2,
-      filter: { order: 1, action: () => undefined },
+      filter: { order: 1, action: () => openFilter(query) },
       reload: { order: 2, action: router.refresh },
     }),
-    [router.refresh],
+    [openFilter, query, router.refresh],
   );
 
   useLayoutEffect(() => {

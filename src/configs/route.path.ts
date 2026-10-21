@@ -78,6 +78,8 @@ export const routePaths = {
   adminProducts: PATHS.ADMIN_PRODUCTS,
   adminOrders: PATHS.ADMIN_ORDERS,
   adminProfile: PATHS.ADMIN_PROFILE,
+  adminOrdersQuery: (query: URLSearchParams) =>
+    query.size === 0 ? PATHS.ADMIN_ORDERS : `${PATHS.ADMIN_ORDERS}?${query.toString()}`,
   adminProductsQuery: (query: URLSearchParams) => `${PATHS.ADMIN_PRODUCTS}?${query.toString()}`,
   adminDashboardQuery: (query: URLSearchParams) =>
     query.size === 0 ? PATHS.ADMIN : `${PATHS.ADMIN}?${query.toString()}`,
