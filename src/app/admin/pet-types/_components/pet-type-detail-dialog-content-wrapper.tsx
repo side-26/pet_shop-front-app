@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
+import { adminDialogScrollableContentClassName } from '@/app/admin/_components/admin-dialog.styles';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { TextField } from '@/components/ui/fields/text-field';
 import { TextareaField } from '@/components/ui/fields/textarea-field';
@@ -102,7 +103,7 @@ export function PetTypeDetailDialogContentWrapper({
       submitText="ذخیره تغییرات"
       title="مشاهده و ویرایش نوع حیوان"
       size="lg"
-      contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
+      contentClassName={adminDialogScrollableContentClassName}
     >
       <Suspense fallback={fallback}>
         <AsyncPetTypeDetailDialogContent request={request}>

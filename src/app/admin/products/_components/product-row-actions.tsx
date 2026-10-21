@@ -18,7 +18,7 @@ import {
   getProductMainInfoAction,
   getProductWeightsAction,
 } from '@/entities/products/products.actions';
-import { submitDeleteProduct } from '@/entities/products/products.client';
+import { useDeleteProductMutation } from '@/entities/products/products.client';
 import { useCommonStore } from '@/stores/common.store';
 
 import type {
@@ -42,6 +42,7 @@ export function ProductRowActions({ productId, productTitle, disabled = false }:
   const [weightsRequest, setWeightsRequest] = useState<ReturnType<
     typeof getProductWeightsAction
   > | null>(null);
+  const { isPending: isDeleting, mutate: deleteProduct } = useDeleteProductMutation();
   function open(section: ProductSection) {
     if (disabled) return;
     const request =
@@ -66,7 +67,8 @@ export function ProductRowActions({ productId, productTitle, disabled = false }:
       icon: Trash2,
       variant: 'error',
       onSuccess: async () => {
-        if (await submitDeleteProduct(productId)) router.refresh();
+        if (isDeleting) return;
+        deleteProduct({ id: productId }, { onSuccess: router.refresh });
       },
     });
   }

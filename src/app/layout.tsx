@@ -20,52 +20,52 @@ import './styles/tailwind.config.css';
 const defaultFont = localFont({
   src: [
     {
-      path: '../../public/fonts/iran-yekan/light.ttf',
+      path: '../../public/fonts/iran-yekan/light.woff2',
       weight: '300',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/iran-yekan/regular.ttf',
+      path: '../../public/fonts/iran-yekan/regular.woff2',
       weight: '400',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/iran-yekan/medium.ttf',
+      path: '../../public/fonts/iran-yekan/medium.woff2',
       weight: '500',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/iran-yekan/bold.ttf',
+      path: '../../public/fonts/iran-yekan/bold.woff2',
       weight: '700',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/iran-yekan/extra-bold.ttf',
+      path: '../../public/fonts/iran-yekan/extra-bold.woff2',
       weight: '800',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/iran-yekan/light-italic.ttf',
+      path: '../../public/fonts/iran-yekan/light-italic.woff2',
       weight: '300',
       style: 'italic',
     },
     {
-      path: '../../public/fonts/iran-yekan/regular-italic.ttf',
+      path: '../../public/fonts/iran-yekan/regular-italic.woff2',
       weight: '400',
       style: 'italic',
     },
     {
-      path: '../../public/fonts/iran-yekan/medium-italic.ttf',
+      path: '../../public/fonts/iran-yekan/medium-italic.woff2',
       weight: '500',
       style: 'italic',
     },
     {
-      path: '../../public/fonts/iran-yekan/bold-italic.ttf',
+      path: '../../public/fonts/iran-yekan/bold-italic.woff2',
       weight: '700',
       style: 'italic',
     },
     {
-      path: '../../public/fonts/iran-yekan/extra-bold-italic.ttf',
+      path: '../../public/fonts/iran-yekan/extra-bold-italic.woff2',
       weight: '800',
       style: 'italic',
     },

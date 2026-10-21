@@ -13,8 +13,9 @@ vi.mock('next/dynamic', () => ({
       throw neverResolvingDialog;
     },
 }));
-vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
-vi.mock('@/entities/brands/brands.actions', () => ({ deleteBrandAction: vi.fn() }));
+vi.mock('@/entities/brands/brands.client', () => ({
+  useDeleteBrand: () => ({ isPending: false, remove: vi.fn() }),
+}));
 
 afterEach(cleanup);
 

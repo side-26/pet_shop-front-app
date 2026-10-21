@@ -1,5 +1,5 @@
 import {
-  buildUrl,
+  buildInternalUrl,
   parseResponseText,
   serializeBody,
   type QueryParams,
@@ -48,7 +48,7 @@ export async function internalFetcher<TSuccess, TBackendError = unknown, TBody =
   }
 
   try {
-    const response = await fetch(buildUrl(url, query), {
+    const response = await fetch(buildInternalUrl(url, query), {
       method,
       headers,
       body: serializedBody,

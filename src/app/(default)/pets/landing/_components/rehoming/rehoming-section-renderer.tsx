@@ -26,7 +26,7 @@ export function RehomingSectionRenderer({ pets, isSkeleton = false }: Props) {
     >
       <CarouselContent className="tw:pb-2">
         {pets.map((pet) => (
-          <CarouselItem key={pet.id} className="tw:basis-[84%] tw:sm:basis-1/2 tw:lg:basis-1/4">
+          <CarouselItem key={pet.id} className="tw:basis-21/25 tw:sm:basis-1/2 tw:lg:basis-1/4">
             <Card variant="outlined" size="sm" className="tw:h-full">
               <div className="tw:relative tw:mx-3 tw:h-40 tw:overflow-hidden tw:rounded-2xl tw:sm:h-48">
                 {isSkeleton ? (

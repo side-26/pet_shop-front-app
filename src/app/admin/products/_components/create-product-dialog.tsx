@@ -1,5 +1,6 @@
 'use client';
 
+import { adminTallDialogScrollableContentClassName } from '@/app/admin/_components/admin-dialog.styles';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { MultipleImageUploaderField } from '@/components/common/multiple-image-uploader-field';
 import { Dialog } from '@/components/ui/dialog';
@@ -33,7 +34,7 @@ export function CreateProductDialog({ open, options, onOpenChange, onCreated }: 
         className="tw:max-w-[730px]"
         isLoading={isPending}
         onClose={() => onOpenChange(false)}
-        contentClassName="tw:max-h-[72dvh] tw:overflow-y-auto"
+        contentClassName={adminTallDialogScrollableContentClassName}
       >
         <Form<ProductInput>
           ref={formRef}

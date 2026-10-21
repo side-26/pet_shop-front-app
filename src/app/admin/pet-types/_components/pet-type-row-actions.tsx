@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { EyeIcon, ListPlusIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
-import { useRouter } from '@/hooks/use-router';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -12,14 +11,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { toast } from '@/components/ui/toast';
 import {
-  deletePetTypeAction,
   getPetTypeByIdAction,
   getPetTypePropertyDefinitionsAction,
 } from '@/entities/pet-types/pet-types.actions';
+import { useDeletePetType } from '@/entities/pet-types/pet-types.client';
 import { useCommonStore } from '@/stores/common.store';
-import { globalErrorHandler } from '@/utils/helpers';
 
 import { PetTypeDetailDialog } from './pet-type-detail-dialog';
 import { PetTypePropertyDefinitionsDialog } from './pet-type-property-definitions-dialog';
@@ -38,8 +35,8 @@ export function PetTypeRowActions({
   petTypeTitle,
   disabled = false,
 }: PetTypeRowActionsProps) {
-  const router = useRouter();
   const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
+  const { remove } = useDeletePetType(() => undefined);
   const [detailRequest, setDetailRequest] = useState<PetTypeDetailRequest | null>(null);
   const [propertyDefinitionsRequest, setPropertyDefinitionsRequest] =
     useState<PetTypePropertyDefinitionsRequest | null>(null);
@@ -63,15 +60,7 @@ export function PetTypeRowActions({
       icon: Trash2Icon,
       variant: 'error',
       onSuccess: async () => {
-        const result = await deletePetTypeAction({ id: petTypeId });
-
-        if (!result.isSuccess) {
-          globalErrorHandler(result);
-          return;
-        }
-
-        toast.add({ type: 'success', title: result.message });
-        router.refresh();
+        await remove(petTypeId);
       },
     });
   }
@@ -119,7 +108,6 @@ export function PetTypeRowActions({
           onClose={() => setDetailRequest(null)}
           onUpdated={() => {
             setDetailRequest(null);
-            router.refresh();
           }}
         />
       ) : null}
@@ -130,7 +118,6 @@ export function PetTypeRowActions({
           onClose={() => setPropertyDefinitionsRequest(null)}
           onUpdated={() => {
             setPropertyDefinitionsRequest(null);
-            router.refresh();
           }}
         />
       ) : null}

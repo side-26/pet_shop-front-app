@@ -1,10 +1,15 @@
 'use client';
 
-import { useCallback, useRef, useTransition } from 'react';
-import type { UseFormSetError } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { useCallback, useRef } from 'react';
 
 import type { FormHandle } from '@/components/ui/form';
-import { toast } from '@/components/ui/toast';
+import type { FetcherError } from '@/lib/api/customFetcher';
+import {
+  type ActionMutation,
+  type ActionMutationOptions,
+  useMutationOptions,
+} from '@/hooks/use-mutation-options';
 import { globalErrorHandler } from '@/utils/helpers';
 
 import {
@@ -16,71 +21,54 @@ import {
 } from './categories.actions';
 import type { CategoryInput, UpdateCategoryInput } from './categories.schema';
 
-export async function submitCreateCategory(
-  input: CategoryInput,
-  showErrorFields: UseFormSetError<CategoryInput>,
+type CategoryMutationOptions<TVariables> = ActionMutationOptions<TVariables>;
+
+/** Category reads are Server Component data; EntityTag invalidation refreshes them. */
+function useCategoryMutation<TVariables>(
+  action: ActionMutation<TVariables>,
+  options?: CategoryMutationOptions<TVariables>,
 ) {
-  const result = await createCategoryAction(input);
-  if (!result.isSuccess) {
-    globalErrorHandler(result, { showErrorFields });
-    return false;
-  }
-
-  toast.add({ type: 'success', title: result.message });
-  return true;
+  return useMutation(useMutationOptions(action, options));
 }
 
-export async function submitUpdateCategory(
-  id: string,
-  input: UpdateCategoryInput,
-  showErrorFields: UseFormSetError<UpdateCategoryInput>,
+export function useCreateCategoryMutation(options?: CategoryMutationOptions<CategoryInput>) {
+  return useCategoryMutation<CategoryInput>(createCategoryAction, options);
+}
+
+export function useUpdateCategoryMutation(
+  options?: CategoryMutationOptions<{ id: string } & UpdateCategoryInput>,
 ) {
-  const result = await updateCategoryAction({ id, ...input });
-  if (!result.isSuccess) {
-    globalErrorHandler(result, { showErrorFields });
-    return false;
-  }
-
-  toast.add({ type: 'success', title: result.message });
-  return true;
+  return useCategoryMutation<{ id: string } & UpdateCategoryInput>(updateCategoryAction, options);
 }
 
-export async function submitCategoryEnabledUpdate(id: string, enabled: boolean) {
-  const result = await (enabled ? enableCategoryAction : disableCategoryAction)({ id });
-  if (!result.isSuccess) {
-    globalErrorHandler(result);
-    return false;
-  }
-
-  toast.add({ type: 'success', title: result.message });
-  return true;
+export function useCategoryStatusMutation(
+  options?: CategoryMutationOptions<{ id: string; enabled: boolean }>,
+) {
+  return useCategoryMutation<{ id: string; enabled: boolean }>(
+    async ({ id, enabled }) => (enabled ? enableCategoryAction : disableCategoryAction)({ id }),
+    options,
+  );
 }
 
-export async function submitDeleteCategory(id: string) {
-  const result = await deleteCategoryAction({ id });
-  if (!result.isSuccess) {
-    globalErrorHandler(result);
-    return false;
-  }
-
-  toast.add({ type: 'success', title: result.message });
-  return true;
+export function useDeleteCategoryMutation(options?: CategoryMutationOptions<{ id: string }>) {
+  return useCategoryMutation<{ id: string }>(deleteCategoryAction, options);
 }
 
 export function useCreateCategory(onSuccess: () => void) {
   const formRef = useRef<FormHandle<CategoryInput>>(null);
-  const [isPending, startTransition] = useTransition();
+  const { isPending, mutate } = useCreateCategoryMutation({
+    onError: (error) => {
+      const form = formRef.current;
+      globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
+    },
+  });
 
   const handleSubmit = useCallback(
     (input: CategoryInput) => {
-      const form = formRef.current;
-      if (!form || isPending) return;
-
-      startTransition(async () => {
-        if (await submitCreateCategory(input, form.setError)) onSuccess();
-      });
+      if (isPending) return;
+      mutate(input, { onSuccess });
     },
-    [isPending, onSuccess],
+    [isPending, mutate, onSuccess],
   );
 
   return { formRef, handleSubmit, isPending } as const;
@@ -88,40 +76,43 @@ export function useCreateCategory(onSuccess: () => void) {
 
 export function useUpdateCategory(id: string, onSuccess: () => void) {
   const formRef = useRef<FormHandle<UpdateCategoryInput>>(null);
-  const [isPending, startTransition] = useTransition();
+  const { isPending, mutate } = useUpdateCategoryMutation({
+    onError: (error) => {
+      const form = formRef.current;
+      globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
+    },
+  });
 
   const handleSubmit = useCallback(
     (input: UpdateCategoryInput) => {
-      const form = formRef.current;
-      if (!form || isPending) return;
-
-      startTransition(async () => {
-        if (await submitUpdateCategory(id, input, form.setError)) onSuccess();
-      });
+      if (isPending) return;
+      mutate({ id, ...input }, { onSuccess });
     },
-    [id, isPending, onSuccess],
+    [id, isPending, mutate, onSuccess],
   );
 
   return { formRef, handleSubmit, isPending } as const;
 }
 
-export function useCategoryRowActions(onSuccess: () => void) {
-  const [isPending, startTransition] = useTransition();
-
-  const run = useCallback(
-    (action: () => Promise<boolean>) => {
-      if (isPending) return;
-      startTransition(async () => {
-        if (await action()) onSuccess();
-      });
-    },
-    [isPending, onSuccess],
-  );
-
+export function useCategoryStatus() {
+  const { isPending, mutate } = useCategoryStatusMutation();
   return {
     isPending,
-    enable: (id: string) => run(() => submitCategoryEnabledUpdate(id, true)),
-    disable: (id: string) => run(() => submitCategoryEnabledUpdate(id, false)),
-    remove: (id: string) => run(() => submitDeleteCategory(id)),
+    update: (id: string, enabled: boolean) => {
+      if (isPending) return;
+      mutate({ id, enabled });
+    },
   } as const;
+}
+
+export function useDeleteCategory(onSuccess: () => void) {
+  const { isPending, mutate } = useDeleteCategoryMutation();
+  const remove = useCallback(
+    (id: string) => {
+      if (isPending) return;
+      mutate({ id }, { onSuccess });
+    },
+    [isPending, mutate, onSuccess],
+  );
+  return { isPending, remove } as const;
 }

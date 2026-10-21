@@ -116,6 +116,7 @@ beforeEach(() => {
     fetchNextPage,
     hasNextPage: initialPage.pagination.hasNextPage,
     isFetchingNextPage: false,
+    isFetchNextPageError: false,
   }));
 });
 
@@ -154,7 +155,7 @@ describe('ProfileOrdersResolved', () => {
     expect(fetchNextPage).toHaveBeenCalledOnce();
   });
 
-  it('keeps the show-more control available after a next-page error', async () => {
+  it('renders the shared retry control after a next-page error', async () => {
     useProfileOrdersPage.mockReturnValue({
       data: { pages: [orders] },
       loadedOrders: orders.result,
@@ -162,6 +163,7 @@ describe('ProfileOrdersResolved', () => {
       fetchNextPage,
       hasNextPage: true,
       isFetchingNextPage: false,
+      isFetchNextPageError: true,
     });
 
     render(
@@ -170,9 +172,8 @@ describe('ProfileOrdersResolved', () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'نمایش سفارش‌های بیشتر' }));
-
     expect((await screen.findByRole('alert')).textContent).toContain('ارتباط با سرور برقرار نشد.');
-    expect(screen.getByRole('button', { name: 'نمایش سفارش‌های بیشتر' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'نمایش سفارش‌های بیشتر' }));
+    expect(fetchNextPage).toHaveBeenCalledOnce();
   });
 });

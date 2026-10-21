@@ -1,15 +1,20 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 
+import type { DialogHandle } from '@/_types';
 import { Dialog } from '@/components/ui/dialog';
 
-import { CreateNewAddressDialogContentWrapper } from './create-new-address-dialog-content-wrapper';
+const CreateNewAddressDialogContentWrapper = dynamic(
+  () =>
+    import('./create-new-address-dialog-content-wrapper').then(
+      (module) => module.CreateNewAddressDialogContentWrapper,
+    ),
+  { ssr: false },
+);
 
-export type CreateNewAddressDialogHandle = Readonly<{
-  open: () => void;
-  close: () => void;
-}>;
+export type CreateNewAddressDialogHandle = DialogHandle<void>;
 
 export const CreateNewAddressDialog = forwardRef<CreateNewAddressDialogHandle>(
   function CreateNewAddressDialog(_, ref) {
@@ -26,7 +31,7 @@ export const CreateNewAddressDialog = forwardRef<CreateNewAddressDialogHandle>(
           else close();
         }}
       >
-        <CreateNewAddressDialogContentWrapper onClose={close} />
+        {open ? <CreateNewAddressDialogContentWrapper onClose={close} /> : null}
       </Dialog>
     );
   },

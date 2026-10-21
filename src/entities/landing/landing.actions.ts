@@ -1,6 +1,7 @@
 'use server';
 
 import { refresh } from 'next/cache';
+import { connection } from 'next/server';
 import { unwrapResult } from '@/lib/utils';
 
 import {
@@ -38,24 +39,29 @@ export async function getAllLandingPetTypesAction() {
 
 /** Server-rendered home categories unwrap failures for their local Suspense error boundary. */
 export async function getHomeLandingPetTypesAction() {
+  await connection();
   return unwrapResult(getAllLandingPetTypes(), 'دریافت دسته‌بندی حیوانات انجام نشد.');
 }
 
 /** Server-rendered product categories unwrap failures for their local Suspense error boundary. */
 export async function getProductLandingPetTypesAction() {
+  await connection();
   return unwrapResult(getAllLandingPetTypes(), 'دریافت دسته‌بندی محصولات انجام نشد.');
 }
 
 export async function getDiscountedLandingProductsAction(input: unknown = {}) {
+  await connection();
   const value = await landingDiscountLimitSchema.validate(input, { stripUnknown: true });
   return getDiscountedLandingProducts(value);
 }
 
 export async function getPopularLandingProductsAction() {
+  await connection();
   return unwrapResult(getPopularLandingProducts(), 'دریافت محصولات محبوب انجام نشد.');
 }
 
 export async function getPopularLandingBrandsAction() {
+  await connection();
   return unwrapResult(getPopularLandingBrands(), 'دریافت برندهای محبوب انجام نشد.');
 }
 

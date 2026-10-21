@@ -1,9 +1,7 @@
 'use client';
 
-import { useRouter } from '@/hooks/use-router';
-
 import { Switch } from '@/components/ui/fields/switch';
-import { useCategoryRowActions } from '@/entities/categories/categories.client';
+import { useCategoryStatus } from '@/entities/categories/categories.client';
 
 type Props = {
   categoryId: string;
@@ -18,8 +16,7 @@ export function CategoryEnabledSwitch({
   isEnabled,
   disabled = false,
 }: Props) {
-  const router = useRouter();
-  const { isPending, enable, disable } = useCategoryRowActions(router.refresh);
+  const { isPending, update } = useCategoryStatus();
 
   return (
     <Switch
@@ -30,7 +27,7 @@ export function CategoryEnabledSwitch({
       checkedColor="success"
       uncheckedColor="error"
       aria-label={`${categoryTitle}: ${isEnabled ? 'فعال' : 'غیرفعال'}`}
-      onCheckedChange={(checked) => (checked ? enable(categoryId) : disable(categoryId))}
+      onCheckedChange={(checked) => update(categoryId, checked)}
     />
   );
 }

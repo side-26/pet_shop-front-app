@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 
+import { adminTallDialogScrollableContentClassName } from '@/app/admin/_components/admin-dialog.styles';
 import { ImageFileField } from '@/components/common/image-file-field';
 import { ImageFilePreview } from '@/components/common/image-file-preview';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
@@ -117,7 +118,7 @@ export function UpdateMainInfoDialogContentWrapper({
       submitText="ذخیره تغییرات"
       title="ویرایش اطلاعات اصلی مقاله"
       size="xl"
-      contentClassName="tw:max-h-[72dvh] tw:overflow-y-auto"
+      contentClassName={adminTallDialogScrollableContentClassName}
     >
       <QueryErrorResetBoundary>
         {({ reset }) => (

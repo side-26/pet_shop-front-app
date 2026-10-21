@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
+import { adminDialogScrollableContentClassName } from '@/app/admin/_components/admin-dialog.styles';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { Form } from '@/components/ui/form';
 import { getBreedAction } from '@/entities/breeds/breeds.actions';
@@ -104,7 +105,7 @@ export function BreedDetailDialogContentWrapper({
       submitText="ذخیره تغییرات"
       title="مشاهده و ویرایش نژاد"
       size="lg"
-      contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
+      contentClassName={adminDialogScrollableContentClassName}
     >
       <Suspense
         fallback={

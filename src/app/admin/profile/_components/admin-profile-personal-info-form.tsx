@@ -1,6 +1,6 @@
 'use client';
 
-import { CameraIcon, SaveIcon, UserRoundIcon } from 'lucide-react';
+import { AtSignIcon, CakeSliceIcon, CameraIcon, SaveIcon, UserRoundIcon } from 'lucide-react';
 import { useRouter } from '@/hooks/use-router';
 import { useRef, useTransition } from 'react';
 
@@ -8,6 +8,7 @@ import { ImageFileField } from '@/components/common/image-file-field';
 import { ImageFilePreview } from '@/components/common/image-file-preview';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { DatePicker } from '@/components/ui/date-picker';
 import { TextField } from '@/components/ui/fields/text-field';
 import { Form, type FormHandle } from '@/components/ui/form';
 import { submitCurrentUserProfile } from '@/entities/users/users.client';
@@ -43,7 +44,15 @@ export function AdminProfilePersonalInfoForm({ user }: { user: CurrentUserDTO })
       id={ADMIN_PROFILE_PERSONAL_INFO_FORM_ID}
       validationSchema={updateCurrentUserProfileSchema}
       options={{
-        defaultValues: { firstName: user.firstName, lastName: user.lastName, avatar: null },
+        defaultValues: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          nationalCode: user.nationalCode,
+          age: user.age ?? undefined,
+          birthDate: user.birthDate,
+          avatar: null,
+        },
       }}
       handleSubmit={handleSubmit}
       aria-label="فرم اطلاعات شخصی"
@@ -80,19 +89,49 @@ export function AdminProfilePersonalInfoForm({ user }: { user: CurrentUserDTO })
           </div>
         </ImageFileField>
 
-        <div className="tw:grid tw:gap-4 tw:sm:grid-cols-2">
+        <div className="tw:grid tw:items-start tw:gap-4 tw:sm:grid-cols-2">
           <TextField<UpdateCurrentUserProfileInput>
             name="firstName"
             label="نام"
+            prefixIcon={<UserRoundIcon />}
             autoComplete="given-name"
             required
           />
           <TextField<UpdateCurrentUserProfileInput>
             name="lastName"
             label="نام خانوادگی"
+            prefixIcon={<UserRoundIcon />}
             autoComplete="family-name"
             required
           />
+          <TextField<UpdateCurrentUserProfileInput>
+            name="email"
+            label="ایمیل"
+            prefixIcon={<AtSignIcon />}
+            autoComplete="email"
+            type="email"
+            dir="ltr"
+            required
+          />
+          <TextField<UpdateCurrentUserProfileInput>
+            name="nationalCode"
+            label="کد ملی"
+            autoComplete="off"
+            inputMode="numeric"
+            dir="ltr"
+            required
+          />
+          <TextField<UpdateCurrentUserProfileInput>
+            name="age"
+            label="سن"
+            prefixIcon={<CakeSliceIcon />}
+            type="number"
+            inputMode="numeric"
+            min={4}
+            dir="ltr"
+            required
+          />
+          <DatePicker<UpdateCurrentUserProfileInput> name="birthDate" label="تاریخ تولد" />
         </div>
       </fieldset>
     </Form>

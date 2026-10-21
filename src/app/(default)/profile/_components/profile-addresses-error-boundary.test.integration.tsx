@@ -20,6 +20,7 @@ describe('ProfileAddressesErrorBoundary', () => {
     );
 
     expect(screen.getByRole('alert').textContent).toContain('دریافت نشانی‌ها انجام نشد');
+    expect(screen.getByRole('alert').textContent).toContain('ارتباط با سرور برقرار نشد.');
     consoleError.mockRestore();
   });
 });

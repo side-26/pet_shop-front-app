@@ -3,6 +3,7 @@
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 
 import type { DialogHandle } from '@/_types';
+import { mobileCatalogDrawerContentClassName } from '@/components/common/pagination-layout/mobile-catalog-drawer.styles';
 import { PaginationSort } from '@/components/common/pagination-layout/pagination-sort';
 import { Button } from '@/components/ui/button';
 import {
@@ -39,7 +40,7 @@ export const MobileCatalogSortNavigationDrawer = forwardRef<
 
   return (
     <Drawer open={open} onOpenChange={setOpen} showSwipeHandle>
-      <DrawerContent color="primary" className="tw:max-h-[calc(100dvh-2rem)] tw:gap-0 tw:p-0">
+      <DrawerContent color="primary" className={mobileCatalogDrawerContentClassName}>
         <DrawerHeader className="tw:border-b tw:border-border tw:px-6 tw:py-4">
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription>{description}</DrawerDescription>

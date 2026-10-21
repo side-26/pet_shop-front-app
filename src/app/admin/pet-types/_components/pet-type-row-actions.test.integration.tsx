@@ -22,6 +22,7 @@ vi.mock('@/entities/pet-types/pet-types.actions', () => ({
   getPetTypePropertyDefinitionsAction: vi.fn(),
 }));
 vi.mock('@/entities/pet-types/pet-types.client', () => ({
+  useDeletePetType: () => ({ remove: vi.fn(), isPending: false }),
   useUpdatePetType: () => ({ formRef: { current: null }, handleSubmit: vi.fn(), isPending: false }),
   useRangePetTypePropertyDefinitions: () => ({
     formRef: { current: null },

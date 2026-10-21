@@ -1,5 +1,7 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, render, screen } from '@testing-library/react';
+import { createElement, type ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
@@ -49,9 +51,17 @@ const petType = {
 
 afterEach(cleanup);
 
+function renderWithQueryClient(children: ReactNode) {
+  const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
+  return {
+    ...render(createElement(QueryClientProvider, { client: queryClient }, children)),
+    queryClient,
+  };
+}
+
 describe(routePaths.adminCategories, () => {
   it('renders the shared table renderer as a busy, non-interactive skeleton', () => {
-    const { container } = render(
+    const { container, queryClient } = renderWithQueryClient(
       <DirectionProvider direction="rtl">
         <CategoriesTable categories={categoriesTableSkeletonData} isSkeleton />
       </DirectionProvider>,
@@ -67,6 +77,7 @@ describe(routePaths.adminCategories, () => {
             control.matches(':disabled') || control.getAttribute('aria-disabled') === 'true',
         ),
     ).toBe(true);
+    queryClient.clear();
     expect(
       screen
         .getAllByRole('button', { name: /عملیات/ })
@@ -81,7 +92,9 @@ describe(routePaths.adminCategories, () => {
     });
     const [row] = mapCategoriesTableRows([category], new Map([[petType.id, petType.title]]));
 
-    const { container } = render(<DirectionProvider direction="rtl">{content}</DirectionProvider>);
+    const { container, queryClient } = renderWithQueryClient(
+      <DirectionProvider direction="rtl">{content}</DirectionProvider>,
+    );
     expect(row.petTypeTitle).toBe('سگ');
     expect(screen.getByText('سگ')).toBeTruthy();
     expect(screen.getByText('سگ').className).toContain('tw:line-clamp-2');
@@ -89,6 +102,7 @@ describe(routePaths.adminCategories, () => {
     expect(container.querySelector('[data-slot="avatar"]')?.getAttribute('style')).toContain(
       category.mainThumbnailImage,
     );
+    queryClient.clear();
   });
 
   it('normalizes list errors and starts both table requests in the wrapper', async () => {

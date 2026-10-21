@@ -305,7 +305,7 @@ export function AdminLayoutShellView({
             <Card
               variant="elevated"
               data-slot="admin-content-card"
-              className="tw:min-h-0 tw:w-full tw:flex-1 tw:gap-0 tw:rounded-b-none tw:p-[6px]"
+              className="tw:min-h-0 tw:w-full tw:flex-1 tw:gap-0 tw:rounded-b-none tw:p-1.5"
             >
               <CardContent className="tw:min-h-0 tw:flex-1 tw:p-0">{children}</CardContent>
             </Card>

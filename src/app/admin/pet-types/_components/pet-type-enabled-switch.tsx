@@ -1,9 +1,7 @@
 'use client';
 
-import { useRouter } from '@/hooks/use-router';
-
 import { Switch } from '@/components/ui/fields/switch';
-import { usePetTypeRowActions } from '@/entities/pet-types/pet-types.client';
+import { usePetTypeStatus } from '@/entities/pet-types/pet-types.client';
 
 type PetTypeEnabledSwitchProps = {
   petTypeId: string;
@@ -18,8 +16,7 @@ export function PetTypeEnabledSwitch({
   isEnabled,
   disabled = false,
 }: PetTypeEnabledSwitchProps) {
-  const router = useRouter();
-  const { isPending, enable, disable } = usePetTypeRowActions(router.refresh);
+  const { isPending, update } = usePetTypeStatus();
   const statusLabel = isEnabled ? 'فعال' : 'غیرفعال';
 
   return (
@@ -31,7 +28,7 @@ export function PetTypeEnabledSwitch({
       checkedColor="success"
       uncheckedColor="error"
       aria-label={`${petTypeTitle}: ${statusLabel}`}
-      onCheckedChange={(checked) => (checked ? enable(petTypeId) : disable(petTypeId))}
+      onCheckedChange={(checked) => update(petTypeId, checked)}
     />
   );
 }

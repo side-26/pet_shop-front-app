@@ -40,27 +40,29 @@ export function AdminProfilePasswordForm() {
       aria-busy={isPending || undefined}
     >
       <fieldset disabled={isPending} className="tw:flex tw:w-full tw:min-w-0 tw:flex-col tw:gap-5">
-        <TextField<ChangeCurrentUserPasswordInput>
-          name="oldPassword"
-          label="کلمه عبور فعلی"
-          type="password"
-          autoComplete="current-password"
-          required
-        />
-        <TextField<ChangeCurrentUserPasswordInput>
-          name="password"
-          label="کلمه عبور جدید"
-          type="password"
-          autoComplete="new-password"
-          required
-        />
-        <TextField<ChangeCurrentUserPasswordInput>
-          name="repeatPassword"
-          label="تکرار کلمه عبور جدید"
-          type="password"
-          autoComplete="new-password"
-          required
-        />
+        <div className="tw:grid tw:items-start tw:gap-4 tw:md:grid-cols-3">
+          <TextField<ChangeCurrentUserPasswordInput>
+            name="oldPassword"
+            label="کلمه عبور فعلی"
+            type="password"
+            autoComplete="current-password"
+            required
+          />
+          <TextField<ChangeCurrentUserPasswordInput>
+            name="password"
+            label="کلمه عبور جدید"
+            type="password"
+            autoComplete="new-password"
+            required
+          />
+          <TextField<ChangeCurrentUserPasswordInput>
+            name="repeatPassword"
+            label="تکرار کلمه عبور جدید"
+            type="password"
+            autoComplete="new-password"
+            required
+          />
+        </div>
       </fieldset>
     </Form>
   );

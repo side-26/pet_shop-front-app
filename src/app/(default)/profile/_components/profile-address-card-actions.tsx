@@ -1,30 +1,27 @@
 'use client';
 
 import { PencilIcon, Trash2Icon } from 'lucide-react';
-import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
-import {
-  deleteProfileAddressAction,
-  getProfileAddressAction,
-} from '@/entities/profile/profile.actions';
+import { deleteProfileAddressAction } from '@/entities/profile/profile.actions';
 import { useCommonStore } from '@/stores/common.store';
 import { globalErrorHandler } from '@/utils/helpers';
 
-import { UpdateAddressDialog } from './update-address-dialog';
+import { useProfileAddressDialogs } from './profile-address-dialogs-context';
 
 type Props = Readonly<{
   addressId?: string;
   addressTitle: string;
+  disabled?: boolean;
 }>;
 
-export function ProfileAddressCardActions({ addressId, addressTitle }: Props) {
+export function ProfileAddressCardActions({ addressId, addressTitle, disabled = false }: Props) {
   const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
-  const [request, setRequest] = useState<ReturnType<typeof getProfileAddressAction> | null>(null);
+  const { openUpdate } = useProfileAddressDialogs();
 
   function confirmDeletion() {
-    if (!addressId) return;
+    if (disabled || !addressId) return;
 
     showConfirmDialog({
       title: 'نشانی حذف شود؟',
@@ -53,26 +50,19 @@ export function ProfileAddressCardActions({ addressId, addressTitle }: Props) {
         size="sm"
         variant="flat"
         iconOnly
-        disabled={!addressId}
+        disabled={disabled || !addressId}
         aria-label="ویرایش نشانی"
-        onClick={() => addressId && setRequest(getProfileAddressAction({ addressId }))}
+        onClick={() => addressId && openUpdate(addressId)}
       >
         <PencilIcon aria-hidden="true" />
       </Button>
-      {request && addressId ? (
-        <UpdateAddressDialog
-          addressId={addressId}
-          request={request}
-          onClose={() => setRequest(null)}
-        />
-      ) : null}
       <Button
         type="button"
         size="sm"
         variant="flat"
         color="error"
         iconOnly
-        disabled={!addressId}
+        disabled={disabled || !addressId}
         aria-label="حذف نشانی"
         onClick={confirmDeletion}
       >

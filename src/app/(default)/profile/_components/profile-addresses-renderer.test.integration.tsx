@@ -1,8 +1,11 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import type { ProfileAddressDTO } from '@/entities/profile/profile.dto';
+import type { ProfileAddressCardDTO } from '@/entities/profile/profile.dto';
 
+import { ProfileAddressesEmpty } from './profile-addresses-empty';
 import { ProfileAddressesRenderer } from './profile-addresses-renderer';
 import { profileAddressesSkeletonData } from './profile-addresses-skeleton-data';
 
@@ -10,27 +13,26 @@ vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ refresh: vi.fn() }) }
 
 afterEach(cleanup);
 
-const addresses: ProfileAddressDTO[] = [
+function renderWithQueryClient(children: ReactNode) {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return render(<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>);
+}
+
+const addresses: ProfileAddressCardDTO[] = [
   {
-    _id: 'address-1',
-    province: 'تهران',
-    city: 'تهران',
-    detailAddress: 'سعادت‌آباد، خیابان علامه شمالی',
-    latLng: [35.7219, 51.3347],
-    plate: '۲۱',
-    unit: '۸',
+    id: 'address-1',
+    title: 'تهران، تهران',
+    details: 'تهران، سعادت‌آباد، خیابان علامه شمالی، پلاک ۲۱، واحد ۸',
     postalCode: '1998712345',
-    receiverIsMe: true,
     firstName: 'نیلوفر',
     lastName: 'احمدی',
-    nationalCode: '0012345678',
     phoneNumber: '09121234567',
   },
 ];
 
 describe('ProfileAddressesRenderer', () => {
   it('renders the API address list and an add-address control at its end', () => {
-    render(<ProfileAddressesRenderer addresses={addresses} />);
+    renderWithQueryClient(<ProfileAddressesRenderer addresses={addresses} />);
 
     expect(screen.getByText('تهران، سعادت‌آباد، خیابان علامه شمالی، پلاک ۲۱، واحد ۸')).toBeTruthy();
     expect(screen.getByText('نیلوفر احمدی')).toBeTruthy();
@@ -43,14 +45,14 @@ describe('ProfileAddressesRenderer', () => {
   });
 
   it('renders an inviting empty state with an add-address control', () => {
-    render(<ProfileAddressesRenderer addresses={[]} />);
+    renderWithQueryClient(<ProfileAddressesEmpty />);
 
     expect(screen.getByText('هنوز نشانی تحویلی ثبت نکرده‌اید')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'افزودن نشانی جدید' })).toBeTruthy();
   });
 
   it('renders an accessible non-interactive skeleton while the list streams', () => {
-    const { container } = render(
+    const { container } = renderWithQueryClient(
       <ProfileAddressesRenderer addresses={profileAddressesSkeletonData} isSkeleton />,
     );
 
@@ -58,6 +60,9 @@ describe('ProfileAddressesRenderer', () => {
       'true',
     );
     expect(container.querySelector('.skeleton')).toBeTruthy();
-    expect(screen.queryByRole('button', { name: 'افزودن نشانی جدید' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'افزودن نشانی جدید' })).toHaveProperty(
+      'disabled',
+      true,
+    );
   });
 });

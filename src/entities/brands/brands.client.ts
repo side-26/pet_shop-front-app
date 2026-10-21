@@ -1,11 +1,15 @@
 'use client';
 
-import { useCallback, useRef, useTransition } from 'react';
-import type { UseFormSetError } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { useCallback, useRef } from 'react';
 
 import type { FormHandle } from '@/components/ui/form';
-import { toast } from '@/components/ui/toast';
-import type { FetcherResult } from '@/lib/api/customFetcher';
+import type { FetcherError } from '@/lib/api/customFetcher';
+import {
+  type ActionMutation,
+  type ActionMutationOptions,
+  useMutationOptions,
+} from '@/hooks/use-mutation-options';
 import { globalErrorHandler } from '@/utils/helpers';
 
 import {
@@ -17,94 +21,95 @@ import {
 } from './brands.actions';
 import type { BrandInput, UpdateBrandInput } from './brands.schema';
 
-export async function submitCreateBrand(
-  input: BrandInput,
-  showErrorFields: UseFormSetError<BrandInput>,
+type BrandMutationOptions<TVariables> = ActionMutationOptions<TVariables>;
+
+/** Brand reads are Server Component data; EntityTag invalidation refreshes them. */
+function useBrandMutation<TVariables>(
+  action: ActionMutation<TVariables>,
+  options?: BrandMutationOptions<TVariables>,
 ) {
-  const result = await createBrandAction(input);
-  if (!result.isSuccess) {
-    globalErrorHandler(result, { showErrorFields });
-    return false;
-  }
-  toast.add({ type: 'success', title: result.message });
-  return true;
+  return useMutation(useMutationOptions(action, options));
 }
 
-export async function submitUpdateBrand(
-  id: string,
-  input: UpdateBrandInput,
-  showErrorFields: UseFormSetError<UpdateBrandInput>,
+export function useCreateBrandMutation(options?: BrandMutationOptions<BrandInput>) {
+  return useBrandMutation<BrandInput>(createBrandAction, options);
+}
+
+export function useUpdateBrandMutation(
+  options?: BrandMutationOptions<{ id: string } & UpdateBrandInput>,
 ) {
-  const result = await updateBrandAction({ id, ...input });
-  if (!result.isSuccess) {
-    globalErrorHandler(result, { showErrorFields });
-    return false;
-  }
-  toast.add({ type: 'success', title: result.message });
-  return true;
+  return useBrandMutation<{ id: string } & UpdateBrandInput>(updateBrandAction, options);
 }
 
-async function submitById<T>(id: string, action: (input: unknown) => Promise<FetcherResult<T>>) {
-  const result = await action({ id });
-  if (!result.isSuccess) {
-    globalErrorHandler(result);
-    return false;
-  }
-  toast.add({ type: 'success', title: result.message });
-  return true;
+export function useBrandStatusMutation(
+  options?: BrandMutationOptions<{ id: string; enabled: boolean }>,
+) {
+  return useBrandMutation<{ id: string; enabled: boolean }>(
+    async ({ id, enabled }) => (enabled ? enableBrandAction : disableBrandAction)({ id }),
+    options,
+  );
 }
 
-export const submitBrandEnabledUpdate = (id: string, enabled: boolean) =>
-  submitById(id, enabled ? enableBrandAction : disableBrandAction);
-export const submitDeleteBrand = (id: string) => submitById(id, deleteBrandAction);
+export function useDeleteBrandMutation(options?: BrandMutationOptions<{ id: string }>) {
+  return useBrandMutation<{ id: string }>(deleteBrandAction, options);
+}
 
 export function useCreateBrand(onSuccess: () => void) {
   const formRef = useRef<FormHandle<BrandInput>>(null);
-  const [isPending, startTransition] = useTransition();
+  const { isPending, mutate } = useCreateBrandMutation({
+    onError: (error) => {
+      const form = formRef.current;
+      globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
+    },
+  });
   const handleSubmit = useCallback(
     (input: BrandInput) => {
-      const form = formRef.current;
-      if (!form || isPending) return;
-      startTransition(async () => {
-        if (await submitCreateBrand(input, form.setError)) onSuccess();
-      });
+      if (isPending) return;
+      mutate(input, { onSuccess });
     },
-    [isPending, onSuccess],
+    [isPending, mutate, onSuccess],
   );
   return { formRef, handleSubmit, isPending } as const;
 }
 
 export function useUpdateBrand(id: string, onSuccess: () => void) {
   const formRef = useRef<FormHandle<UpdateBrandInput>>(null);
-  const [isPending, startTransition] = useTransition();
-
+  const { isPending, mutate } = useUpdateBrandMutation({
+    onError: (error) => {
+      const form = formRef.current;
+      globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
+    },
+  });
   const handleSubmit = useCallback(
     (input: UpdateBrandInput) => {
-      const form = formRef.current;
-      if (!form || isPending) return;
-
-      startTransition(async () => {
-        if (await submitUpdateBrand(id, input, form.setError)) onSuccess();
-      });
+      if (isPending) return;
+      mutate({ id, ...input }, { onSuccess });
     },
-    [id, isPending, onSuccess],
+    [id, isPending, mutate, onSuccess],
   );
-
   return { formRef, handleSubmit, isPending } as const;
 }
 
-export function useBrandStatus(onSuccess: () => void) {
-  const [isPending, startTransition] = useTransition();
+export function useBrandStatus() {
+  const { isPending, mutate } = useBrandStatusMutation();
   const update = useCallback(
     (id: string, enabled: boolean) => {
       if (isPending) return;
-
-      startTransition(async () => {
-        if (await submitBrandEnabledUpdate(id, enabled)) onSuccess();
-      });
+      mutate({ id, enabled });
     },
-    [isPending, onSuccess],
+    [isPending, mutate],
   );
-
   return { isPending, update } as const;
+}
+
+export function useDeleteBrand(onSuccess: () => void) {
+  const { isPending, mutate } = useDeleteBrandMutation();
+  const remove = useCallback(
+    (id: string) => {
+      if (isPending) return;
+      mutate({ id }, { onSuccess });
+    },
+    [isPending, mutate, onSuccess],
+  );
+  return { isPending, remove } as const;
 }

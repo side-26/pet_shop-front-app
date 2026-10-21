@@ -241,7 +241,7 @@ function MultipleImageUploaderField<
           <span className="tw:text-label-m tw:text-muted-foreground">تصاویر فعلی</span>
           <ImageCarousel ariaLabel="تصاویر فعلی به‌صورت اسلایدی">
             {mainImageUrl ? (
-              <CarouselItem className="tw:basis-[100px]">
+              <CarouselItem className="tw:basis-25">
                 <div className="tw:overflow-hidden tw:rounded-2xl tw:border tw:border-primary tw:bg-card tw:shadow-sm tw:ring-2 tw:ring-primary/20">
                   <div className="tw:relative tw:aspect-square tw:overflow-hidden">
                     <PersistedImage alt="تصویر اصلی فعلی" url={mainImageUrl} />
@@ -254,7 +254,7 @@ function MultipleImageUploaderField<
               </CarouselItem>
             ) : null}
             {persistedImages.map((imageUrl, index) => (
-              <CarouselItem key={imageUrl} className="tw:basis-[100px]">
+              <CarouselItem key={imageUrl} className="tw:basis-25">
                 <div className="tw:overflow-hidden tw:rounded-2xl tw:border tw:border-border tw:bg-card tw:shadow-sm">
                   <div className="tw:aspect-square tw:overflow-hidden">
                     <PersistedImage alt={`تصویر فعلی ${index + 1}`} url={imageUrl} />
@@ -272,7 +272,7 @@ function MultipleImageUploaderField<
             const isMainImage = value.mainImageIndex === index;
 
             return (
-              <CarouselItem key={getFileIdentity(file)} className={cn('tw:basis-[160px]')}>
+              <CarouselItem key={getFileIdentity(file)} className={cn('tw:basis-40')}>
                 <div
                   className={cn(
                     'tw:overflow-hidden tw:rounded-2xl tw:border tw:bg-card tw:shadow-sm',

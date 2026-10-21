@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
+import { adminDialogScrollableContentClassName } from '@/app/admin/_components/admin-dialog.styles';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { MultipleImageUploaderField } from '@/components/common/multiple-image-uploader-field';
 import { TextareaField } from '@/components/ui/fields/textarea-field';
@@ -182,7 +183,7 @@ export function ProductSectionDialogContentWrapper({
       title={`${titles[section]} ${productTitle}`}
       size="lg"
       className="tw:max-w-[730px]"
-      contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
+      contentClassName={adminDialogScrollableContentClassName}
     >
       <Suspense fallback={<SectionForm section={section} isSkeleton {...formProps} />}>
         <AsyncContent request={request} optionsRequest={optionsRequest}>

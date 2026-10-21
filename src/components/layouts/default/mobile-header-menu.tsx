@@ -1,6 +1,6 @@
 'use client';
 
-import { Menu } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -10,12 +10,20 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useLogoutUser } from '@/entities/auth/auth.client';
+import { useAuthStore } from '@/entities/auth/auth.store';
+import { useCommonStore } from '@/stores/common.store';
 
 import { mobileOverflowNavigationItems } from './navigation-items';
 
 export function MobileHeaderMenu() {
+  const userIdentity = useAuthStore((state) => state.userIdentity);
+  const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
+  const logoutUser = useLogoutUser();
+
   return (
     <div className="tw:lg:hidden">
       <DropdownMenu>
@@ -34,6 +42,28 @@ export function MobileHeaderMenu() {
               </DropdownMenuItem>
             ))}
           </DropdownMenuGroup>
+          {userIdentity ? (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={() => {
+                    showConfirmDialog({
+                      title: 'از حساب خارج می‌شوید؟',
+                      message: 'برای ادامه، لازم است دوباره وارد حساب کاربری خود شوید.',
+                      icon: LogOut,
+                      variant: 'warning',
+                      onSuccess: logoutUser,
+                    });
+                  }}
+                >
+                  <LogOut aria-hidden="true" />
+                  خروج از حساب
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </>
+          ) : null}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

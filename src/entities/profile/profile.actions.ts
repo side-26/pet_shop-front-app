@@ -7,6 +7,7 @@ import { refresh } from 'next/cache';
 import { USER_ROLES } from '@/configs/user-role';
 import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
 import type { FetcherError } from '@/lib/api/customFetcher';
+import { unwrapResult } from '@/lib/utils';
 import { deleteSessionCookie, getSession } from '@/utils/session';
 
 import {
@@ -75,6 +76,17 @@ export async function getProfileAddressesAction() {
   return 'error' in auth ? auth.error : service.getProfileAddresses(auth.session.userId);
 }
 
+/** Server-rendered profile-tab read; errors reject into the section boundary. */
+export async function getProfileAddressesForProfileAction() {
+  const auth = await authorizeCustomer();
+  if ('error' in auth) throw new Error(auth.error?.message ?? 'دریافت نشانی‌ها انجام نشد.');
+
+  return unwrapResult(
+    service.getProfileAddresses(auth.session.userId),
+    'دریافت نشانی‌ها انجام نشد.',
+  );
+}
+
 export async function retryProfileAddressesAction() {
   const auth = await authorizeCustomer();
   if ('error' in auth) return auth.error;
@@ -109,9 +121,15 @@ export async function updateProfileAddressAction(input: unknown) {
   const id = await validate(profileAddressIdSchema, input);
   if ('error' in id) return id.error;
   const parsed = await validate(updateProfileAddressSchema, input);
-  return 'error' in parsed
-    ? parsed.error
-    : service.updateProfileAddress(auth.session.userId, id.value.addressId, parsed.value);
+  if ('error' in parsed) return parsed.error;
+
+  const result = await service.updateProfileAddress(
+    auth.session.userId,
+    id.value.addressId,
+    parsed.value,
+  );
+  if (result.isSuccess) refresh();
+  return result;
 }
 
 export async function deleteProfileAddressAction(input: unknown) {
@@ -127,11 +145,13 @@ export async function deleteProfileAddressAction(input: unknown) {
 
 export async function getProfileOrdersAction(input: unknown = {}) {
   const auth = await authorizeCustomer();
-  if ('error' in auth) return auth.error;
+  if ('error' in auth) throw new Error(auth.error?.message ?? 'دریافت سفارش‌ها انجام نشد.');
+
   const parsed = await validate(getProfileOrdersSchema, input);
-  return 'error' in parsed
-    ? parsed.error
-    : service.getProfileOrders(auth.session.userId, parsed.value);
+  if ('error' in parsed)
+    throw new Error(parsed.error?.message ?? 'پارامترهای سفارش‌ها نامعتبر است.');
+
+  return unwrapResult(service.getProfileOrders(auth.session.userId, parsed.value));
 }
 
 export async function getProfileOrderSummaryAction() {

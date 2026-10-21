@@ -219,9 +219,10 @@ function CalendarSelector({
 }: CalendarSelectorProps) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const widthClassName = width ? undefined : label === 'سال' ? 'tw:w-[95px]' : 'tw:w-[105px]';
+  const widthClassName = width ? undefined : label === 'سال' ? 'tw:w-23.75' : 'tw:w-26.25';
   const widthStyle = width ? { width } : undefined;
   const colors = selectorColorVariants({ color });
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger

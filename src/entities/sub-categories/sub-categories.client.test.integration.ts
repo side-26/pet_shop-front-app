@@ -1,17 +1,19 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook } from '@testing-library/react';
+import { createElement, type ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { toast } from '@/components/ui/toast';
 import { globalErrorHandler } from '@/utils/helpers';
-
 import {
   createSubCategoryAction,
   deleteSubCategoryAction,
   updateSubCategoryAction,
 } from './sub-categories.actions';
 import {
-  submitCreateSubCategory,
-  submitDeleteSubCategory,
-  submitUpdateSubCategory,
+  useCreateSubCategoryMutation,
+  useDeleteSubCategoryMutation,
+  useUpdateSubCategoryMutation,
 } from './sub-categories.client';
 
 vi.mock('./sub-categories.actions', () => ({
@@ -24,78 +26,83 @@ vi.mock('@/utils/helpers', () => ({ globalErrorHandler: vi.fn() }));
 
 const id = '507f1f77bcf86cd799439012';
 const input = { title: 'غذای خشک', category: '507f1f77bcf86cd799439011' };
-const error = {
+const failure = {
   isSuccess: false as const,
   message: 'ناموفق',
-  data: { messages: [{ value: 'title', label: 'عنوان تکراری است.' }], details: {} },
+  data: { messages: [], details: {} },
 };
+function wrapper() {
+  const client = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
+  return {
+    client,
+    wrapper: ({ children }: { children: ReactNode }) =>
+      createElement(QueryClientProvider, { client }, children),
+  };
+}
 
-describe('sub-category client orchestration', () => {
+describe('sub-category client mutations', () => {
   beforeEach(() => vi.clearAllMocks());
+  it.each([
+    [useCreateSubCategoryMutation, createSubCategoryAction, input],
+    [useUpdateSubCategoryMutation, updateSubCategoryAction, { id, ...input }],
+    [useDeleteSubCategoryMutation, deleteSubCategoryAction, { id }],
+  ] as const)(
+    'delegates successful mutations through the Server Action',
+    async (useHook, action, variables) => {
+      vi.mocked(action).mockResolvedValue({
+        isSuccess: true,
+        message: 'انجام شد.',
+        data: {} as never,
+      });
+      const setup = wrapper();
+      const { result } = renderHook(() => useHook(), { wrapper: setup.wrapper });
+      await result.current.mutateAsync(variables as never);
+      expect(action).toHaveBeenCalledWith(variables);
+      expect(toast.add).toHaveBeenCalledWith({ type: 'success', title: 'انجام شد.' });
+      setup.client.clear();
+    },
+  );
+  it('reports a failed result once without retrying', async () => {
+    vi.mocked(deleteSubCategoryAction).mockResolvedValue(failure);
+    const setup = wrapper();
+    const { result } = renderHook(() => useDeleteSubCategoryMutation(), { wrapper: setup.wrapper });
+    await expect(result.current.mutateAsync({ id })).rejects.toBe(failure);
+    expect(deleteSubCategoryAction).toHaveBeenCalledOnce();
+    expect(globalErrorHandler).toHaveBeenCalledWith(failure);
+    setup.client.clear();
+  });
 
-  it('creates, shows the backend message, and reports success', async () => {
+  it('keeps the backend success toast when an entity adds post-success work', async () => {
     vi.mocked(createSubCategoryAction).mockResolvedValue({
       isSuccess: true,
-      message: 'زیر دسته‌بندی ایجاد شد.',
+      message: 'ایجاد شد.',
       data: {} as never,
     });
-
-    await expect(submitCreateSubCategory(input, vi.fn())).resolves.toBe(true);
-    expect(createSubCategoryAction).toHaveBeenCalledWith(input);
-    expect(toast.add).toHaveBeenCalledWith({
-      type: 'success',
-      title: 'زیر دسته‌بندی ایجاد شد.',
+    const onSuccess = vi.fn();
+    const setup = wrapper();
+    const { result } = renderHook(() => useCreateSubCategoryMutation({ onSuccess }), {
+      wrapper: setup.wrapper,
     });
+
+    await result.current.mutateAsync(input);
+
+    expect(toast.add).toHaveBeenCalledWith({ type: 'success', title: 'ایجاد شد.' });
+    expect(onSuccess).toHaveBeenCalledOnce();
+    setup.client.clear();
   });
 
-  it('passes complete create errors to the shared field handler', async () => {
-    const setError = vi.fn();
-    vi.mocked(createSubCategoryAction).mockResolvedValue(error);
-
-    await expect(submitCreateSubCategory(input, setError)).resolves.toBe(false);
-    expect(globalErrorHandler).toHaveBeenCalledWith(error, { showErrorFields: setError });
-    expect(toast.add).not.toHaveBeenCalled();
-  });
-
-  it('updates and forwards the exact payload', async () => {
-    vi.mocked(updateSubCategoryAction).mockResolvedValue({
-      isSuccess: true,
-      message: 'زیر دسته‌بندی ویرایش شد.',
-      data: {} as never,
+  it('allows form orchestration to receive the complete normalized error', async () => {
+    vi.mocked(updateSubCategoryAction).mockResolvedValue(failure);
+    const onError = vi.fn();
+    const setup = wrapper();
+    const { result } = renderHook(() => useUpdateSubCategoryMutation({ onError }), {
+      wrapper: setup.wrapper,
     });
 
-    await expect(submitUpdateSubCategory(id, input, vi.fn())).resolves.toBe(true);
-    expect(updateSubCategoryAction).toHaveBeenCalledWith({ id, ...input });
-    expect(toast.add).toHaveBeenCalledWith({
-      type: 'success',
-      title: 'زیر دسته‌بندی ویرایش شد.',
-    });
-  });
+    await expect(result.current.mutateAsync({ id, ...input })).rejects.toBe(failure);
 
-  it('deletes and shows the backend message', async () => {
-    vi.mocked(deleteSubCategoryAction).mockResolvedValue({
-      isSuccess: true,
-      message: 'زیر دسته‌بندی حذف شد.',
-      data: { id },
-    });
-
-    await expect(submitDeleteSubCategory(id)).resolves.toBe(true);
-    expect(deleteSubCategoryAction).toHaveBeenCalledWith({ id });
-    expect(toast.add).toHaveBeenCalledWith({
-      type: 'success',
-      title: 'زیر دسته‌بندی حذف شد.',
-    });
-  });
-
-  it('passes complete update and delete errors to the shared handler', async () => {
-    const setError = vi.fn();
-    vi.mocked(updateSubCategoryAction).mockResolvedValue(error);
-    vi.mocked(deleteSubCategoryAction).mockResolvedValue(error);
-
-    await expect(submitUpdateSubCategory(id, input, setError)).resolves.toBe(false);
-    await expect(submitDeleteSubCategory(id)).resolves.toBe(false);
-    expect(globalErrorHandler).toHaveBeenNthCalledWith(1, error, { showErrorFields: setError });
-    expect(globalErrorHandler).toHaveBeenNthCalledWith(2, error);
-    expect(toast.add).not.toHaveBeenCalled();
+    expect(onError).toHaveBeenCalledWith(failure, { id, ...input }, undefined, expect.anything());
+    expect(globalErrorHandler).not.toHaveBeenCalled();
+    setup.client.clear();
   });
 });

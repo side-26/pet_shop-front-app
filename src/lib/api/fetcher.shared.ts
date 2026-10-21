@@ -65,6 +65,23 @@ export function buildUrl(path: string, query?: QueryParams): string {
   return url.toString();
 }
 
+/** Build a same-origin URL for browser-facing Next.js Route Handlers. */
+export function buildInternalUrl(path: string, query?: QueryParams): string {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const browserOrigin = typeof window === 'undefined' ? 'http://localhost' : window.location.origin;
+  const url = new URL(/^https?:\/\//i.test(path) ? path : `${browserOrigin}${normalizedPath}`);
+
+  for (const [key, value] of Object.entries(query ?? {})) {
+    if (value == null) continue;
+
+    for (const item of Array.isArray(value) ? value : [value]) {
+      url.searchParams.append(key, String(item));
+    }
+  }
+
+  return url.toString();
+}
+
 export function serializeBody<TBody>(body: TBody | undefined): XMLHttpRequestBodyInit | undefined {
   if (body == null) return undefined;
   if (body instanceof FormData) return body;

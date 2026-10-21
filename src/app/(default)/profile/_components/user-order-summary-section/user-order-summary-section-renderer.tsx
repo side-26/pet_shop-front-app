@@ -22,7 +22,7 @@ export function UserOrderSummarySectionRenderer({ summary, isSkeleton = false }:
       aria-busy={isSkeleton || undefined}
       aria-labelledby="user-order-summary-title"
       className={cn(
-        'tw:grid tw:grid-cols-2 tw:gap-3 tw:sm:grid-cols-3 tw:md:min-w-[360px]',
+        'tw:grid tw:grid-cols-2 tw:gap-3 tw:sm:grid-cols-3 tw:md:min-w-90',
         isSkeleton && 'skeleton tw:pointer-events-none tw:select-none',
       )}
     >

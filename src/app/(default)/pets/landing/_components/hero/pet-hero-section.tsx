@@ -12,12 +12,14 @@ export function PetHeroSection() {
       aria-labelledby="pet-hero-title"
       className="tw:default-layout-container tw:py-8 tw:md:py-12"
     >
-      <div className="tw:group/hero tw:relative tw:h-[530px] tw:overflow-hidden tw:rounded-3xl tw:shadow-lg tw:md:h-[600px]">
+      <div className="tw:group/hero tw:relative tw:h-132.5 tw:overflow-hidden tw:rounded-3xl tw:shadow-lg tw:md:h-150">
         <Image
           src="/images/home/hero-pets.jpeg"
           alt="سگ گلدن رتریور و گربه پرشین در خانه‌ای روشن"
           fill
-          priority
+          preload
+          loading="eager"
+          fetchPriority="high"
           sizes="(min-width: 1280px) 1280px, 100vw"
           className="tw:object-cover tw:transition-transform tw:duration-700 tw:group-hover/hero:scale-105 tw:motion-reduce:transition-none tw:motion-reduce:group-hover/hero:transform-none"
         />

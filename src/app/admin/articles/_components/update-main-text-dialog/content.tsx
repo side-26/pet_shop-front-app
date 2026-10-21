@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 
+import { adminTallDialogScrollableContentClassName } from '@/app/admin/_components/admin-dialog.styles';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import RichTextField from '@/components/ui/fields/rich-text-field';
 import { Form } from '@/components/ui/form';
@@ -74,7 +75,7 @@ export function UpdateMainTextDialogContentWrapper({
       submitText="ذخیره تغییرات"
       title="ویرایش متن مقاله"
       size="xl"
-      contentClassName="tw:max-h-[72dvh] tw:overflow-y-auto"
+      contentClassName={adminTallDialogScrollableContentClassName}
     >
       <QueryErrorResetBoundary>
         {({ reset }) => (

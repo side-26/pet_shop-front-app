@@ -1,4 +1,5 @@
 'use client';
+import { adminDialogScrollableContentClassName } from '@/app/admin/_components/admin-dialog.styles';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { Dialog } from '@/components/ui/dialog';
 import { TextField } from '@/components/ui/fields/text-field';
@@ -28,7 +29,7 @@ export function CreatePetTypeDialog({
         submitText="ایجاد نوع حیوان"
         title="ایجاد نوع حیوان جدید"
         size="lg"
-        contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
+        contentClassName={adminDialogScrollableContentClassName}
       >
         <Form<PetTypeInput>
           ref={formRef}

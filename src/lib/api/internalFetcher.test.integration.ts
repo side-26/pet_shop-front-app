@@ -14,7 +14,7 @@ const fetchMock = vi.fn<typeof fetch>();
 beforeEach(() => {
   vi.clearAllMocks();
   vi.stubGlobal('fetch', fetchMock);
-  vi.stubEnv('NEXT_PUBLIC_API_BASE_URL', 'http://localhost');
+  vi.stubEnv('NEXT_PUBLIC_API_BASE_URL', 'https://api.example.test/api');
 });
 
 describe('internalFetcher observability', () => {
@@ -34,6 +34,9 @@ describe('internalFetcher observability', () => {
     ).resolves.toEqual({ result: [] });
 
     const headers = new Headers(fetchMock.mock.calls[0]?.[1]?.headers);
+    const requestUrl = new URL(String(fetchMock.mock.calls[0]?.[0]));
+    expect(requestUrl.origin).toBe(window.location.origin);
+    expect(requestUrl.pathname).toBe('/api/landing/products');
     expect(headers.get('x-request-id')).toBe('client_request_1234');
     expect(setClientRequestId).toHaveBeenCalledWith('server_request_1234');
     expect(reportClientError).not.toHaveBeenCalled();

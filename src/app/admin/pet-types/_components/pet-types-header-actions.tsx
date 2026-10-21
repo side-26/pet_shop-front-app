@@ -28,7 +28,6 @@ export function PetTypesHeaderActions() {
         onOpenChange={setCreateOpen}
         onCreated={() => {
           setCreateOpen(false);
-          router.refresh();
         }}
       />
     </Suspense>

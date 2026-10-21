@@ -1,25 +1,20 @@
 'use client';
 
-import { useRef } from 'react';
 import { PackagePlus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
-import {
-  CreateNewAddressDialog,
-  type CreateNewAddressDialogHandle,
-} from './create-new-address-dialog';
+import { useProfileAddressDialogs } from './profile-address-dialogs-context';
 
-export function CreateNewAddressButton() {
-  const dialogRef = useRef<CreateNewAddressDialogHandle>(null);
+export function CreateNewAddressButton({ disabled = false }: Readonly<{ disabled?: boolean }>) {
+  const { openCreate } = useProfileAddressDialogs();
 
   return (
     <>
-      <Button type="button" size="lg" onClick={() => dialogRef.current?.open()}>
+      <Button type="button" size="lg" disabled={disabled} onClick={openCreate}>
         <PackagePlus data-icon="inline-start" aria-hidden="true" />
         افزودن نشانی جدید
       </Button>
-      <CreateNewAddressDialog ref={dialogRef} />
     </>
   );
 }

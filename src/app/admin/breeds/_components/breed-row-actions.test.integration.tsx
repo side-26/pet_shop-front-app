@@ -10,9 +10,7 @@ import type { BreedDTO } from '@/entities/breeds/breeds.dto';
 
 import { BreedRowActions } from './breed-row-actions';
 
-vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock('@/entities/breeds/breeds.actions', () => ({
-  deleteBreedAction: vi.fn(),
   getBreedAction: vi.fn(),
   getBreedPropertyDefinitionsAction: vi.fn(),
 }));
@@ -23,6 +21,7 @@ vi.mock('@/entities/breeds/breeds.client', () => ({
     handleSubmit: vi.fn(),
     isPending: false,
   }),
+  useDeleteBreed: () => ({ isPending: false, remove: vi.fn() }),
 }));
 
 const breed: BreedDTO = {

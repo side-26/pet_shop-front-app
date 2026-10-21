@@ -53,6 +53,7 @@ const nextConfig: NextConfig = {
     },
     cssChunking: true,
     optimizeCss: true,
+    inlineCss: true,
   },
   ...(process.env.PETSHOP_CYPRESS_COMPONENT_TEST === 'true'
     ? {

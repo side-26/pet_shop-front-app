@@ -2,7 +2,7 @@ services:
   petshop-front-dev:
     build:
       context: .
-      dockerfile: DockerFIle.dev.yaml
+      dockerfile: Dockerfile.dev
     env_file:
       - .env
     environment:

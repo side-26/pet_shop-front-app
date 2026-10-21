@@ -49,7 +49,6 @@ export function SubCategoriesHeaderActions({
         categories={categories}
         onCreated={() => {
           setCreateOpen(false);
-          router.refresh();
         }}
       />
     </Suspense>

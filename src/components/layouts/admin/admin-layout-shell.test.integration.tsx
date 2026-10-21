@@ -60,7 +60,7 @@ describe('AdminLayoutShell', () => {
     expect(contentCard?.className).toContain('tw:w-full');
     expect(contentCard?.className).toContain('tw:flex-1');
     expect(contentCard?.className).toContain('tw:rounded-b-none');
-    expect(contentCard?.className).toContain('tw:p-[6px]');
+    expect(contentCard?.className).toContain('tw:p-1.5');
     expect(screen.getByRole('heading', { level: 1, name: 'داشبورد' })).toBeTruthy();
     expect(document.querySelector('[data-slot="admin-page-title-icon"]')).toBeTruthy();
     expect(screen.queryByText('خوش آمدید، مدیر ارشد')).toBeNull();

@@ -1,7 +1,5 @@
 'use client';
 
-import { useRouter } from '@/hooks/use-router';
-
 import { Switch } from '@/components/ui/fields/switch';
 import { useBreedStatus } from '@/entities/breeds/breeds.client';
 
@@ -13,8 +11,7 @@ type Props = {
 };
 
 export function BreedEnabledSwitch({ breedId, breedTitle, isEnabled, disabled = false }: Props) {
-  const router = useRouter();
-  const { isPending, update } = useBreedStatus(router.refresh);
+  const { isPending, update } = useBreedStatus();
 
   return (
     <Switch

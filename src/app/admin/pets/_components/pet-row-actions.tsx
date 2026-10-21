@@ -18,7 +18,7 @@ import {
   getPetImagesAction,
   getPetPriceAction,
 } from '@/entities/pets/pets.actions';
-import { submitDeletePet } from '@/entities/pets/pets.client';
+import { useDeletePetMutation } from '@/entities/pets/pets.client';
 import { useCommonStore } from '@/stores/common.store';
 
 import type {
@@ -38,6 +38,7 @@ export function PetRowActions({ petId, petTitle, disabled = false }: Props) {
   const router = useRouter();
   const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
   const [dialog, setDialog] = useState<DialogState>(null);
+  const { isPending: isDeleting, mutate: deletePet } = useDeletePetMutation();
 
   function open(section: PetSection) {
     if (disabled) return;
@@ -62,7 +63,8 @@ export function PetRowActions({ petId, petTitle, disabled = false }: Props) {
       icon: Trash2,
       variant: 'error',
       onSuccess: async () => {
-        if (await submitDeletePet(petId)) router.refresh();
+        if (isDeleting) return;
+        deletePet({ id: petId }, { onSuccess: router.refresh });
       },
     });
   }

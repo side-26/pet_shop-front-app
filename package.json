@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "deploy:vps": "bash scripts/deploy.sh",
     "lint": "eslint .",
     "format": "prettier --write . --ignore-unknown && eslint . --fix",
     "test": "pnpm run test:unit && pnpm run test:integration && pnpm run test:component && pnpm run test:e2e",
@@ -19,6 +20,8 @@
     "core-web-vitals:install": "playwright install chromium",
     "prepare": "husky",
     "cypress:open": "cypress open --e2e",
+    "analyze": "next experimental-analyze",
+    "analyze:output": "next experimental-analyze --output",
     "generate:typography": "node ./src/scripts/typography.generator.mjs"
   },
   "dependencies": {

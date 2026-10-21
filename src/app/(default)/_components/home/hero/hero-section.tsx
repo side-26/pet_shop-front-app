@@ -20,7 +20,7 @@ export function HeroSection() {
 
       <FadeIn
         loading="eager"
-        className="tw:default-layout-container tw:relative tw:grid tw:min-h-[calc(100svh-140px)] tw:items-center tw:gap-8 tw:lg:min-h-[640px] tw:lg:grid-cols-12 tw:lg:gap-10"
+        className="tw:default-layout-container tw:relative tw:grid tw:min-h-[calc(100svh-140px)] tw:items-center tw:gap-8 tw:lg:min-h-160 tw:lg:grid-cols-12 tw:lg:gap-10"
       >
         <div className="tw:flex tw:flex-col tw:items-start tw:gap-5 tw:lg:col-span-5">
           <RevealItem>
@@ -72,12 +72,14 @@ export function HeroSection() {
 
         <RevealItem className="tw:relative tw:lg:col-span-7">
           <div className="tw:absolute tw:-inset-3 tw:rounded-[2.25rem] tw:bg-primary/15 tw:blur-2xl tw:sm:-inset-5" />
-          <div className="tw:relative tw:aspect-[16/10] tw:overflow-hidden tw:rounded-[2rem] tw:border tw:border-background/70 tw:bg-card tw:shadow-2xl tw:shadow-foreground/15">
+          <div className="tw:relative tw:aspect-16/10 tw:overflow-hidden tw:rounded-4xl tw:border tw:border-background/70 tw:bg-card tw:shadow-2xl tw:shadow-foreground/15">
             <Image
               src="/images/home/hero-pets.jpeg"
               alt="سگ گلدن رتریور و گربه پرشین در خانه‌ای روشن، کنار نمای موبایل پت‌شاپ"
               fill
-              priority
+              preload
+              loading="eager"
+              fetchPriority="high"
               sizes="(min-width: 1024px) 58vw, 100vw"
               className="tw:object-cover tw:object-center"
             />

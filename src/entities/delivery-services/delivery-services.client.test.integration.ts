@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { toast } from '@/components/ui/toast';
 import { globalErrorHandler } from '@/utils/helpers';
@@ -15,12 +15,13 @@ import {
   updateDeliveryServiceAction,
 } from './delivery-services.actions';
 import {
-  submitCreateDeliveryService,
-  submitDeleteDeliveryService,
-  submitDeliveryServiceEnabledUpdate,
-  submitUpdateDeliveryService,
+  deliveryServicesQueryKeys,
   getAvailableDeliveryServices,
   useAvailableDeliveryServices,
+  useCreateDeliveryServiceMutation,
+  useDeleteDeliveryServiceMutation,
+  useDeliveryServiceStatusMutation,
+  useUpdateDeliveryServiceMutation,
 } from './delivery-services.client';
 
 vi.mock('./delivery-services.actions', () => ({
@@ -63,77 +64,109 @@ const failure = {
   data: { messages: [], details: {} },
 };
 
-describe('delivery service client orchestration', () => {
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: { mutations: { retry: false }, queries: { retry: false } },
+  });
+  return {
+    queryClient,
+    wrapper: ({ children }: { children: ReactNode }) =>
+      createElement(QueryClientProvider, { client: queryClient }, children),
+  };
+}
+
+afterEach(() => vi.clearAllMocks());
+
+describe('delivery service client data flow', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('submits creation and updates, then presents backend success messages', async () => {
-    vi.mocked(createDeliveryServiceAction).mockResolvedValue({
-      isSuccess: true,
-      message: 'ایجاد شد.',
-      data: {} as never,
-    });
-    vi.mocked(updateDeliveryServiceAction).mockResolvedValue({
-      isSuccess: true,
-      message: 'ویرایش شد.',
-      data: {} as never,
-    });
-    await expect(submitCreateDeliveryService(input, vi.fn())).resolves.toBe(true);
-    await expect(submitUpdateDeliveryService(id, input, vi.fn())).resolves.toBe(true);
-    expect(createDeliveryServiceAction).toHaveBeenCalledWith(input);
-    expect(updateDeliveryServiceAction).toHaveBeenCalledWith({ id, ...input });
-    expect(toast.add).toHaveBeenNthCalledWith(1, { type: 'success', title: 'ایجاد شد.' });
-    expect(toast.add).toHaveBeenNthCalledWith(2, { type: 'success', title: 'ویرایش شد.' });
-  });
-
   it('reads public delivery quotes through the delivery-service Server Action', async () => {
-    const result = { isSuccess: true as const, message: null, data: [] };
-    vi.mocked(getAvailableDeliveryServicesAction).mockResolvedValue(result);
+    const response = { isSuccess: true as const, message: null, data: [] };
+    vi.mocked(getAvailableDeliveryServicesAction).mockResolvedValue(response);
 
-    await expect(getAvailableDeliveryServices({ lat: 35.72, lng: 51.33 })).resolves.toBe(result);
+    await expect(getAvailableDeliveryServices({ lat: 35.72, lng: 51.33 })).resolves.toBe(response);
     expect(getAvailableDeliveryServicesAction).toHaveBeenCalledWith({ lat: 35.72, lng: 51.33 });
   });
 
-  it('uses an ephemeral TanStack Query for available-delivery reads', async () => {
+  it('keeps available-delivery reads ephemeral in TanStack Query', async () => {
     vi.mocked(getAvailableDeliveryServicesAction).mockResolvedValue({
       isSuccess: true,
       message: null,
       data: [],
     });
-    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-    const wrapper = ({ children }: { children: ReactNode }) =>
-      createElement(QueryClientProvider, { client: queryClient }, children);
-
+    const { queryClient, wrapper } = createWrapper();
     const { result } = renderHook(() => useAvailableDeliveryServices({ lat: 35.72, lng: 51.33 }), {
       wrapper,
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(getAvailableDeliveryServicesAction).toHaveBeenCalledWith({ lat: 35.72, lng: 51.33 });
     expect(queryClient.getQueryCache().findAll()).toHaveLength(1);
     queryClient.clear();
   });
 
   it.each([
-    [true, enableDeliveryServiceAction],
-    [false, disableDeliveryServiceAction],
-  ] as const)('selects the matching status action', async (enabled, action) => {
-    vi.mocked(action).mockResolvedValue({
-      isSuccess: true,
-      message: 'وضعیت تغییر کرد.',
-      data: {} as never,
-    });
-    await expect(submitDeliveryServiceEnabledUpdate(id, enabled)).resolves.toBe(true);
-    expect(action).toHaveBeenCalledWith({ id });
-  });
+    ['create', useCreateDeliveryServiceMutation, createDeliveryServiceAction, input, input],
+    [
+      'update',
+      useUpdateDeliveryServiceMutation,
+      updateDeliveryServiceAction,
+      { id, ...input },
+      { id, ...input },
+    ],
+    [
+      'enable',
+      useDeliveryServiceStatusMutation,
+      enableDeliveryServiceAction,
+      { id, enabled: true },
+      { id },
+    ],
+    [
+      'disable',
+      useDeliveryServiceStatusMutation,
+      disableDeliveryServiceAction,
+      { id, enabled: false },
+      { id },
+    ],
+    ['delete', useDeleteDeliveryServiceMutation, deleteDeliveryServiceAction, { id }, { id }],
+  ] as const)(
+    '%s invalidates client-owned quotes only after a successful response',
+    async (_, useHook, action, variables, expectedInput) => {
+      vi.mocked(action).mockResolvedValue({
+        isSuccess: true,
+        message: 'انجام شد.',
+        data: {} as never,
+      });
+      const { queryClient, wrapper } = createWrapper();
+      const quoteInput = { lat: 35.72, lng: 51.33 };
+      queryClient.setQueryData(deliveryServicesQueryKeys.available(quoteInput), []);
+      const { result } = renderHook(() => useHook(), { wrapper });
 
-  it('forwards form and destructive failures to the shared error handler', async () => {
+      await result.current.mutateAsync(variables as never);
+
+      expect(action).toHaveBeenCalledWith(expectedInput);
+      expect(
+        queryClient.getQueryState(deliveryServicesQueryKeys.available(quoteInput))?.isInvalidated,
+      ).toBe(true);
+      expect(toast.add).toHaveBeenCalledWith({ type: 'success', title: 'انجام شد.' });
+      queryClient.clear();
+    },
+  );
+
+  it('does not invalidate quotes or retry when the Server Action fails', async () => {
     vi.mocked(createDeliveryServiceAction).mockResolvedValue(failure);
-    vi.mocked(deleteDeliveryServiceAction).mockResolvedValue(failure);
-    const setError = vi.fn();
-    await expect(submitCreateDeliveryService(input, setError)).resolves.toBe(false);
-    await expect(submitDeleteDeliveryService(id)).resolves.toBe(false);
-    expect(globalErrorHandler).toHaveBeenNthCalledWith(1, failure, { showErrorFields: setError });
-    expect(globalErrorHandler).toHaveBeenNthCalledWith(2, failure);
+    const { queryClient, wrapper } = createWrapper();
+    const quoteInput = { lat: 35.72, lng: 51.33 };
+    queryClient.setQueryData(deliveryServicesQueryKeys.available(quoteInput), []);
+    const { result } = renderHook(() => useCreateDeliveryServiceMutation(), { wrapper });
+
+    await expect(result.current.mutateAsync(input)).rejects.toBe(failure);
+
+    expect(createDeliveryServiceAction).toHaveBeenCalledTimes(1);
+    expect(
+      queryClient.getQueryState(deliveryServicesQueryKeys.available(quoteInput))?.isInvalidated,
+    ).toBe(false);
+    expect(globalErrorHandler).toHaveBeenCalledWith(failure);
     expect(toast.add).not.toHaveBeenCalled();
+    queryClient.clear();
   });
 });

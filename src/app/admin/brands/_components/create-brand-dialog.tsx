@@ -2,6 +2,7 @@
 
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 
+import { adminDialogScrollableContentClassName } from '@/app/admin/_components/admin-dialog.styles';
 import { FormDialogContent } from '@/components/common/form-dialog-content';
 import { Dialog } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
@@ -56,7 +57,7 @@ export const CreateBrandDialog = forwardRef<BrandFormDialogHandle, Props>(
           submitText="ایجاد برند"
           title="ایجاد برند جدید"
           size="lg"
-          contentClassName="tw:max-h-[70dvh] tw:overflow-y-auto"
+          contentClassName={adminDialogScrollableContentClassName}
         >
           <Form<BrandInput>
             ref={formRef}

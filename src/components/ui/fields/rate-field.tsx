@@ -31,7 +31,7 @@ const rateFieldVariants = tv({
   variants: {
     size: {
       xs: { stars: 'tw:gap-0.5', star: 'tw:size-8', icon: 'tw:size-4', description: 'tw:text-xs' },
-      sm: { star: 'tw:size-9', icon: 'tw:size-[18px]', description: 'tw:text-xs' },
+      sm: { star: 'tw:size-9', icon: 'tw:size-4.5', description: 'tw:text-xs' },
       md: { star: 'tw:size-10', icon: 'tw:size-5', description: 'tw:text-xs' },
       lg: { star: 'tw:size-11', icon: 'tw:size-6', description: 'tw:text-[13px]/[1.6]' },
       xl: { star: 'tw:size-12', icon: 'tw:size-7', description: 'tw:text-[13px]/[1.6]' },

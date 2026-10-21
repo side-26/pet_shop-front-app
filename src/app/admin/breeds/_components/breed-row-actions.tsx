@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { EyeIcon, ListPlusIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
-import { useRouter } from '@/hooks/use-router';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -12,14 +11,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { toast } from '@/components/ui/toast';
 import {
-  deleteBreedAction,
   getBreedAction,
   getBreedPropertyDefinitionsAction,
 } from '@/entities/breeds/breeds.actions';
+import { useDeleteBreed } from '@/entities/breeds/breeds.client';
 import { useCommonStore } from '@/stores/common.store';
-import { globalErrorHandler } from '@/utils/helpers';
 
 import type { BreedCountryOption, BreedPetTypeOption } from './breeds-form.types';
 import { BreedDetailDialog } from './breed-detail-dialog';
@@ -43,11 +40,11 @@ export function BreedRowActions({
   petTypes,
   disabled = false,
 }: Props) {
-  const router = useRouter();
   const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
   const [detailRequest, setDetailRequest] = useState<DetailRequest | null>(null);
   const [propertyDefinitionsRequest, setPropertyDefinitionsRequest] =
     useState<PropertyDefinitionsRequest | null>(null);
+  const { remove } = useDeleteBreed(() => undefined);
 
   function confirmDeletion() {
     if (disabled) return;
@@ -57,10 +54,7 @@ export function BreedRowActions({
       icon: Trash2Icon,
       variant: 'error',
       onSuccess: async () => {
-        const result = await deleteBreedAction({ id: breedId });
-        if (!result.isSuccess) return globalErrorHandler(result);
-        toast.add({ type: 'success', title: result.message });
-        router.refresh();
+        await remove(breedId);
       },
     });
   }
@@ -114,7 +108,6 @@ export function BreedRowActions({
           onClose={() => setDetailRequest(null)}
           onUpdated={() => {
             setDetailRequest(null);
-            router.refresh();
           }}
         />
       ) : null}
@@ -125,7 +118,6 @@ export function BreedRowActions({
           onClose={() => setPropertyDefinitionsRequest(null)}
           onUpdated={() => {
             setPropertyDefinitionsRequest(null);
-            router.refresh();
           }}
         />
       ) : null}

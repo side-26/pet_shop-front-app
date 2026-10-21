@@ -15,9 +15,9 @@ export function DeliverySection() {
       className="tw:default-layout-container tw:grid tw:items-center tw:gap-10 tw:py-16 tw:lg:grid-cols-2 tw:lg:gap-16 tw:lg:py-24"
     >
       <RevealItem className="tw:relative">
-        <div className="tw:absolute tw:inset-0 tw:rotate-3 tw:rounded-[2rem] tw:bg-primary-muted" />
-        <ParallaxMedia className="tw:relative tw:overflow-hidden tw:rounded-[2rem] tw:border tw:border-border/60 tw:bg-card tw:shadow-xl">
-          <div className="tw:relative tw:aspect-[4/3]">
+        <div className="tw:absolute tw:inset-0 tw:rotate-3 tw:rounded-4xl tw:bg-primary-muted" />
+        <ParallaxMedia className="tw:relative tw:overflow-hidden tw:rounded-4xl tw:border tw:border-border/60 tw:bg-card tw:shadow-xl">
+          <div className="tw:relative tw:aspect-4/3">
             <Image
               src="/images/home/delivery-v2.jpg"
               alt="تحویل بسته محصولات پت در درب منزل"

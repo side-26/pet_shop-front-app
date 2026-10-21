@@ -9,15 +9,10 @@ import type { BrandFormDialogHandle } from './brand-form-dialog.types';
 import { BrandRowActions } from './brand-row-actions';
 import { CreateBrandDialog } from './create-brand-dialog';
 
-const refresh = vi.fn();
-
-vi.mock('@/hooks/use-router', () => ({ useRouter: () => ({ refresh }) }));
-vi.mock('@/entities/brands/brands.actions', () => ({
-  deleteBrandAction: vi.fn(),
-}));
 vi.mock('@/entities/brands/brands.client', () => ({
   useCreateBrand: () => ({ formRef: { current: null }, handleSubmit: vi.fn(), isPending: false }),
   useUpdateBrand: () => ({ formRef: { current: null }, handleSubmit: vi.fn(), isPending: false }),
+  useDeleteBrand: () => ({ isPending: false, remove: vi.fn() }),
 }));
 
 afterEach(() => {
@@ -107,8 +102,6 @@ describe('brand form dialogs', () => {
     expect(await screen.findByRole('dialog', { name: 'مشاهده و ویرایش برند' })).toBeTruthy();
     expect(await screen.findByDisplayValue('Royal Canin')).toBeTruthy();
     expect(screen.queryByText('فعال')).toBeNull();
-    expect(refresh).not.toHaveBeenCalled();
-
     fireEvent.click(screen.getByRole('button', { name: 'انصراف' }));
     await waitFor(() =>
       expect(screen.queryByRole('dialog', { name: 'مشاهده و ویرایش برند' })).toBeNull(),

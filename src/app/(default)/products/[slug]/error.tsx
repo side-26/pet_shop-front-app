@@ -8,7 +8,6 @@ export default function ProductDetailError({
   retry,
 }: Readonly<{ error: Error & { digest?: string }; retry: () => void }>) {
   useReportClientError(error);
-
   return (
     <PageErrorState statusCode={500} errorMessage="بارگذاری محصول کامل نشد." onRetry={retry} />
   );
