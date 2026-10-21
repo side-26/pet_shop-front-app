@@ -17,6 +17,11 @@ import {
   uploadRichTextImages,
 } from '@/entities/images/images.client';
 import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
+import {
+  type ActionMutation,
+  type ActionMutationOptions,
+  useMutationOptions,
+} from '@/hooks/use-mutation-options';
 import type { RichTextDocument } from '@/lib/rich-text';
 import { globalErrorHandler } from '@/utils/helpers';
 import { transformData } from '@/app/core/transformer/transform';
@@ -51,18 +56,11 @@ import {
 } from './articles.dto';
 import { articlesClientService } from './articles.client-service';
 
-type ArticleMutationOptions = Readonly<{
-  onError?: (error: FetcherError) => void;
-}>;
-type ArticleMutationAction<TVariables> = (variables: TVariables) => Promise<FetcherResult<unknown>>;
+type ArticleMutationOptions<TVariables> = ActionMutationOptions<TVariables>;
 type ArticleMutationSuccessHandler<TVariables> = (
   result: FetcherResult<unknown>,
   variables: TVariables,
 ) => void | Promise<void>;
-
-function reportMutationError(error: FetcherError) {
-  globalErrorHandler(error);
-}
 
 async function finalizeArticleMainText(
   mainText: UpdateArticleMainTextInput['mainText'],
@@ -88,13 +86,13 @@ export type DeleteArticleVariables = { id: string };
 
 export const articlesQueryKeys = {
   all: ['articles'] as const,
+  catalogPrefix: ['articles', 'catalog'] as const,
   mainInfo: (id: ArticleIdDTO['id']) => [...articlesQueryKeys.all, 'main-info', id] as const,
   mainText: (id: ArticleIdDTO['id']) => [...articlesQueryKeys.all, 'main-text', id] as const,
   tags: (id: ArticleIdDTO['id']) => [...articlesQueryKeys.all, 'tags', id] as const,
   catalog: (query: Readonly<Record<string, string>>) =>
     [
-      ...articlesQueryKeys.all,
-      'catalog',
+      ...articlesQueryKeys.catalogPrefix,
       new URLSearchParams(Object.entries(query).sort()).toString(),
     ] as const,
 };
@@ -192,30 +190,30 @@ export function useArticleTagsQuery() {
 }
 
 function useArticleMutation<TVariables>(
-  action: ArticleMutationAction<TVariables>,
-  { onError = reportMutationError }: ArticleMutationOptions = {},
-  onSuccess?: ArticleMutationSuccessHandler<TVariables>,
+  action: ActionMutation<TVariables>,
+  { onSuccess, ...options }: ArticleMutationOptions<TVariables> = {},
+  onEntitySuccess?: ArticleMutationSuccessHandler<TVariables>,
 ) {
-  return useMutation<FetcherResult<unknown>, FetcherError, TVariables>({
-    mutationFn: async (variables) => {
-      const result = await action(variables);
-      if (!result.isSuccess) throw result;
-      return result;
-    },
-    retry: 0,
-    onSuccess: async (result, variables) => {
-      toast.add({ type: 'success', title: result.message });
-      await onSuccess?.(result, variables);
-    },
-    onError,
+  return useMutation(
+    useMutationOptions(action, {
+      ...options,
+      onSuccess: async (result, variables, context, mutationContext) => {
+        await onEntitySuccess?.(result, variables);
+        await onSuccess?.(result, variables, context, mutationContext);
+      },
+    }),
+  );
+}
+
+export function useCreateArticleMutation(options?: ArticleMutationOptions<CreateArticleInput>) {
+  const queryClient = useQueryClient();
+
+  return useArticleMutation<CreateArticleInput>(createArticleAction, options, async () => {
+    await queryClient.invalidateQueries({ queryKey: articlesQueryKeys.catalogPrefix });
   });
 }
 
-export function useCreateArticleMutation(options?: ArticleMutationOptions) {
-  return useArticleMutation<CreateArticleInput>(createArticleAction, options);
-}
-
-export function useUpdateArticleMutation(options?: ArticleMutationOptions) {
+export function useUpdateArticleMutation(options?: ArticleMutationOptions<UpdateArticleVariables>) {
   const queryClient = useQueryClient();
 
   return useArticleMutation<UpdateArticleVariables>(
@@ -236,12 +234,17 @@ export function useUpdateArticleMutation(options?: ArticleMutationOptions) {
       });
 
       // The backend owns the resulting image URL, so reconcile this query after the local patch.
-      await queryClient.invalidateQueries({ queryKey });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey }),
+        queryClient.invalidateQueries({ queryKey: articlesQueryKeys.catalogPrefix }),
+      ]);
     },
   );
 }
 
-export function useUpdateArticleMainTextMutation(options?: ArticleMutationOptions) {
+export function useUpdateArticleMainTextMutation(
+  options?: ArticleMutationOptions<UpdateArticleMainTextVariables>,
+) {
   const queryClient = useQueryClient();
 
   return useArticleMutation<UpdateArticleMainTextVariables>(
@@ -253,31 +256,40 @@ export function useUpdateArticleMainTextMutation(options?: ArticleMutationOption
   );
 }
 
-export function useReplaceArticleTagsMutation(options?: ArticleMutationOptions) {
+export function useReplaceArticleTagsMutation(
+  options?: ArticleMutationOptions<ReplaceArticleTagsVariables>,
+) {
   const queryClient = useQueryClient();
 
   return useArticleMutation<ReplaceArticleTagsVariables>(
     replaceArticleTagsAction,
     options,
     async (_result, { id }) => {
-      await queryClient.invalidateQueries({ queryKey: articlesQueryKeys.tags(id) });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: articlesQueryKeys.tags(id) }),
+        queryClient.invalidateQueries({ queryKey: articlesQueryKeys.catalogPrefix }),
+      ]);
     },
   );
 }
 
-export function useDeleteArticleMutation(options?: ArticleMutationOptions) {
-  return useArticleMutation<DeleteArticleVariables>(deleteArticleAction, options);
+export function useDeleteArticleMutation(options?: ArticleMutationOptions<DeleteArticleVariables>) {
+  const queryClient = useQueryClient();
+
+  return useArticleMutation<DeleteArticleVariables>(deleteArticleAction, options, async () => {
+    await queryClient.invalidateQueries({ queryKey: articlesQueryKeys.catalogPrefix });
+  });
 }
 
 export function useDeleteArticle(onDeleted: () => void) {
-  const { isPending, mutateAsync } = useDeleteArticleMutation();
+  const { isPending, mutate } = useDeleteArticleMutation();
 
   const deleteArticle = useCallback(
-    async (id: string) => {
-      await mutateAsync({ id });
-      onDeleted();
+    (id: string) => {
+      if (isPending) return;
+      mutate({ id }, { onSuccess: onDeleted });
     },
-    [mutateAsync, onDeleted],
+    [isPending, mutate, onDeleted],
   );
 
   return { deleteArticle, isPending } as const;
@@ -291,7 +303,7 @@ export function useCreateArticle(onCreated: () => void) {
       globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
     },
   });
-  const { isPending, mutateAsync } = mutation;
+  const { isPending, mutate } = mutation;
 
   const handleSubmit = useCallback(
     async (input: CreateArticleInput) => {
@@ -303,15 +315,17 @@ export function useCreateArticle(onCreated: () => void) {
       if (!mainText) return;
       form?.setValue('mainText', mainText);
 
-      try {
-        await mutateAsync({ ...input, mainText });
-        persistRichTextDraftImages(mainText);
-        onCreated();
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate(
+        { ...input, mainText },
+        {
+          onSuccess: () => {
+            persistRichTextDraftImages(mainText);
+            onCreated();
+          },
+        },
+      );
     },
-    [isPending, mutateAsync, onCreated],
+    [isPending, mutate, onCreated],
   );
 
   return { formRef, handleSubmit, isPending } as const;
@@ -325,19 +339,14 @@ export function useUpdateArticle(id: string, onUpdated: () => void) {
       globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
     },
   });
-  const { isPending, mutateAsync } = mutation;
+  const { isPending, mutate } = mutation;
 
   const handleSubmit = useCallback(
     async (input: UpdateArticleInput) => {
       if (isPending) return;
-      try {
-        await mutateAsync({ id, ...input });
-        onUpdated();
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate({ id, ...input }, { onSuccess: onUpdated });
     },
-    [id, isPending, mutateAsync, onUpdated],
+    [id, isPending, mutate, onUpdated],
   );
 
   return { formRef, handleSubmit, isPending } as const;
@@ -351,7 +360,7 @@ export function useUpdateArticleMainText(id: string, onUpdated: () => void) {
       globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
     },
   });
-  const { isPending, mutateAsync } = mutation;
+  const { isPending, mutate } = mutation;
 
   const handleSubmit = useCallback(
     async (input: UpdateArticleMainTextInput) => {
@@ -363,15 +372,17 @@ export function useUpdateArticleMainText(id: string, onUpdated: () => void) {
       if (!mainText) return;
       form?.setValue('mainText', mainText);
 
-      try {
-        await mutateAsync({ id, ...input, mainText });
-        persistRichTextDraftImages(mainText);
-        onUpdated();
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate(
+        { id, ...input, mainText },
+        {
+          onSuccess: () => {
+            persistRichTextDraftImages(mainText);
+            onUpdated();
+          },
+        },
+      );
     },
-    [id, isPending, mutateAsync, onUpdated],
+    [id, isPending, mutate, onUpdated],
   );
 
   return { formRef, handleSubmit, isPending } as const;
@@ -385,18 +396,13 @@ export function useUpdateArticleTags(id: string, onUpdated: () => void) {
       globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
     },
   });
-  const { isPending, mutateAsync } = mutation;
+  const { isPending, mutate } = mutation;
   const handleSubmit = useCallback(
     async (input: ReplaceArticleTagsInput) => {
       if (isPending) return;
-      try {
-        await mutateAsync({ id, ...input });
-        onUpdated();
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate({ id, ...input }, { onSuccess: onUpdated });
     },
-    [id, isPending, mutateAsync, onUpdated],
+    [id, isPending, mutate, onUpdated],
   );
   return { formRef, handleSubmit, isPending } as const;
 }

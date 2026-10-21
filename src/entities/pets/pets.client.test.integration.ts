@@ -1,6 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { createElement, type ReactNode } from 'react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { toast } from '@/components/ui/toast';
 import { globalErrorHandler } from '@/utils/helpers';
 
 import {
@@ -10,10 +12,10 @@ import {
   updatePetPriceAction,
 } from './pets.actions';
 import {
-  submitCreatePet,
-  submitDeletePet,
-  submitPetEnabledUpdate,
-  submitUpdatePetPrice,
+  useCreatePetMutation,
+  useDeletePetMutation,
+  usePetStatusMutation,
+  useUpdatePetPriceMutation,
 } from './pets.client';
 
 vi.mock('./pets.actions', () => ({
@@ -29,10 +31,9 @@ vi.mock('@/components/ui/toast', () => ({ toast: { add: vi.fn() } }));
 vi.mock('@/utils/helpers', () => ({ globalErrorHandler: vi.fn() }));
 
 const id = '507f1f77bcf86cd799439010';
-const description = { type: 'doc' as const, content: [] };
 const input = {
   title: 'Kitten',
-  description,
+  description: { type: 'doc' as const, content: [] },
   petType: '507f1f77bcf86cd799439011',
   breed: '507f1f77bcf86cd799439012',
   slug: 'kitten',
@@ -45,44 +46,61 @@ const input = {
   discountPercentage: 0,
   inEnable: true,
 };
+const success = { isSuccess: true as const, message: 'انجام شد', data: {} as never };
 const failure = {
   isSuccess: false as const,
-  message: 'failed',
+  message: 'ناموفق',
   data: { messages: {}, details: {} },
 };
 
-describe('pet client orchestration', () => {
+function createWrapper() {
+  const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
+  const wrapper = ({ children }: { children: ReactNode }) =>
+    createElement(QueryClientProvider, { client: queryClient }, children);
+  return { queryClient, wrapper };
+}
+
+describe('pet client mutations', () => {
+  afterEach(() => vi.clearAllMocks());
   beforeEach(() => vi.clearAllMocks());
 
-  it('shows success messages for create and update', async () => {
-    vi.mocked(createPetAction).mockResolvedValue({
-      isSuccess: true,
-      message: 'created',
-      data: {} as never,
+  it('delegates create, section update, status, and delete mutations to their Server Actions', async () => {
+    vi.mocked(createPetAction).mockResolvedValue(success);
+    vi.mocked(updatePetPriceAction).mockResolvedValue(success);
+    vi.mocked(disablePetAction).mockResolvedValue(success);
+    vi.mocked(deletePetAction).mockResolvedValue(success);
+    const { queryClient, wrapper } = createWrapper();
+    const { result: create } = renderHook(() => useCreatePetMutation(), { wrapper });
+    const { result: updatePrice } = renderHook(() => useUpdatePetPriceMutation(), { wrapper });
+    const { result: status } = renderHook(() => usePetStatusMutation(), { wrapper });
+    const { result: remove } = renderHook(() => useDeletePetMutation(), { wrapper });
+
+    await act(async () => {
+      await create.current.mutateAsync(input);
+      await updatePrice.current.mutateAsync({ id, price: 200 });
+      await status.current.mutateAsync({ id, enabled: false });
+      await remove.current.mutateAsync({ id });
     });
-    vi.mocked(updatePetPriceAction).mockResolvedValue({
-      isSuccess: true,
-      message: 'updated',
-      data: {} as never,
-    });
-    await expect(submitCreatePet(input, vi.fn())).resolves.toBe(true);
-    await expect(submitUpdatePetPrice(id, { price: 200 }, vi.fn())).resolves.toBe(true);
+
+    expect(createPetAction).toHaveBeenCalledWith(input);
     expect(updatePetPriceAction).toHaveBeenCalledWith({ id, price: 200 });
-    expect(toast.add).toHaveBeenNthCalledWith(1, { type: 'success', title: 'created' });
-    expect(toast.add).toHaveBeenNthCalledWith(2, { type: 'success', title: 'updated' });
+    expect(disablePetAction).toHaveBeenCalledWith({ id });
+    expect(deletePetAction).toHaveBeenCalledWith({ id });
+    await waitFor(() => expect(remove.current.isSuccess).toBe(true));
+    queryClient.clear();
   });
 
-  it('forwards complete form and row errors', async () => {
-    const setError = vi.fn();
-    vi.mocked(createPetAction).mockResolvedValue(failure);
-    vi.mocked(disablePetAction).mockResolvedValue(failure);
+  it('reports a failed action result once and does not retry it', async () => {
     vi.mocked(deletePetAction).mockResolvedValue(failure);
-    await expect(submitCreatePet(input, setError)).resolves.toBe(false);
-    await expect(submitPetEnabledUpdate(id, false)).resolves.toBe(false);
-    await expect(submitDeletePet(id)).resolves.toBe(false);
-    expect(globalErrorHandler).toHaveBeenNthCalledWith(1, failure, { showErrorFields: setError });
-    expect(globalErrorHandler).toHaveBeenNthCalledWith(2, failure);
-    expect(globalErrorHandler).toHaveBeenNthCalledWith(3, failure);
-    expect(toast.add).not.toHaveBeenCalled();
+    const { queryClient, wrapper } = createWrapper();
+    const { result } = renderHook(() => useDeletePetMutation(), { wrapper });
+
+    await act(async () => {
+      await expect(result.current.mutateAsync({ id })).rejects.toBe(failure);
+    });
+
+    expect(globalErrorHandler).toHaveBeenCalledWith(failure);
+    expect(deletePetAction).toHaveBeenCalledOnce();
+    queryClient.clear();
   });
 });

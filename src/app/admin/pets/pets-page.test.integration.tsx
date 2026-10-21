@@ -16,7 +16,7 @@ vi.mock('@/entities/pets/pets.client', () => ({
     disable: vi.fn(),
     remove: vi.fn(),
   }),
-  submitDeletePet: vi.fn(),
+  useDeletePetMutation: () => ({ isPending: false, mutate: vi.fn() }),
 }));
 
 afterEach(cleanup);

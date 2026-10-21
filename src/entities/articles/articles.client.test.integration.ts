@@ -186,6 +186,30 @@ describe('article client mutations', () => {
     queryClient.clear();
   });
 
+  it('invalidates the catalog prefix after successful create and delete mutations', async () => {
+    vi.mocked(createArticleAction).mockResolvedValue(success);
+    vi.mocked(deleteArticleAction).mockResolvedValue(success);
+    const { queryClient, wrapper } = createWrapper();
+    const invalidateQueries = vi.spyOn(queryClient, 'invalidateQueries');
+    const { result: create } = renderHook(() => useCreateArticleMutation(), { wrapper });
+    const { result: remove } = renderHook(() => useDeleteArticleMutation(), { wrapper });
+
+    await act(async () => {
+      await create.current.mutateAsync(createInput);
+      await remove.current.mutateAsync({ id });
+    });
+
+    expect(invalidateQueries).toHaveBeenCalledWith({
+      queryKey: articlesQueryKeys.catalogPrefix,
+    });
+    expect(
+      invalidateQueries.mock.calls.filter(
+        ([filters]) => filters?.queryKey === articlesQueryKeys.catalogPrefix,
+      ),
+    ).toHaveLength(2);
+    queryClient.clear();
+  });
+
   it('patches and refreshes only the matching main-info cache entry after an update', async () => {
     vi.mocked(updateArticleAction).mockResolvedValue(success);
     const { queryClient, wrapper } = createWrapper();
@@ -217,6 +241,9 @@ describe('article client mutations', () => {
       petType: '507f1f77bcf86cd799439012',
     });
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey });
+    expect(invalidateQueries).toHaveBeenCalledWith({
+      queryKey: articlesQueryKeys.catalogPrefix,
+    });
     queryClient.clear();
   });
 
@@ -237,7 +264,7 @@ describe('article client mutations', () => {
     queryClient.clear();
   });
 
-  it('refreshes only the matching tags cache entry after replacement', async () => {
+  it('refreshes matching tags and catalog caches after replacement', async () => {
     vi.mocked(replaceArticleTagsAction).mockResolvedValue(success);
     const { queryClient, wrapper } = createWrapper();
     const queryKey = articlesQueryKeys.tags(id);
@@ -249,6 +276,9 @@ describe('article client mutations', () => {
     });
 
     expect(invalidateQueries).toHaveBeenCalledWith({ queryKey });
+    expect(invalidateQueries).toHaveBeenCalledWith({
+      queryKey: articlesQueryKeys.catalogPrefix,
+    });
     queryClient.clear();
   });
 
