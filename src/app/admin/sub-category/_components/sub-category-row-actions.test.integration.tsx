@@ -21,6 +21,7 @@ vi.mock('@/entities/sub-categories/sub-categories.actions', () => ({
   getSubCategoryByIdAction: vi.fn(),
 }));
 vi.mock('@/entities/sub-categories/sub-categories.client', () => ({
+  useDeleteSubCategory: () => ({ remove: deleteSubCategoryAction, isPending: false }),
   useUpdateSubCategory: () => ({
     formRef: { current: null },
     handleSubmit: vi.fn(),
@@ -108,7 +109,7 @@ describe('SubCategoryRowActions', () => {
     );
   });
 
-  it('requires confirmation before deleting and refreshes after success', async () => {
+  it('requires confirmation before deleting through the mutation hook', async () => {
     vi.mocked(deleteSubCategoryAction).mockResolvedValue({
       isSuccess: true,
       message: 'حذف شد',
@@ -135,8 +136,8 @@ describe('SubCategoryRowActions', () => {
     });
 
     await act(async () => useCommonStore.getState().confirmDialog.onSuccess());
-    expect(deleteSubCategoryAction).toHaveBeenCalledWith({ id: subCategory.id });
-    expect(toast.add).toHaveBeenCalledWith({ type: 'success', title: 'حذف شد' });
-    expect(refresh).toHaveBeenCalledOnce();
+    expect(deleteSubCategoryAction).toHaveBeenCalledWith(subCategory.id);
+    expect(toast.add).not.toHaveBeenCalled();
+    expect(refresh).not.toHaveBeenCalled();
   });
 });

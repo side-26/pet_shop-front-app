@@ -3,6 +3,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
+import { ReactQueryProvider } from '@/app/react-query-provider';
 import { getAllPetTypesAction } from '@/entities/pet-types/pet-types.actions';
 import type { PetTypeDTO } from '@/entities/pet-types/pet-types.dto';
 
@@ -39,9 +40,11 @@ const petTypes: PetTypeDTO[] = [
 
 function renderTable(props?: Partial<React.ComponentProps<typeof PetTypesTable>>) {
   return render(
-    <DirectionProvider direction="rtl">
-      <PetTypesTable petTypes={petTypes} {...props} />
-    </DirectionProvider>,
+    <ReactQueryProvider>
+      <DirectionProvider direction="rtl">
+        <PetTypesTable petTypes={petTypes} {...props} />
+      </DirectionProvider>
+    </ReactQueryProvider>,
   );
 }
 
@@ -84,7 +87,9 @@ describe(routePaths.adminPetTypes, () => {
     });
 
     const { container, rerender } = render(
-      <DirectionProvider direction="rtl">{loaded}</DirectionProvider>,
+      <ReactQueryProvider>
+        <DirectionProvider direction="rtl">{loaded}</DirectionProvider>
+      </ReactQueryProvider>,
     );
     expect(screen.getByText('سگ')).toBeTruthy();
     expect(screen.getByText('سگ').className).toContain('tw:line-clamp-2');
@@ -94,7 +99,11 @@ describe(routePaths.adminPetTypes, () => {
     );
     expect(screen.getByRole('switch', { name: 'سگ: فعال' })).toBeTruthy();
 
-    rerender(<DirectionProvider direction="rtl">{error}</DirectionProvider>);
+    rerender(
+      <ReactQueryProvider>
+        <DirectionProvider direction="rtl">{error}</DirectionProvider>
+      </ReactQueryProvider>,
+    );
     expect(screen.getByText('دریافت انواع حیوان انجام نشد')).toBeTruthy();
     expect(screen.getByText('خطا در ارتباط با سرور')).toBeTruthy();
   });

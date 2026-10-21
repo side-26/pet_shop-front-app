@@ -3,6 +3,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
+import { ReactQueryProvider } from '@/app/react-query-provider';
 import { getAllCategoriesAction } from '@/entities/categories/categories.actions';
 import type { CategoryDTO } from '@/entities/categories/categories.dto';
 import { getAllPetTypesAction } from '@/entities/pet-types/pet-types.actions';
@@ -67,9 +68,11 @@ afterEach(cleanup);
 describe(routePaths.adminSubCategories, () => {
   it('renders the shared table renderer as a busy non-interactive skeleton', () => {
     const { container } = render(
-      <DirectionProvider direction="rtl">
-        <SubCategoriesTable rows={subCategoriesTableSkeletonData} isSkeleton />
-      </DirectionProvider>,
+      <ReactQueryProvider>
+        <DirectionProvider direction="rtl">
+          <SubCategoriesTable rows={subCategoriesTableSkeletonData} isSkeleton />
+        </DirectionProvider>
+      </ReactQueryProvider>,
     );
 
     const section = container.querySelector('section');
@@ -93,7 +96,11 @@ describe(routePaths.adminSubCategories, () => {
       petTypesPromise: Promise.resolve({ isSuccess: true, message: null, data: [petType] }),
     });
 
-    render(<DirectionProvider direction="rtl">{content}</DirectionProvider>);
+    render(
+      <ReactQueryProvider>
+        <DirectionProvider direction="rtl">{content}</DirectionProvider>
+      </ReactQueryProvider>,
+    );
     expect(screen.getByText('غذای خشک')).toBeTruthy();
     expect(screen.getByText('غذای خشک').className).toContain('tw:line-clamp-2');
     expect(screen.getByText('غذا')).toBeTruthy();
@@ -112,7 +119,11 @@ describe(routePaths.adminSubCategories, () => {
       petTypesPromise: Promise.resolve({ isSuccess: true, message: null, data: [] }),
     });
 
-    render(<DirectionProvider direction="rtl">{error}</DirectionProvider>);
+    render(
+      <ReactQueryProvider>
+        <DirectionProvider direction="rtl">{error}</DirectionProvider>
+      </ReactQueryProvider>,
+    );
     expect(screen.getByText('دریافت زیر دسته‌بندی‌ها انجام نشد')).toBeTruthy();
 
     SubCategoriesTableWrapper();

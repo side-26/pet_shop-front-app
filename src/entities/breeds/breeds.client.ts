@@ -4,8 +4,12 @@ import { useMutation } from '@tanstack/react-query';
 import { useCallback, useRef } from 'react';
 
 import type { FormHandle } from '@/components/ui/form';
-import { toast } from '@/components/ui/toast';
-import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
+import type { FetcherError } from '@/lib/api/customFetcher';
+import {
+  type ActionMutation,
+  type ActionMutationOptions,
+  useMutationOptions,
+} from '@/hooks/use-mutation-options';
 import { globalErrorHandler } from '@/utils/helpers';
 
 import {
@@ -18,156 +22,122 @@ import {
 } from './breeds.actions';
 import type { BreedPropertyDefinitionsFormInput, UpdateBreedInput } from './breeds.schema';
 
-type BreedMutationAction<TVariables> = (input: TVariables) => Promise<FetcherResult<unknown>>;
-type BreedMutationOptions = {
-  onError?: (error: FetcherError) => void;
-  onSuccess?: () => void | Promise<void>;
-};
+type BreedMutationOptions<TVariables> = ActionMutationOptions<TVariables>;
 
 /** Breed reads are Server Component data; EntityTag invalidation refreshes them. */
 function useBreedMutation<TVariables>(
-  action: BreedMutationAction<TVariables>,
-  { onError = globalErrorHandler, onSuccess }: BreedMutationOptions = {},
+  action: ActionMutation<TVariables>,
+  options?: BreedMutationOptions<TVariables>,
 ) {
-  return useMutation<FetcherResult<unknown>, FetcherError, TVariables>({
-    mutationFn: async (variables) => {
-      const result = await action(variables);
-      if (!result.isSuccess) throw result;
-      return result;
-    },
-    retry: false,
-    onError: (error) => onError(error),
-    onSuccess: async (result) => {
-      toast.add({ type: 'success', title: result.message });
-      await onSuccess?.();
-    },
-  });
+  return useMutation(useMutationOptions(action, options));
 }
 
-export function useCreateBreedMutation(options?: BreedMutationOptions) {
+export function useCreateBreedMutation(options?: BreedMutationOptions<UpdateBreedInput>) {
   return useBreedMutation<UpdateBreedInput>(createBreedAction, options);
 }
 
-export function useUpdateBreedMutation(options?: BreedMutationOptions) {
+export function useUpdateBreedMutation(
+  options?: BreedMutationOptions<{ id: string } & UpdateBreedInput>,
+) {
   return useBreedMutation<{ id: string } & UpdateBreedInput>(updateBreedAction, options);
 }
 
-export function useReplaceBreedPropertyDefinitionsMutation(options?: BreedMutationOptions) {
+export function useReplaceBreedPropertyDefinitionsMutation(
+  options?: BreedMutationOptions<{ id: string } & BreedPropertyDefinitionsFormInput>,
+) {
   return useBreedMutation<{ id: string } & BreedPropertyDefinitionsFormInput>(
     replaceBreedPropertyDefinitionsAction,
     options,
   );
 }
 
-export function useBreedStatusMutation(options?: BreedMutationOptions) {
+export function useBreedStatusMutation(
+  options?: BreedMutationOptions<{ id: string; enabled: boolean }>,
+) {
   return useBreedMutation<{ id: string; enabled: boolean }>(
     async ({ id, enabled }) => (enabled ? enableBreedAction : disableBreedAction)({ id }),
     options,
   );
 }
 
-export function useDeleteBreedMutation(options?: BreedMutationOptions) {
+export function useDeleteBreedMutation(options?: BreedMutationOptions<{ id: string }>) {
   return useBreedMutation<{ id: string }>(deleteBreedAction, options);
 }
 
 export function useCreateBreed(onSuccess: () => void) {
   const formRef = useRef<FormHandle<UpdateBreedInput>>(null);
-  const { isPending, mutateAsync } = useCreateBreedMutation({
+  const { isPending, mutate } = useCreateBreedMutation({
     onError: (error) => {
       const form = formRef.current;
       globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
     },
   });
   const handleSubmit = useCallback(
-    async (input: UpdateBreedInput) => {
+    (input: UpdateBreedInput) => {
       if (isPending) return;
-      try {
-        await mutateAsync(input);
-        onSuccess();
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate(input, { onSuccess });
     },
-    [isPending, mutateAsync, onSuccess],
+    [isPending, mutate, onSuccess],
   );
   return { formRef, handleSubmit, isPending } as const;
 }
 
 export function useUpdateBreed(id: string, onSuccess: () => void) {
   const formRef = useRef<FormHandle<UpdateBreedInput>>(null);
-  const { isPending, mutateAsync } = useUpdateBreedMutation({
+  const { isPending, mutate } = useUpdateBreedMutation({
     onError: (error) => {
       const form = formRef.current;
       globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
     },
   });
   const handleSubmit = useCallback(
-    async (input: UpdateBreedInput) => {
+    (input: UpdateBreedInput) => {
       if (isPending) return;
-      try {
-        await mutateAsync({ id, ...input });
-        onSuccess();
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate({ id, ...input }, { onSuccess });
     },
-    [id, isPending, mutateAsync, onSuccess],
+    [id, isPending, mutate, onSuccess],
   );
   return { formRef, handleSubmit, isPending } as const;
 }
 
 export function useBreedStatus() {
-  const { isPending, mutateAsync } = useBreedStatusMutation();
+  const { isPending, mutate } = useBreedStatusMutation();
   const update = useCallback(
-    async (id: string, enabled: boolean) => {
+    (id: string, enabled: boolean) => {
       if (isPending) return;
-      try {
-        await mutateAsync({ id, enabled });
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate({ id, enabled });
     },
-    [isPending, mutateAsync],
+    [isPending, mutate],
   );
   return { isPending, update } as const;
 }
 
 export function useReplaceBreedPropertyDefinitions(id: string, onSuccess: () => void) {
   const formRef = useRef<FormHandle<BreedPropertyDefinitionsFormInput>>(null);
-  const { isPending, mutateAsync } = useReplaceBreedPropertyDefinitionsMutation({
+  const { isPending, mutate } = useReplaceBreedPropertyDefinitionsMutation({
     onError: (error) => {
       const form = formRef.current;
       globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
     },
   });
   const handleSubmit = useCallback(
-    async (input: BreedPropertyDefinitionsFormInput) => {
+    (input: BreedPropertyDefinitionsFormInput) => {
       if (isPending) return;
-      try {
-        await mutateAsync({ id, ...input });
-        onSuccess();
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate({ id, ...input }, { onSuccess });
     },
-    [id, isPending, mutateAsync, onSuccess],
+    [id, isPending, mutate, onSuccess],
   );
   return { formRef, handleSubmit, isPending } as const;
 }
 
 export function useDeleteBreed(onSuccess: () => void) {
-  const { isPending, mutateAsync } = useDeleteBreedMutation();
+  const { isPending, mutate } = useDeleteBreedMutation();
   const remove = useCallback(
-    async (id: string) => {
+    (id: string) => {
       if (isPending) return;
-      try {
-        await mutateAsync({ id });
-        onSuccess();
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate({ id }, { onSuccess });
     },
-    [isPending, mutateAsync, onSuccess],
+    [isPending, mutate, onSuccess],
   );
   return { isPending, remove } as const;
 }

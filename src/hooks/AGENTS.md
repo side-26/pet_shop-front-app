@@ -4,7 +4,7 @@
 
 ## Contents
 
-- Dialog, debounce, responsive viewport, unsaved-change prevention, default-value, client-action adaptation, browser-share, and top-loader-backed router hooks.
+- Dialog, debounce, mutation-option, responsive viewport, unsaved-change prevention, default-value, client-action adaptation, browser-share, and top-loader-backed router hooks.
 - `use-report-client-error.ts` connects client boundaries to sanitized observability reporting.
 
 ## Rules
@@ -15,6 +15,7 @@
 
 - `use-router.ts` is the sole client-side programmatic-navigation entry point and delegates to `nextjs-toploader/app`.
 - `use-share.ts` owns the browser share-sheet and clipboard fallback contract for current-page sharing.
+- `use-mutation-options.ts` standardizes TanStack mutations backed by Server Actions that return the project's `FetcherResult` union. It throws unsuccessful results so `onError` handles them, and defaults retry, error reporting, and success toasts.
 
 ## Maintenance
 

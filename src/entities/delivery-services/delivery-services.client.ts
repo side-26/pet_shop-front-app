@@ -116,79 +116,60 @@ export function useDeleteDeliveryServiceMutation(options?: DeliveryServiceMutati
 
 export function useCreateDeliveryService(onSuccess: () => void) {
   const formRef = useRef<FormHandle<DeliveryServiceInput>>(null);
-  const { isPending, mutateAsync } = useCreateDeliveryServiceMutation({
+  const { isPending, mutate } = useCreateDeliveryServiceMutation({
     onError: (error) => {
       const form = formRef.current;
       globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
     },
   });
   const handleSubmit = useCallback(
-    async (input: DeliveryServiceInput) => {
+    (input: DeliveryServiceInput) => {
       if (isPending) return;
-      try {
-        await mutateAsync(input);
-        onSuccess();
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate(input, { onSuccess });
     },
-    [isPending, mutateAsync, onSuccess],
+    [isPending, mutate, onSuccess],
   );
   return { formRef, handleSubmit, isPending } as const;
 }
 
 export function useUpdateDeliveryService(id: string, onSuccess: () => void) {
   const formRef = useRef<FormHandle<UpdateDeliveryServiceInput>>(null);
-  const { isPending, mutateAsync } = useUpdateDeliveryServiceMutation({
+  const { isPending, mutate } = useUpdateDeliveryServiceMutation({
     onError: (error) => {
       const form = formRef.current;
       globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
     },
   });
   const handleSubmit = useCallback(
-    async (input: UpdateDeliveryServiceInput) => {
+    (input: UpdateDeliveryServiceInput) => {
       if (isPending) return;
-      try {
-        await mutateAsync({ id, ...input });
-        onSuccess();
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate({ id, ...input }, { onSuccess });
     },
-    [id, isPending, mutateAsync, onSuccess],
+    [id, isPending, mutate, onSuccess],
   );
   return { formRef, handleSubmit, isPending } as const;
 }
 
 export function useDeliveryServiceStatus() {
-  const { isPending, mutateAsync } = useDeliveryServiceStatusMutation();
+  const { isPending, mutate } = useDeliveryServiceStatusMutation();
   const update = useCallback(
-    async (id: string, enabled: boolean) => {
+    (id: string, enabled: boolean) => {
       if (isPending) return;
-      try {
-        await mutateAsync({ id, enabled });
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate({ id, enabled });
     },
-    [isPending, mutateAsync],
+    [isPending, mutate],
   );
   return { isPending, update } as const;
 }
 
 export function useDeleteDeliveryService(onSuccess: () => void) {
-  const { isPending, mutateAsync } = useDeleteDeliveryServiceMutation();
+  const { isPending, mutate } = useDeleteDeliveryServiceMutation();
   const remove = useCallback(
-    async (id: string) => {
+    (id: string) => {
       if (isPending) return;
-      try {
-        await mutateAsync({ id });
-        onSuccess();
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate({ id }, { onSuccess });
     },
-    [isPending, mutateAsync, onSuccess],
+    [isPending, mutate, onSuccess],
   );
   return { isPending, remove } as const;
 }

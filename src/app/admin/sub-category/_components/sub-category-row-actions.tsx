@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { EyeIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
-import { useRouter } from '@/hooks/use-router';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -12,13 +11,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { toast } from '@/components/ui/toast';
-import {
-  deleteSubCategoryAction,
-  getSubCategoryByIdAction,
-} from '@/entities/sub-categories/sub-categories.actions';
+import { getSubCategoryByIdAction } from '@/entities/sub-categories/sub-categories.actions';
+import { useDeleteSubCategory } from '@/entities/sub-categories/sub-categories.client';
 import { useCommonStore } from '@/stores/common.store';
-import { globalErrorHandler } from '@/utils/helpers';
 
 import type { SubCategoryOption } from './sub-categories-form.types';
 import { SubCategoryDetailDialog } from './sub-category-detail-dialog';
@@ -36,8 +31,8 @@ export function SubCategoryRowActions({
   categories,
   disabled = false,
 }: Props) {
-  const router = useRouter();
   const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
+  const { remove } = useDeleteSubCategory(() => undefined);
   const [detailRequest, setDetailRequest] = useState<ReturnType<
     typeof getSubCategoryByIdAction
   > | null>(null);
@@ -54,10 +49,7 @@ export function SubCategoryRowActions({
       icon: Trash2Icon,
       variant: 'error',
       onSuccess: async () => {
-        const result = await deleteSubCategoryAction({ id: subCategoryId });
-        if (!result.isSuccess) return globalErrorHandler(result);
-        toast.add({ type: 'success', title: result.message });
-        router.refresh();
+        await remove(subCategoryId);
       },
     });
   }
@@ -102,7 +94,6 @@ export function SubCategoryRowActions({
           onClose={() => setDetailRequest(null)}
           onUpdated={() => {
             setDetailRequest(null);
-            router.refresh();
           }}
         />
       ) : null}

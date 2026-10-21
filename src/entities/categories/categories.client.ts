@@ -4,8 +4,12 @@ import { useMutation } from '@tanstack/react-query';
 import { useCallback, useRef } from 'react';
 
 import type { FormHandle } from '@/components/ui/form';
-import { toast } from '@/components/ui/toast';
-import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
+import type { FetcherError } from '@/lib/api/customFetcher';
+import {
+  type ActionMutation,
+  type ActionMutationOptions,
+  useMutationOptions,
+} from '@/hooks/use-mutation-options';
 import { globalErrorHandler } from '@/utils/helpers';
 
 import {
@@ -17,50 +21,42 @@ import {
 } from './categories.actions';
 import type { CategoryInput, UpdateCategoryInput } from './categories.schema';
 
-type Action<T> = (input: T) => Promise<FetcherResult<unknown>>;
-type CategoryMutationOptions = {
-  onError?: (error: FetcherError) => void;
-};
+type CategoryMutationOptions<TVariables> = ActionMutationOptions<TVariables>;
 
 /** Category reads are Server Component data; EntityTag invalidation refreshes them. */
-function useCategoryMutation<T>(
-  action: Action<T>,
-  { onError = globalErrorHandler }: CategoryMutationOptions = {},
+function useCategoryMutation<TVariables>(
+  action: ActionMutation<TVariables>,
+  options?: CategoryMutationOptions<TVariables>,
 ) {
-  return useMutation<FetcherResult<unknown>, FetcherError, T>({
-    mutationFn: async (input) => {
-      const result = await action(input);
-      if (!result.isSuccess) throw result;
-      return result;
-    },
-    retry: false,
-    onError: (error) => onError(error),
-    onSuccess: (result) => toast.add({ type: 'success', title: result.message }),
-  });
+  return useMutation(useMutationOptions(action, options));
 }
 
-export function useCreateCategoryMutation(options?: CategoryMutationOptions) {
+export function useCreateCategoryMutation(options?: CategoryMutationOptions<CategoryInput>) {
   return useCategoryMutation<CategoryInput>(createCategoryAction, options);
 }
 
-export function useUpdateCategoryMutation(options?: CategoryMutationOptions) {
+export function useUpdateCategoryMutation(
+  options?: CategoryMutationOptions<{ id: string } & UpdateCategoryInput>,
+) {
   return useCategoryMutation<{ id: string } & UpdateCategoryInput>(updateCategoryAction, options);
 }
 
-export function useCategoryStatusMutation(options?: CategoryMutationOptions) {
+export function useCategoryStatusMutation(
+  options?: CategoryMutationOptions<{ id: string; enabled: boolean }>,
+) {
   return useCategoryMutation<{ id: string; enabled: boolean }>(
     async ({ id, enabled }) => (enabled ? enableCategoryAction : disableCategoryAction)({ id }),
     options,
   );
 }
 
-export function useDeleteCategoryMutation(options?: CategoryMutationOptions) {
+export function useDeleteCategoryMutation(options?: CategoryMutationOptions<{ id: string }>) {
   return useCategoryMutation<{ id: string }>(deleteCategoryAction, options);
 }
 
 export function useCreateCategory(onSuccess: () => void) {
   const formRef = useRef<FormHandle<CategoryInput>>(null);
-  const { isPending, mutateAsync } = useCreateCategoryMutation({
+  const { isPending, mutate } = useCreateCategoryMutation({
     onError: (error) => {
       const form = formRef.current;
       globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
@@ -68,16 +64,11 @@ export function useCreateCategory(onSuccess: () => void) {
   });
 
   const handleSubmit = useCallback(
-    async (input: CategoryInput) => {
+    (input: CategoryInput) => {
       if (isPending) return;
-      try {
-        await mutateAsync(input);
-        onSuccess();
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate(input, { onSuccess });
     },
-    [isPending, mutateAsync, onSuccess],
+    [isPending, mutate, onSuccess],
   );
 
   return { formRef, handleSubmit, isPending } as const;
@@ -85,7 +76,7 @@ export function useCreateCategory(onSuccess: () => void) {
 
 export function useUpdateCategory(id: string, onSuccess: () => void) {
   const formRef = useRef<FormHandle<UpdateCategoryInput>>(null);
-  const { isPending, mutateAsync } = useUpdateCategoryMutation({
+  const { isPending, mutate } = useUpdateCategoryMutation({
     onError: (error) => {
       const form = formRef.current;
       globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
@@ -93,49 +84,35 @@ export function useUpdateCategory(id: string, onSuccess: () => void) {
   });
 
   const handleSubmit = useCallback(
-    async (input: UpdateCategoryInput) => {
+    (input: UpdateCategoryInput) => {
       if (isPending) return;
-      try {
-        await mutateAsync({ id, ...input });
-        onSuccess();
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate({ id, ...input }, { onSuccess });
     },
-    [id, isPending, mutateAsync, onSuccess],
+    [id, isPending, mutate, onSuccess],
   );
 
   return { formRef, handleSubmit, isPending } as const;
 }
 
 export function useCategoryStatus() {
-  const { isPending, mutateAsync } = useCategoryStatusMutation();
+  const { isPending, mutate } = useCategoryStatusMutation();
   return {
     isPending,
-    update: async (id: string, enabled: boolean) => {
+    update: (id: string, enabled: boolean) => {
       if (isPending) return;
-      try {
-        await mutateAsync({ id, enabled });
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate({ id, enabled });
     },
   } as const;
 }
 
 export function useDeleteCategory(onSuccess: () => void) {
-  const { isPending, mutateAsync } = useDeleteCategoryMutation();
+  const { isPending, mutate } = useDeleteCategoryMutation();
   const remove = useCallback(
-    async (id: string) => {
+    (id: string) => {
       if (isPending) return;
-      try {
-        await mutateAsync({ id });
-        onSuccess();
-      } catch {
-        // The mutation callback reports normalized errors.
-      }
+      mutate({ id }, { onSuccess });
     },
-    [isPending, mutateAsync, onSuccess],
+    [isPending, mutate, onSuccess],
   );
   return { isPending, remove } as const;
 }
