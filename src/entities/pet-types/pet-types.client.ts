@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type { FieldValues } from 'react-hook-form';
 
 import type { FormHandle } from '@/components/ui/form';
@@ -89,13 +89,15 @@ async function prepareDescription<T extends { description?: unknown }>(
 
 export function useCreatePetType(onSuccess: () => void) {
   const formRef = useRef<FormHandle<PetTypeInput>>(null);
+  const [isPreparing, setIsPreparing] = useState(false);
   const { isPending, mutate } = useCreatePetTypeMutation({
     onError: (error) => handleFormMutationError(error, formRef.current),
   });
   const handleSubmit = useCallback(
     async (input: PetTypeInput) => {
-      if (isPending) return;
+      if (isPreparing || isPending) return;
       let prepared: PetTypeInput | null;
+      setIsPreparing(true);
       try {
         prepared = await prepareDescription(input, (description) =>
           formRef.current?.setValue('description', description),
@@ -103,6 +105,8 @@ export function useCreatePetType(onSuccess: () => void) {
       } catch (error) {
         handleFormMutationError(error as FetcherError, formRef.current);
         return;
+      } finally {
+        setIsPreparing(false);
       }
       if (!prepared) return;
       mutate(prepared, {
@@ -112,20 +116,22 @@ export function useCreatePetType(onSuccess: () => void) {
         },
       });
     },
-    [isPending, mutate, onSuccess],
+    [isPending, isPreparing, mutate, onSuccess],
   );
-  return { formRef, handleSubmit, isPending } as const;
+  return { formRef, handleSubmit, isPending: isPreparing || isPending } as const;
 }
 
 export function useUpdatePetType(id: string, onSuccess: () => void) {
   const formRef = useRef<FormHandle<UpdatePetTypeInput>>(null);
+  const [isPreparing, setIsPreparing] = useState(false);
   const { isPending, mutate } = useUpdatePetTypeMutation({
     onError: (error) => handleFormMutationError(error, formRef.current),
   });
   const handleSubmit = useCallback(
     async (input: UpdatePetTypeInput) => {
-      if (isPending) return;
+      if (isPreparing || isPending) return;
       let prepared: UpdatePetTypeInput | null;
+      setIsPreparing(true);
       try {
         prepared = await prepareDescription(input, (description) =>
           formRef.current?.setValue('description', description),
@@ -133,6 +139,8 @@ export function useUpdatePetType(id: string, onSuccess: () => void) {
       } catch (error) {
         handleFormMutationError(error as FetcherError, formRef.current);
         return;
+      } finally {
+        setIsPreparing(false);
       }
       if (!prepared) return;
       mutate(
@@ -145,9 +153,9 @@ export function useUpdatePetType(id: string, onSuccess: () => void) {
         },
       );
     },
-    [id, isPending, mutate, onSuccess],
+    [id, isPending, isPreparing, mutate, onSuccess],
   );
-  return { formRef, handleSubmit, isPending } as const;
+  return { formRef, handleSubmit, isPending: isPreparing || isPending } as const;
 }
 
 export function useRangePetTypePropertyDefinitions(id: string, onSuccess: () => void) {
