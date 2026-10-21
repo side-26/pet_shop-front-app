@@ -27,7 +27,7 @@ export type AdminNavigationItem = Readonly<{
 
 export const adminNavigationItems = [
   { label: 'داشبورد', href: routePaths.admin, icon: LayoutDashboard },
-  { label: 'سفارش‌ها', href: routePaths.adminPage('orders'), icon: ShoppingCart },
+  { label: 'سفارش‌ها', href: routePaths.adminOrders, icon: ShoppingCart },
   { label: 'محصولات', href: routePaths.adminProducts, icon: Package },
   { label: 'حیوانات', href: routePaths.adminPets, icon: PawPrint },
   { label: 'دسته‌بندی', href: routePaths.adminCategories, icon: Tags },

@@ -3,6 +3,9 @@ import { ValidationError } from 'yup';
 import { USER_ROLES } from '@/configs/user-role';
 import { validationErrorToFetcherError } from '@/entities/auth/auth.helpers';
 import { getSession } from '@/utils/session';
+import { unwrapResult } from '@/lib/utils';
+import type { FetcherResult } from '@/lib/api/customFetcher';
+import type { OrdersPaginatedDTO } from './orders.dto';
 import {
   prepareOrderSchema,
   getOrdersSchema,
@@ -88,6 +91,14 @@ export async function getAllOrdersAction(input: unknown = {}) {
     getOrdersSchema,
     'برای مشاهده سفارش‌ها وارد حساب مدیریتی شوید.',
     getAllOrders,
+  );
+}
+
+/** Server Component read boundary: returns data or throws a safe error for its error boundary. */
+export async function getAllOrdersPageAction(input: unknown = {}): Promise<OrdersPaginatedDTO> {
+  return unwrapResult(
+    getAllOrdersAction(input) as Promise<FetcherResult<OrdersPaginatedDTO>>,
+    'دریافت سفارش‌ها انجام نشد.',
   );
 }
 export async function updateOrderDeliveryStateAction(input: unknown) {
