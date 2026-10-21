@@ -49,7 +49,6 @@ export function CategoriesHeaderActions({
         petTypes={petTypes}
         onCreated={() => {
           setCreateOpen(false);
-          router.refresh();
         }}
       />
     </Suspense>

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { EyeIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
-import { useRouter } from '@/hooks/use-router';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -12,13 +11,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { toast } from '@/components/ui/toast';
-import {
-  deleteCategoryAction,
-  getCategoryByIdAction,
-} from '@/entities/categories/categories.actions';
+import { getCategoryByIdAction } from '@/entities/categories/categories.actions';
+import { useDeleteCategory } from '@/entities/categories/categories.client';
 import { useCommonStore } from '@/stores/common.store';
-import { globalErrorHandler } from '@/utils/helpers';
 
 import type { CategoryPetTypeOption } from './categories-form.types';
 import { CategoryDetailDialog } from './category-detail-dialog';
@@ -36,8 +31,8 @@ export function CategoryRowActions({
   petTypes,
   disabled = false,
 }: Props) {
-  const router = useRouter();
   const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
+  const { remove } = useDeleteCategory(() => undefined);
   const [detailRequest, setDetailRequest] = useState<ReturnType<
     typeof getCategoryByIdAction
   > | null>(null);
@@ -54,10 +49,7 @@ export function CategoryRowActions({
       icon: Trash2Icon,
       variant: 'error',
       onSuccess: async () => {
-        const result = await deleteCategoryAction({ id: categoryId });
-        if (!result.isSuccess) return globalErrorHandler(result);
-        toast.add({ type: 'success', title: result.message });
-        router.refresh();
+        await remove(categoryId);
       },
     });
   }
@@ -102,7 +94,6 @@ export function CategoryRowActions({
           onClose={() => setDetailRequest(null)}
           onUpdated={() => {
             setDetailRequest(null);
-            router.refresh();
           }}
         />
       ) : null}

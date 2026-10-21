@@ -1,12 +1,11 @@
 'use client';
 
-import { useCallback, useRef, useTransition } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import type { UseFormSetError } from 'react-hook-form';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useRef } from 'react';
 
 import type { FormHandle } from '@/components/ui/form';
 import { toast } from '@/components/ui/toast';
-import type { FetcherResult } from '@/lib/api/customFetcher';
+import type { FetcherError, FetcherResult } from '@/lib/api/customFetcher';
 import { globalErrorHandler } from '@/utils/helpers';
 
 import {
@@ -26,6 +25,7 @@ import type {
 export const deliveryServicesQueryKeys = {
   available: (input: AvailableDeliveryServicesQueryInput) =>
     ['delivery-services', 'available', input.lat, input.lng] as const,
+  availablePrefix: ['delivery-services', 'available'] as const,
 };
 
 export class AvailableDeliveryServicesQueryError extends Error {
@@ -63,90 +63,132 @@ export function useAvailableDeliveryServices(input: AvailableDeliveryServicesQue
   });
 }
 
-export async function submitCreateDeliveryService(
-  input: DeliveryServiceInput,
-  showErrorFields: UseFormSetError<DeliveryServiceInput>,
+type DeliveryServiceMutationAction<TVariables> = (
+  input: TVariables,
+) => Promise<FetcherResult<unknown>>;
+type DeliveryServiceMutationOptions = {
+  onError?: (error: FetcherError) => void;
+};
+
+/** Server reads refresh through EntityTags; checkout quotes refresh through this client query prefix. */
+function useDeliveryServiceMutation<TVariables>(
+  action: DeliveryServiceMutationAction<TVariables>,
+  { onError = globalErrorHandler }: DeliveryServiceMutationOptions = {},
 ) {
-  const result = await createDeliveryServiceAction(input);
-  if (!result.isSuccess) {
-    globalErrorHandler(result, { showErrorFields });
-    return false;
-  }
-  toast.add({ type: 'success', title: result.message });
-  return true;
+  const queryClient = useQueryClient();
+  return useMutation<FetcherResult<unknown>, FetcherError, TVariables>({
+    mutationFn: async (variables) => {
+      const result = await action(variables);
+      if (!result.isSuccess) throw result;
+      return result;
+    },
+    retry: false,
+    onError: (error) => onError(error),
+    onSuccess: async (result) => {
+      await queryClient.invalidateQueries({ queryKey: deliveryServicesQueryKeys.availablePrefix });
+      toast.add({ type: 'success', title: result.message });
+    },
+  });
 }
 
-export async function submitUpdateDeliveryService(
-  id: string,
-  input: UpdateDeliveryServiceInput,
-  showErrorFields: UseFormSetError<UpdateDeliveryServiceInput>,
-) {
-  const result = await updateDeliveryServiceAction({ id, ...input });
-  if (!result.isSuccess) {
-    globalErrorHandler(result, { showErrorFields });
-    return false;
-  }
-  toast.add({ type: 'success', title: result.message });
-  return true;
+export function useCreateDeliveryServiceMutation(options?: DeliveryServiceMutationOptions) {
+  return useDeliveryServiceMutation<DeliveryServiceInput>(createDeliveryServiceAction, options);
 }
 
-async function submitById<T>(id: string, action: (input: unknown) => Promise<FetcherResult<T>>) {
-  const result = await action({ id });
-  if (!result.isSuccess) {
-    globalErrorHandler(result);
-    return false;
-  }
-  toast.add({ type: 'success', title: result.message });
-  return true;
+export function useUpdateDeliveryServiceMutation(options?: DeliveryServiceMutationOptions) {
+  return useDeliveryServiceMutation<{ id: string } & UpdateDeliveryServiceInput>(
+    updateDeliveryServiceAction,
+    options,
+  );
 }
 
-export const submitDeliveryServiceEnabledUpdate = (id: string, enabled: boolean) =>
-  submitById(id, enabled ? enableDeliveryServiceAction : disableDeliveryServiceAction);
-export const submitDeleteDeliveryService = (id: string) =>
-  submitById(id, deleteDeliveryServiceAction);
+export function useDeliveryServiceStatusMutation(options?: DeliveryServiceMutationOptions) {
+  return useDeliveryServiceMutation<{ id: string; enabled: boolean }>(
+    async ({ id, enabled }) =>
+      (enabled ? enableDeliveryServiceAction : disableDeliveryServiceAction)({ id }),
+    options,
+  );
+}
+
+export function useDeleteDeliveryServiceMutation(options?: DeliveryServiceMutationOptions) {
+  return useDeliveryServiceMutation<{ id: string }>(deleteDeliveryServiceAction, options);
+}
 
 export function useCreateDeliveryService(onSuccess: () => void) {
   const formRef = useRef<FormHandle<DeliveryServiceInput>>(null);
-  const [isPending, startTransition] = useTransition();
-  const handleSubmit = useCallback(
-    (input: DeliveryServiceInput) => {
+  const { isPending, mutateAsync } = useCreateDeliveryServiceMutation({
+    onError: (error) => {
       const form = formRef.current;
-      if (!form || isPending) return;
-      startTransition(async () => {
-        if (await submitCreateDeliveryService(input, form.setError)) onSuccess();
-      });
+      globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
     },
-    [isPending, onSuccess],
+  });
+  const handleSubmit = useCallback(
+    async (input: DeliveryServiceInput) => {
+      if (isPending) return;
+      try {
+        await mutateAsync(input);
+        onSuccess();
+      } catch {
+        // The mutation callback reports normalized errors.
+      }
+    },
+    [isPending, mutateAsync, onSuccess],
   );
   return { formRef, handleSubmit, isPending } as const;
 }
 
 export function useUpdateDeliveryService(id: string, onSuccess: () => void) {
   const formRef = useRef<FormHandle<UpdateDeliveryServiceInput>>(null);
-  const [isPending, startTransition] = useTransition();
-  const handleSubmit = useCallback(
-    (input: UpdateDeliveryServiceInput) => {
+  const { isPending, mutateAsync } = useUpdateDeliveryServiceMutation({
+    onError: (error) => {
       const form = formRef.current;
-      if (!form || isPending) return;
-      startTransition(async () => {
-        if (await submitUpdateDeliveryService(id, input, form.setError)) onSuccess();
-      });
+      globalErrorHandler(error, form ? { showErrorFields: form.setError } : undefined);
     },
-    [id, isPending, onSuccess],
+  });
+  const handleSubmit = useCallback(
+    async (input: UpdateDeliveryServiceInput) => {
+      if (isPending) return;
+      try {
+        await mutateAsync({ id, ...input });
+        onSuccess();
+      } catch {
+        // The mutation callback reports normalized errors.
+      }
+    },
+    [id, isPending, mutateAsync, onSuccess],
   );
   return { formRef, handleSubmit, isPending } as const;
 }
 
-export function useDeliveryServiceStatus(onSuccess: () => void) {
-  const [isPending, startTransition] = useTransition();
+export function useDeliveryServiceStatus() {
+  const { isPending, mutateAsync } = useDeliveryServiceStatusMutation();
   const update = useCallback(
-    (id: string, enabled: boolean) => {
+    async (id: string, enabled: boolean) => {
       if (isPending) return;
-      startTransition(async () => {
-        if (await submitDeliveryServiceEnabledUpdate(id, enabled)) onSuccess();
-      });
+      try {
+        await mutateAsync({ id, enabled });
+      } catch {
+        // The mutation callback reports normalized errors.
+      }
     },
-    [isPending, onSuccess],
+    [isPending, mutateAsync],
   );
   return { isPending, update } as const;
+}
+
+export function useDeleteDeliveryService(onSuccess: () => void) {
+  const { isPending, mutateAsync } = useDeleteDeliveryServiceMutation();
+  const remove = useCallback(
+    async (id: string) => {
+      if (isPending) return;
+      try {
+        await mutateAsync({ id });
+        onSuccess();
+      } catch {
+        // The mutation callback reports normalized errors.
+      }
+    },
+    [isPending, mutateAsync, onSuccess],
+  );
+  return { isPending, remove } as const;
 }

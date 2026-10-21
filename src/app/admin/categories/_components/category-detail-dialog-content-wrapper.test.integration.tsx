@@ -23,7 +23,7 @@ describe('CategoryDetailFormBody', () => {
         <Dialog open>
           <CategoryDetailFormBody
             formRef={{ current: null }}
-            handleSubmit={() => undefined}
+            handleSubmit={async () => undefined}
             category={category}
             petTypes={[{ value: category.petType, label: 'سگ' }]}
           />
