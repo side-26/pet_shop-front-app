@@ -7,7 +7,9 @@ vi.mock('@/components/common/table-pagination', () => ({
   TablePagination: () => <div data-testid="pagination" />,
 }));
 vi.mock('./orders-row-actions', () => ({
-  OrdersRowActions: () => <button type="button" aria-label="مشاهده جزئیات سفارش ORD-1" />,
+  OrdersRowActions: ({ disabled = false }: { disabled?: boolean }) => (
+    <button type="button" disabled={disabled} aria-label="مشاهده جزئیات سفارش ORD-1" />
+  ),
 }));
 
 afterEach(cleanup);
