@@ -1,5 +1,4 @@
 import { cleanup, render, screen } from '@testing-library/react';
-import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { routePaths } from '@/configs/route.path';
@@ -11,31 +10,6 @@ import { ProductAssuranceRenderer } from './_components/assurance/product-assura
 import { ProductCategoriesSectionRenderer } from './_components/categories/product-categories-section-renderer';
 import { ProductHeroRenderer } from './_components/hero/product-hero-section';
 import { PopularBrandsSectionRenderer } from './_components/popular-brands/popular-brands-section-renderer';
-
-vi.mock('./_components/shared/product-landing-motion', () => ({
-  MotionSection: ({
-    children,
-    labelledBy,
-    id,
-    cacheSection,
-  }: {
-    children: ReactNode;
-    labelledBy?: string;
-    id?: string;
-    cacheSection?: string;
-  }) => (
-    <section id={id} aria-labelledby={labelledBy} data-cache-section={cacheSection}>
-      {children}
-    </section>
-  ),
-  MotionItem: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-  HeroMotion: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-  ParallaxProductMedia: ({ children, className }: { children: ReactNode; className?: string }) => (
-    <div data-slot="parallax-product-media" className={className}>
-      {children}
-    </div>
-  ),
-}));
 
 beforeEach(() => {
   window.matchMedia = vi.fn().mockReturnValue({
@@ -130,10 +104,9 @@ describe('Product landing page', () => {
       screen.getByAltText('گلدن رتریور و گربه پرشین در خانه روشن').getAttribute('fetchpriority'),
     ).toBe('high');
     expect(
-      screen
-        .getByAltText('گلدن رتریور و گربه پرشین در خانه روشن')
-        .closest('[data-slot="parallax-product-media"]')?.className,
-    ).toContain('tw:lg:block');
+      screen.getByAltText('گلدن رتریور و گربه پرشین در خانه روشن').parentElement?.parentElement
+        ?.className,
+    ).not.toContain('tw:hidden');
     expect(
       screen.getByAltText('داستان انتخاب آگاهانه محصولات پت از شناخت نیاز تا تحویل در خانه'),
     ).toBeTruthy();

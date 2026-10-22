@@ -3,11 +3,16 @@ import { cacheLife } from 'next/cache';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { FadeIn } from '@/components/common/animation/fade-in';
+import {
+  AnimatedStaggeredList,
+  animatedStaggeredListItemClassName,
+} from '@/components/common/staggered-list';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { routePaths } from '@/configs/route.path';
+import { cn } from '@/lib/utils';
 
-import { MotionItem, MotionSection, ParallaxProductMedia } from '../shared/product-landing-motion';
 import { careSteps } from '../shared/product-landing-data';
 
 export async function CareGuideSection() {
@@ -19,14 +24,20 @@ export async function CareGuideSection() {
 
 export function CareGuideRenderer() {
   return (
-    <MotionSection
+    <FadeIn
+      loading="eager"
       id="care-guide"
-      labelledBy="care-guide-title"
-      cacheSection="care-guide"
+      aria-labelledby="care-guide-title"
+      data-cache-section="care-guide"
       className="tw:bg-surface tw:py-16 tw:lg:py-24"
     >
-      <div className="tw:default-layout-container tw:grid tw:items-center tw:gap-10 tw:lg:grid-cols-2 tw:lg:gap-16">
-        <ParallaxProductMedia className="tw:hidden tw:relative tw:mx-auto tw:w-full tw:max-w-xl tw:sm:block">
+      <AnimatedStaggeredList className="tw:default-layout-container tw:grid tw:items-center tw:gap-10 tw:lg:grid-cols-2 tw:lg:gap-16">
+        <div
+          className={cn(
+            'tw:relative tw:mx-auto tw:w-full tw:max-w-xl',
+            animatedStaggeredListItemClassName,
+          )}
+        >
           <div className="tw:absolute tw:-inset-3 tw:rounded-[2.5rem] tw:bg-secondary-muted tw:-rotate-3" />
           <div className="tw:relative tw:aspect-[4/3] tw:overflow-hidden tw:rounded-[2.25rem] tw:border tw:border-border/70 tw:shadow-xl">
             <Image
@@ -43,9 +54,14 @@ export function CareGuideRenderer() {
               غذا، مراقبت و بازی بر پایه نیاز واقعی
             </p>
           </div>
-        </ParallaxProductMedia>
+        </div>
 
-        <MotionItem className="tw:flex tw:flex-col tw:items-start tw:gap-6">
+        <div
+          className={cn(
+            'tw:flex tw:flex-col tw:items-start tw:gap-6',
+            animatedStaggeredListItemClassName,
+          )}
+        >
           <Badge variant="tonal" color="secondary" size="lg">
             <HeartHandshake aria-hidden="true" />
             خرید آگاهانه، مراقبت بهتر
@@ -86,8 +102,8 @@ export function CareGuideRenderer() {
             شروع کن
             <ArrowLeft aria-hidden="true" data-icon="inline-end" />
           </Link>
-        </MotionItem>
-      </div>
-    </MotionSection>
+        </div>
+      </AnimatedStaggeredList>
+    </FadeIn>
   );
 }

@@ -2,6 +2,11 @@ import { ArrowLeftIcon, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { Suspense } from 'react';
 
+import { FadeIn } from '@/components/common/animation/fade-in';
+import {
+  AnimatedStaggeredList,
+  animatedStaggeredListItemClassName,
+} from '@/components/common/staggered-list';
 import { buttonVariants } from '@/components/ui/button';
 import { routePaths } from '@/configs/route.path';
 import { getPopularLandingProductsAction } from '@/entities/landing/landing.actions';
@@ -11,7 +16,6 @@ import { FeaturedProductsSectionContent } from './featured-products-section-cont
 import { FeaturedProductsSectionErrorBoundary } from './featured-products-section-error-boundary';
 import { FeaturedProductsRenderer } from './featured-products-section-renderer';
 import { featuredProductsSectionSkeletonData } from './featured-products-section-skeleton-data';
-import { MotionItem, MotionSection } from '../shared/product-landing-motion';
 
 export { FeaturedProductsRenderer } from './featured-products-section-renderer';
 
@@ -19,15 +23,21 @@ export function FeaturedProductsSection() {
   const popularProductsPromise = getPopularLandingProductsAction();
 
   return (
-    <MotionSection
+    <FadeIn
+      loading="eager"
       id="featured-products"
-      labelledBy="featured-products-title"
-      cacheSection="featured-products"
+      aria-labelledby="featured-products-title"
+      data-cache-section="featured-products"
       className="tw:relative tw:overflow-hidden tw:py-16 tw:lg:py-24"
     >
       <div className="tw:absolute tw:end-0 tw:top-0 tw:-z-10 tw:size-80 tw:translate-x-1/3 tw:-translate-y-1/3 tw:rounded-full tw:bg-secondary/15 tw:blur-3xl" />
-      <div className="tw:default-layout-container tw:flex tw:flex-col tw:gap-8">
-        <MotionItem className="tw:flex tw:items-center tw:justify-between tw:gap-4 tw:sm:items-end">
+      <AnimatedStaggeredList className="tw:default-layout-container tw:flex tw:flex-col tw:gap-8">
+        <div
+          className={cn(
+            'tw:flex tw:items-center tw:justify-between tw:gap-4 tw:sm:items-end',
+            animatedStaggeredListItemClassName,
+          )}
+        >
           <div className="tw:flex tw:items-center tw:gap-3">
             <span className="tw:hidden tw:size-12 tw:items-center tw:justify-center tw:rounded-2xl tw:bg-secondary-muted tw:text-secondary-muted-foreground tw:sm:flex">
               <Sparkles aria-hidden="true" className="tw:size-6" />
@@ -57,17 +67,19 @@ export function FeaturedProductsSection() {
             <span className="tw:hidden tw:lg:inline">مشاهده همه محصولات</span>
             <ArrowLeftIcon aria-hidden="true" data-icon="inline-end" />
           </Link>
-        </MotionItem>
-        <Suspense
-          fallback={
-            <FeaturedProductsRenderer products={featuredProductsSectionSkeletonData} isSkeleton />
-          }
-        >
-          <FeaturedProductsSectionErrorBoundary>
-            <FeaturedProductsSectionContent popularProductsPromise={popularProductsPromise} />
-          </FeaturedProductsSectionErrorBoundary>
-        </Suspense>
-      </div>
-    </MotionSection>
+        </div>
+        <div className={animatedStaggeredListItemClassName}>
+          <Suspense
+            fallback={
+              <FeaturedProductsRenderer products={featuredProductsSectionSkeletonData} isSkeleton />
+            }
+          >
+            <FeaturedProductsSectionErrorBoundary>
+              <FeaturedProductsSectionContent popularProductsPromise={popularProductsPromise} />
+            </FeaturedProductsSectionErrorBoundary>
+          </Suspense>
+        </div>
+      </AnimatedStaggeredList>
+    </FadeIn>
   );
 }
