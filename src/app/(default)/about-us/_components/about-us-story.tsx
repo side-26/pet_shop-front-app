@@ -1,5 +1,11 @@
 import { HeartIcon, ShieldCheckIcon, SparklesIcon } from 'lucide-react';
 
+import { FadeIn } from '@/components/common/animation/fade-in';
+import {
+  AnimatedStaggeredList,
+  animatedStaggeredListItemClassName,
+} from '@/components/common/staggered-list';
+
 const principles = [
   {
     icon: ShieldCheckIcon,
@@ -27,12 +33,14 @@ export function AboutUsStory() {
       <div className="tw:default-layout-container tw:grid tw:gap-10 tw:lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] tw:lg:gap-20">
         <div className="tw:flex tw:flex-col tw:gap-4">
           <span className="tw:text-label-l tw:font-bold tw:text-primary">قول ما به شما</span>
-          <h2
-            id="about-us-story-title"
-            className="tw:max-w-xl tw:text-heading-1 tw:text-balance tw:sm:text-display-l"
-          >
-            مراقبت خوب، از <em className="tw:text-primary">شناختن</em> شروع می‌شود.
-          </h2>
+          <FadeIn loading="eager">
+            <h2
+              id="about-us-story-title"
+              className="tw:max-w-xl tw:text-heading-1 tw:text-balance tw:sm:text-display-l"
+            >
+              مراقبت خوب، از <em className="tw:text-primary">شناختن</em> شروع می‌شود.
+            </h2>
+          </FadeIn>
         </div>
 
         <div className="tw:flex tw:flex-col tw:gap-8">
@@ -47,20 +55,21 @@ export function AboutUsStory() {
             </p>
           </div>
 
-          <ul className="tw:grid tw:gap-3 tw:sm:grid-cols-3">
-            {principles.map(({ description, icon: Icon, title }) => (
-              <li
-                key={title}
-                className="tw:flex tw:flex-col tw:gap-3 tw:rounded-2xl tw:border tw:border-primary/15 tw:bg-card/75 tw:p-4 tw:shadow-sm tw:sm:min-h-44"
-              >
-                <Icon aria-hidden="true" className="tw:size-5 tw:text-primary" />
-                <h3 className="tw:text-title-s">{title}</h3>
-                <p className="tw:text-body-s tw:leading-6 tw:text-muted-foreground">
-                  {description}
-                </p>
-              </li>
-            ))}
-          </ul>
+          <AnimatedStaggeredList>
+            <ul className="tw:grid tw:gap-3 tw:sm:grid-cols-3">
+              {principles.map(({ description, icon: Icon, title }) => (
+                <li key={title} className={animatedStaggeredListItemClassName}>
+                  <div className="tw:flex tw:flex-col tw:gap-3 tw:rounded-2xl tw:border tw:border-primary/15 tw:bg-card/75 tw:p-4 tw:shadow-sm tw:sm:min-h-44">
+                    <Icon aria-hidden="true" className="tw:size-5 tw:text-primary" />
+                    <h3 className="tw:text-title-s">{title}</h3>
+                    <p className="tw:text-body-s tw:leading-6 tw:text-muted-foreground">
+                      {description}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </AnimatedStaggeredList>
         </div>
       </div>
     </section>

@@ -2,6 +2,11 @@ import { ArrowLeftIcon } from 'lucide-react';
 import Link from 'next/link';
 import { Suspense } from 'react';
 
+import { FadeIn } from '@/components/common/animation/fade-in';
+import {
+  AnimatedStaggeredList,
+  animatedStaggeredListItemClassName,
+} from '@/components/common/staggered-list';
 import { buttonVariants } from '@/components/ui/button';
 import { routePaths } from '@/configs/route.path';
 import { getProductLandingPetTypesAction } from '@/entities/landing/landing.actions';
@@ -16,13 +21,19 @@ export function ProductCategoriesSection() {
   const petTypesPromise = getProductLandingPetTypesAction();
 
   return (
-    <section
+    <FadeIn
+      loading="eager"
       id="pet-categories"
       aria-labelledby="pet-categories-title"
       className="tw:bg-surface tw:py-16 tw:lg:py-24"
     >
-      <div className="tw:default-layout-container tw:flex tw:flex-col tw:gap-8">
-        <div className="tw:flex tw:items-center tw:justify-between tw:gap-4">
+      <AnimatedStaggeredList className="tw:default-layout-container tw:flex tw:flex-col tw:gap-8">
+        <div
+          className={cn(
+            'tw:flex tw:items-center tw:justify-between tw:gap-4',
+            animatedStaggeredListItemClassName,
+          )}
+        >
           <h2
             id="pet-categories-title"
             className="tw:text-title-m tw:font-semibold tw:sm:text-heading-2 tw:sm:font-bold tw:lg:text-heading-1"
@@ -44,19 +55,21 @@ export function ProductCategoriesSection() {
           </Link>
         </div>
 
-        <Suspense
-          fallback={
-            <ProductCategoriesSectionRenderer
-              petTypes={productCategoriesSectionSkeletonData}
-              isSkeleton
-            />
-          }
-        >
-          <ProductCategoriesSectionErrorBoundary>
-            <ProductCategoriesSectionContent petTypesPromise={petTypesPromise} />
-          </ProductCategoriesSectionErrorBoundary>
-        </Suspense>
-      </div>
-    </section>
+        <div className={animatedStaggeredListItemClassName}>
+          <Suspense
+            fallback={
+              <ProductCategoriesSectionRenderer
+                petTypes={productCategoriesSectionSkeletonData}
+                isSkeleton
+              />
+            }
+          >
+            <ProductCategoriesSectionErrorBoundary>
+              <ProductCategoriesSectionContent petTypesPromise={petTypesPromise} />
+            </ProductCategoriesSectionErrorBoundary>
+          </Suspense>
+        </div>
+      </AnimatedStaggeredList>
+    </FadeIn>
   );
 }

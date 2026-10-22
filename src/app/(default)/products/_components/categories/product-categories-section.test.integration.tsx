@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { act, cleanup, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { animatedStaggeredListItemClassName } from '@/components/common/staggered-list';
 import { routePaths } from '@/configs/route.path';
 import type { LandingPetTypeDTO } from '@/entities/landing/landing.dto';
 
@@ -76,6 +77,9 @@ describe('ProductCategoriesSection', () => {
     );
     expect(screen.getByText('بیشتر').className).toContain('tw:sm:hidden');
     expect(screen.getByText('مشاهده محصولات بیشتر').className).toContain('tw:sm:inline');
+    expect(screen.getByText('از دنیای او شروع کن').parentElement?.className).toContain(
+      animatedStaggeredListItemClassName,
+    );
   });
 
   it('renders a pet-type image, title, and canonical filtered-products link without legacy copy', () => {

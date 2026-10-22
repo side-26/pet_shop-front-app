@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
+import { animatedStaggeredListItemClassName } from '@/components/common/staggered-list';
 import { routePaths } from '@/configs/route.path';
 
 import AboutUsPage, { instant } from './page';
@@ -23,5 +24,16 @@ describe('/about-us', () => {
       routePaths.products,
     );
     expect(screen.getByRole('heading', { level: 2, name: /مراقبت خوب/i })).toBeTruthy();
+    expect(
+      screen.getByRole('heading', { level: 1, name: /انتخاب برای دوست پشمالویتان/i }).parentElement
+        ?.className,
+    ).toContain('tw:fade-in');
+    expect(
+      screen.getByRole('heading', { level: 2, name: /مراقبت خوب/i }).parentElement?.className,
+    ).toContain('tw:fade-in');
+    expect(
+      screen.getByRole('heading', { level: 3, name: 'انتخاب‌های قابل اعتماد' }).parentElement
+        ?.parentElement?.className,
+    ).toContain(animatedStaggeredListItemClassName);
   });
 });

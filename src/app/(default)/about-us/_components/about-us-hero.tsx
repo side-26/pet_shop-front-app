@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeftIcon, HeartHandshakeIcon, PawPrintIcon } from 'lucide-react';
 
+import { FadeIn } from '@/components/common/animation/fade-in';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { routePaths } from '@/configs/route.path';
@@ -19,13 +20,15 @@ export function AboutUsHero() {
             <PawPrintIcon aria-hidden="true" />
             درباره پت‌شاپ پرشین
           </Badge>
-          <h1
-            id="about-us-title"
-            className="tw:max-w-2xl tw:text-heading-1 tw:text-balance tw:sm:text-display-l tw:lg:text-display-xl"
-          >
-            کنار شما هستیم تا <span className="tw:text-primary">انتخاب برای دوست پشمالویتان</span>{' '}
-            ساده‌تر شود.
-          </h1>
+          <FadeIn loading="eager">
+            <h1
+              id="about-us-title"
+              className="tw:max-w-2xl tw:text-heading-1 tw:text-balance tw:sm:text-display-l tw:lg:text-display-xl"
+            >
+              کنار شما هستیم تا <span className="tw:text-primary">انتخاب برای دوست پشمالویتان</span>{' '}
+              ساده‌تر شود.
+            </h1>
+          </FadeIn>
           <div className="tw:max-w-xl tw:space-y-4 tw:text-body-m tw:leading-8 tw:text-muted-foreground tw:sm:text-body-l tw:sm:leading-9">
             <p>
               پت‌شاپ پرشین از یک دغدغه ساده شروع شد: هر سرپرست حیوان خانگی باید بتواند با خیال راحت،
