@@ -3,11 +3,14 @@
 import { refresh } from 'next/cache';
 import { connection } from 'next/server';
 import { unwrapResult } from '@/lib/utils';
+import type { FetcherError } from '@/lib/api/customFetcher';
+import { getSession } from '@/utils/session';
 
 import {
   getAllLandingPetTypes,
   getDiscountedLandingProducts,
   getLandingPetBySlug,
+  getLandingWishlist,
   invalidateAllLandingPetTypes,
   invalidateLandingFeaturedProducts,
   invalidateLandingHomeOffers,
@@ -33,8 +36,23 @@ import {
   landingSlugSchema,
 } from './landing.schema';
 
+function accessError(message: string): FetcherError {
+  return {
+    isSuccess: false,
+    message,
+    data: { messages: {}, details: {} },
+  };
+}
+
 export async function getAllLandingPetTypesAction() {
   return getAllLandingPetTypes();
+}
+
+export async function getLandingWishlistAction() {
+  const session = await getSession();
+  return session
+    ? getLandingWishlist(session.userId)
+    : accessError('برای مشاهده علاقه‌مندی‌ها وارد حساب کاربری شوید.');
 }
 
 /** Server-rendered home categories unwrap failures for their local Suspense error boundary. */

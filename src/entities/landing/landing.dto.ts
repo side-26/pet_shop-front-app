@@ -104,6 +104,13 @@ export type LandingPopularProductDTO = LandingProductDTO & {
   slug: string;
 };
 
+/** An authenticated user's saved catalogue card, retained in the order it was saved. */
+export type LandingWishlistItemDTO = {
+  id: string;
+  itemType: 'pet' | 'product';
+  item: LandingPetDTO | LandingPopularProductDTO;
+};
+
 /**
  * The card-ready public catalogue projection consumed by `/products/list`.
  * Keep it deliberately narrow so client queries do not retain unrelated backend fields.

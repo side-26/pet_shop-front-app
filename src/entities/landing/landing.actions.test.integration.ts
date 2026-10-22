@@ -8,6 +8,7 @@ import {
   getProductLandingPetTypesAction,
   getDiscountedLandingProductsAction,
   getLandingPetBySlugAction,
+  getLandingWishlistAction,
   getPublicLandingPetBySlugAction,
   getLandingProductBySlugAction,
   getLandingProductListAction,
@@ -31,6 +32,7 @@ import {
   getAllLandingPetTypes,
   getDiscountedLandingProducts,
   getLandingPetBySlug,
+  getLandingWishlist,
   getLandingProductBySlug,
   getLandingProductList,
   getLandingPetList,
@@ -55,12 +57,16 @@ const { connectionMock, refreshMock } = vi.hoisted(() => ({
   refreshMock: vi.fn(),
 }));
 
+const { getSessionMock } = vi.hoisted(() => ({ getSessionMock: vi.fn() }));
+
 vi.mock('next/cache', () => ({ refresh: refreshMock }));
 vi.mock('next/server', () => ({ connection: connectionMock }));
+vi.mock('@/utils/session', () => ({ getSession: getSessionMock }));
 vi.mock('./landing.service', () => ({
   getAllLandingPetTypes: vi.fn(),
   getDiscountedLandingProducts: vi.fn(),
   getLandingPetBySlug: vi.fn(),
+  getLandingWishlist: vi.fn(),
   getLandingProductBySlug: vi.fn(),
   getLandingProductList: vi.fn(),
   getLandingPetList: vi.fn(),
@@ -83,6 +89,7 @@ vi.mock('./landing.service', () => ({
 beforeEach(() => {
   vi.clearAllMocks();
   connectionMock.mockResolvedValue(undefined);
+  getSessionMock.mockResolvedValue(null);
   vi.mocked(getAllLandingPetTypes).mockResolvedValue({
     isSuccess: true,
     message: null,
@@ -118,6 +125,11 @@ beforeEach(() => {
     message: null,
     data: {} as never,
   });
+  vi.mocked(getLandingWishlist).mockResolvedValue({
+    isSuccess: true,
+    message: null,
+    data: [],
+  });
   vi.mocked(getPublicLandingProductBySlug).mockResolvedValue({
     isSuccess: true,
     message: null,
@@ -126,6 +138,18 @@ beforeEach(() => {
 });
 
 describe('retryAllLandingPetTypesAction', () => {
+  it('requires a session before requesting the private landing wishlist', async () => {
+    await expect(getLandingWishlistAction()).resolves.toMatchObject({
+      isSuccess: false,
+      message: 'برای مشاهده علاقه‌مندی‌ها وارد حساب کاربری شوید.',
+    });
+    expect(getLandingWishlist).not.toHaveBeenCalled();
+
+    getSessionMock.mockResolvedValue({ userId: 'user-1' });
+    await getLandingWishlistAction();
+    expect(getLandingWishlist).toHaveBeenCalledWith('user-1');
+  });
+
   it('validates read-action input and delegates uncached orchestration to the service cache layer', async () => {
     await getAllLandingPetTypesAction();
     await getProductLandingPetTypesAction();

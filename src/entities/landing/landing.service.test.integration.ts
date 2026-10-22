@@ -10,6 +10,7 @@ import type {
   LandingProductListPageDTO,
   LandingPetListPageDTO,
   LandingProductDTO,
+  LandingWishlistItemDTO,
 } from './landing.dto';
 import {
   getAllLandingPetTypes,
@@ -23,6 +24,7 @@ import {
   getLandingProductList,
   getLandingPetList,
   getLandingProductBySlug,
+  getLandingWishlist,
   getPublicLandingProductBySlug,
   getPopularLandingPets,
   getPopularLandingBrands,
@@ -91,6 +93,10 @@ const popularBrand: LandingPopularBrandDTO = {
   slug: 'royal-canin',
   productCount: 12,
 };
+
+const landingWishlist: LandingWishlistItemDTO[] = [
+  { id: 'wishlist-product-1', itemType: 'product', item: popularProduct },
+];
 
 const productList: LandingProductListPageDTO = {
   result: [popularProduct],
@@ -343,5 +349,23 @@ describe('landing service', () => {
       }),
     );
     expect(mocks.invalidateDetail).toHaveBeenCalledWith('cat-food');
+  });
+
+  it('keeps an authenticated wishlist private and scoped to its signed-in user', async () => {
+    fetcher.mockResolvedValue({ isSuccess: true, message: null, data: landingWishlist });
+
+    await expect(getLandingWishlist('user-1')).resolves.toEqual({
+      isSuccess: true,
+      message: null,
+      data: landingWishlist,
+    });
+
+    expect(mocks.registerDetail).toHaveBeenCalledWith('user-1');
+    expect(fetcher).toHaveBeenCalledWith({
+      url: '/landing/wishlist',
+      method: 'GET',
+      auth: true,
+      cache: 'no-store',
+    });
   });
 });

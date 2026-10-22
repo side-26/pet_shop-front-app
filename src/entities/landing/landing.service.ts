@@ -19,6 +19,7 @@ import type {
   LandingProductDetailDTO,
   LandingProductDTO,
   LandingSlugDTO,
+  LandingWishlistItemDTO,
 } from './landing.dto';
 import {
   landingDiscountLimitSchema,
@@ -90,8 +91,29 @@ async function fetchAuthenticatedLandingProductDetail(slug: string) {
   });
 }
 
+async function fetchLandingWishlist(userId: string) {
+  'use cache: private';
+
+  landingCache.cacheLife({ stale: 360 });
+  landingCache.registerDetail(userId);
+  return customFetcher<LandingWishlistItemDTO[]>({
+    url: '/landing/wishlist',
+    method: 'GET',
+    auth: true,
+    cache: 'no-store',
+  });
+}
+
 export function getFeaturedLandingPetTypes() {
   return fetchLandingList<LandingPetTypeDTO[]>('/landing/pet-types', featuredPetTypesCacheKey);
+}
+
+/**
+ * Returns the signed-in user's enabled saved products and pets in saved order.
+ * This response is user-specific, so it is only cached in the browser's private cache.
+ */
+export function getLandingWishlist(userId: string) {
+  return fetchLandingWishlist(userId);
 }
 
 export function getAllLandingPetTypes() {
