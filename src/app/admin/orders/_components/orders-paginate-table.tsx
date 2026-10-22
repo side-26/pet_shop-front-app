@@ -136,7 +136,11 @@ export function OrdersPaginateTable({
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <OrdersRowActions orderNumber={order.orderNumber} disabled={isLoading} />
+                      <OrdersRowActions
+                        orderId={order.id}
+                        orderNumber={order.orderNumber}
+                        disabled={isLoading}
+                      />
                     </TableCell>
                   </TableRow>
                 );

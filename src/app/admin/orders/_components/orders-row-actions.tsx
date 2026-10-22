@@ -4,13 +4,19 @@ import { Eye } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
+import { useOrdersDialogs } from './orders-dialog-provider';
+
 export function OrdersRowActions({
+  orderId,
   orderNumber,
   disabled = false,
 }: Readonly<{
+  orderId: string;
   orderNumber: string;
   disabled?: boolean;
 }>) {
+  const { openDetail } = useOrdersDialogs();
+
   return (
     <Button
       type="button"
@@ -19,8 +25,9 @@ export function OrdersRowActions({
       variant="flat"
       color="secondary"
       disabled={disabled}
+      onClick={() => openDetail(orderId)}
       aria-label={`مشاهده جزئیات سفارش ${orderNumber}`}
-      title="جزئیات سفارش به‌زودی اضافه می‌شود"
+      title="مشاهده جزئیات سفارش"
     >
       <Eye aria-hidden="true" />
     </Button>

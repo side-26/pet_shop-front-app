@@ -5,9 +5,12 @@ import { createContext, use, useMemo, useRef, type ReactNode } from 'react';
 import { useDialogController } from '@/hooks/use-dialog-controller';
 
 import { OrdersFilterDialog, type OrdersFilterDialogHandle } from './orders-filter-dialog';
+import { OrdersDetailDialogWrapper } from './orders-detail-dialog-wrapper';
+import type { OrdersDetailDialogHandle } from './orders-detail-dialog.types';
 
 type OrdersDialogActions = Readonly<{
   openFilter: (query: Record<string, string>) => void;
+  openDetail: (orderId: string) => void;
 }>;
 
 const OrdersDialogContext = createContext<OrdersDialogActions | null>(null);
@@ -22,9 +25,15 @@ export function useOrdersDialogs() {
 
 export function OrdersDialogProvider({ children }: Readonly<{ children: ReactNode }>) {
   const filterDialogRef = useRef<OrdersFilterDialogHandle>(null);
-  const { open } = useDialogController(useMemo(() => ({ filter: { ref: filterDialogRef } }), []));
+  const detailDialogRef = useRef<OrdersDetailDialogHandle>(null);
+  const { open } = useDialogController(
+    useMemo(() => ({ filter: { ref: filterDialogRef }, detail: { ref: detailDialogRef } }), []),
+  );
   const actions = useMemo<OrdersDialogActions>(
-    () => ({ openFilter: (query) => open('filter', { query }) }),
+    () => ({
+      openFilter: (query) => open('filter', { query }),
+      openDetail: (orderId) => open('detail', { orderId }),
+    }),
     [open],
   );
 
@@ -32,6 +41,7 @@ export function OrdersDialogProvider({ children }: Readonly<{ children: ReactNod
     <OrdersDialogContext value={actions}>
       {children}
       <OrdersFilterDialog ref={filterDialogRef} />
+      <OrdersDetailDialogWrapper ref={detailDialogRef} />
     </OrdersDialogContext>
   );
 }
