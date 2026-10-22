@@ -31,7 +31,7 @@ afterEach(() => {
 });
 
 describe('DesktopAccountMenu', () => {
-  it('opens with the identity, profile, and a logout confirmation action', async () => {
+  it('opens with identity, profile, wishlist, and a logout confirmation action', async () => {
     render(
       <>
         <DesktopAccountMenu user={user} />
@@ -44,6 +44,9 @@ describe('DesktopAccountMenu', () => {
     expect(await screen.findByText('نیلوفر احمدی')).toBeTruthy();
     expect(screen.getByRole('menuitem', { name: 'پروفایل' }).getAttribute('href')).toBe(
       routePaths.profile,
+    );
+    expect(screen.getByRole('menuitem', { name: 'علاقه‌مندی‌ها' }).getAttribute('href')).toBe(
+      routePaths.profileWishList,
     );
     expect(screen.queryByRole('menuitem', { name: 'سفارش‌ها' })).toBeNull();
 

@@ -9,6 +9,7 @@ export const PATHS = {
   CART: '/cart',
   CHECKOUT: '/cart/checkout',
   PROFILE: '/profile',
+  PROFILE_WISH_LIST: '/profile/wish-list',
   PAYMENT_RESULT: '/payment/result',
   AUTH: {
     LOGIN: '/login',
@@ -58,6 +59,7 @@ export const routePaths = {
   cart: PATHS.CART,
   checkout: PATHS.CHECKOUT,
   profile: PATHS.PROFILE,
+  profileWishList: PATHS.PROFILE_WISH_LIST,
   paymentResult: (authority: string) => `${PATHS.PAYMENT_RESULT}/${encodeURIComponent(authority)}`,
   login: PATHS.AUTH.LOGIN,
   loginAfterLogout: PATHS.AUTH.LOGIN_AFTER_LOGOUT,

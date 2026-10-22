@@ -138,16 +138,22 @@ beforeEach(() => {
 });
 
 describe('retryAllLandingPetTypesAction', () => {
-  it('requires a session before requesting the private landing wishlist', async () => {
-    await expect(getLandingWishlistAction()).resolves.toMatchObject({
-      isSuccess: false,
-      message: 'برای مشاهده علاقه‌مندی‌ها وارد حساب کاربری شوید.',
-    });
+  it('requires a session and unwraps failures before requesting the private landing wishlist', async () => {
+    await expect(getLandingWishlistAction()).rejects.toThrow(
+      'برای مشاهده علاقه‌مندی‌ها وارد حساب کاربری شوید.',
+    );
     expect(getLandingWishlist).not.toHaveBeenCalled();
 
     getSessionMock.mockResolvedValue({ userId: 'user-1' });
     await getLandingWishlistAction();
     expect(getLandingWishlist).toHaveBeenCalledWith('user-1');
+
+    vi.mocked(getLandingWishlist).mockResolvedValue({
+      isSuccess: false,
+      message: 'علاقه‌مندی‌ها در دسترس نیستند.',
+      data: { messages: {}, details: {} },
+    });
+    await expect(getLandingWishlistAction()).rejects.toThrow('علاقه‌مندی‌ها در دسترس نیستند.');
   });
 
   it('validates read-action input and delegates uncached orchestration to the service cache layer', async () => {

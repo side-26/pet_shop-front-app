@@ -3,7 +3,6 @@
 import { refresh } from 'next/cache';
 import { connection } from 'next/server';
 import { unwrapResult } from '@/lib/utils';
-import type { FetcherError } from '@/lib/api/customFetcher';
 import { getSession } from '@/utils/session';
 
 import {
@@ -36,23 +35,15 @@ import {
   landingSlugSchema,
 } from './landing.schema';
 
-function accessError(message: string): FetcherError {
-  return {
-    isSuccess: false,
-    message,
-    data: { messages: {}, details: {} },
-  };
-}
-
 export async function getAllLandingPetTypesAction() {
   return getAllLandingPetTypes();
 }
 
 export async function getLandingWishlistAction() {
   const session = await getSession();
-  return session
-    ? getLandingWishlist(session.userId)
-    : accessError('برای مشاهده علاقه‌مندی‌ها وارد حساب کاربری شوید.');
+  if (!session) throw new Error('برای مشاهده علاقه‌مندی‌ها وارد حساب کاربری شوید.');
+
+  return unwrapResult(getLandingWishlist(session.userId), 'دریافت علاقه‌مندی‌ها انجام نشد.');
 }
 
 /** Server-rendered home categories unwrap failures for their local Suspense error boundary. */

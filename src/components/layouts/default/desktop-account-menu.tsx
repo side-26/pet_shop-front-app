@@ -1,6 +1,6 @@
 'use client';
 
-import { LogOut, UserRound } from 'lucide-react';
+import { Heart, LogOut, UserRound } from 'lucide-react';
 import Link from 'next/link';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -51,6 +51,10 @@ export function DesktopAccountMenu({ user }: Props) {
           <DropdownMenuItem render={<Link href={routePaths.profile} />}>
             <UserRound aria-hidden="true" />
             پروفایل
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href={routePaths.profileWishList} />}>
+            <Heart aria-hidden="true" />
+            علاقه‌مندی‌ها
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
