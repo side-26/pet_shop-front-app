@@ -23,7 +23,6 @@ docker save "$IMAGE" | gzip > "$ARCHIVE"
 echo "3. Uploading image and Compose configuration..."
 
 scp "$ARCHIVE" "$SERVER:/opt/$ARCHIVE"
-scp compose.yml "$SERVER:$REMOTE_DIR/compose.yml"
 
 echo "4. Deploying frontend..."
 

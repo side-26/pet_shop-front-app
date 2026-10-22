@@ -14,13 +14,13 @@ export const metadata: Metadata = {
 
 export default function ProductLandingPage() {
   return (
-    <div className="tw:overflow-clip">
+    <main className="tw:overflow-clip">
       <ProductHeroSection />
       <ProductAssuranceSection />
       <ProductCategoriesSection />
       <PopularBrandsSection />
       <FeaturedProductsSection />
       <CareGuideSection />
-    </div>
+    </main>
   );
 }

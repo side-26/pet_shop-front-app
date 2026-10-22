@@ -14,7 +14,7 @@ export function PetHeroSection() {
     >
       <div className="tw:group/hero tw:relative tw:h-132.5 tw:overflow-hidden tw:rounded-3xl tw:shadow-lg tw:md:h-150">
         <Image
-          src="/images/home/hero-pets.jpeg"
+          src="/images/home/hero-pets.jpg"
           alt="سگ گلدن رتریور و گربه پرشین در خانه‌ای روشن"
           fill
           preload

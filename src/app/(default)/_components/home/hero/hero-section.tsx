@@ -9,13 +9,11 @@ import { routePaths } from '@/configs/route.path';
 import { cn } from '@/lib/utils';
 
 import { RevealItem } from '../shared/motion-primitives';
-import { ShaderBackground } from './shader-background';
 
 export function HeroSection() {
   return (
     <section className="tw:relative tw:isolate tw:overflow-hidden tw:py-8 tw:sm:py-12 tw:lg:py-16">
       <div className="tw:absolute tw:inset-0 tw:-z-20 tw:bg-linear-to-bl tw:from-primary-muted/70 tw:via-background tw:to-secondary-muted/65" />
-      <ShaderBackground />
       <div className="tw:absolute tw:inset-0 tw:-z-10 tw:bg-background/35 tw:supports-backdrop-filter:backdrop-blur-[2px]" />
 
       <FadeIn
@@ -74,12 +72,12 @@ export function HeroSection() {
           <div className="tw:absolute tw:-inset-3 tw:rounded-[2.25rem] tw:bg-primary/15 tw:blur-2xl tw:sm:-inset-5" />
           <div className="tw:relative tw:aspect-16/10 tw:overflow-hidden tw:rounded-4xl tw:border tw:border-background/70 tw:bg-card tw:shadow-2xl tw:shadow-foreground/15">
             <Image
-              src="/images/home/hero-pets.jpeg"
+              src="/images/home/hero-pets.jpg"
               alt="سگ گلدن رتریور و گربه پرشین در خانه‌ای روشن، کنار نمای موبایل پت‌شاپ"
               fill
               preload
-              loading="eager"
               fetchPriority="high"
+              quality={50}
               sizes="(min-width: 1024px) 58vw, 100vw"
               className="tw:object-cover tw:object-center"
             />

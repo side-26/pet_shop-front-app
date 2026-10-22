@@ -53,7 +53,7 @@ export function AboutUsHero() {
             />
             <figure className="tw:absolute tw:inset-x-0 tw:top-0 tw:bottom-[12%] tw:overflow-hidden tw:rounded-[48%] tw:border tw:border-background tw:bg-muted tw:shadow-xl tw:shadow-foreground/10">
               <Image
-                src="/images/home/hero-pets.jpeg"
+                src="/images/home/hero-pets.jpg"
                 alt="سگ گلدن رتریور و گربه پرشین در خانه‌ای روشن"
                 fill
                 priority
