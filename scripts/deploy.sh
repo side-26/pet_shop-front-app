@@ -5,7 +5,7 @@ set -euo pipefail
 IMAGE="pet-shop-frontend:latest"
 ARCHIVE="pet-shop-frontend.tar.gz"
 
-SERVER="root@109.122.247.171"
+SERVER="root@89.44.240.25"
 REMOTE_DIR="/opt/pet-shop-frontend"
 
 echo "1. Building production image..."

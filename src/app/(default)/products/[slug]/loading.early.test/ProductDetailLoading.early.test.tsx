@@ -1,5 +1,5 @@
-import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import ProductDetailLoading from '../loading';
 
 type MockRichTextFormValue = {
@@ -54,75 +54,75 @@ describe('ProductDetailLoading() ProductDetailLoading method', () => {
     it('renders the skeleton product detail content with all expected sections', () => {
       render(<ProductDetailLoading />);
       const article = screen.getByRole('article');
-      expect(article).toBeInTheDocument();
-      expect(article).toHaveAttribute('data-product-detail-shell');
-      expect(article).toHaveAttribute('aria-busy', 'true');
-      expect(article).toHaveClass('skeleton');
+      expect(article).toBeTruthy();
+      expect(article.getAttribute('data-product-detail-shell')).toBe('');
+      expect(article.getAttribute('aria-busy')).toBe('true');
+      expect(article.classList.contains('skeleton')).toBe(true);
 
-      expect(screen.getByText('خانه')).toBeInTheDocument();
-      expect(screen.getByText('محصولات')).toBeInTheDocument();
+      expect(screen.getByText('خانه')).toBeTruthy();
+      expect(screen.getByText('محصولات')).toBeTruthy();
 
-      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { level: 1 })).toBeTruthy();
 
       expect(screen.getAllByLabelText(/گالری تصاویر/)).toHaveLength(2);
 
-      expect(screen.getByLabelText('خلاصه محصول')).toBeInTheDocument();
+      expect(screen.getByLabelText('خلاصه محصول')).toBeTruthy();
 
-      expect(screen.getByLabelText('اطلاعات تکمیلی محصول')).toBeInTheDocument();
+      expect(screen.getByLabelText('اطلاعات تکمیلی محصول')).toBeTruthy();
 
-      expect(screen.getByLabelText('خرید محصول')).toBeInTheDocument();
+      expect(screen.getByLabelText('خرید محصول')).toBeTruthy();
 
-      expect(screen.getByText(/امتیاز شما/)).toBeInTheDocument();
+      expect(screen.getByText(/امتیاز شما/)).toBeTruthy();
     });
 
     it('renders product information section with skeleton-only text', () => {
       render(<ProductDetailLoading />);
-      expect(screen.getByText('وضعیت امتیازدهی کاربر در حال دریافت است.')).toBeInTheDocument();
+      expect(screen.getByText('وضعیت امتیازدهی کاربر در حال دریافت است.')).toBeTruthy();
     });
 
     it('renders product summary section with collapsed and expanded views', () => {
       render(<ProductDetailLoading />);
-      expect(screen.getByText('خلاصه محصول')).toBeInTheDocument();
+      expect(screen.getByText('خلاصه محصول')).toBeTruthy();
 
-      expect(screen.getByRole('heading', { name: 'خلاصه محصول', level: 2 })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'خلاصه محصول', level: 2 })).toBeTruthy();
     });
 
     it('renders product detail tabs with overview and specifications', () => {
       render(<ProductDetailLoading />);
-      expect(screen.getByText('معرفی محصول')).toBeInTheDocument();
-      expect(screen.getByText('مشخصات')).toBeInTheDocument();
+      expect(screen.getByText('معرفی محصول')).toBeTruthy();
+      expect(screen.getByText('مشخصات')).toBeTruthy();
     });
 
     it('renders product purchase sidebar and mobile purchase section', () => {
       render(<ProductDetailLoading />);
-      expect(screen.getByLabelText('خرید محصول')).toBeInTheDocument();
-      expect(screen.getByText('امتیاز شما')).toBeInTheDocument();
+      expect(screen.getByLabelText('خرید محصول')).toBeTruthy();
+      expect(screen.getByText('امتیاز شما')).toBeTruthy();
     });
 
     it('renders product header actions with wishlist and share buttons', () => {
       render(<ProductDetailLoading />);
-      expect(screen.getByLabelText('افزودن محصول به علاقه‌مندی‌ها')).toBeInTheDocument();
-      expect(screen.getByLabelText('اشتراک‌گذاری محصول')).toBeInTheDocument();
+      expect(screen.getByLabelText('افزودن محصول به علاقه‌مندی‌ها')).toBeTruthy();
+      expect(screen.getByLabelText('اشتراک‌گذاری محصول')).toBeTruthy();
     });
 
     it('renders product rating and review count', () => {
       render(<ProductDetailLoading />);
-      expect(screen.getByText(/نظر/)).toBeInTheDocument();
+      expect(screen.getByText(/نظر/)).toBeTruthy();
       expect(
         screen.getByText((content, element) => {
           return element?.tagName === 'BDI';
         }),
-      ).toBeInTheDocument();
+      ).toBeTruthy();
     });
 
     it('renders product availability status', () => {
       render(<ProductDetailLoading />);
-      expect(screen.getByText(/موجود در انبار|ناموجود/)).toBeInTheDocument();
+      expect(screen.getByText(/موجود در انبار|ناموجود/)).toBeTruthy();
     });
   });
 
   describe('Edge Cases', () => {
-    it('renders with minimal skeleton data (empty summary, no specifications)', () => {
+    it('renders with minimal skeleton data (empty summary, no specifications)', async () => {
       const minimalSkeleton: MockLandingProductDetailDTO = {
         id: 'min-id',
         slug: 'min-slug',
@@ -156,24 +156,25 @@ describe('ProductDetailLoading() ProductDetailLoading method', () => {
         hasRated: false,
       };
 
-      jest.mock('../_components/product-detail-data', () => ({
+      vi.resetModules();
+      vi.doMock('../_components/product-detail-data', () => ({
         productDetailSkeleton: minimalSkeleton as any,
         __esModule: true,
       }));
 
-      const { default: ProductDetailLoadingMinimal } = require('../loading');
+      const { default: ProductDetailLoadingMinimal } = await import('../loading');
 
       render(<ProductDetailLoadingMinimal />);
-      expect(screen.getByRole('article')).toBeInTheDocument();
+      expect(screen.getByRole('article')).toBeTruthy();
 
-      expect(screen.queryByLabelText('خلاصه محصول')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText('خلاصه محصول')).not.toBeTruthy();
 
-      expect(screen.queryByText('مشخصات')).not.toBeInTheDocument();
+      expect(screen.queryByText('مشخصات')).not.toBeTruthy();
 
-      expect(screen.queryByText('معرفی محصول')).not.toBeInTheDocument();
+      expect(screen.queryByText('معرفی محصول')).not.toBeTruthy();
     });
 
-    it('renders with multiple images and verifies image gallery behavior', () => {
+    it('renders with multiple images and verifies image gallery behavior', async () => {
       const multiImageSkeleton: MockLandingProductDetailDTO = {
         id: 'multi-id',
         slug: 'multi-slug',
@@ -216,23 +217,24 @@ describe('ProductDetailLoading() ProductDetailLoading method', () => {
         hasRated: false,
       };
 
-      jest.mock('../_components/product-detail-data', () => ({
+      vi.resetModules();
+      vi.doMock('../_components/product-detail-data', () => ({
         productDetailSkeleton: multiImageSkeleton as any,
         __esModule: true,
       }));
 
-      const { default: ProductDetailLoadingMultiImage } = require('../loading');
+      const { default: ProductDetailLoadingMultiImage } = await import('../loading');
 
       render(<ProductDetailLoadingMultiImage />);
       expect(screen.getAllByLabelText(/گالری تصاویر/)).toHaveLength(2);
 
-      expect(screen.getByRole('button', { name: /previous/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /previous/i })).toBeTruthy();
+      expect(screen.getByRole('button', { name: /next/i })).toBeTruthy();
 
       expect(screen.getAllByRole('img')).toHaveLength(3);
     });
 
-    it('renders product information section with missing animal, category, and subcategory', () => {
+    it('renders product information section with missing animal, category, and subcategory', async () => {
       const missingInfoSkeleton: MockLandingProductDetailDTO = {
         id: 'missing-id',
         slug: 'missing-slug',
@@ -266,20 +268,21 @@ describe('ProductDetailLoading() ProductDetailLoading method', () => {
         hasRated: false,
       };
 
-      jest.mock('../_components/product-detail-data', () => ({
+      vi.resetModules();
+      vi.doMock('../_components/product-detail-data', () => ({
         productDetailSkeleton: missingInfoSkeleton as any,
         __esModule: true,
       }));
 
-      const { default: ProductDetailLoadingMissingInfo } = require('../loading');
+      const { default: ProductDetailLoadingMissingInfo } = await import('../loading');
 
       render(<ProductDetailLoadingMissingInfo />);
-      expect(screen.queryByText('حیوان')).not.toBeInTheDocument();
-      expect(screen.queryByText('زیرگروه')).not.toBeInTheDocument();
-      expect(screen.queryByText('برند')).not.toBeInTheDocument();
+      expect(screen.queryByText('حیوان')).not.toBeTruthy();
+      expect(screen.queryByText('زیرگروه')).not.toBeTruthy();
+      expect(screen.queryByText('برند')).not.toBeTruthy();
     });
 
-    it('renders product purchase controls with no weights', () => {
+    it('renders product purchase controls with no weights', async () => {
       const noWeightsSkeleton: MockLandingProductDetailDTO = {
         id: 'no-weights-id',
         slug: 'no-weights-slug',
@@ -313,15 +316,16 @@ describe('ProductDetailLoading() ProductDetailLoading method', () => {
         hasRated: false,
       };
 
-      jest.mock('../_components/product-detail-data', () => ({
+      vi.resetModules();
+      vi.doMock('../_components/product-detail-data', () => ({
         productDetailSkeleton: noWeightsSkeleton as any,
         __esModule: true,
       }));
 
-      const { default: ProductDetailLoadingNoWeights } = require('../loading');
+      const { default: ProductDetailLoadingNoWeights } = await import('../loading');
 
       render(<ProductDetailLoadingNoWeights />);
-      expect(screen.getByLabelText('خرید محصول')).toBeInTheDocument();
+      expect(screen.getByLabelText('خرید محصول')).toBeTruthy();
     });
   });
 });
