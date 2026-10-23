@@ -77,7 +77,7 @@ export function HeroSection() {
               fill
               preload
               fetchPriority="high"
-              quality={50}
+              quality={70}
               sizes="(min-width: 1024px) 58vw, 100vw"
               className="tw:object-cover tw:object-center"
             />

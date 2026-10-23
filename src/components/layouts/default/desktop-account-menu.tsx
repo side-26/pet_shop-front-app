@@ -1,6 +1,6 @@
 'use client';
 
-import { Heart, LogOut, UserRound } from 'lucide-react';
+import { Heart, UserRound } from 'lucide-react';
 import Link from 'next/link';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -15,15 +15,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { routePaths } from '@/configs/route.path';
-import { useLogoutUser } from '@/entities/auth/auth.client';
 import type { CurrentUserDTO } from '@/entities/users/users.dto';
-import { useCommonStore } from '@/stores/common.store';
+
+import { AccountLogoutMenuItem } from './account-logout-menu-item';
 
 type Props = Readonly<{ user: CurrentUserDTO }>;
 
 export function DesktopAccountMenu({ user }: Props) {
-  const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
-  const logoutUser = useLogoutUser();
   const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.phoneNumber;
 
   return (
@@ -59,21 +57,7 @@ export function DesktopAccountMenu({ user }: Props) {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            variant="destructive"
-            onClick={() => {
-              showConfirmDialog({
-                title: 'از حساب خارج می‌شوید؟',
-                message: 'برای ادامه، لازم است دوباره وارد حساب کاربری خود شوید.',
-                icon: LogOut,
-                variant: 'warning',
-                onSuccess: logoutUser,
-              });
-            }}
-          >
-            <LogOut aria-hidden="true" />
-            خروج
-          </DropdownMenuItem>
+          <AccountLogoutMenuItem label="خروج" />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

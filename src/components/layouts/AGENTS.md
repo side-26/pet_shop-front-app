@@ -72,6 +72,9 @@ tablet before splitting at `lg`; its quick-navigation links must derive from
 `public/images/brand/pet-haven-mark.png` asset and canonical `routePaths`
 entries rather than duplicating brand art or route literals.
 
+`AccountLogoutMenuItem` owns the shared storefront logout confirmation item;
+desktop and mobile menus provide only their context-specific label.
+
 Below `lg`, keep services and about links out of the bottom dock: expose them
 through the accessible overflow menu beside the compact brand, and keep the
 account destination as the dock's final item. Let the mobile/tablet product

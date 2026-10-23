@@ -1,6 +1,6 @@
 'use client';
 
-import { LogOut, Menu } from 'lucide-react';
+import { Heart, Menu } from 'lucide-react';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -13,16 +13,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useLogoutUser } from '@/entities/auth/auth.client';
+import { routePaths } from '@/configs/route.path';
 import { useAuthStore } from '@/entities/auth/auth.store';
-import { useCommonStore } from '@/stores/common.store';
 
+import { AccountLogoutMenuItem } from './account-logout-menu-item';
 import { mobileOverflowNavigationItems } from './navigation-items';
 
 export function MobileHeaderMenu() {
   const userIdentity = useAuthStore((state) => state.userIdentity);
-  const showConfirmDialog = useCommonStore((state) => state.showConfirmDialog);
-  const logoutUser = useLogoutUser();
 
   return (
     <div className="tw:lg:hidden">
@@ -46,21 +44,14 @@ export function MobileHeaderMenu() {
             <>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem
-                  variant="destructive"
-                  onClick={() => {
-                    showConfirmDialog({
-                      title: 'از حساب خارج می‌شوید؟',
-                      message: 'برای ادامه، لازم است دوباره وارد حساب کاربری خود شوید.',
-                      icon: LogOut,
-                      variant: 'warning',
-                      onSuccess: logoutUser,
-                    });
-                  }}
-                >
-                  <LogOut aria-hidden="true" />
-                  خروج از حساب
+                <DropdownMenuItem render={<Link href={routePaths.profileWishList} />}>
+                  <Heart aria-hidden="true" />
+                  علاقه‌مندی‌ها
                 </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <AccountLogoutMenuItem label="خروج از حساب" />
               </DropdownMenuGroup>
             </>
           ) : null}

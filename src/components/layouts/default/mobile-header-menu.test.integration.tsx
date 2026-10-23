@@ -2,6 +2,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ConfirmDialog } from '@/components/common/confirm-dialog/main';
+import { routePaths } from '@/configs/route.path';
 import { useAuthStore } from '@/entities/auth/auth.store';
 import { useCommonStore } from '@/stores/common.store';
 
@@ -45,6 +46,9 @@ describe('MobileHeaderMenu', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'باز کردن منوی بیشتر' }));
+    expect(
+      (await screen.findByRole('menuitem', { name: 'علاقه‌مندی‌ها' })).getAttribute('href'),
+    ).toBe(routePaths.profileWishList);
     fireEvent.click(await screen.findByRole('menuitem', { name: 'خروج از حساب' }));
 
     expect(await screen.findByRole('alertdialog', { name: 'از حساب خارج می‌شوید؟' })).toBeTruthy();
