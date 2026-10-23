@@ -43,8 +43,8 @@ beforeEach(() => {
 });
 
 describe(routePaths.profile, () => {
-  it('renders the customer identity and three profile sections', () => {
-    render(<ProfilePage />);
+  it('renders the customer identity and three profile sections without clipping vertical overflow', () => {
+    const { container } = render(<ProfilePage />);
 
     expect(screen.queryByText('حساب کاربری')).toBeNull();
     expect(screen.queryByRole('heading', { name: 'پروفایل من' })).toBeNull();
@@ -67,6 +67,8 @@ describe(routePaths.profile, () => {
     );
     expect(screen.queryByRole('heading', { name: 'سفارش‌های من', hidden: true })).toBeNull();
     expect(screen.queryByRole('heading', { name: 'نشانی‌های من', hidden: true })).toBeNull();
+    expect(container.firstElementChild?.className).toContain('tw:overflow-x-clip');
+    expect(container.firstElementChild?.className).not.toContain('tw:overflow-hidden');
   });
 
   it('loads the orders tab only after it is selected', async () => {

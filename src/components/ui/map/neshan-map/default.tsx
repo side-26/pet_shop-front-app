@@ -48,7 +48,7 @@ export type NeshanMapProps = Omit<ComponentPropsWithoutRef<'section'>, 'children
 
 export const NeshanMap = forwardRef<NeshanMapHandle, NeshanMapProps>(function NeshanMap(
   {
-    apiKey = process.env.NEXT_PUBLIC_NESHAN_API_KEY,
+    apiKey = process.env.NEXT_PUBLIC_NESHAN_API_KEY ?? 'web.1fb93d72-85fe-4f7a-a7f9-e7260fae5473',
     center = DEFAULT_CENTER,
     zoom = 12,
     zoomControl = true,
